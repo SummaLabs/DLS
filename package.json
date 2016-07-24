@@ -1,0 +1,26 @@
+{
+  "name": "dls",
+  "private": true,
+  "version": "0.0.4",
+  "description": "Deep Learning Studio",
+  "peerDependencies": {
+    "angular": "@>=1.3 <1.6",
+    "angular-animate": "^@>=1.3 <1.6",
+    "angular-aria": "@>=1.3 <1.6",
+    "angular-messages": "@>=1.3 <1.6"
+  },
+  "dependencies": {
+    "angular": "^1.5.5",
+    "angular-animate": "^1.5.5",
+    "angular-aria": "^1.5.5",
+    "angular-messages": "^1.5.5",
+    "angular-material": "git+https://github.com/angular/bower-material.git#master"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0"
+  },
+  "scripts": {
+    "prestart": "npm update"
+  }
+}

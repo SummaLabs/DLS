@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <title>Deap Learning Studio</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="initial-scale=1" />
+    <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,700'>
+    <link rel="stylesheet" href="/frontend/assets/css/angular-material.css"/>
+    <link rel="stylesheet" href="/frontend/assets/css/app.css"/>
+</head>
+
+<body ng-app="starterApp" layout="column">
+<md-toolbar layout="row">
+    <main-menu></main-menu>
+    <h3>Deep Learning Studio</h3>
+</md-toolbar>
+
+<md-tabs md-dynamic-height md-border-bottom>
+    <md-tab label="Builder">
+        <div>
+            <md-button class="md-secondary">Start Training</md-button>
+        </div>
+    </md-tab>
+    <md-tab label="Networks">
+        <network-main></network-main>
+    </md-tab>
+    <md-tab label="Models">
+        <model-main></model-main>
+    </md-tab>
+    <md-tab label="Data">
+        <main-data-set></main-data-set>
+    </md-tab>
+</md-tabs>
+
+<script src="/frontend/lib/angular.js"></script>
+<script src="/frontend/lib/angular-animate.js"></script>
+<script src="/frontend/lib/angular-aria.js"></script>
+<script type="text/javascript" src="/frontend/lib/angular-material.js"></script>
+
+<script src="/frontend/components/main-menu/MainMenu.js"></script>
+<script src="/frontend/components/networks-main/NetworksMain.js"></script>
+<script src="/frontend/components/models-main/ModelsMain.js"></script>
+<script src="/frontend/components/data-set-main/MainDataSet.js"></script>
+
+<script type="text/javascript">
+
+    angular.module('starterApp', ['ngMaterial',
+        'mainMenu',
+        'networkMain',
+        'modelMain',
+        'mainDataSet']);
+
+</script>
+
+</body>
+</html>

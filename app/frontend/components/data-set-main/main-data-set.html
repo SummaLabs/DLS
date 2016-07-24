@@ -1,0 +1,12 @@
+<div>
+    <md-button class="md-secondary" ng-click="$ctrl.createDialog()">Create New Data Set</md-button>
+    <md-list ng-cloak>
+        <md-list-item ng-repeat="model in $ctrl.models">
+            <p> {{ model.name }} </p>
+            <md-progress-linear md-mode="determinate" value="60"></md-progress-linear>
+            <p>In Progress</p>
+            <md-button class="md-secondary" ng-click="$ctrl.createDialog()">Open</md-button>
+            <md-button class="md-secondary" ng-click="$ctrl.createDialog()">Delete</md-button>
+        </md-list-item>
+    </md-list>
+</div>
