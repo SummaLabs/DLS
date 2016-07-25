@@ -21,6 +21,7 @@
     "grunt-contrib-copy": "^1.0.0"
   },
   "scripts": {
-    "prestart": "npm update"
+    "prestart": "npm update",
+    "grunt": "grunt"
   }
 }
