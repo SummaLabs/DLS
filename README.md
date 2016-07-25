@@ -3,8 +3,8 @@
 _Ho to build and run_:
 * cd to DLS root dir
 * Install python and pip if not installed
-* Run _pip install -r requirements.txt_ command
+* Run ```pip install -r requirements.txt``` command
 * Install npm if not installed
-* Run _npm install_ command
-* Run _npm run-script grunt_ command
-* Run _python run-app.py_ command
+* Run ```npm install``` command
+* Run ~~npm run-script grunt~~ command
+* Run ```python run-app.py``` or ```./run-flask-app.sh``` command
