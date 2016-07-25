@@ -22,6 +22,6 @@
   },
   "scripts": {
     "prestart": "npm update",
-    "grunt": "grunt"
+    "postinstall": "grunt"
   }
 }
