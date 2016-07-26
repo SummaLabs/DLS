@@ -1,9 +1,8 @@
-<md-list ng-cloak>
-    <md-list-item ng-repeat="model in $ctrl.models">
-        <p> {{ model.name }} </p>
-        <md-progress-linear md-mode="determinate" value="60"></md-progress-linear>
-        <p>In Progress</p>
-        <md-button class="md-secondary" ng-click="$ctrl.createDialog()">Open</md-button>
-        <md-button class="md-secondary" ng-click="$ctrl.createDialog()">Delete</md-button>
+<md-list>
+    <md-subheader class="md-no-sticky">Model Names</md-subheader>
+    <md-list-item class="md-1-line" ng-repeat="model in $ctrl.models" ng-click="null">
+        <div class="md-list-item-text">
+            <h3> {{ model.name }} </h3>
+        </div>
     </md-list-item>
 </md-list>
