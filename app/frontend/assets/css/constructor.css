@@ -1,0 +1,121 @@
+html, body {
+    height: 100%;
+}
+
+/*#workspace {
+    position: absolute;
+    margin: 0;
+    top:0px;
+    left:180px;
+    bottom: 0px;
+    right: 0px;
+    overflow: hidden;
+}
+
+#chart {
+   overflow: auto;
+   background: #e3e3e3;
+   position: absolute;
+   bottom:5px;
+   top: 5px;
+   left:5px;
+   right:5px;
+   box-sizing:border-box;
+   transition: right 0.2s ease;
+}
+
+#palette {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left:0px;
+    background: #f3f3f3;
+    width: 180px;
+    text-align: center;
+  
+
+}*/
+
+.palette_node {
+    cursor:move;
+    background: none;
+    margin: 10px auto;
+    height: 25px;
+    border-radius: 5px;
+    border: 2px solid #999;
+    background-position: 5% 50%;
+    background-repeat: no-repeat;
+    width: 50px;
+    background-size: contain;
+    
+}
+
+[draggable] {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  /* Required to make elements draggable in old WebKit */
+  -khtml-user-drag: element;
+  -webkit-user-drag: element;
+}
+
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.node_label {
+    stroke-width: 0;
+    fill: #333;
+    font-size: 14px;
+    pointer-events: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.function_label {
+    font-size: 12px;
+}
+.node {
+    fill: none;
+    stroke: #999;
+    cursor: move;
+    stroke-width: 2;
+}
+
+.port {
+    fill:grey/* #FF7F50*/;
+    stroke: grey;
+    stroke-opacity: 0;
+    stroke-width: 10;
+    cursor: crosshair;
+}
+
+.port_hovered {
+    fill: grey;
+    stroke: grey;
+    stroke-opacity: .5;
+    stroke-width: 10;
+    cursor: crosshair;
+}
+
+.node_selected {
+    stroke-width: 2;
+    stroke: grey !important;
+}
+
+.link_line {
+    stroke: green;
+    stroke-width: 3;
+    fill: none;
+    pointer-events: none;
+}
