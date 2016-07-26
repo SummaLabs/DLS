@@ -1,8 +1,19 @@
-<md-list>
-    <md-subheader class="md-no-sticky">Model Names</md-subheader>
-    <md-list-item class="md-1-line" ng-repeat="model in $ctrl.models" ng-click="null">
+<div layout="row">
+    <md-content flex="15">
+        <md-list>
+            <md-subheader class="md-no-sticky">Model Names</md-subheader>
+            <md-list-item class="md-1-line" ng-repeat="model in $ctrl.models" ng-click="null">
+                <div class="md-list-item-text" ng-click="$ctrl.$selectModel(model)" ng-class="{'selected' : it === $ctrl.selected }">
+                    <h3> {{ model.name }} </h3>
+                </div>
+            </md-list-item>
+        </md-list>
+    </md-content>
+    <md-content>
+        <md-subheader class="md-no-sticky">Model Names</md-subheader>
         <div class="md-list-item-text">
-            <h3> {{ model.name }} </h3>
+            <h3> Test </h3>
         </div>
-    </md-list-item>
-</md-list>
+    </md-content>
+</div>
+
