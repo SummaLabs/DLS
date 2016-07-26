@@ -53,6 +53,13 @@ module.exports = function (grunt) {
                         src: '<%= globalConfig.node_modules_path %>/angular-material/angular-material.css',
                         dest: '<%= globalConfig.styles %>/',
                         filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: '<%= globalConfig.node_modules_path %>/d3/build/d3.min.js',
+                        dest: '<%= globalConfig.lib %>/',
+                        filter: 'isFile'
                     }
                 ]
             }
