@@ -18,3 +18,7 @@ md-toolbar div md-icon {
   width: 48px;
 }
 
+md-list div.selected {
+  color: #03a9f4;
+}
+

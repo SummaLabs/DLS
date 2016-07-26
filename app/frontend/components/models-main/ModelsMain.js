@@ -9,13 +9,13 @@
             },
             controller: function ($mdDialog) {
                 this.$onInit = function () {
-                    this.selected = null;
                     this.models = [
                         { name: 'Model1111111111111111111111111111111111111111111111111111111'},
                         { name: 'Model2222222222222222222222222222222222222222222222222222222'},
                         { name: 'Model3222222222222222222222222222222222222222222222222222222'},
                         { name: 'Model4222222222222222222222222222222222222222222222222222222'}
-                    ]
+                    ];
+                    this.selected = this.models[0];
                 };
 
                 this.$selectModel = function( model ) {
