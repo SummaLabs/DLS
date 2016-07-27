@@ -1,7 +1,3 @@
-html, body {
-    height: 100%;
-}
-
 .palette_node {
     cursor:move;
     background: none;
@@ -93,6 +89,6 @@ html, body {
 
 .link_line_active {
     stroke: green;
-    stroke-width: 4;
+    stroke-width: 3;
     stroke-opacity: 1;
 }

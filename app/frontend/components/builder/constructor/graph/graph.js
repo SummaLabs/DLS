@@ -46,7 +46,6 @@ function node() {
 		templateNamespace: 'svg',
 
 		link: function($scope, element, attrs) {
-
 			element.attr('id', 'id_' + $scope.nodeData.id);
 		    var isPort = false;
             var width = 20;
@@ -116,19 +115,25 @@ function node() {
             });
 
             element.on('mousedown', function (event) {
-                if (isPort)
+                if (isPort || event.ctrlKey)
                     return;
-                rectNode.addClass("node_selected");
 				var offsetMousePos = getOffsetPos(rectNode, event);
-
                 $scope.$emit('nodeMouseDown', {
                 	id: $scope.nodeData.id,
                 	pos: {x: offsetMousePos.x, y: offsetMousePos.y}
                 });
             });
 
+            element.on('mouseenter', function (event) {
+                rectNode.addClass("node_selected");
+            });
+
+            element.on('mouseleave', function (event) {
+                rectNode.removeClass("node_selected");
+            });
+
             element.on('click', function (event) {
-                if (isPort)
+                if (isPort || !event.ctrlKey)
                     return;
                 $scope.$apply( function() {
                     $scope.nodeData.selected = !$scope.nodeData.selected;
@@ -139,8 +144,6 @@ function node() {
                     type: 'node',
                     selected: $scope.nodeData.selected
                 });
-
-                console.log('click');
             });
 
             $scope.$watch('nodeData.selected', function(newValue, oldValue) {
@@ -153,10 +156,11 @@ function node() {
                 }
 			});
 
-            element.on('mouseup', function () {
+            element.on('mouseup', function (event) {
+                if (event.ctrlKey)
+                    return;
                 rectNode.removeClass("node_selected");
                 $scope.$emit('nodeMouseUp', { });
-                console.log('up');
             });
         }
 	}
@@ -374,6 +378,18 @@ function svgHandler($scope, $rootScope,$window, $element) {
         self.isItemClicked = false;
     });
 
+    $element.on('keydown', function (event) {
+        if (event.keyCode === 46) {
+            $scope.$apply( function() {
+                removeSelectedItems(self.nodes, self.links);
+            });
+        }
+    });
+
+    $element.on('focus', function (event) {
+
+    });
+
     $element.on('mousemove', function (event) {
     	if (self.mouseMode === state.MOVING) {
 			var curMousePos = getOffsetPos($element, event);
@@ -487,6 +503,41 @@ function selectItems (array, options) {
         for(var i = 0; i < array.length; ++i) {
             array[i].selected = options;
         }
+    }
+}
+
+function removeSelectedItems(nodes, links) {
+    var delNodes = [];
+    var delLinks = [];
+    for (var i = 0; i < nodes.length; ++i) {
+        if (nodes[i].selected)
+            delNodes.push(i);
+    }
+
+    for (var i = 0; i < links.length; ++i) {
+        if (links[i].selected)
+            delLinks.push(i);
+        else {
+            for (var a = 0; a < delNodes.length; ++a) {
+                var nodeId = nodes[delNodes[a]].id;
+                if (links[i].nodes[0].id === nodeId || links[i].nodes[1].id === nodeId) {
+                    delLinks.push(i);
+                    break;
+                }
+            }
+        }
+    }
+
+    var coutnerDel = 0;
+    for (var i = 0; i < delNodes.length; ++i) {
+        nodes.splice(delNodes[i] - coutnerDel, 1);
+        coutnerDel ++;
+    }
+
+    coutnerDel = 0;
+    for (var i = 0; i < delLinks.length; ++i) {
+        links.splice(delLinks[i] - coutnerDel, 1);
+        coutnerDel ++;
     }
 }
 

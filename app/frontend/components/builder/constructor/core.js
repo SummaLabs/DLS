@@ -56,29 +56,29 @@ function ConstructorService() {
 
   	var nodes = [
 		{
-		    id: 1,
+		    id: 0,
 			name : 'websocket',
 			content : 'web',
 			category : 'input',
 			pos: {x: 100, y: 200},
 			wires: [
-			    2
+			    1
 			]
 		}, {
-		    id: 2,
+		    id: 1,
 			name : 'socket',
 			content : 'socket',
 			category : 'input',
 			pos: {x: 300, y: 300},
 			wires: [
-			    3, 1
+			    2, 0
 			]
 		}, {
-		    id: 3,
+		    id: 2,
 			name : 'db',
 			content : 'db',
 			category : 'output',
-			pos: {x: 300, y: 500},
+			pos: {x: 300, y: 100},
 		},
 	];
 
@@ -95,7 +95,7 @@ function ConstructorService() {
     };
 }
 
-function ConstructorController($scope, $rootScope) {
+function ConstructorController($scope, $rootScope, $element) {
 
 	this.$onInit = function() {
 
