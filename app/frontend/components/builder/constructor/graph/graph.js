@@ -48,7 +48,7 @@ function node() {
 		link: function($scope, element, attrs) {
 
 			element.attr('id', 'id_' + $scope.nodeData.id);
-		    var isSelected = true;
+		    var isPort = false;
             var width = 20;
             var height = 50;
             var pad = 24;
@@ -56,7 +56,7 @@ function node() {
             //var txtHeight = calculateTextHeight($scope.nodeData.content, "", 1);
             width += txtWidth + 2*pad;
             var rectNode = angular.element(element[0].querySelector('rect'));
-	    var textNode = angular.element(element[0].querySelector('text'));
+	        var textNode = angular.element(element[0].querySelector('text'));
 
             var portIn = angular.element(element[0].querySelector('.port'));
             var portOut = angular.element(element[0].querySelector('circle:last-child'));
@@ -73,12 +73,12 @@ function node() {
             portOut.attr('cy', height / 2);
 
             portIn.on('mouseenter', function (event) {
-                isSelected = false;
+                isPort = true;
                 portIn.addClass("port_hovered");
             });
 
             portIn.on('mouseleave', function (event) {
-                isSelected = true;
+                isPort = false;
                 portIn.removeClass("port_hovered");
             });
 
@@ -90,12 +90,12 @@ function node() {
             });
 
             portOut.on('mouseenter', function (event) {
-                isSelected = false;
+                isPort = true;
                 portOut.addClass("port_hovered");
             });
 
             portOut.on('mouseleave', function (event) {
-                isSelected = true;
+                isPort = false;
                 portOut.removeClass("port_hovered");
             });
 
@@ -116,7 +116,7 @@ function node() {
             });
 
             element.on('mousedown', function (event) {
-                if (!isSelected)
+                if (isPort)
                     return;
                 rectNode.addClass("node_selected");
 				var offsetMousePos = getOffsetPos(rectNode, event);
@@ -127,9 +127,36 @@ function node() {
                 });
             });
 
+            element.on('click', function (event) {
+                if (isPort)
+                    return;
+                $scope.$apply( function() {
+                    $scope.nodeData.selected = !$scope.nodeData.selected;
+                });
+
+                $scope.$emit('selectedItem', {
+                    id: $scope.nodeData.id,
+                    type: 'node',
+                    selected: $scope.nodeData.selected
+                });
+
+                console.log('click');
+            });
+
+            $scope.$watch('nodeData.selected', function(newValue, oldValue) {
+				if (newValue) {
+                    rectNode.addClass("node_active");
+                    rectNode.attr('stroke-dasharray', '5,5');
+                } else {
+                    rectNode.removeClass("node_active");
+                    rectNode.attr('stroke-dasharray', '');
+                }
+			});
+
             element.on('mouseup', function () {
                 rectNode.removeClass("node_selected");
                 $scope.$emit('nodeMouseUp', { });
+                console.log('up');
             });
         }
 	}
@@ -150,39 +177,71 @@ function link() {
 		link: function($scope, element, attrs) {
 			var parentNode = angular.element(element[0].parentNode);
 
-			var fromNodeRect = angular.element(parentNode[0].querySelector('#id_' + $scope.linkData[0].id).firstElementChild);
+			var fromNodeRect = angular.element(parentNode[0].querySelector('#id_' + $scope.linkData.nodes[0].id).firstElementChild);
 			var fromRect = fromNodeRect[0].getBoundingClientRect();
 			var fromWidth = fromRect.right - fromRect.left;
 			var fromHeight = fromRect.bottom - fromRect.top;
-			var from = {x: $scope.linkData[0].pos.x + fromWidth, y: $scope.linkData[0].pos.y + fromHeight / 2};
+			var from = {x: $scope.linkData.nodes[0].pos.x + fromWidth, y: $scope.linkData.nodes[0].pos.y + fromHeight / 2};
 
 			var to = {};
-			if($scope.linkData[1].id === 'activePoint') {
-				to = $scope.linkData[1].pos;
+			if($scope.linkData.nodes[1].id === 'activePoint') {
+				to = $scope.linkData.nodes[1].pos;
 			} else {
-				var toNodeRect = angular.element(parentNode[0].querySelector('#id_' + $scope.linkData[1].id).firstElementChild);
+				var toNodeRect = angular.element(parentNode[0].querySelector('#id_' + $scope.linkData.nodes[1].id).firstElementChild);
 				var toRect = toNodeRect[0].getBoundingClientRect();
 				var toWidth = toRect.right - toRect.left;
 				var toHeight = toRect.bottom - toRect.top;
-				to = {x: $scope.linkData[1].pos.x, y: $scope.linkData[1].pos.y + toHeight / 2};
+				to = {x: $scope.linkData.nodes[1].pos.x, y: $scope.linkData.nodes[1].pos.y + toHeight / 2};
 			}
 
-			$scope.$watch('linkData[0].pos.x', function(newValue, oldValue) {
+			element.on('mouseenter', function (event) {
+
+                element.addClass("link_line_active");
+            });
+
+            element.on('mouseleave', function (event) {
+                if (!$scope.linkData.selected) {
+                    element.removeClass("link_line_active");
+                }
+            });
+
+            element.on('click', function (event) {
+                $scope.$apply( function() {
+                    $scope.linkData.selected = !$scope.linkData.selected;
+                });
+                $scope.$emit('selectedItem', {
+                    id: $scope.linkData.id,
+                    type: 'link',
+                    selected: $scope.linkData.selected
+                });
+            });
+
+            $scope.$watch('linkData.selected', function(newValue, oldValue) {
+                if (newValue) {
+                    element.addClass("link_line_active");
+                    element.attr('stroke-dasharray', '5,5');
+                } else {
+                    element.removeClass("link_line_active");
+                    element.attr('stroke-dasharray', '');
+                }
+			});
+
+			$scope.$watch('linkData.nodes[0].pos.x', function(newValue, oldValue) {
 				from.x += newValue - oldValue;
 				updatePos();
 			});
 
-			$scope.$watch('linkData[0].pos.y', function(newValue, oldValue) {
+			$scope.$watch('linkData.nodes[0].pos.y', function(newValue, oldValue) {
 				from.y += newValue - oldValue;
 				updatePos();
 			});
 
-			$scope.$watch('linkData[1].pos.x', function(newValue, oldValue) {
+			$scope.$watch('linkData.nodes[1].pos.x', function(newValue, oldValue) {
 				to.x += newValue - oldValue;
 				updatePos();
 			});
 
-			$scope.$watch('linkData[1].pos.y', function(newValue, oldValue) {
+			$scope.$watch('linkData.nodes[1].pos.y', function(newValue, oldValue) {
 				to.y += newValue - oldValue;
 				updatePos();
 			});
@@ -231,7 +290,9 @@ function GraphController($scope, $rootScope, $window, $element, constructorServi
 
 	self.nodes = constructorService.getNodes();
 	self.links = parseNodesForLinks(self.nodes);
-	self.activelink = [];
+	self.activelink = {
+	    nodes: []
+	};
 
     self.$onInit = function() {
 
@@ -240,6 +301,8 @@ function GraphController($scope, $rootScope, $window, $element, constructorServi
 
 function svgHandler($scope, $rootScope,$window, $element) {
 	var self = this;
+
+	self.isItemClicked = false;
 
 	const state = {
         DEFAULT: 0,
@@ -269,7 +332,8 @@ function svgHandler($scope, $rootScope,$window, $element) {
                         name : data.data.name,
                         content : data.data.content,
                         category : data.data.category,
-                        pos: pos
+                        pos: pos,
+                        selected: false
                     });
                 });
             }
@@ -284,7 +348,7 @@ function svgHandler($scope, $rootScope,$window, $element) {
     });
 
     $scope.$on('nodeMouseDown', function (event, data) {
-	    $scope.editedNode = getNodeById(self.nodes, data.id);
+	    $scope.editedNode = getItemById(self.nodes, data.id);
 	    self.mouseMode = state.MOVING;
 
 		prevMousePos = {x: $scope.editedNode.pos.x + data.pos.x, y: $scope.editedNode.pos.y + data.pos.y};
@@ -300,6 +364,16 @@ function svgHandler($scope, $rootScope,$window, $element) {
 
     });
 
+    $element.on('click', function (event) {
+        if (!self.isItemClicked) {
+            $scope.$apply( function() {
+                selectItems (self.nodes, false);
+                selectItems (self.links, false);
+            });
+        }
+        self.isItemClicked = false;
+    });
+
     $element.on('mousemove', function (event) {
     	if (self.mouseMode === state.MOVING) {
 			var curMousePos = getOffsetPos($element, event);
@@ -311,13 +385,13 @@ function svgHandler($scope, $rootScope,$window, $element) {
     	} else if (self.mouseMode === state.JOINING) {
             var curMousePos = getOffsetPos($element, event);
 			$scope.$apply( function() {
-				if (self.activelink.length === 1) {
-					self.activelink.push({
+				if (self.activelink.nodes.length === 1) {
+					self.activelink.nodes.push({
 						id: 'activePoint',
 						pos: curMousePos
 					});
 				} else {
-					self.activelink[1].pos = curMousePos;
+					self.activelink.nodes[1].pos = curMousePos;
 				}
 			});
     	}
@@ -331,10 +405,10 @@ function svgHandler($scope, $rootScope,$window, $element) {
     });
 
     $scope.$on('portOutMouseDown', function (event, data) {
-	    var node = getNodeById(self.nodes, data.id);
+	    var node = getItemById(self.nodes, data.id);
 	    self.mouseMode = state.JOINING;
-	    self.activelink.length = 0;
-	    self.activelink.push(node);
+	    self.activelink.nodes.length = 0;
+	    self.activelink.nodes.push(node);
     });
 
     $scope.$on('portOutMouseUp', function (event, data) {
@@ -344,11 +418,17 @@ function svgHandler($scope, $rootScope,$window, $element) {
 		}
     });
 
+    $scope.$on('selectedItem', function (event, data) {
+        self.isItemClicked = true;
+    });
+
     $scope.$on('portInMouseUp', function (event, data) {
     	if (self.mouseMode === state.JOINING) {
-			var nodeFrom = getNodeById(self.nodes, self.activelink[0].id);
-			var nodeTo = getNodeById(self.nodes, data.id);
-			var link = [nodeFrom, nodeTo];
+			var nodeFrom = getItemById(self.nodes, self.activelink.nodes[0].id);
+			var nodeTo = getItemById(self.nodes, data.id);
+			var link = newLink();
+            link.id = "" + nodeFrom.id + nodeTo.id;
+            link.nodes = [nodeFrom, nodeTo];
 
 			if (validateLink(link, self.links)) {
 				if (nodeFrom.wires) {
@@ -368,7 +448,7 @@ function svgHandler($scope, $rootScope,$window, $element) {
 
     function removeActiveLink() {
 		$scope.$apply( function() {
-			self.activelink.length = 0;
+			self.activelink.nodes.length = 0;
 		});
     }
 }
@@ -378,21 +458,36 @@ function parseNodesForLinks(nodes) {
     nodes.forEach(function(node, i, array) {
         if (node.wires  && node.wires.length > 0) {
             for (var a = 0; a < node.wires.length; ++a) {
-                links.push([node, getNodeById(nodes, node.wires[a])]);
+                var nodeTo = getItemById(nodes, node.wires[a]);
+                var link = newLink();
+                link.id = "" + node.id + nodeTo.id;
+                link.nodes = [node, nodeTo];
+                links.push(link);
             }
-
         }
 	});
 	return links;
 }
 
-function getNodeById(array, id) {
+function getItemById(array, id) {
     for (var i = 0; i < array.length ; i ++) {
         if (array[i].id === id) {
             return array[i];
         }
     }
     return {};
+}
+
+function selectItems (array, options) {
+    if (typeof options == 'undefined') {
+        for(var i = 0; i < array.length; ++i) {
+            array[i].selected = true;
+        }
+    } else {
+        for(var i = 0; i < array.length; ++i) {
+            array[i].selected = options;
+        }
+    }
 }
 
 function convertCoordinateFromClienToSvg($element, parentNode, clientCoord) {
@@ -426,11 +521,23 @@ function getOffsetPos(element, event) {
     return {x: event.clientX - elementRect.left, y: event.clientY - elementRect.top};
 }
 
+function newLink() {
+    return {
+        id: '',
+        nodes: [],
+        selected: false
+    }
+}
+
 function validateLink (link, links) {
 	for (var i = 0; i < links.length; ++i) {
-        if (link[0].id === links[i][0].id && link[1].id === links[i][1].id) {
+        if (link.id === links[i].id) {
             return false;
         }
 	}
 	return true;
+}
+
+Array.prototype.last = function() {
+    return this[this.length-1];
 }

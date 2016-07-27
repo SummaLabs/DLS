@@ -2,40 +2,6 @@ html, body {
     height: 100%;
 }
 
-/*#workspace {
-    position: absolute;
-    margin: 0;
-    top:0px;
-    left:180px;
-    bottom: 0px;
-    right: 0px;
-    overflow: hidden;
-}
-
-#chart {
-   overflow: auto;
-   background: #e3e3e3;
-   position: absolute;
-   bottom:5px;
-   top: 5px;
-   left:5px;
-   right:5px;
-   box-sizing:border-box;
-   transition: right 0.2s ease;
-}
-
-#palette {
-    position: absolute;
-    top: 0px;
-    bottom: 0px;
-    left:0px;
-    background: #f3f3f3;
-    width: 180px;
-    text-align: center;
-  
-
-}*/
-
 .palette_node {
     cursor:move;
     background: none;
@@ -55,7 +21,6 @@ html, body {
   -khtml-user-select: none;
   -webkit-user-select: none;
   user-select: none;
-  /* Required to make elements draggable in old WebKit */
   -khtml-user-drag: element;
   -webkit-user-drag: element;
 }
@@ -92,8 +57,18 @@ html, body {
     stroke-width: 2;
 }
 
+.node_selected {
+    stroke-width: 3;
+    stroke: grey !important;
+}
+
+.node_active {
+    stroke-width: 3;
+    stroke: grey !important;
+}
+
 .port {
-    fill:grey/* #FF7F50*/;
+    fill:grey;
     stroke: grey;
     stroke-opacity: 0;
     stroke-width: 10;
@@ -108,14 +83,16 @@ html, body {
     cursor: crosshair;
 }
 
-.node_selected {
-    stroke-width: 2;
-    stroke: grey !important;
-}
-
 .link_line {
     stroke: green;
-    stroke-width: 3;
+    stroke-width: 2;
+    stroke-opacity: .8;
     fill: none;
-    pointer-events: none;
+    pointer-events: stroke;
+}
+
+.link_line_active {
+    stroke: green;
+    stroke-width: 4;
+    stroke-opacity: 1;
 }

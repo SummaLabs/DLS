@@ -36,18 +36,21 @@ function ConstructorService() {
 			content : 'web',
 			category : 'input',
 			pos: {x: 100, y: 200},
+			selected: false
 		}, {
 		    id: 2,
 			name : 'socket',
 			content : 'socket',
 			category : 'input',
 			pos: {x: 300, y: 300},
+			selected: false
 		}, {
 		    id: 3,
 			name : 'db',
 			content : 'db',
 			category : 'output',
 			pos: {x: 300, y: 500},
+			selected: false
 		},
 	];
 

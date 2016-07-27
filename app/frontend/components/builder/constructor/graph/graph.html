@@ -1,7 +1,7 @@
-<svg id = "svg"  ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}" ng-mousemove="mousemove($event)" pointer-events="all" style="cursor:crosshair">
+<svg id = "svg"  ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}" pointer-events="all" style="cursor:crosshair">
     <g id = "view">
         <rect ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}" fill="{{svgColor}}"></rect>
-        <nodelink ng-if="svg.activelink.length === 2" link-data="svg.activelink"/>
+        <nodelink ng-if="svg.activelink.nodes.length === 2" link-data="svg.activelink"/>
         <nodelink ng-if="svg.idNodesInit" ng-repeat="link in svg.links" link-data="link"/>
         <node ng-repeat="node in svg.nodes" node-data="node" ng-init="svg.idNodesInit = true" ></node>
     </g>
