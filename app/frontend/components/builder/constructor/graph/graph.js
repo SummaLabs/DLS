@@ -116,7 +116,7 @@ function node($rootScope) {
             });
 
             element.on('mousedown', function (event) {
-                if (isPort || event.ctrlKey)
+                if (isPort || event.ctrlKey || event.button !== 0)
                     return;
 				var offsetMousePos = getOffsetPos(rectNode, event);
                 $scope.$emit('nodeMouseDown', {
@@ -234,6 +234,8 @@ function link() {
             });
 
             element.on('click', function (event) {
+            	if (!event.ctrlKey)
+                    return;
                 $scope.$apply( function() {
                     $scope.linkData.selected = !$scope.linkData.selected;
                 });
@@ -413,7 +415,7 @@ function svgHandler($scope, $rootScope,$window, $element, networkDataService) {
     });
 
     $element.on('focus', function (event) {
-
+		console.log('focus');
     });
 
     $element.on('mousemove', function (event) {

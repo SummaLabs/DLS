@@ -1,4 +1,4 @@
-<svg id = "svg"  ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}" pointer-events="all" style="cursor:crosshair">
+<svg id = "svg"  ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}" pointer-events="all" style="cursor:crosshair" focusable="true">
     <g id = "view">
         <rect ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}" fill="{{svgColor}}"></rect>
         <nodelink ng-if="svg.activelink.nodes.length === 2" link-data="svg.activelink"/>
