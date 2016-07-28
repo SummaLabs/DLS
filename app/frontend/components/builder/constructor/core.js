@@ -16,16 +16,71 @@ var editorDefinition = {
 }
 
 angular.module('constructorCore')
-	.service('constructorLoaderService', ConstructorLoaderService)
-	.service('constructorService', ['constructorLoaderService', ConstructorDataService])
+	.service('constructorService', ConstructorService)
 	.component('constructor', editorDefinition);
 
-function ConstructorDataService(constructorLoaderService) {
-	var categories = constructorLoaderService.loadLayerCategories();
+function ConstructorService() {
+	var categories = [
+		{
+        	name : 'input',
+    	},
+    	{
+        	name : 'output',
+    	},
+    ];
 
-    var paletteElements = constructorLoaderService.loadNetworksLayers();
+    var paletteElements = [
+		{
+		    id: 1,
+			name : 'websocket',
+			content : 'web',
+			category : 'input',
+			pos: {x: 100, y: 200},
+			selected: false
+		}, {
+		    id: 2,
+			name : 'socket',
+			content : 'socket',
+			category : 'input',
+			pos: {x: 300, y: 300},
+			selected: false
+		}, {
+		    id: 3,
+			name : 'db',
+			content : 'db',
+			category : 'output',
+			pos: {x: 300, y: 500},
+			selected: false
+		},
+	];
 
-  	var nodes = constructorLoaderService.loadSavedNetwork();
+  	var nodes = [
+		{
+		    id: 0,
+			name : 'websocket',
+			content : 'web',
+			category : 'input',
+			pos: {x: 100, y: 200},
+			wires: [
+			    1
+			]
+		}, {
+		    id: 1,
+			name : 'socket',
+			content : 'socket',
+			category : 'input',
+			pos: {x: 300, y: 300},
+			wires: [
+			    2, 0
+			]
+		}, {
+		    id: 2,
+			name : 'db',
+			content : 'db',
+			category : 'output',
+			pos: {x: 300, y: 100},
+		},
+	];
 
     this.getCategories= function() {
     	return categories;
@@ -38,92 +93,9 @@ function ConstructorDataService(constructorLoaderService) {
 	this.getNodes = function() {
     	return nodes;
     };
-
-	this.addNode = function(node) {
-		nodes.push(node);
-	};
-
-	this.updateNode = function(node) {
-		nodes.push(node);
-	};
 }
 
-function ConstructorLoaderService() {
-	
-	this.loadSavedNetwork = function () {
-		var network = [
-			{
-				id: 1,
-				name : 'websocket',
-				content : 'web',
-				category : 'input',
-				pos: {x: 100, y: 200},
-				wires: [
-					2
-				]
-			}, {
-				id: 2,
-				name : 'socket',
-				content : 'socket',
-				category : 'input',
-				pos: {x: 300, y: 300},
-				wires: [
-					3, 1
-				]
-			}, {
-				id: 3,
-				name : 'db',
-				content : 'db',
-				category : 'output',
-				pos: {x: 300, y: 500},
-			}
-		];
-		
-		return network
-	};
-	
-	this.loadNetworksLayers = function () {
-		var networksLayers = [
-			{
-				id: 1,
-				name : 'websocket',
-				content : 'web',
-				category : 'input',
-				pos: {x: 100, y: 200},
-			}, {
-				id: 2,
-				name : 'socket',
-				content : 'socket',
-				category : 'input',
-				pos: {x: 300, y: 300},
-			}, {
-				id: 3,
-				name : 'db',
-				content : 'db',
-				category : 'output',
-				pos: {x: 300, y: 500},
-			}
-		];
-
-		return networksLayers;
-	};
-
-	this.loadLayerCategories = function () {
-
-		var categories = [
-			{
-				name : 'input',
-			},
-			{
-				name : 'output',
-			}
-		];
-
-		return categories;
-	}
-}
-
-function ConstructorController() {
+function ConstructorController($scope, $rootScope, $element) {
 
 	this.$onInit = function() {
 
