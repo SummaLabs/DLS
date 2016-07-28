@@ -51,25 +51,26 @@ function node() {
             var width = 20;
             var height = 50;
             var pad = 24;
-            var txtWidth  = calculateTextWidth($scope.nodeData.content, "", 1);
-            //var txtHeight = calculateTextHeight($scope.nodeData.content, "", 1);
-            width += txtWidth + 2*pad;
+            // var txtWidth  = calculateTextWidth($scope.nodeData.content, "", 1);
+            // //var txtHeight = calculateTextHeight($scope.nodeData.content, "", 1);
+            // width += txtWidth + 2*pad;
             var rectNode = angular.element(element[0].querySelector('rect'));
-	        var textNode = angular.element(element[0].querySelector('text'));
-
-            var portIn = angular.element(element[0].querySelector('.port'));
-            var portOut = angular.element(element[0].querySelector('circle:last-child'));
-
-            textNode.attr('x', (width-txtWidth)/2.);
-            textNode.attr('y', height/2.);
-            rectNode.attr('width', width);
-            rectNode.attr('height', height);
-
-            portIn.attr('cx', 0);
-            portIn.attr('cy', height / 2);
-
-            portOut.attr('cx', width);
-            portOut.attr('cy', height / 2);
+            var textNode = angular.element(element[0].querySelector('text'));
+            //
+            var portIn  = angular.element(element[0].querySelector('.port-inp'));
+            var portOut = angular.element(element[0].querySelector('.port-out'));
+            // var portOut = angular.element(element[0].querySelector('circle:last-child'));
+            //
+            // textNode.attr('x', (width-txtWidth)/2.);
+            // textNode.attr('y', height/2.);
+            // rectNode.attr('width', width);
+            // rectNode.attr('height', height);
+            //
+            // portIn.attr('cx', 0);
+            // portIn.attr('cy', height / 2);
+            //
+            // portOut.attr('cx', width);
+            // portOut.attr('cy', height / 2);
 
             portIn.on('mouseenter', function (event) {
                 isPort = true;
