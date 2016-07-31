@@ -53,9 +53,9 @@ function ElementCtrl($scope, $element, $rootScope) {
 
 }
 
-function PaletteController($scope, constructorService) {
-	$scope.categories = constructorService.getCategories();
-	$scope.types = constructorService.getPaletteElements();
+function PaletteController($scope, networkDataService) {
+	$scope.categories = networkDataService.getCategories();
+	$scope.types = networkDataService.getLayers();
 }
 
 

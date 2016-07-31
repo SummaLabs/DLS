@@ -33,7 +33,7 @@ function initComponent() {
 	}
 }
 
-function node() {
+function node($rootScope) {
 	return {
 		restrict: 'E',
 		controller: NodeCtrl,
@@ -133,7 +133,7 @@ function node() {
                 rectNode.removeClass("node_selected");
             });
 
-            element.on('click', function (event) {
+            function doClickAction(event, $scope) {
                 if (isPort || !event.ctrlKey)
                     return;
                 $scope.$apply( function() {
@@ -145,6 +145,29 @@ function node() {
                     type: 'node',
                     selected: $scope.nodeData.selected
                 });
+            }
+
+            function doDoubleClickAction($rootScope) {
+                $rootScope.$emit('EditLayer', {
+                    id: $scope.nodeData.id,
+                    layerType: $scope.nodeData.name
+                })
+            }
+
+            var timer = 0;
+            var delay = 200;
+            var prevent = false;
+            element.on("click", function(event) {
+                timer = setTimeout(function() {
+                    if (!prevent) {
+                        doClickAction(event, $scope);
+                    }
+                    prevent = false;
+                }, delay);
+            }).on("dblclick", function() {
+                clearTimeout(timer);
+                prevent = true;
+                doDoubleClickAction($rootScope);
             });
 
             $scope.$watch('nodeData.selected', function(newValue, oldValue) {
@@ -288,12 +311,12 @@ function LinkCtrl($scope, $element, $document) {
 
 }
 
-function GraphController($scope, $rootScope, $window, $element, constructorService) {
+function GraphController($scope, $rootScope, $window, $element, networkDataService) {
 	var self = this;
 
     svgHandler.bind(self)($scope, $rootScope, $window, $element);
 
-	self.nodes = constructorService.getNodes();
+	self.nodes = networkDataService.getNetwork();
 	self.links = parseNodesForLinks(self.nodes);
 	self.activelink = {
 	    nodes: []

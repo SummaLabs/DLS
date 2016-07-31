@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="/frontend/assets/css/constructor.css"/>
 </head>
 
-<body ng-app="starterApp" layout="column">
+<body ng-app="dlsApp" layout="column">
 <md-toolbar layout="row">
     <main-menu></main-menu>
     <h3>Deep Learning Studio</h3>
@@ -47,17 +47,11 @@
 <script src="/frontend/components/networks-main/NetworksMain.js"></script>
 <script src="/frontend/components/models-main/ModelsMain.js"></script>
 <script src="/frontend/components/data-set-main/MainDataSet.js"></script>
-
-<script type="text/javascript">
-
-    angular.module('starterApp', ['ngMaterial',
-        'mainMenu',
-        'constructorCore',
-        'networkMain',
-        'modelMain',
-        'mainDataSet']);
-
-</script>
+<script src="/frontend/components/layers/convol/convol-editor.js"></script>
+<script src="/frontend/components/layers/data/input-data-editor.js"></script>
+<script src="/frontend/components/layers/dense/dense-editor.js"></script>
+<script src="/frontend/components/layers/solver/solver-editor.js.js"></script>
+<script src="/frontend/app.js"></script>
 
 </body>
 </html>

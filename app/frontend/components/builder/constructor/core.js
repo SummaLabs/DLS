@@ -9,126 +9,60 @@ angular.module('constructorCore', [
 var editorDefinition = {
 	templateUrl: 'frontend/components/builder/constructor/core.html',
 	controller: ConstructorController,
-	controllerAs: 'cstr',
 	bindings: {
-
 	}
 };
 
 angular.module('constructorCore')
-	.service('constructorLoaderService', ConstructorLoaderService)
-	.service('constructorService', ['constructorLoaderService', ConstructorDataService])
 	.component('constructor', editorDefinition);
 
-function ConstructorDataService(constructorLoaderService) {
-	var categories = constructorLoaderService.loadLayerCategories();
+function ConstructorController($mdDialog, $rootScope, networkDataService) {
 
-	var paletteElements = constructorLoaderService.loadNetworksLayers();
-
-	var nodes = constructorLoaderService.loadSavedNetwork();
-
-	this.getCategories= function() {
-		return categories;
+    var layerDirectives =
+	{
+		'data':'<input-data-editor></input-data-editor>',
+		'convol':'<convol-editor></convol-editor>',
+		'dense':'<dense-editor></dense-editor>',
+		'solver':'<solver-editor></solver-editor>'
 	};
-
-	this.getPaletteElements= function() {
-		return paletteElements;
-	};
-
-	this.getNodes = function() {
-		return nodes;
-	};
-
-	this.addNode = function(node) {
-		nodes.push(node);
-	};
-
-	this.updateNode = function(node) {
-		nodes.push(node);
-	};
-}
-
-function ConstructorLoaderService() {
-
-	this.loadSavedNetwork = function () {
-		var network = [
-			{
-				id: 0,
-				name : 'websocket',
-				content : 'web',
-				category : 'input',
-				pos: {x: 100, y: 200},
-				wires: [
-					1
-				]
-			}, {
-				id: 1,
-				name : 'socket',
-				content : 'socket',
-				category : 'input',
-				pos: {x: 300, y: 300},
-				wires: [
-					2, 0
-				]
-			}, {
-				id: 2,
-				name : 'db',
-				content : 'db',
-				category : 'output',
-				pos: {x: 300, y: 100},
-			}
-		];
-
-		return network
-	};
-
-	this.loadNetworksLayers = function () {
-		var networksLayers = [
-			{
-				id: 1,
-				name : 'websocket',
-				content : 'web',
-				category : 'input',
-				pos: {x: 100, y: 200},
-				selected: false
-			}, {
-				id: 2,
-				name : 'socket',
-				content : 'socket',
-				category : 'input',
-				pos: {x: 300, y: 300},
-				selected: false
-			}, {
-				id: 3,
-				name : 'db',
-				content : 'db',
-				category : 'output',
-				pos: {x: 300, y: 500},
-				selected: false
-			}
-		];
-
-		return networksLayers;
-	};
-
-	this.loadLayerCategories = function () {
-
-		var categories = [
-			{
-				name : 'input',
-			},
-			{
-				name : 'output',
-			}
-		];
-
-		return categories;
-	}
-}
-
-function ConstructorController() {
 
 	this.$onInit = function() {
+		$rootScope.$on('EditLayer', function ($event, data) {
+			var network = networkDataService.getNetwork();
+			var parentEl = angular.element(document.body);
+			var dialogTemplate = buildTemplate(layerDirectives[data.layerType]);
+			$mdDialog.show({
+				parent: parentEl,
+				targetEvent: $event,
+				template: dialogTemplate,
+				locals: {},
+				controller: DialogController
+			});
 
+			function DialogController($scope, $mdDialog) {
+				$scope.closeDialog = function() {
+					$mdDialog.hide();
+				}
+			}
+
+			function buildTemplate(layerDirective) {
+				var template =
+					'<md-dialog>' +
+					'  <md-dialog-content>'+
+					       layerDirective +
+					'  </md-dialog-content>' +
+					'  <md-dialog-actions layout="row">' +
+					'    <md-button ng-click="closeDialog()" class="md-primary">' +
+					'      Close' +
+					'    </md-button>' +
+					'    <md-button ng-click="closeDialog()" class="md-primary">' +
+					'      Update' +
+					'    </md-button>' +
+					'  </md-dialog-actions>' +
+					'</md-dialog>';
+
+				return template;
+			}
+		});
 	};
 }

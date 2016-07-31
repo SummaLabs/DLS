@@ -1,9 +1,9 @@
 (function () {
   'use strict';
   angular
-      .module('dataLayer', ['ngMaterial'])
-	  .component('dlsDataInputs', {
-			templateUrl: "frontend/components/layers/data/dls-data-inputs.html",
+      .module('inputDataEditor', ['ngMaterial'])
+	  .component('inputDataEditor', {
+			templateUrl: "frontend/components/layers/data/input-data-editor.html",
 			controller: function() {
 				this.$onInit = function () {
 					this.dataset_types = [

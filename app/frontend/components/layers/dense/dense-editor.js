@@ -1,9 +1,9 @@
 (function () {
   'use strict';
   angular
-      .module('denseLayer', ['ngMaterial'])
-	  .component('dlsDenseInputs', {
-			templateUrl: "frontend/components/layers/dense/dls-dense-inputs.html",
+      .module('denseEditor', ['ngMaterial'])
+	  .component('denseEditor', {
+			templateUrl: "frontend/components/layers/dense/dense-editor.html",
 			controller: function() {
 				this.$onInit = function () {
 					this.act_funcs = [

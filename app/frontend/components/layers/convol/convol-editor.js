@@ -1,9 +1,9 @@
 (function () {
   'use strict';
   angular
-      .module('convolLayer', ['ngMaterial'])
-	  .component('dlsConvolInputs', {
-				templateUrl: "frontend/components/layers/convol/dls-convol-inputs.html",
+      .module('convolEditor', ['ngMaterial'])
+	  .component('convolEditor', {
+				templateUrl: "frontend/components/layers/convol/convol-editor.html",
 				controller: function () { 
 					this.$onInit = function () {
 						this.act_funcs = [

@@ -1,9 +1,9 @@
 (function () {
   'use strict';
   angular
-      .module('solverLayer', ['ngMaterial'])
-	  .component('dlsSolverInputs', {
-			templateUrl: "frontend/components/layers/solver/dls-solver-inputs.html",
+      .module('solverEditor', ['ngMaterial'])
+	  .component('solverEditor', {
+			templateUrl: "frontend/components/layers/solver/solver-editor.html",
 			controller: function () {
 				this.$onInit = function () {
 					this.loss_funcs = [
