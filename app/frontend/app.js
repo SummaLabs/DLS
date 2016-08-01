@@ -43,13 +43,22 @@ function NetworkDataService(networkDataLoaderService) {
         this.network = network;
     };
 
-    this.addNodeToNetwork = function(node) {
-        this.network.push(node);
+    this.addLayerToNetwork = function(layer) {
+        this.network.push(layer);
     };
 
-    this.updateNetworkLayer = function(node) {
-        network.push(node);
+    this.updateNetworkLayer = function(layer) {
+        network.push(layer);
     };
+
+    this.getLayerById = function(id) {
+        for (var i = 0, len = network.length; i < len; i++) {
+            var layer = network[i];
+            if(layer.id == id) {
+                return layer;
+            }
+        }
+    }
 }
 
 function NetworkDataLoaderService() {

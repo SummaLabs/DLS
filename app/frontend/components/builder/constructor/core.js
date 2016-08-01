@@ -28,7 +28,7 @@ function ConstructorController($mdDialog, $rootScope, networkDataService) {
 
 	this.$onInit = function() {
 		$rootScope.$on('EditLayer', function ($event, data) {
-			var network = networkDataService.getNetwork();
+			var layerToEdit = networkDataService.getLayerById(data.id);
 			var parentEl = angular.element(document.body);
 			var dialogTemplate = buildTemplate(layerDirectives[data.layerType]);
 			$mdDialog.show({

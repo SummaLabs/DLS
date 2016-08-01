@@ -314,7 +314,7 @@ function LinkCtrl($scope, $element, $document) {
 function GraphController($scope, $rootScope, $window, $element, networkDataService) {
 	var self = this;
 
-    svgHandler.bind(self)($scope, $rootScope, $window, $element);
+    svgHandler.bind(self)($scope, $rootScope, $window, $element, networkDataService);
 
 	self.nodes = networkDataService.getNetwork();
 	self.links = parseNodesForLinks(self.nodes);
@@ -327,7 +327,7 @@ function GraphController($scope, $rootScope, $window, $element, networkDataServi
     };
 }
 
-function svgHandler($scope, $rootScope,$window, $element) {
+function svgHandler($scope, $rootScope,$window, $element, networkDataService) {
 	var self = this;
 
 	self.isItemClicked = false;
@@ -355,15 +355,17 @@ function svgHandler($scope, $rootScope,$window, $element) {
             var pos = convertCoordinateFromClienToSvg($element, parentNode, positionDrag);
             if (pos.x > 0 && pos.y > 0) {
                 $scope.$apply( function() {
-                    self.nodes.push({
+                    var node = {
                         id: self.nodes.length + 1,
                         name : data.data.name,
                         content : data.data.content,
                         category : data.data.category,
                         pos: pos,
                         selected: false
-                    });
+                    };
+                    self.nodes.push(node);
                 });
+                networkDataService.addLayerToNetwork(node);
             }
         }
     });
