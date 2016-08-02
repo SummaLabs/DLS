@@ -21,17 +21,17 @@ function ConstructorController($mdDialog, $rootScope, networkDataService) {
     var layerDirectives =
 	{
 		'data':'<input-data-editor></input-data-editor>',
-		'convol':'<convol-editor></convol-editor>',
-		'dense':'<dense-editor></dense-editor>',
+		'convol':'<convol-editor></convol-editor action="closeDialog()">',
+		'dense':'<dense-editor></dense-editor >',
 		'solver':'<solver-editor></solver-editor>'
 	};
 
 	this.$onInit = function() {
 		$rootScope.$on('EditLayer', function ($event, data) {
-			var layerToEdit = networkDataService.getLayerById(data.id);
 			var parentEl = angular.element(document.body);
 			var dialogTemplate = buildTemplate(layerDirectives[data.layerType]);
 			$mdDialog.show({
+				clickOutsideToClose: true,
 				parent: parentEl,
 				targetEvent: $event,
 				template: dialogTemplate,
@@ -51,14 +51,6 @@ function ConstructorController($mdDialog, $rootScope, networkDataService) {
 					'  <md-dialog-content>'+
 					       layerDirective +
 					'  </md-dialog-content>' +
-					'  <md-dialog-actions layout="row">' +
-					'    <md-button ng-click="closeDialog()" class="md-primary">' +
-					'      Close' +
-					'    </md-button>' +
-					'    <md-button ng-click="closeDialog()" class="md-primary">' +
-					'      Update' +
-					'    </md-button>' +
-					'  </md-dialog-actions>' +
 					'</md-dialog>';
 
 				return template;
