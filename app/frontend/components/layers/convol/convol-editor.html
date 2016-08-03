@@ -18,16 +18,16 @@
 	</div>
 	<md-input-container>
 		<label>Acivation Function</label>
-		<md-select ng-model="activation_func" required>
-			<md-option ng-repeat="option in act_funcs" ng-value="option.value">
+		<md-select ng-model="act_func_selected" ng-model-options="{trackBy: '$value.id'}" required>
+			<md-option ng-repeat="option in act_funcs" ng-value="option.id">
                 {{option.text}}
 			</md-option>
 		</md-select>
 	</md-input-container>
 	<md-input-container>
 		<label>Subsampling Type</label>
-		<md-select ng-model="$ctrl.subsampling_type"  required>
-			<md-option ng-repeat="option in subsample_types" ng-value="option.value">
+		<md-select ng-model="subsample_type_selected"  required>
+			<md-option ng-repeat="option in subsample_types" ng-value="option.value" ng-selected="$first">
                 {{option.text}}
 			</md-option>
 		</md-select>

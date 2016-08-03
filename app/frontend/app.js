@@ -47,10 +47,6 @@ function NetworkDataService(networkDataLoaderService) {
         this.network.push(layer);
     };
 
-    this.updateNetworkLayer = function(layer) {
-        network.push(layer);
-    };
-
     this.getLayerById = function(id) {
         for (var i = 0, len = network.length; i < len; i++) {
             var layer = network[i];
@@ -58,7 +54,16 @@ function NetworkDataService(networkDataLoaderService) {
                 return layer;
             }
         }
-    }
+    };
+
+    this.updateNetworkLayer = function (updateedLayer) {
+        for (var i = 0, len = network.length; i < len; i++) {
+            var layer = network[i];
+            if(layer.id == updateedLayer.id) {
+                network[i] = updateedLayer;
+            }
+        }
+    };
 }
 
 function NetworkDataLoaderService() {
@@ -116,7 +121,15 @@ function NetworkDataLoaderService() {
                 name : 'convol',
                 content : 'convolution',
                 category : 'layer',
-                selected: false
+                selected: false,
+                params : {
+                    filtersCount:'',
+                    filterWidth:'',
+                    filterHeight:'',
+                    activationFunction:'',
+                    subsamplingType:'',
+                    subsamplingSize:''
+                }
             },{
                 id: 3,
                 name : 'dense',
