@@ -23,6 +23,7 @@
 				  $scope.onSubmit = function () {
 					  var layer = networkDataService.getLayerById($scope.layerId);
 					  editLayer(layer);
+					  networkDataService.notifyNetworkUpdate();
 					  $scope.doOnSubmit();
 				  };
 

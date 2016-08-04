@@ -14,7 +14,7 @@ angular.module('dlsApp', ['ngMaterial',
     .service('networkDataService', ['networkDataLoaderService', NetworkDataService]);
 
 
-function NetworkDataService(networkDataLoaderService) {
+function NetworkDataService(networkDataLoaderService, $rootScope) {
     var categories = networkDataLoaderService.loadCategories();
     var layers = networkDataLoaderService.loadLayers();
     var network = networkDataLoaderService.loadNetwork();
@@ -39,12 +39,13 @@ function NetworkDataService(networkDataLoaderService) {
         return network;
     };
 
-    this.setNetwork = function(network) {
-        this.network = network;
+    this.setNetwork = function(networkToSetup) {
+        network = networkToSetup;
     };
 
     this.addLayerToNetwork = function(layer) {
-        this.network.push(layer);
+        network.push(layer);
+        this.notifyNetworkUpdate();
     };
 
     this.getLayerById = function(id) {
@@ -56,13 +57,8 @@ function NetworkDataService(networkDataLoaderService) {
         }
     };
 
-    this.updateNetworkLayer = function(updateedLayer) {
-        for (var i = 0, len = network.length; i < len; i++) {
-            var layer = network[i];
-            if(layer.id == updateedLayer.id) {
-                network[i] = updateedLayer;
-            }
-        }
+    this.notifyNetworkUpdate = function() {
+        $rootScope.$emit('NetworkUpdated', {});
     };
 }
 

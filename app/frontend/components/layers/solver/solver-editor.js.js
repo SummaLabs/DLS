@@ -11,7 +11,7 @@
                 templateUrl: "frontend/components/layers/solver/solver-editor.html",
                 controller: function ($scope, networkDataService) {
                     $scope.loss_funcs = [
-                        {value: "CategoricalCrossEntropy", text: "Categorical Cross Entropy"},
+                        {value: "CategoricalCrossEntropy", text: "Categorical Cross Entropy"}
                     ];
 
                     $scope.optimizers = [
@@ -21,12 +21,13 @@
                         {value: "Adadelta", text: "Adadelta optimizer"},
                         {value: "Adam", text: "Adam optimizer"},
                         {value: "Adamax", text: "Adamax optimizer"},
-                        {value: "Nadam", text: "Nesterov Adam optimizer"},
+                        {value: "Nadam", text: "Nesterov Adam optimizer"}
                     ];
 
                     $scope.onSubmit = function () {
                         var layer = networkDataService.getLayerById($scope.layerId);
                         editLayer(layer);
+                        networkDataService.notifyNetworkUpdate();
                         $scope.doOnSubmit();
                     };
 

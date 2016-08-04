@@ -364,8 +364,8 @@ function svgHandler($scope, $rootScope,$window, $element, networkDataService) {
                         selected: false
                     };
                     self.nodes.push(node);
+                    networkDataService.addLayerToNetwork(node);
                 });
-                networkDataService.addLayerToNetwork(node);
             }
         }
     });

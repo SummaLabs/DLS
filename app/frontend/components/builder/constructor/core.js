@@ -27,6 +27,10 @@ function ConstructorController($mdDialog, $rootScope) {
 	};
 
 	this.$onInit = function() {
+		$rootScope.$on('NetworkUpdated', function ($event, data) {
+			alert('NetworkUpdated')
+		});
+
 		$rootScope.$on('EditLayer', function ($event, data) {
 			var layerId = data.id;
 			var parentEl = angular.element(document.body);
