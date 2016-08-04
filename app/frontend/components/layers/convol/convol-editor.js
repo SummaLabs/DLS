@@ -7,7 +7,7 @@
             return {
                 scope: {
                     layerId: '=',
-                    submit: '&'
+                    doOnSubmit: '&'
                 },
                 templateUrl: "frontend/components/layers/convol/convol-editor.html",
                 controller: function ($scope, networkDataService) {
@@ -27,17 +27,16 @@
                     $scope.onSubmit = function () {
                         var layer = networkDataService.getLayerById($scope.layerId);
                         editLayer(layer);
-                        networkDataService.updateNetworkLayer(layer);
-                        $scope.submit();
+                        $scope.doOnSubmit();
                     };
                     
                     function editLayer(layer) {
-                        layer.filtersCount = $scope.filters_count;
-                        layer.filterWidth = $scope.filter_width;
-                        layer.filterHeight = $scope.filter_height;
-                        layer.activationFunction = $scope.act_func_selected;
-                        layer.subsamplingType = $scope.subsample_type_selected;
-                        layer.subsamplingSize = $scope.subsampling_size;
+                        layer.params.filtersCount = $scope.filters_count;
+                        layer.params.filterWidth = $scope.filter_width;
+                        layer.params.filterHeight = $scope.filter_height;
+                        layer.params.activationFunction = $scope.act_func_selected;
+                        layer.params.subsamplingType = $scope.subsample_type_selected;
+                        layer.params.subsamplingSize = $scope.subsampling_size;
                     }
                 }
             };

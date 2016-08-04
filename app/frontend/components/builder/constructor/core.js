@@ -20,10 +20,10 @@ function ConstructorController($mdDialog, $rootScope) {
 
     var layerDirectives =
 	{
-		'data':'<input-data-editor></input-data-editor>',
-		'convol':'<convol-editor layer-id="layerId" submit="closeDialog()"></convol-editor>',
-		'dense':'<dense-editor></dense-editor >',
-		'solver':'<solver-editor></solver-editor>'
+		'data':'<input-data-editor layer-id="layerId" do-on-submit="closeDialog()"></input-data-editor>',
+		'convol':'<convol-editor layer-id="layerId" do-on-submit="closeDialog()"></convol-editor>',
+		'dense':'<dense-editor layer-id="layerId" do-on-submit="closeDialog()"></dense-editor>',
+		'solver':'<solver-editor layer-id="layerId" do-on-submit="closeDialog()"></solver-editor>'
 	};
 
 	this.$onInit = function() {

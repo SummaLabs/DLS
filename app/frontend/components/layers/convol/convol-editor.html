@@ -1,44 +1,44 @@
 <form layout-margin ng-submit="onSubmit()">
-<div layout="column">
-	<img src="frontend/assets/img/layers/convol.png" layout-margin></img>
-	<md-divider></md-divider>
-	<md-input-container>
-		<label>Filters Count</label>
-		<input ng-model="filters_count" type="number" min="1" required>
-	</md-input-container>
-	<div layout="row">
-		<md-input-container  layout-fill>
-			<label>Filter Width </label>
-			<input ng-model="filter_width" type="number" min = "1" required>
-		</md-input-container>
-		<md-input-container  layout-fill>
-			<label>Filter Height </label>
-			<input ng-model="filter_height" type="number" min = "1" required>
-		</md-input-container>
-	</div>
-	<md-input-container>
-		<label>Acivation Function</label>
-		<md-select ng-model="act_func_selected" ng-model-options="{trackBy: '$value.id'}" required>
-			<md-option ng-repeat="option in act_funcs" ng-value="option.id">
-                {{option.text}}
-			</md-option>
-		</md-select>
-	</md-input-container>
-	<md-input-container>
-		<label>Subsampling Type</label>
-		<md-select ng-model="subsample_type_selected"  required>
-			<md-option ng-repeat="option in subsample_types" ng-value="option.value" ng-selected="$first">
-                {{option.text}}
-			</md-option>
-		</md-select>
-	</md-input-container>
-	<md-input-container>
-		<label>Subsampling Size</label>
-		<input ng-model="subsampling_size" type="number" min = "1"  required>
-	</md-input-container>
-	<md-checkbox ng-model="isTrainable">
+    <div layout="column">
+        <img src="frontend/assets/img/layers/convol.png" layout-margin></img>
+        <md-divider></md-divider>
+        <md-input-container>
+            <label>Filters Count</label>
+            <input ng-model="filters_count" type="number" min="1" required>
+        </md-input-container>
+        <div layout="row">
+            <md-input-container layout-fill>
+                <label>Filter Width </label>
+                <input ng-model="filter_width" type="number" min="1" required>
+            </md-input-container>
+            <md-input-container layout-fill>
+                <label>Filter Height </label>
+                <input ng-model="filter_height" type="number" min="1" required>
+            </md-input-container>
+        </div>
+        <md-input-container>
+            <label>Acivation Function</label>
+            <md-select ng-model="act_func_selected" ng-model-options="{trackBy: '$value.id'}" required>
+                <md-option ng-repeat="option in act_funcs" ng-value="option.id">
+                    {{option.text}}
+                </md-option>
+            </md-select>
+        </md-input-container>
+        <md-input-container>
+            <label>Subsampling Type</label>
+            <md-select ng-model="subsample_type_selected" required>
+                <md-option ng-repeat="option in subsample_types" ng-value="option.value" ng-selected="$first">
+                    {{option.text}}
+                </md-option>
+            </md-select>
+        </md-input-container>
+        <md-input-container>
+            <label>Subsampling Size</label>
+            <input ng-model="subsampling_size" type="number" min="1" required>
+        </md-input-container>
+        <md-checkbox ng-model="isTrainable">
             Trainable
-	</md-checkbox>
-</div>
-	<input type="submit" id="submit" value="Submit" />
+        </md-checkbox>
+    </div>
+    <input type="submit" id="submit" value="Submit"/>
 </form>

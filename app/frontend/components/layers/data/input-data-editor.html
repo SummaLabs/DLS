@@ -1,30 +1,31 @@
-<form layout-margin>
-<div layout="column">
-	<img src="frontend/assets/img/layers/data-input.png" layout-margin></img>
-	<md-divider></md-divider>
-	<md-input-container>
-		<label>Data Set Type</label>
-		<md-select ng-model="$ctrl.type" required>
-			<md-option ng-repeat="option in $ctrl.dataset_types" ng-value="option.value">
-                {{option.text}}
-			</md-option>
-		</md-select>
-	</md-input-container>
-	<md-input-container>
-		<label>Select Data Set</label>
-		<md-select ng-model="$ctrl.name" required>
-			<md-option ng-repeat="option in $ctrl.dataset_names" ng-value="option.value">
-                {{option.text}}
-			</md-option>
-		</md-select>
-	</md-input-container>
-	<md-input-container>
-		<label>Data Set Id</label>
-		<input disabled type="text" value="{{$ctrl.name}}">
-	</md-input-container>
-	<md-input-container>
-		<label>Data Set Shape</label>
-		<input disabled ng-model="$ctrl.shape" type="text" value="Load shape">
-	</md-input-container>
-</div>
+<form layout-margin ng-submit="onSubmit()">
+    <div layout="column">
+        <img src="frontend/assets/img/layers/data-input.png" layout-margin></img>
+        <md-divider></md-divider>
+        <md-input-container>
+            <label>Data Set Type</label>
+            <md-select ng-model="dataset_type" required>
+                <md-option ng-repeat="option in dataset_types" ng-value="option.value">
+                    {{option.text}}
+                </md-option>
+            </md-select>
+        </md-input-container>
+        <md-input-container>
+            <label>Select Data Set</label>
+            <md-select ng-model="dataset_id" required>
+                <md-option ng-repeat="option in dataset_ids" ng-value="option.value">
+                    {{option.text}}
+                </md-option>
+            </md-select>
+        </md-input-container>
+        <md-input-container>
+            <label>Data Set Id</label>
+            <input disabled type="text" value="{{name}}">
+        </md-input-container>
+        <md-input-container>
+            <label>Data Set Shape</label>
+            <input disabled ng-model="shape" type="text" value="Load shape">
+        </md-input-container>
+    </div>
+    <input type="submit" id="submit" value="Submit"/>
 </form>
