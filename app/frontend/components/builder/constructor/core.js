@@ -28,7 +28,7 @@ function ConstructorController($mdDialog, $rootScope) {
 
 	this.$onInit = function() {
 		$rootScope.$on('NetworkUpdated', function ($event, data) {
-			alert('NetworkUpdated')
+			console.log('NetworkUpdated')
 		});
 
 		$rootScope.$on('EditLayer', function ($event, data) {

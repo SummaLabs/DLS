@@ -11,7 +11,7 @@ angular.module('dlsApp', ['ngMaterial',
     'denseEditor',
     'solverEditor'])
     .service('networkDataLoaderService', NetworkDataLoaderService)
-    .service('networkDataService', ['networkDataLoaderService', NetworkDataService]);
+    .service('networkDataService', ['networkDataLoaderService', '$rootScope', NetworkDataService]);
 
 
 function NetworkDataService(networkDataLoaderService, $rootScope) {
@@ -36,7 +36,7 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
     };
 
     this.getNetwork = function() {
-        return network;
+        return network.slice();
     };
 
     this.setNetwork = function(networkToSetup) {
