@@ -21,7 +21,6 @@
                     doOnSubmit: '&'
                 },
                 link: function(scope, element, attrs) {
-                    // scope.doOnSubmit();
                     var id = scope.$eval(attrs.layerId);
                     var type = attrs.layerType;
                     var template = buildTemplate(id, type);
