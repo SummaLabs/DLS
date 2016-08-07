@@ -5,7 +5,8 @@ module.exports = function (grunt) {
         icons: staticPath + 'assets/icons',
         styles: staticPath + 'assets/css',
         lib: staticPath + 'lib',
-        node_modules_path: 'node_modules'
+        node_modules_path: 'node_modules',
+        bower_components_path: 'bower_components'
     };
     grunt.initConfig({
         globalConfig: globalConfig,
@@ -59,6 +60,55 @@ module.exports = function (grunt) {
                         flatten: true,
                         src: '<%= globalConfig.node_modules_path %>/d3/build/d3.min.js',
                         dest: '<%= globalConfig.lib %>/',
+                        filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: '<%= globalConfig.bower_components_path %>/angular-translate/angular-translate.min.js',
+                        dest: '<%= globalConfig.lib %>/',
+                        filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: '<%= globalConfig.bower_components_path %>/jquery/dist/jquery.min.js',
+                        dest: '<%= globalConfig.lib %>/',
+                        filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: '<%= globalConfig.bower_components_path %>/bootstrap/dist/js/bootstrap.min.js',
+                        dest: '<%= globalConfig.lib %>/',
+                        filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: '<%= globalConfig.bower_components_path %>/ng-file-upload/ng-file-upload.js',
+                        dest: '<%= globalConfig.lib %>/',
+                        filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: '<%= globalConfig.bower_components_path %>/angular-filemanager/dist/angular-filemanager.min.js',
+                        dest: '<%= globalConfig.lib %>/',
+                        filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: '<%= globalConfig.bower_components_path %>/angular-filemanager/dist/angular-filemanager.min.css',
+                        dest: '<%= globalConfig.styles %>/',
+                        filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: '<%= globalConfig.bower_components_path %>/bootswatch/paper/bootstrap.min.css',
+                        dest: '<%= globalConfig.styles %>/',
                         filter: 'isFile'
                     }
                 ]

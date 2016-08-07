@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="/frontend/assets/css/angular-material.css"/>
     <link rel="stylesheet" href="/frontend/assets/css/app.css"/>
     <link rel="stylesheet" href="/frontend/assets/css/constructor.css"/>
+
+    <link rel="stylesheet" href="/frontend/assets/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/frontend/assets/css/angular-filemanager.min.css"/>
+
 </head>
 
 <body ng-app="dlsApp" layout="column">
@@ -31,14 +35,23 @@
     <md-tab label="Data">
         <main-data-set></main-data-set>
     </md-tab>
+    <md-tab label="Filemanager sandbox">
+        <filemanager-sandbox></filemanager-sandbox>
+    </md-tab>
 </md-tabs>
 
 <script src="/frontend/lib/angular.js"></script>
 <script src="/frontend/lib/angular-animate.js"></script>
 <script src="/frontend/lib/angular-aria.js"></script>
+<script src="/frontend/lib/angular-translate.min.js"></script>
 <script type="text/javascript" src="/frontend/lib/angular-material.js"></script>
 
 <script src="/frontend/lib/d3.min.js"></script>
+
+<script src="/frontend/lib/jquery.min.js"></script>
+<script src="/frontend/lib/bootstrap.min.js"></script>
+<script src="/frontend/lib/ng-file-upload.js"></script>
+<script src="/frontend/lib/angular-filemanager.min.js"></script>
 
 <script src="/frontend/components/main-menu/MainMenu.js"></script>
 <script src="/frontend/components/builder/constructor/core.js"></script>

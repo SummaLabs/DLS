@@ -18,6 +18,7 @@
     "d3": "^4.x.x"
   },
   "devDependencies": {
+    "bower": "latest",
     "grunt": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0"
   },
