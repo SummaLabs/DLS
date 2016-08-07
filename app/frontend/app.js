@@ -1,7 +1,6 @@
 'use strict';
 
 angular.module('dlsApp', ['ngMaterial',
-    'FileManagerApp',
     'mainMenu',
     'constructorCore',
     'networkMain',
