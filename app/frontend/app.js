@@ -9,7 +9,8 @@ angular.module('dlsApp', ['ngMaterial',
     'convolEditor',
     'inputDataEditor',
     'denseEditor',
-    'solverEditor'])
+    'solverEditor',
+    'layerEditor'])
     .service('networkDataLoaderService', NetworkDataLoaderService)
     .service('networkDataService', ['networkDataLoaderService', '$rootScope', NetworkDataService]);
 

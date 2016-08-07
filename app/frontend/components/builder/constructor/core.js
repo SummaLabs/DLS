@@ -34,7 +34,7 @@ function ConstructorController($mdDialog, $rootScope) {
 		$rootScope.$on('EditLayer', function ($event, data) {
 			var layerId = data.id;
 			var parentEl = angular.element(document.body);
-			var dialogTemplate = buildTemplate(layerDirectives[data.layerType]);
+			var dialogTemplate = buildTemplate();
 			$mdDialog.show({
 				clickOutsideToClose: true,
 				parent: parentEl,
@@ -46,16 +46,19 @@ function ConstructorController($mdDialog, $rootScope) {
 
 			function DialogController($scope, $mdDialog) {
 				$scope.layerId = layerId;
+				$scope.layerType = data.layerType;
 				$scope.closeDialog = function() {
 					$mdDialog.hide();
 				}
 			}
 
-			function buildTemplate(layerDirective) {
+			function buildTemplate() {
+				var layerId = 1;
+				var layerType = "convol";
 				var template =
 					'<md-dialog>' +
 					'  <md-dialog-content>'+
-					       layerDirective +
+					'    <layer-editor layer-id="99" layer-type="convol" do-on-submit="closeDialog()"></layer-editor>' +
 					'  </md-dialog-content>' +
 					'</md-dialog>';
 
