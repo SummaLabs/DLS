@@ -57,6 +57,7 @@ function ConstructorLoaderService() {
 				name : 'websocket',
 				content : 'web',
 				category : 'input',
+				template: 'frontend/components/builder/constructor/graph/node1.svg',
 				pos: {x: 100, y: 200},
 				wires: [
 					1
@@ -66,6 +67,7 @@ function ConstructorLoaderService() {
 				name : 'socket',
 				content : 'socket',
 				category : 'input',
+				template: 'frontend/components/builder/constructor/graph/node1.svg',
 				pos: {x: 300, y: 300},
 				wires: [
 					2, 0
@@ -75,6 +77,7 @@ function ConstructorLoaderService() {
 				name : 'db',
 				content : 'db',
 				category : 'output',
+				template: 'frontend/components/builder/constructor/graph/node1.svg',
 				pos: {x: 300, y: 100},
 			}
 		];
