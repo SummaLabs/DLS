@@ -1,0 +1,43 @@
+
+  <g
+     id="layer1"
+     transform="translate(12.285714,-955.07648)">
+    <rect
+       style="fill:#cacdce;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="border"
+       width="196.42856"
+       height="94.642929"
+       x="1.4285725"
+       y="955.57648"
+       ry="12.5" />
+    <image
+       y="972.36212"
+       x="15.892858"
+       id="image3398"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz AAAG7AAABuwBHnU4NQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAD3SURB VEiJ1ZQxCsJAEEVfxM7r2Jva0mYK7YKHEA9g4REknUKm8QxaaOU9PIGNTWxWMLKzu0KUONUy7Dw+ vGGyqqpos3qt0v4C2Pc1RSQHRkBmzNXAUVUPQaCITIAFMExJIyIXYKWqeyvh2MGuwA64GawBMHV/ x4AJXANnYKuq90i6JTADTq/9rO099EpxCXL8YkwhXmCqGJ8QK2FMjCnEAkbFWELgl1JckpymmKAQ ExgTYwkJJbTEBIWEgKaYkBD4gpTf3MNnicgGKGhaLlV1bs3EEr7CcO8iNBAD+i62dcWTgB9XDFgn 9pKB5Rugdj2zur+H3Qc+AIU7YY2yx01/AAAAAElFTkSuQmCC "
+       preserveAspectRatio="none"
+       height="56.42857"
+       width="39.285713" />
+    <ellipse
+       style="fill:#a0989d;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       id="in"
+       cx="1.4285716"
+       cy="1002.3621"
+       rx="13.214286"
+       ry="12.5" />
+    <ellipse
+       style="fill:#a0989d;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="out"
+       cx="196.42857"
+       cy="1002.3622"
+       rx="13.214286"
+       ry="12.5"
+        onmouseover="this.style.fill='red';this.style.opacity=0.5;this.style.cursor='crosshair';"/>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="56.428574"
+       y="985.93359"
+       id="text"
+       sodipodi:linespacing="125%"></text>
+  </g>
