@@ -4,7 +4,6 @@ angular.module('graph')
 	.directive('nodelink', link);
 
 function link() {
-	var from, to;
 
 	return {
 		restrict: 'E',
@@ -19,23 +18,21 @@ function link() {
 
 		link: function($scope, element, attrs) {
 
-			from = {
+			$scope.from = {
 				x: $scope.linkData.nodes[0].pos.x + $scope.linkData.nodes[0].portOut.offset.x,
 				y: $scope.linkData.nodes[0].pos.y + $scope.linkData.nodes[0].portOut.offset.y,
 			}
 
 			if($scope.linkData.nodes[1].id === 'activePoint') {
-				to = $scope.linkData.nodes[1].pos;
+				$scope.to = $scope.linkData.nodes[1].pos;
 			} else {
-				to = {
+				$scope.to = {
 					x: $scope.linkData.nodes[1].pos.x + $scope.linkData.nodes[1].portIn.offset.x,
 					y: $scope.linkData.nodes[1].pos.y + $scope.linkData.nodes[1].portIn.offset.y,
 				}
 			}
-			linkWatcher($scope, element);
-			eventsHandler($scope, element);
-
-			console.log($scope.linkData.nodes[0], $scope.linkData.nodes[1]);
+			linkWatcher.bind(this)($scope, element);
+			eventsHandler.bind(this)($scope, element);
 		}
 	}
 
@@ -51,23 +48,25 @@ function link() {
 		});
 
 		scope.$watch('linkData.nodes[0].pos.x', function(newValue, oldValue) {
-			from.x += newValue - oldValue;
-			updatePos(element, from, to);
+
+			scope.from.x += newValue - oldValue;
+			updatePos(element, scope.from, scope.to);
 		});
 
 		scope.$watch('linkData.nodes[0].pos.y', function(newValue, oldValue) {
-			from.y += newValue - oldValue;
-			updatePos(element, from, to);
+
+			scope.from.y += newValue - oldValue;
+			updatePos(element, scope.from, scope.to);
 		});
 
 		scope.$watch('linkData.nodes[1].pos.x', function(newValue, oldValue) {
-			to.x += newValue - oldValue;
-			updatePos(element, from, to);
+		    scope.to.x += newValue - oldValue;
+			updatePos(element, scope.from, scope.to);
 		});
 
 		scope.$watch('linkData.nodes[1].pos.y', function(newValue, oldValue) {
-			to.y += newValue - oldValue;
-			updatePos(element, from, to);
+		    scope.to.y += newValue - oldValue;
+			updatePos(element, scope.from, scope.to);
 		});
 	}
 

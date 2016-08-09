@@ -5,19 +5,7 @@ angular.module('graph', [
 ]);
 
 angular.module('graph')
-	.service('graphService', GraphService)
 	.directive('svgGraph', initComponent);
-
-function GraphService() {
-	this.patternDefinitions = {
-		markerRect: 'border',
-		markerText: 'text',
-		markerPortIn: 'in',
-		markerPortOut: 'out'
-	}
-}
-
-
 
 function initComponent() {
 
@@ -30,20 +18,19 @@ function initComponent() {
 
 	function GraphController($scope, $rootScope, $window, $element, constructorService) {
 		var self = this;
-		self.mouseMode = state.DEFAULT;
 
-		self.nodes = constructorService.getNodes();
-		self.links = [];
-//		self.links = parseNodesForLinks(self.nodes);
-
-		self.activelink = {
-			nodes: []
-		};
-
-		svgHandler.bind(self)($scope, $rootScope, $window, $element);
 
 		self.$onInit = function() {
+            self.mouseMode = state.DEFAULT;
+            self.nodes = constructorService.getNodes();
+            self.links = [];
+            self.scale = 1;
 
+            self.activelink = {
+                nodes: []
+            };
+
+            svgHandler.bind(self)($scope, $rootScope, $window, $element);
 		};
 	}
 
@@ -72,18 +59,29 @@ function initComponent() {
 		self.isItemClicked = false;
 
 		var prevMousePos = [0,0];
-		$scope.editedNode = {};
+		var editedNode = {};
 		var parentNode = angular.element($element[0].parentNode);
+
+		var positionDrag = {x:0, y: 0};
+
+        // Custom events:
+
+        $scope.$on('nodeInit', function (event, data) {
+			counterNodesInit ++;
+			if (counterNodesInit === self.nodes.length) {
+				self.links = parseNodesForLinks(self.nodes);
+
+			}
+		});
 
 		$rootScope.$on('palette_drag_start', function (event, data) {
 			self.mouseMode = state.DRAGGING;
 		});
 
-		var positionDrag = {x:0, y: 0};
-
 		$rootScope.$on('palette_drag_end', function (event, data) {
 			if (self.mouseMode === state.DRAGGING) {
 				var pos = convertCoordinateFromClienToSvg($element, parentNode, positionDrag);
+				var correctPos = { x: pos.x - data.offset.x, y: pos.y - data.offset.y}
 				if (pos.x > 0 && pos.y > 0) {
 					$scope.$apply( function() {
 						self.nodes.push({
@@ -91,26 +89,20 @@ function initComponent() {
 							name : data.data.name,
 							content : data.data.content,
 							category : data.data.category,
-							pos: pos,
-							selected: false
+							pos: correctPos,
+							selected: false,
+							template: 'frontend/components/builder/constructor/graph/node1.svg'
 						});
 					});
 				}
 			}
 		});
 
-		$element.on('dragover', function (event) {
-			if (self.mouseMode === state.DRAGGING) {
-				positionDrag = {x: event.clientX, y: event.clientY};
-			}
-
-		});
-
 		$scope.$on('nodeMouseDown', function (event, data) {
-			$scope.editedNode = getItemById(self.nodes, data.id);
+			editedNode = getItemById(self.nodes, data.id);
 			self.mouseMode = state.MOVING;
 
-			prevMousePos = {x: $scope.editedNode.pos.x + data.pos.x, y: $scope.editedNode.pos.y + data.pos.y};
+			prevMousePos = {x: editedNode.pos.x + data.pos.x, y: editedNode.pos.y + data.pos.y};
 		});
 
 		$scope.$on('nodeMouseUp', function (event, data) {
@@ -120,16 +112,58 @@ function initComponent() {
 				removeActiveLink();
 				self.mouseMode = state.DEFAULT;
 			}
-
 		});
 
-		$scope.$on('nodeInit', function (event, data) {
-			counterNodesInit ++;
-			if (counterNodesInit === self.nodes.length) {
-				self.links = parseNodesForLinks(self.nodes);
+		$scope.$on('portOutMouseDown', function (event, data) {
+			var node = getItemById(self.nodes, data.id);
+			self.mouseMode = state.JOINING;
+			self.activelink.nodes.length = 0;
+			self.activelink.nodes.push(node);
+		});
+
+		$scope.$on('portOutMouseUp', function (event, data) {
+			if (self.mouseMode === state.JOINING) {
+				removeActiveLink();
+				self.mouseMode = state.DEFAULT;
 			}
 		});
 
+		$scope.$on('portInMouseUp', function (event, data) {
+			if (self.mouseMode === state.JOINING) {
+				var nodeFrom = getItemById(self.nodes, self.activelink.nodes[0].id);
+				var nodeTo = getItemById(self.nodes, data.id);
+
+				var link = newLink();
+				link.id = "" + nodeFrom.id + nodeTo.id;
+				link.nodes = [nodeFrom, nodeTo];
+
+				if (validateLink(link, self.links)) {
+					if (nodeFrom.wires) {
+						nodeFrom.wires.push[data.id];
+					} else {
+						nodeFrom.wires = [[nodeFrom.id, nodeTo.id]];
+					}
+
+					$scope.$apply( function() {
+						self.links.push(link);
+					});
+					removeActiveLink();
+					self.mouseMode = state.DEFAULT;
+				}
+			}
+		});
+
+		$scope.$on('selectedItem', function (event, data) {
+			self.isItemClicked = true;
+		});
+
+		//Mouse events:
+
+		$element.on('dragover', function (event) {
+			if (self.mouseMode === state.DRAGGING) {
+				positionDrag = {x: event.clientX, y: event.clientY};
+			}
+		});
 
 		$element.on('click', function (event) {
 			if (!self.isItemClicked) {
@@ -141,24 +175,21 @@ function initComponent() {
 			self.isItemClicked = false;
 		});
 
-		$element.on('keydown', function (event) {
-			if (event.keyCode === 46) {
-				$scope.$apply( function() {
-					removeSelectedItems(self.nodes, self.links);
-				});
-			}
-		});
-
-		$element.on('focus', function (event) {
-
-		});
-
 		$element.on('mousemove', function (event) {
 			if (self.mouseMode === state.MOVING) {
 				var curMousePos = getOffsetPos($element, event);
+
+				var newNodePos = {
+				    x: editedNode.pos.x += curMousePos.x - prevMousePos.x,
+				    y: editedNode.pos.y += curMousePos.y - prevMousePos.y
+				}
+				if (newNodePos.x < 0)
+				    newNodePos.x = 0;
+				if (newNodePos.y < 0)
+				    newNodePos.y = 0;
 				$scope.$apply( function() {
-					$scope.editedNode.pos.x += curMousePos.x - prevMousePos.x;
-					$scope.editedNode.pos.y += curMousePos.y - prevMousePos.y;
+					editedNode.pos.x = newNodePos.x;
+					editedNode.pos.y = newNodePos.y;
 				});
 				prevMousePos = curMousePos;
 			} else if (self.mouseMode === state.JOINING) {
@@ -183,49 +214,26 @@ function initComponent() {
 			}
 		});
 
-		$scope.$on('portOutMouseDown', function (event, data) {
-			var node = getItemById(self.nodes, data.id);
-			self.mouseMode = state.JOINING;
-			self.activelink.nodes.length = 0;
-			self.activelink.nodes.push(node);
+		$element.on('mouseleave', function (event) {
+            if (self.mouseMode === state.MOVING) {
+                self.mouseMode = state.DEFAULT;
+            }
 		});
 
-		$scope.$on('portOutMouseUp', function (event, data) {
-			if (self.mouseMode === state.JOINING) {
-				removeActiveLink();
-				self.mouseMode = state.DEFAULT;
+        // keyboard events:
+
+		$element.on('keydown', function (event) {
+			if (event.keyCode === 46) {
+				$scope.$apply( function() {
+					removeSelectedItems(self.nodes, self.links);
+				});
 			}
 		});
 
-		$scope.$on('selectedItem', function (event, data) {
-			self.isItemClicked = true;
-		});
+        // system events:
 
-		$scope.$on('portInMouseUp', function (event, data) {
-			if (self.mouseMode === state.JOINING) {
+		$element.on('focus', function (event) {
 
-
-				var nodeFrom = getItemById(self.nodes, self.activelink.nodes[0].id);
-				var nodeTo = getItemById(self.nodes, data.id);
-
-				var link = newLink();
-				link.id = "" + nodeFrom.id + nodeTo.id;
-				link.nodes = [nodeFrom, nodeTo];
-
-				if (validateLink(link, self.links)) {
-					if (nodeFrom.wires) {
-						nodeFrom.wires.push[data.id];
-					} else {
-						nodeFrom.wires = [[nodeFrom.id, nodeTo.id]];
-					}
-
-					$scope.$apply( function() {
-						self.links.push(link);
-					});
-					removeActiveLink();
-					self.mouseMode = state.DEFAULT;
-				}
-			}
 		});
 
 		function removeActiveLink() {
@@ -294,16 +302,16 @@ function initComponent() {
 			}
 		}
 
-		var coutnerDel = 0;
+		var counterDel = 0;
 		for (var i = 0; i < delNodes.length; ++i) {
-			nodes.splice(delNodes[i] - coutnerDel, 1);
-			coutnerDel ++;
+			nodes.splice(delNodes[i] - counterDel, 1);
+			counterDel ++;
 		}
 
-		coutnerDel = 0;
+		counterDel = 0;
 		for (var i = 0; i < delLinks.length; ++i) {
-			links.splice(delLinks[i] - coutnerDel, 1);
-			coutnerDel ++;
+			links.splice(delLinks[i] - counterDel, 1);
+			counterDel ++;
 		}
 	}
 

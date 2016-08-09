@@ -36,7 +36,16 @@ function PaletteService() {
 
 function ElementCtrl($scope, $element, $rootScope) {
 
+    var elemOffset;
+
     $element.on('dragstart', function (event) {
+
+        var elementRect = this.getBoundingClientRect();
+        elemOffset = {
+            x: event.clientX - elementRect.left,
+            y: event.clientY - elementRect.top
+        }
+
         event.target.style.opacity = '0.6';
         event.dataTransfer.effectAllowed = 'move';
         event.dataTransfer.setData('text/html', this.innerHTML);
@@ -47,7 +56,7 @@ function ElementCtrl($scope, $element, $rootScope) {
         event.target.style.opacity = '1';
         $rootScope.$emit('palette_drag_end', {
             data: $scope.paletteData,
-            pos: {x: event.clientX, y:event.clientY },
+            offset: elemOffset
         });
     });
 

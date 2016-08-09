@@ -3,15 +3,14 @@
 angular.module('graph')
 	.directive('node', node);
 
-function node($compile, $templateCache, $http) {
+function node($compile, $templateCache, $http, appConfig) {
 
-	var patternDefinitions;
-	var isPort = false;
+	var patternDefinitions = appConfig.svgDefinitions;
 
-	function NodeCtrl($scope, $element, $document, graphService) {
+	function NodeCtrl($scope, $element, $document) {
 
 		this.$onInit = function() {
-			patternDefinitions = graphService.patternDefinitions;
+
 		};
 	}
 
@@ -35,6 +34,7 @@ function node($compile, $templateCache, $http) {
                         $compile(element.contents())($scope);
 
                         var idNode = $scope.nodeData.id;
+                        $scope.isPort = false;
 
                         var rectNode = angular.element(element[0].querySelector('#' + patternDefinitions.markerRect));
                         var textNode = angular.element(element[0].querySelector('#' + patternDefinitions.markerText));
@@ -91,13 +91,14 @@ function node($compile, $templateCache, $http) {
 			return null;
 		var baseRect = base[0].getBoundingClientRect();
 		var portRect = port[0].getBoundingClientRect();
+		console.log(baseRect, portRect);
 		var elemWidth = portRect.right - portRect.left;
 		var elemHeight = portRect.bottom - portRect.top;
 
 
 		var elemCenter = {
-			x: portRect.left - baseRect.left + elemWidth / 2,
-			y: portRect.top - baseRect.top + elemHeight / 2
+			x: portRect.left - baseRect.left + portRect.width / 2,
+			y: portRect.top - baseRect.top + portRect.height / 2
 		}
 
 		var id = marker + '_' + data.id;
@@ -130,7 +131,7 @@ function node($compile, $templateCache, $http) {
 	function nodeEventsHandler(scope, element, rectNode, idNode) {
 
 		element.on('mousedown', function (event) {
-			if (isPort || event.ctrlKey || event.button !== 0)
+			if (scope.isPort || event.ctrlKey || event.button !== 0)
 				return;
 			var offsetMousePos = getOffsetPos(element, event);
 			scope.$emit('nodeMouseDown', {
@@ -148,7 +149,7 @@ function node($compile, $templateCache, $http) {
 		});
 
 		element.on('click', function (event) {
-			if (isPort || !event.ctrlKey)
+			if (scope.isPort || !event.ctrlKey)
 				return;
 			scope.$apply( function() {
 				scope.nodeData.selected = !scope.nodeData.selected;
@@ -172,12 +173,12 @@ function node($compile, $templateCache, $http) {
 	function portEventsHandler(scope, portIn, portOut, idNode) {
 
 		portIn.element.on('mouseenter', function (event) {
-			isPort = true;
+			scope.isPort = true;
 			portIn.element.addClass("port_hovered");
 		});
 
 		portIn.element.on('mouseleave', function (event) {
-			isPort = false;
+			scope.isPort = false;
 			portIn.element.removeClass("port_hovered");
 		});
 
@@ -189,12 +190,12 @@ function node($compile, $templateCache, $http) {
 		});
 
 		portOut.element.on('mouseenter', function (event) {
-			isPort = true;
+			scope.isPort = true;
 			portOut.element.addClass("port_hovered");
 		});
 
 		portOut.element.on('mouseleave', function (event) {
-			isPort = false;
+			scope.isPort = false;
 			portOut.element.removeClass("port_hovered");
 		});
 

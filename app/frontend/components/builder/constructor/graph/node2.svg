@@ -1,5 +1,0 @@
-
-    <rect class="node" rx="5" ry="5"></rect>
-    <text class="node_label node_label_left" x="10" y="23" dy=".35em" text-anchor="middle" alignment-baseline="middle">node2 {{nodeData.content}}</text>
-    <circle class='port' r="15"> </circle>
-    <circle class='port' r="15"> </circle>
