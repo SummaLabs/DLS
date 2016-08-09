@@ -1,7 +1,7 @@
 angular.module('networkDataLoaderService', [])
-    .service('networkDataLoaderService', NetworkDataLoaderService);
+    .service('networkDataLoaderService', ['$http', NetworkDataLoaderService]);
 
-function NetworkDataLoaderService() {
+function NetworkDataLoaderService($http) {
 
     this.loadNetwork = function () {
         var network = [
@@ -69,75 +69,33 @@ function NetworkDataLoaderService() {
     };
 
     this.loadLayers = function () {
-        var layers = [
-            {
-                id: 1,
-                name : 'data',
-                content : 'data',
-                category : 'input',
-                selected: false,
-                params : {
-                    datasetType : '',
-                    datasetId : ''
-                }
-            }, {
-                id: 2,
-                name : 'convol',
-                content : 'convolution',
-                category : 'layer',
-                selected: false,
-                params : {
-                    filtersCount : '',
-                    filterWidth : '',
-                    filterHeight : '',
-                    activationFunction : '',
-                    subsamplingType : '',
-                    subsamplingSize : ''
-                }
-            },{
-                id: 3,
-                name : 'dense',
-                content : 'dense',
-                category : 'layer',
-                selected: false,
-                params : {
-                    activationFunction : '',
-                    neuronsCount : ''
-                }
-            }, {
-                id: 4,
-                name : 'solver',
-                content : 'solver',
-                category : 'output',
-                selected: false,
-                params : {
-                    lossFunction : '',
-                    epochsCount : '',
-                    snapshotInterval : '',
-                    validationInterval : '',
-                    batchSize : '',
-                    learningRate : '',
-                    optimizer : ''
-                }
-            }
-        ];
+        var layers = [];
+        $http({
+            method: "GET",
+            url: "/network/layers"
+        }).then(function mySucces(response) {
+            response.data.forEach(function(layer) {
+                layers.push(layer)
+            });
+        }, function myError(response) {
+            console.log(response);
+        });
 
         return layers;
     };
 
     this.loadCategories = function () {
-
-        var categories = [
-            {
-                name : 'input'
-            },
-            {
-                name : 'layer'
-            },
-            {
-                name : 'output'
-            }
-        ];
+        var categories = [];
+        $http({
+            method: "GET",
+            url: "/network/layer/categories"
+        }).then(function mySucces(response) {
+            response.data.forEach(function(layer) {
+                categories.push(layer)
+            });
+        }, function myError(response) {
+            console.log(response);
+        });
 
         return categories;
     }
