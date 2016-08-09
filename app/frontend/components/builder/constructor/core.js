@@ -53,4 +53,21 @@ function ConstructorController($mdDialog, $rootScope) {
 			}
 		});
 	};
+
+	this.saveNetworkDialog = function ($event) {
+		var confirm = $mdDialog.prompt()
+			.title('Save Network')
+			.textContent('Enter name of the network')
+			.placeholder('Network Name')
+			.ariaLabel('Network Name')
+			.initialValue('Buddy')
+			.targetEvent($event)
+			.ok('Save')
+			.cancel('Cancel');
+		$mdDialog.show(confirm).then(function (result) {
+			$scope.status = 'You decided to name your dog ' + result + '.';
+		}, function () {
+			$scope.status = 'You didn\'t name your dog.';
+		});
+	}
 }

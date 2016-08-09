@@ -1,7 +1,9 @@
-<md-button class="md-secondary" ng-click="$ctrl.createTestDialog($event)">Create New Data Set</md-button>
+<md-button class="md-primary md-raised" ng-click="$ctrl.saveNetworkDialog($event)">
+    Save
+</md-button>
 <div layout="row">
-    <palette flex = '20'></palette>
-    <div flex = '80' id="workspace" style="overflow: auto; ">
+    <palette flex='20'></palette>
+    <div flex='80' id="workspace" style="overflow: auto; ">
         <svg-graph svg-width="1000" svg-height="1000" svg-color="#fff"></svg-graph>
     </div>
 </div>
