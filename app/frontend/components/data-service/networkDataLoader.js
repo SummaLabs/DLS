@@ -2,6 +2,35 @@ angular.module('networkDataLoaderService', [])
     .service('networkDataLoaderService', ['$http', NetworkDataLoaderService]);
 
 function NetworkDataLoaderService($http) {
+    
+    this.loadSavedNetworksNames = function () {
+        var network_names = [];
+        $http({
+            method: "GET",
+            url: "/network/saved/names"
+        }).then(function mySucces(response) {
+            response.data.forEach(function(net_name) {
+                network_names.push(net_name)
+            });
+        }, function myError(response) {
+            console.log(response);
+        });
+
+        return network_names;
+    };
+
+    this.loadNetworkByName = function (name) {
+        var network;
+        $http({
+            method: "GET",
+            url: "/network/load/" + name
+        }).then(function mySucces(response) {
+            network = response.data;
+        }, function myError(response) {
+            console.log(response);
+        });
+        return network;
+    };
 
     this.loadNetwork = function () {
         var network = [

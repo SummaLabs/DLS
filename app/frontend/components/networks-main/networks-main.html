@@ -6,7 +6,7 @@
     </md-list-item>
     <md-subheader class="md-no-sticky">Saved Networks</md-subheader>
     <md-list-item ng-repeat="network in $ctrl.savedNetworks">
-        <p> {{ network.name }} </p>
+        <p> {{ network}} </p>
         <md-button class="md-secondary" ng-click="$ctrl.createDialog()">Open In Builder</md-button>
         <md-button class="md-secondary" ng-click="$ctrl.createDialog()">Delete</md-button>
     </md-list-item>

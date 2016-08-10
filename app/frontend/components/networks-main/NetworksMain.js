@@ -8,7 +8,7 @@
                 networkTemplates: '<',
                 savedNetworks: '<'
             },
-            controller: function ($mdDialog) {
+            controller: function ($mdDialog, networkDataLoaderService) {
                 this.$onInit = function () {
                     this.networkTemplates = [
                         { name: 'Network Architecture Template 1'},
@@ -17,12 +17,7 @@
                         { name: 'Network Architecture Template 4'}
                     ];
 
-                    this.savedNetworks = [
-                        { name: 'Saved Network Architecture 1'},
-                        { name: 'Saved Network Architecture 2'},
-                        { name: 'Saved Network Architecture 3'},
-                        { name: 'Saved Network Architecture 4'}
-                    ];
+                    this.savedNetworks = networkDataLoaderService.loadSavedNetworksNames()
                 };
 
                 this.createDialog = function() {

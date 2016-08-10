@@ -62,3 +62,25 @@ def network_layers():
         with open(layers_path, 'r') as f:
             return Response(json.dumps(json.load(f)), mimetype='application/json')
 
+@app.route('/network/saved/names')
+def load_saved_network_names():
+    networks_names = []
+
+    saved_dir = os.path.join(dirname(dirname(dirname(__file__))),  'data/network/saved')
+    for file in os.listdir(saved_dir):
+        if file.endswith(".json"):
+            networks_names.append(file)
+
+    if request.method == 'GET':
+            return Response(json.dumps(networks_names), mimetype='application/json')
+
+
+@app.route('/network/load/<path:filename>')
+def load_network(filename):
+    layers_dir = os.path.join(dirname(dirname(dirname(__file__))), 'data/network/saved')
+    layers_path = os.path.join(layers_dir, filename)
+
+    if request.method == 'GET':
+        with open(layers_path, 'r') as f:
+            return Response(json.dumps(json.load(f)), mimetype='application/json')
+
