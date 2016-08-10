@@ -56,8 +56,8 @@ function node($compile, $templateCache, $http, appConfig) {
                         }
                         element.attr('id', 'id_' + idNode);
 
-                        $scope.nodeData.portIn = portIn.data;
-                        $scope.nodeData.portOut = portOut.data;
+                        $scope.nodeData.portIn = portIn;
+                        $scope.nodeData.portOut = portOut;
 
 
                         textNode.text($scope.nodeData.content);
@@ -89,17 +89,6 @@ function node($compile, $templateCache, $http, appConfig) {
 
 		if (!port)
 			return null;
-		var baseRect = base[0].getBoundingClientRect();
-		var portRect = port[0].getBoundingClientRect();
-		console.log(baseRect, portRect);
-		var elemWidth = portRect.right - portRect.left;
-		var elemHeight = portRect.bottom - portRect.top;
-
-
-		var elemCenter = {
-			x: portRect.left - baseRect.left + portRect.width / 2,
-			y: portRect.top - baseRect.top + portRect.height / 2
-		}
 
 		var id = marker + '_' + data.id;
 		port.attr('id', id);
@@ -107,11 +96,7 @@ function node($compile, $templateCache, $http, appConfig) {
 		return {
 			element: port,
 			data: {
-				id: id,
-				offset: {
-					x: elemCenter.x,
-					y: elemCenter.y,
-				}
+				id: id
 			}
 		}
 	}
