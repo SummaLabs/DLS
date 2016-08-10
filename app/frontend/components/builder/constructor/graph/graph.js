@@ -68,9 +68,10 @@ function initComponent() {
 
         $scope.$on('nodeInit', function (event, data) {
 			counterNodesInit ++;
+
 			if (counterNodesInit === self.nodes.length) {
 				self.links = parseNodesForLinks(self.nodes);
-
+                counterNodesInit = -9999;
 			}
 		});
 
@@ -79,10 +80,11 @@ function initComponent() {
 		});
 
 		$rootScope.$on('palette_drag_end', function (event, data) {
-			if (self.mouseMode === state.DRAGGING) {
+			if (self.mouseMode === state.DRAGGING && positionDrag) {
 				var pos = convertCoordinateFromClienToSvg($element, parentNode, positionDrag);
+				positionDrag = false;
 				var correctPos = { x: pos.x - data.offset.x, y: pos.y - data.offset.y}
-				if (pos.x > 0 && pos.y > 0) {
+				if (correctPos.x > 0 && correctPos.y > 0) {
 					$scope.$apply( function() {
 						self.nodes.push({
 							id: self.nodes.length + 1,
@@ -93,6 +95,9 @@ function initComponent() {
 							selected: false,
 							template: 'frontend/components/builder/constructor/graph/node1.svg'
 						});
+//                        self.links.forEach(function(link, i, array) {
+//                            console.log('drag', link.nodes[0].id, link.nodes[1].id);
+//		                });
 					});
 				}
 			}
@@ -139,9 +144,9 @@ function initComponent() {
 
 				if (validateLink(link, self.links)) {
 					if (nodeFrom.wires) {
-						nodeFrom.wires.push[data.id];
+						nodeFrom.wires.push[nodeTo.id];
 					} else {
-						nodeFrom.wires = [[nodeFrom.id, nodeTo.id]];
+						nodeFrom.wires = [nodeTo.id];
 					}
 
 					$scope.$apply( function() {
@@ -249,6 +254,7 @@ function initComponent() {
 			if (node.wires  && node.wires.length > 0) {
 				for (var a = 0; a < node.wires.length; ++a) {
 					var nodeTo = getItemById(nodes, node.wires[a]);
+
 					var link = newLink();
 					link.id = "" + node.id + nodeTo.id;
 					link.nodes = [node, nodeTo];
@@ -256,6 +262,9 @@ function initComponent() {
 				}
 			}
 		});
+//		links.forEach(function(link, i, array) {
+//                            console.log('parse', link.nodes[0].id, link.nodes[1].id);
+//		                });
 		return links;
 	}
 

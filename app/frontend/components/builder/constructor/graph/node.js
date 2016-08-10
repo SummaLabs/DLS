@@ -38,14 +38,18 @@ function node($compile, $templateCache, $http, appConfig) {
 
                         var rectNode = angular.element(element[0].querySelector('#' + patternDefinitions.markerRect));
                         var textNode = angular.element(element[0].querySelector('#' + patternDefinitions.markerText));
+
+                        var parentNode = angular.element(element[0].parentNode);
+                        var baseRect = parentNode[0].getBoundingClientRect();
+
                         var portIn = portInit(
-							element,
+							parentNode,
 							angular.element(element[0].querySelector('#' + patternDefinitions.markerPortIn)),
 							$scope.nodeData,
 							patternDefinitions.markerPortIn
 						);
                         var portOut = portInit(
-							element,
+							parentNode,
 							angular.element(element[0].querySelector('#' + patternDefinitions.markerPortOut)),
 							$scope.nodeData,
 							patternDefinitions.markerPortOut
@@ -93,12 +97,32 @@ function node($compile, $templateCache, $http, appConfig) {
 		var id = marker + '_' + data.id;
 		port.attr('id', id);
 
+        var baseRect = base[0].getBoundingClientRect();
+        var portRect = port[0].getBoundingClientRect();
+
+        var portCoord = getPortCoord(baseRect, portRect);
+//		console.log(data.pos);
+
 		return {
 			element: port,
 			data: {
-				id: id
+				id: id,
+				offset: {
+				    x: portCoord.x - data.pos.x,
+				    y: portCoord.y - data.pos.y
+				}
 			}
 		}
+	}
+
+	function getPortCoord(svgRect, portRect) {
+        var portWidth = portRect.right - portRect.left;
+        var portHeight = portRect.bottom - portRect.top;
+
+        return {
+            x: portRect.left - svgRect.left + portWidth / 2,
+            y: portRect.top - svgRect.top + portHeight / 2
+        }
 	}
 
 	function nodeWatcher(scope, rectNode){

@@ -77,7 +77,7 @@ function ConstructorLoaderService() {
 				name : 'db',
 				content : 'db',
 				category : 'output',
-				template: 'frontend/components/builder/constructor/graph/node1.svg',
+				template: 'frontend/components/builder/constructor/graph/node-test-2.svg',
 				pos: {x: 300, y: 100},
 			}
 		];
