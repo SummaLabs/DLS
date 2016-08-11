@@ -92,3 +92,7 @@
     stroke-width: 3;
     stroke-opacity: 1;
 }
+
+#workspace:focus {
+  background: pink;
+}
