@@ -16,7 +16,7 @@ var editorDefinition = {
 angular.module('constructorCore')
 	.component('constructor', editorDefinition);
 
-function ConstructorController($mdDialog, $rootScope) {
+function ConstructorController($mdDialog, $rootScope, networkDataService) {
 
 	this.$onInit = function() {
 		$rootScope.$on('NetworkUpdated', function ($event, data) {
@@ -60,14 +60,14 @@ function ConstructorController($mdDialog, $rootScope) {
 			.textContent('Enter name of the network')
 			.placeholder('Network Name')
 			.ariaLabel('Network Name')
-			.initialValue('Buddy')
+			.initialValue(networkDataService.getNetworkConfig().name)
 			.targetEvent($event)
 			.ok('Save')
 			.cancel('Cancel');
 		$mdDialog.show(confirm).then(function (result) {
-			$scope.status = 'You decided to name your dog ' + result + '.';
+			networkDataService.saveNetwork(result);
 		}, function () {
-			$scope.status = 'You didn\'t name your dog.';
+			//silent
 		});
 	}
 }

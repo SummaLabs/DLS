@@ -77,10 +77,32 @@ def load_saved_network_names():
 
 @app.route('/network/load/<path:filename>')
 def load_network(filename):
-    layers_dir = os.path.join(dirname(dirname(dirname(__file__))), 'data/network/saved')
-    layers_path = os.path.join(layers_dir, filename)
+    saved_dir = os.path.join(dirname(dirname(dirname(__file__))), 'data/network/saved')
+    saved_path = os.path.join(saved_dir, str(filename))
 
     if request.method == 'GET':
-        with open(layers_path, 'r') as f:
+        with open(saved_path, 'r') as f:
             return Response(json.dumps(json.load(f)), mimetype='application/json')
 
+
+@app.route('/network/save', methods=["POST"])
+def save_network():
+    if request.method == "POST":
+        network_name = request.form['network_name']
+        network = request.json
+
+    jsonData = json.loads(request.data)
+    if len(jsonData) > 1:
+        fileName = jsonData[0]
+        jsonFlow = jsonData[1]
+        save_dir = os.path.join(dirname(dirname(dirname(__file__))), 'data/network/saved')
+        fout = os.path.join(save_dir, fileName)
+    try:
+        with open(fout, 'w') as f:
+            f.write(json.dumps(jsonFlow))
+        ret = ['ok', fileName]
+    except Exception as err:
+        ret = ['error', 'Cant save file [%s], Error: [%s]' % (fileName, str(err))]
+    else:
+        ret = ['error', 'Invalid request']
+    return Response(json.dumps(ret), mimetype='application/json')

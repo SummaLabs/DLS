@@ -20,16 +20,19 @@ function NetworkDataLoaderService($http) {
     };
 
     this.loadNetworkByName = function (name) {
-        var network;
-        $http({
+        return $http({
             method: "GET",
             url: "/network/load/" + name
-        }).then(function mySucces(response) {
-            network = response.data;
-        }, function myError(response) {
-            console.log(response);
-        });
-        return network;
+        })
+    };
+
+    this.saveNetwork = function (network) {
+        return $http({
+            url: '/network/save',
+            method: 'POST',
+            params: network,
+            headers: {'Content-Type': 'application/json;charset=utf-8'}
+        })
     };
 
     this.loadNetwork = function () {
