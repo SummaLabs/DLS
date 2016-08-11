@@ -57,7 +57,7 @@ function ConstructorLoaderService() {
 				name : 'websocket',
 				content : 'web',
 				category : 'input',
-				template: 'frontend/components/builder/constructor/graph/node1.svg',
+				template: 'frontend/components/builder/constructor/graph/node-test-2.svg',
 				pos: {x: 100, y: 200},
 				wires: [
 					1
@@ -77,7 +77,7 @@ function ConstructorLoaderService() {
 				name : 'db',
 				content : 'db',
 				category : 'output',
-				template: 'frontend/components/builder/constructor/graph/node-test-2.svg',
+				template: 'frontend/components/builder/constructor/graph/node-test-4.svg',
 				pos: {x: 300, y: 100},
 			}
 		];
@@ -93,21 +93,24 @@ function ConstructorLoaderService() {
 				content : 'web',
 				category : 'input',
 				pos: {x: 100, y: 200},
-				selected: false
+				selected: false,
+				template: 'frontend/components/builder/constructor/graph/node-test-2.svg',
 			}, {
 				id: 2,
 				name : 'socket',
 				content : 'socket',
 				category : 'input',
 				pos: {x: 300, y: 300},
-				selected: false
+				selected: false,
+				template: 'frontend/components/builder/constructor/graph/node-test-4.svg',
 			}, {
 				id: 3,
 				name : 'db',
 				content : 'db',
 				category : 'output',
 				pos: {x: 300, y: 500},
-				selected: false
+				selected: false,
+				template: 'frontend/components/builder/constructor/graph/node-test-4.svg',
 			}
 		];
 

@@ -93,7 +93,7 @@ function initComponent() {
 							category : data.data.category,
 							pos: correctPos,
 							selected: false,
-							template: 'frontend/components/builder/constructor/graph/node1.svg'
+							template: data.data.template
 						});
 //                        self.links.forEach(function(link, i, array) {
 //                            console.log('drag', link.nodes[0].id, link.nodes[1].id);
@@ -106,20 +106,22 @@ function initComponent() {
 		$scope.$on('nodeMouseDown', function (event, data) {
 			editedNode = getItemById(self.nodes, data.id);
 			self.mouseMode = state.MOVING;
+            console.log('nodeMouseDown');
 
 			prevMousePos = {x: editedNode.pos.x + data.pos.x, y: editedNode.pos.y + data.pos.y};
 		});
 
 		$scope.$on('nodeMouseUp', function (event, data) {
 			if (self.mouseMode === state.MOVING) {
-				self.mouseMode = state.DEFAULT;
 			} else if (self.mouseMode === state.JOINING) {
 				removeActiveLink();
-				self.mouseMode = state.DEFAULT;
 			}
+            self.mouseMode = state.DEFAULT;
+            console.log('nodeMouseUp');
 		});
 
 		$scope.$on('portOutMouseDown', function (event, data) {
+            console.log('portOutMouseDown');
 			var node = getItemById(self.nodes, data.id);
 			self.mouseMode = state.JOINING;
 			self.activelink.nodes.length = 0;
@@ -129,8 +131,9 @@ function initComponent() {
 		$scope.$on('portOutMouseUp', function (event, data) {
 			if (self.mouseMode === state.JOINING) {
 				removeActiveLink();
-				self.mouseMode = state.DEFAULT;
 			}
+            self.mouseMode = state.DEFAULT;
+            console.log('portOutMouseUp');
 		});
 
 		$scope.$on('portInMouseUp', function (event, data) {
@@ -152,10 +155,11 @@ function initComponent() {
 					$scope.$apply( function() {
 						self.links.push(link);
 					});
-					removeActiveLink();
-					self.mouseMode = state.DEFAULT;
 				}
+                removeActiveLink();
 			}
+            self.mouseMode = state.DEFAULT;
+            console.log('portInMouseUp');
 		});
 
 		$scope.$on('selectedItem', function (event, data) {
@@ -181,7 +185,9 @@ function initComponent() {
 		});
 
 		$element.on('mousemove', function (event) {
-			if (self.mouseMode === state.MOVING) {
+
+			if (self.mouseMode === state.MOVING && event.buttons === 1) {
+                console.log('mousemove', event.buttons);
 				var curMousePos = getOffsetPos($element, event);
 
 				var newNodePos = {
@@ -197,7 +203,7 @@ function initComponent() {
 					editedNode.pos.y = newNodePos.y;
 				});
 				prevMousePos = curMousePos;
-			} else if (self.mouseMode === state.JOINING) {
+			} else if (self.mouseMode === state.JOINING  && event.buttons === 1) {
 				var curMousePos = getOffsetPos($element, event);
 				$scope.$apply( function() {
 					if (self.activelink.nodes.length === 1) {
@@ -217,12 +223,15 @@ function initComponent() {
 				removeActiveLink();
 				self.mouseMode = state.DEFAULT;
 			}
+            self.mouseMode = state.DEFAULT;
+            console.log('mouseup');
 		});
 
 		$element.on('mouseleave', function (event) {
             if (self.mouseMode === state.MOVING) {
                 self.mouseMode = state.DEFAULT;
             }
+            console.log('mouseleave');
 		});
 
         // keyboard events:
@@ -233,12 +242,13 @@ function initComponent() {
 					removeSelectedItems(self.nodes, self.links);
 				});
 			}
+            console.log(event.keyCode);
 		});
 
         // system events:
 
 		$element.on('focus', function (event) {
-
+            console.log('focus');
 		});
 
 		function removeActiveLink() {
@@ -359,9 +369,4 @@ function initComponent() {
 		}
 		return true;
 	}
-
-	Array.prototype.last = function() {
-		return this[this.length-1];
-	}
-
 }
