@@ -18,22 +18,6 @@ function link() {
 
 		link: function($scope, element, attrs) {
             var parentNode = angular.element(element[0].parentNode);
-            /*var baseRect = parentNode[0].getBoundingClientRect();
-
-		    var portRectOut = $scope.linkData.nodes[0].portOut.element[0].getBoundingClientRect();
-            var coordPortFrom = getPortCoord(baseRect, portRectOut);
-			$scope.from = coordPortFrom;
-
-			if($scope.linkData.nodes[1].id === 'activePoint') {
-				$scope.to = $scope.linkData.nodes[1].pos;
-			} else {
-			    var portRectIn = $scope.linkData.nodes[1].portIn.element[0].getBoundingClientRect();
-			    var coordPortTo = getPortCoord(baseRect, portRectIn);
-				$scope.to = coordPortTo;
-			}*/
-
-
-//            console.log($scope.linkData.nodes[0].id, $scope.linkData.nodes[1].id);
 
 			$scope.from = {
 			    x: $scope.linkData.nodes[0].pos.x + $scope.linkData.nodes[0].portOut.data.offset.x,
@@ -43,9 +27,7 @@ function link() {
 			if($scope.linkData.nodes[1].id === 'activePoint') {
 				$scope.to = $scope.linkData.nodes[1].pos;
 			} else {
-			    /*var portRectIn = $scope.linkData.nodes[1].portIn.element[0].getBoundingClientRect();
-			    var coordPortTo = getPortCoord(baseRect, portRectIn);
-				$scope.to = coordPortTo;*/
+
 				$scope.to = {
                     x: $scope.linkData.nodes[1].pos.x + $scope.linkData.nodes[1].portIn.data.offset.x,
                     y: $scope.linkData.nodes[1].pos.y + $scope.linkData.nodes[1].portIn.data.offset.y

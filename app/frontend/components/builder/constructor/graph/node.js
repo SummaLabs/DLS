@@ -101,7 +101,6 @@ function node($compile, $templateCache, $http, appConfig) {
         var portRect = port[0].getBoundingClientRect();
 
         var portCoord = getPortCoord(baseRect, portRect);
-//		console.log(data.pos);
 
 		return {
 			element: port,
