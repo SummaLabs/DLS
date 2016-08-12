@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('dlsApp', ['ngMaterial',
+
     'mainMenu',
     'constructorCore',
     'networkMain',
@@ -13,3 +14,14 @@ angular.module('dlsApp', ['ngMaterial',
     'layerEditor',
     'networkDataLoaderService',
     'networkDataService']);
+
+
+angular.module('dlsApp')
+    .value('appConfig', {
+        svgDefinitions: {
+            markerRect: 'border',
+            markerText: 'text',
+            markerPortIn: 'in',
+            markerPortOut: 'out'
+        }
+    })

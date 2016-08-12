@@ -60,7 +60,7 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
     };
 
     this.addLayerToNetwork = function(layer) {
-        networkConf.push(layer);
+        networkConf.network.push(layer);
         this.notifyNetworkUpdate();
     };
 

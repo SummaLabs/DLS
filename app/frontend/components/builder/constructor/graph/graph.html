@@ -1,5 +1,9 @@
-<svg id = "svg"  ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}" pointer-events="all" style="cursor:crosshair" focusable="true">
-    <g id = "view">
+<svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    id = "svg"
+    ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}">
+    <g id = "view" ng-attr-transform="scale({{svg.scale}})">
         <rect ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}" fill="{{svgColor}}"></rect>
         <nodelink ng-if="svg.activelink.nodes.length === 2" link-data="svg.activelink"/>
         <nodelink ng-if="svg.idNodesInit" ng-repeat="link in svg.links" link-data="link"/>

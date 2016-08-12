@@ -48,7 +48,8 @@ function NetworkDataLoaderService($http) {
                 params : {
                     datasetType : '',
                     datasetId : ''
-                }
+                },
+                template: 'frontend/components/layers/data/node-test-2.svg'
             }, {
                 id: 1,
                 name : 'convol',
@@ -64,7 +65,8 @@ function NetworkDataLoaderService($http) {
                     activationFunction : '',
                     subsamplingType : '',
                     subsamplingSize : ''
-                }
+                },
+                template: 'frontend/components/layers/convol/node-test-2.svg'
             }, {
                 id: 2,
                 name : 'dense',
@@ -76,7 +78,8 @@ function NetworkDataLoaderService($http) {
                 params : {
                     activationFunction : '',
                     neuronsCount : ''
-                }
+                },
+                template: 'frontend/components/layers/dense/node-test-4.svg'
             }, {
                 id: 3,
                 name : 'solver',
@@ -93,7 +96,8 @@ function NetworkDataLoaderService($http) {
                     batchSize : '',
                     learningRate : '',
                     optimizer : ''
-                }
+                },
+                template: 'frontend/components/layers/solver/node-test-4.svg'
             }
         ];
 

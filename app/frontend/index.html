@@ -19,16 +19,16 @@
 </md-toolbar>
 
 <md-tabs md-dynamic-height md-border-bottom>
-    <md-tab label="Builder">
+    <md-tab label="Builder" class="unselectable">
         <constructor></constructor>
     </md-tab>
-    <md-tab label="Networks">
+    <md-tab label="Networks" class="unselectable">
         <network-main></network-main>
     </md-tab>
-    <md-tab label="Models">
+    <md-tab label="Models" class="unselectable">
         <model-main></model-main>
     </md-tab>
-    <md-tab label="Data">
+    <md-tab label="Data" class="unselectable">
         <main-data-set></main-data-set>
     </md-tab>
 </md-tabs>
@@ -39,11 +39,14 @@
 <script type="text/javascript" src="/frontend/lib/angular-material.js"></script>
 
 <script src="/frontend/lib/d3.min.js"></script>
+
 <script src="/frontend/app.js"></script>
 <script src="/frontend/components/main-menu/MainMenu.js"></script>
 <script src="/frontend/components/builder/constructor/core.js"></script>
 <script src="/frontend/components/builder/constructor/palette/palette.js"></script>
 <script src="/frontend/components/builder/constructor/graph/graph.js"></script>
+<script src="/frontend/components/builder/constructor/graph/node.js"></script>
+<script src="/frontend/components/builder/constructor/graph/link.js"></script>
 <script src="/frontend/components/networks-main/NetworksMain.js"></script>
 <script src="/frontend/components/models-main/ModelsMain.js"></script>
 <script src="/frontend/components/data-set-main/MainDataSet.js"></script>
