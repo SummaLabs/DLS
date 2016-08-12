@@ -30,7 +30,7 @@ function NetworkDataLoaderService($http) {
         return $http({
             url: '/network/save',
             method: 'POST',
-            params: network,
+            data:network,
             headers: {'Content-Type': 'application/json;charset=utf-8'}
         })
     };

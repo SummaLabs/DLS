@@ -5,6 +5,7 @@ from os.path import dirname, abspath
 from app.backend import app
 
 import json
+import re
 
 
 import os
@@ -69,7 +70,7 @@ def load_saved_network_names():
     saved_dir = os.path.join(dirname(dirname(dirname(__file__))),  'data/network/saved')
     for file in os.listdir(saved_dir):
         if file.endswith(".json"):
-            networks_names.append(file)
+            networks_names.append(re.sub(".json","",file))
 
     if request.method == 'GET':
             return Response(json.dumps(networks_names), mimetype='application/json')
@@ -88,21 +89,15 @@ def load_network(filename):
 @app.route('/network/save', methods=["POST"])
 def save_network():
     if request.method == "POST":
-        network_name = request.form['network_name']
-        network = request.json
-
-    jsonData = json.loads(request.data)
-    if len(jsonData) > 1:
-        fileName = jsonData[0]
-        jsonFlow = jsonData[1]
+        net_config = json.loads(request.data)
+        file_out_name = net_config['name'] + ".json"
         save_dir = os.path.join(dirname(dirname(dirname(__file__))), 'data/network/saved')
-        fout = os.path.join(save_dir, fileName)
-    try:
-        with open(fout, 'w') as f:
-            f.write(json.dumps(jsonFlow))
-        ret = ['ok', fileName]
-    except Exception as err:
-        ret = ['error', 'Cant save file [%s], Error: [%s]' % (fileName, str(err))]
-    else:
-        ret = ['error', 'Invalid request']
+        file_out = os.path.join(save_dir, file_out_name)
+        try:
+            with open(file_out, 'w') as f:
+                f.write(json.dumps(net_config))
+            ret = ['ok', file_out_name]
+        except Exception as err:
+            ret = ['error', 'Cant save file [%s], Error: [%s]' % (file_out_name, str(err))]
+
     return Response(json.dumps(ret), mimetype='application/json')

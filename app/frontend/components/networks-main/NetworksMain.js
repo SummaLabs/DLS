@@ -20,7 +20,7 @@
                     this.savedNetworks = networkDataLoaderService.loadSavedNetworksNames()
                 };
 
-                this.createDialog = function() {
+                this.createDialog = function($event) {
                     $mdDialog.show(
                         $mdDialog.alert()
                             .title('Primary Action')
