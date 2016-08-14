@@ -13,7 +13,8 @@ angular.module('dlsApp', ['ngMaterial',
     'solverEditor',
     'layerEditor',
     'networkDataLoaderService',
-    'networkDataService']);
+    'networkDataService',
+    'networkLayerService']);
 
 
 angular.module('dlsApp')
@@ -24,4 +25,4 @@ angular.module('dlsApp')
             markerPortIn: 'in',
             markerPortOut: 'out'
         }
-    })
+    });

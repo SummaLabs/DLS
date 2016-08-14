@@ -8,7 +8,7 @@
                 networkTemplates: '<',
                 savedNetworks: '<'
             },
-            controller: function ($mdDialog, networkDataService, networkDataLoaderService) {
+            controller: function ($mdDialog, $rootScope, networkDataService, networkDataLoaderService) {
                 this.$onInit = function () {
                     this.networkTemplates = [
                         { name: 'Network Architecture Template 1'},
@@ -20,7 +20,21 @@
                     this.savedNetworks = networkDataLoaderService.loadSavedNetworksNames()
                 };
 
-                this.createDialog = function ($event) {
+                this.createOpenNetworkDialog = function ($event, name) {
+                    var networkName = "demo_network.json";
+                    var loadNetworkFunc = function () {
+                        networkDataService.loadNetwork(name);
+                        networkDataService.setChangesSaved()
+                        $rootScope.tabSelectedIndex = 1;
+                    };
+                    if (!networkDataService.isChangesSaved()) {
+                        showSaveNetworkDialog($event, loadNetworkFunc);
+                    } else {
+                        loadNetworkFunc.call();
+                    }
+                };
+
+                function showSaveNetworkDialog($event, loadNetworkFunc) {
                     var parentEl = angular.element(document.body);
                     $mdDialog.show({
                         clickOutsideToClose: true,
@@ -34,20 +48,21 @@
                     function DialogController($scope, $mdDialog) {
                         $scope.network =
                         {
-                            name: networkDataService.getNetworkConfig().name,
-                            description: networkDataService.getNetworkConfig().description
+                            name: networkDataService.getNetwork().name,
+                            description: networkDataService.getNetwork().description
                         };
 
                         $scope.saveNetwork = function () {
                             networkDataService.saveNetwork($scope.network.name, $scope.network.description);
                             $mdDialog.hide();
+                            loadNetworkFunc.call();
                         };
 
                         $scope.closeDialog = function () {
                             $mdDialog.hide();
                         }
                     }
-                };
+                }
             }
         });
 })();

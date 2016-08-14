@@ -18,12 +18,12 @@
     <h3>Deep Learning Studio</h3>
 </md-toolbar>
 
-<md-tabs md-dynamic-height md-border-bottom>
-    <md-tab label="Builder" class="unselectable">
-        <constructor></constructor>
-    </md-tab>
+<md-tabs md-selected="tabSelectedIndex" md-dynamic-height md-border-bottom md-autoselect>
     <md-tab label="Networks" class="unselectable">
         <network-main></network-main>
+    </md-tab>
+    <md-tab label="Builder" class="unselectable">
+        <constructor></constructor>
     </md-tab>
     <md-tab label="Models" class="unselectable">
         <model-main></model-main>
@@ -57,6 +57,7 @@
 <script src="/frontend/components/layers/layer-editor.js"></script>
 <script src="/frontend/components/data-service/networkDataLoader.js"></script>
 <script src="/frontend/components/data-service/networkData.js"></script>
+<script src="/frontend/components/data-service/networkLayerService.js"></script>
 
 </body>
 </html>

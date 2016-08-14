@@ -69,8 +69,8 @@ function ConstructorController($mdDialog, $rootScope, networkDataService) {
 		function DialogController($scope, $mdDialog) {
 			$scope.network =
 			{
-				name: networkDataService.getNetworkConfig().name,
-				description : networkDataService.getNetworkConfig().description
+				name: networkDataService.getNetwork().name,
+				description : networkDataService.getNetwork().description
 			};
 
 			$scope.saveNetwork = function () {

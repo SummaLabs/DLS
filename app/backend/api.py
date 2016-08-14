@@ -79,7 +79,7 @@ def load_saved_network_names():
 @app.route('/network/load/<path:filename>')
 def load_network(filename):
     saved_dir = os.path.join(dirname(dirname(dirname(__file__))), 'data/network/saved')
-    saved_path = os.path.join(saved_dir, str(filename))
+    saved_path = os.path.join(saved_dir, str(filename) + ".json")
 
     if request.method == 'GET':
         with open(saved_path, 'r') as f:
@@ -95,7 +95,7 @@ def save_network():
         file_out = os.path.join(save_dir, file_out_name)
         try:
             with open(file_out, 'w') as f:
-                f.write(json.dumps(net_config))
+                f.write(json.dumps(net_config, indent=2))
             ret = ['ok', file_out_name]
         except Exception as err:
             ret = ['error', 'Cant save file [%s], Error: [%s]' % (file_out_name, str(err))]

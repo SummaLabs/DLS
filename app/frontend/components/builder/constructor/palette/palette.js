@@ -62,9 +62,9 @@ function ElementCtrl($scope, $element, $rootScope) {
 
 }
 
-function PaletteController($scope, networkDataService) {
-	$scope.categories = networkDataService.getCategories();
-	$scope.types = networkDataService.getLayers();
+function PaletteController($scope, networkLayerService) {
+	$scope.categories = networkLayerService.getCategories();
+	$scope.types = networkLayerService.getLayers();
 }
 
 

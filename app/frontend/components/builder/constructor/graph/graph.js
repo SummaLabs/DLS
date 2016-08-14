@@ -22,7 +22,7 @@ function initComponent() {
 
 		self.$onInit = function() {
             self.mouseMode = state.DEFAULT;
-            self.nodes = networkDataService.getNetwork();
+            self.nodes = networkDataService.getLayers();
             self.links = [];
             self.scale = 1;
 
@@ -97,7 +97,7 @@ function initComponent() {
 						};
 						
                     	self.nodes.push(node);
-                    	networkDataService.addLayerToNetwork(node);
+                    	networkDataService.notifyNetworkUpdate();
 					});
 				}
 			}

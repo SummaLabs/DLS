@@ -7,8 +7,8 @@
     <md-subheader class="md-no-sticky">Saved Networks</md-subheader>
     <md-list-item ng-repeat="network in $ctrl.savedNetworks">
         <p> {{ network}} </p>
-        <md-button class="md-secondary" ng-click="$ctrl.createDialog($event)">Open In Builder</md-button>
-        <md-button class="md-secondary" ng-click="$ctrl.createDialog($event)">Delete</md-button>
+        <md-button class="md-secondary" ng-click="$ctrl.createOpenNetworkDialog($event, network)">Open In Builder</md-button>
+        <md-button class="md-secondary" ng-click="$ctrl.createOpenNetworkDialog($event, network)">Delete</md-button>
     </md-list-item>
 </md-list>
 
