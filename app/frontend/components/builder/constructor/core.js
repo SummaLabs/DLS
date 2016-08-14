@@ -14,10 +14,26 @@ var editorDefinition = {
 };
 
 angular.module('constructorCore')
-	.component('constructor', editorDefinition);
+	.component('constructor', editorDefinition)
+	.service('coreService', CoreService);
 
-function ConstructorController($mdDialog, $rootScope, networkDataService) {
 
+function CoreService() {
+    var store = {};
+    store.scale = 1;
+
+    this.param = function(key, value) {
+        if (arguments.length === 1)
+            return store[key];
+
+        store[key] = value;
+    };
+}
+
+function ConstructorController($mdDialog, $scope, $rootScope, networkDataService, coreService, appConfig) {
+    var self = this;
+
+	constructorWatcher.bind(self)();
 	this.$onInit = function() {
 		$rootScope.$on('NetworkUpdated', function ($event, data) {
 			console.log('NetworkUpdated')
@@ -70,4 +86,32 @@ function ConstructorController($mdDialog, $rootScope, networkDataService) {
 			//silent
 		});
 	}
+
+	this.zoomOut = function(event) {
+        var scale = coreService.param('scale');
+        scale /= appConfig.svgDefinitions.scaleFactor;
+        if (scale > appConfig.svgDefinitions.scaleMin) {
+            coreService.param('scale', scale);
+        }
+    };
+
+    this.zoomIn = function(event) {
+        var scale = coreService.param('scale');
+        scale *= appConfig.svgDefinitions.scaleFactor;
+        if (scale < appConfig.svgDefinitions.scaleMax) {
+            coreService.param('scale', scale);
+        }
+    };
+
+    function constructorWatcher() {
+        var self = this;
+        $scope.$watch(function () {
+            return coreService.param('scale');
+        }, function(newValue, oldValue) {
+            self.svgWidth = newValue * appConfig.svgDefinitions.areaWidth;
+            self.svgHeight = newValue * appConfig.svgDefinitions.areaHeight;
+
+            console.log(newValue, self.svgWidth, self.svgHeight);
+        }, true);
+    }
 }

@@ -7,6 +7,7 @@ angular.module('graph', [
 angular.module('graph')
 	.directive('svgGraph', initComponent);
 
+
 function initComponent() {
 
 	const state = {
@@ -16,7 +17,7 @@ function initComponent() {
         DRAGGING: 3,
     }
 
-	function GraphController($scope, $rootScope, $window, $element, networkDataService) {
+	function GraphController($scope, $rootScope, $window, $element, networkDataService, coreService) {
 		var self = this;
 
 
@@ -24,12 +25,10 @@ function initComponent() {
             self.mouseMode = state.DEFAULT;
             self.nodes = networkDataService.getNetwork();
             self.links = [];
-            self.scale = 1;
-
             self.activelink = {
                 nodes: []
             };
-
+            svgWatcher.bind(self)($scope, coreService);
             svgHandler.bind(self)($scope, $rootScope, $window, $element, networkDataService);
 		};
 	}
@@ -50,6 +49,16 @@ function initComponent() {
 
         }
 	}
+
+	function svgWatcher(scope, coreService) {
+	    var self = this;
+        scope.$watch(function () {
+            return coreService.param('scale');
+        }, function(newValue, oldValue) {
+            self.scale = newValue;
+            console.log(self.scale);
+        }, true);
+    }
 
 	function svgHandler($scope, $rootScope,$window, $element, networkDataService) {
 		var self = this;
@@ -95,7 +104,8 @@ function initComponent() {
 							selected: false,
 							template: data.data.template
 						};
-						
+
+
                     	self.nodes.push(node);
                     	networkDataService.addLayerToNetwork(node);
 					});
