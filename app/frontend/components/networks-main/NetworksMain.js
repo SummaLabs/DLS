@@ -8,7 +8,7 @@
                 networkTemplates: '<',
                 savedNetworks: '<'
             },
-            controller: function ($mdDialog, networkDataLoaderService) {
+            controller: function ($mdDialog, networkDataService, networkDataLoaderService) {
                 this.$onInit = function () {
                     this.networkTemplates = [
                         { name: 'Network Architecture Template 1'},
@@ -20,15 +20,33 @@
                     this.savedNetworks = networkDataLoaderService.loadSavedNetworksNames()
                 };
 
-                this.createDialog = function($event) {
-                    $mdDialog.show(
-                        $mdDialog.alert()
-                            .title('Primary Action')
-                            .textContent('Primary actions can be used for one click actions')
-                            .ariaLabel('Primary click demo')
-                            .ok('Awesome!')
-                            .targetEvent(event)
-                    );
+                this.createDialog = function ($event) {
+                    var parentEl = angular.element(document.body);
+                    $mdDialog.show({
+                        clickOutsideToClose: true,
+                        parent: parentEl,
+                        targetEvent: $event,
+                        templateUrl: '/frontend/components/dialog/save-network.html',
+                        locals: {},
+                        controller: DialogController
+                    });
+
+                    function DialogController($scope, $mdDialog) {
+                        $scope.network =
+                        {
+                            name: networkDataService.getNetworkConfig().name,
+                            description: networkDataService.getNetworkConfig().description
+                        };
+
+                        $scope.saveNetwork = function () {
+                            networkDataService.saveNetwork($scope.network.name, $scope.network.description);
+                            $mdDialog.hide();
+                        };
+
+                        $scope.closeDialog = function () {
+                            $mdDialog.hide();
+                        }
+                    }
                 };
             }
         });

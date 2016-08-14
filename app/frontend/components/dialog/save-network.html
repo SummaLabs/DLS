@@ -1,0 +1,32 @@
+<md-dialog aria-label="Save Network" flex="35" ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Save Current Network</h2>
+        <span flex></span>
+      </div>
+    </md-toolbar>
+    <md-dialog-content >
+        <md-content layout-padding>
+            <div>
+                <form name="userForm">
+                    <md-input-container class="md-block">
+                        <label>Network name</label>
+                        <input ng-model="network.name">
+                    </md-input-container>
+                    <md-input-container class="md-block">
+                        <label>Description</label>
+                        <textarea ng-model="network.description" md-maxlength="350" rows="5" md-select-on-focus></textarea>
+                    </md-input-container>
+                </form>
+            </div>
+        </md-content>
+    </md-dialog-content>
+    <md-dialog-actions>
+        <md-button ng-click="closeDialog()" class="md-raised">
+            Cancel
+        </md-button>
+        <md-button ng-click="saveNetwork()"class="md-primary md-raised">
+            Save
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

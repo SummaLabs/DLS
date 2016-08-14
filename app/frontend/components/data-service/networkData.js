@@ -45,8 +45,9 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
         networkConf = networkToSetup;
     };
 
-    this.saveNetwork = function (name) {
+    this.saveNetwork = function (name, description) {
         networkConf.name = name;
+        networkConf.description = description;
         networkConf.network = network;
         var result = networkDataLoaderService.saveNetwork(networkConf, name);
         result.then(

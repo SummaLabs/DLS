@@ -55,19 +55,32 @@ function ConstructorController($mdDialog, $rootScope, networkDataService) {
 	};
 
 	this.saveNetworkDialog = function ($event) {
-		var confirm = $mdDialog.prompt()
-			.title('Save Network')
-			.textContent('Enter name of the network')
-			.placeholder('Network Name')
-			.ariaLabel('Network Name')
-			.initialValue(networkDataService.getNetworkConfig().name)
-			.targetEvent($event)
-			.ok('Save')
-			.cancel('Cancel');
-		$mdDialog.show(confirm).then(function (result) {
-			networkDataService.saveNetwork(result);
-		}, function () {
-			//silent
+		var parentEl = angular.element(document.body);
+		$mdDialog.show({
+			clickOutsideToClose: true,
+			parent: parentEl,
+			targetEvent: $event,
+			templateUrl: '/frontend/components/dialog/save-network.html',
+			locals: {
+			},
+			controller: DialogController
 		});
+
+		function DialogController($scope, $mdDialog) {
+			$scope.network =
+			{
+				name: networkDataService.getNetworkConfig().name,
+				description : networkDataService.getNetworkConfig().description
+			};
+
+			$scope.saveNetwork = function () {
+				networkDataService.saveNetwork($scope.network.name, $scope.network.description);
+				$mdDialog.hide();
+			};
+
+			$scope.closeDialog = function () {
+				$mdDialog.hide();
+			}
+		}
 	}
 }
