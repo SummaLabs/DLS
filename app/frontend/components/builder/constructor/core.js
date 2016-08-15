@@ -19,8 +19,8 @@ angular.module('constructorCore')
 function ConstructorController($mdDialog, $rootScope, networkDataService) {
 
 	this.$onInit = function() {
-		$rootScope.$on('NetworkUpdated', function ($event, data) {
-			console.log('NetworkUpdated')
+		networkDataService.subClearNetworkEvent(function ($event, data) {
+			console.log('NetworkClear');
 		});
 
 		$rootScope.$on('EditLayer', function ($event, data) {

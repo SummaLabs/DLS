@@ -65,6 +65,11 @@ function initComponent() {
 		var positionDrag = {x:0, y: 0};
 
         // Custom events:
+		
+		networkDataService.subClearNetworkEvent(function ($event, data) {
+			self.nodes.length = 0;
+            self.links.length = 0;
+		});
 
         $scope.$on('nodeInit', function (event, data) {
 			counterNodesInit ++;

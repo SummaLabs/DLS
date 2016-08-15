@@ -24,7 +24,7 @@
                     var networkName = "demo_network.json";
                     var loadNetworkFunc = function () {
                         networkDataService.loadNetwork(name);
-                        networkDataService.setChangesSaved()
+                        networkDataService.setChangesSaved();
                         $rootScope.tabSelectedIndex = 1;
                     };
                     if (!networkDataService.isChangesSaved()) {
