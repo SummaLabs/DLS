@@ -17,7 +17,6 @@ function link() {
 		templateNamespace: 'svg',
 
 		link: function($scope, element, attrs) {
-            var parentNode = angular.element(element[0].parentNode);
 
 			$scope.from = {
 			    x: $scope.linkData.nodes[0].pos.x + $scope.linkData.nodes[0].portOut.data.offset.x,
@@ -36,16 +35,6 @@ function link() {
 			linkWatcher.bind(this)($scope, element);
 			eventsHandler.bind(this)($scope, element);
 		}
-	}
-
-	function getPortCoord(svgRect, portRect) {
-        var portWidth = portRect.right - portRect.left;
-        var portHeight = portRect.bottom - portRect.top;
-
-        return {
-            x: portRect.left - svgRect.left + portWidth / 2,
-            y: portRect.top - svgRect.top + portHeight / 2
-        }
 	}
 
 	function linkWatcher(scope, element) {

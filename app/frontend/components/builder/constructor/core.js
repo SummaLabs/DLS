@@ -110,8 +110,6 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
         }, function(newValue, oldValue) {
             self.svgWidth = newValue * appConfig.svgDefinitions.areaWidth;
             self.svgHeight = newValue * appConfig.svgDefinitions.areaHeight;
-
-            console.log(newValue, self.svgWidth, self.svgHeight);
         }, true);
     }
 }
