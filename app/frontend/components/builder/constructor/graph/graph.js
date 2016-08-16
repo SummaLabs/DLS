@@ -77,6 +77,7 @@ function initComponent() {
 		networkDataService.subClearNetworkEvent(function ($event, data) {
 			self.nodes.length = 0;
             self.links.length = 0;
+            counterNodesInit = 0;
 		});
 
         $scope.$on('nodeInit', function (event, data) {
