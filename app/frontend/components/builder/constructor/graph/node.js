@@ -3,9 +3,10 @@
 angular.module('graph')
 	.directive('node', node);
 
-function node($compile, $templateCache, $http, appConfig, $rootScope) {
+function node($compile, $templateCache, $http, appConfig, $rootScope, coreService) {
 
 	var patternDefinitions = appConfig.svgDefinitions;
+	var scale = 1;
 
 	function NodeCtrl($scope, $element, $document) {
 
@@ -55,7 +56,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope) {
 							patternDefinitions.markerPortOut
 						);
 
-                        if (!rectNode && !textNode && !portIn && !portOut) {
+                        if (!rectNode && !textNode) {
 							message('File "' + newType + '" isn\'t valid!', 'error');
                         }
                         element.attr('id', 'id_' + idNode);
@@ -91,7 +92,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope) {
 
 	function portInit(base, port, data, marker) {
 
-		if (!port)
+		if (!port[0])
 			return null;
 
 		var id = marker + '_' + data.id;
@@ -107,8 +108,8 @@ function node($compile, $templateCache, $http, appConfig, $rootScope) {
 			data: {
 				id: id,
 				offset: {
-				    x: portCoord.x - data.pos.x,
-				    y: portCoord.y - data.pos.y
+				    x: portCoord.x / scale - data.pos.x,
+				    y: portCoord.y / scale - data.pos.y
 				}
 			}
 		}
@@ -134,6 +135,12 @@ function node($compile, $templateCache, $http, appConfig, $rootScope) {
 				rectNode.attr('stroke-dasharray', '');
 			}
 		});
+
+		scope.$watch(function () {
+			return coreService.param('scale');
+		}, function(newValue, oldValue) {
+			scale = newValue;
+		}, true);
 	}
 
 	function nodeEventsHandler(scope, $rootScope, element, rectNode, idNode) {
@@ -205,49 +212,51 @@ function node($compile, $templateCache, $http, appConfig, $rootScope) {
 	}
 
 	function portEventsHandler(scope, portIn, portOut, idNode) {
-
-		portIn.element.on('mouseenter', function (event) {
-			scope.isPort = true;
-			portIn.element.addClass("port_hovered");
-		});
-
-		portIn.element.on('mouseleave', function (event) {
-			scope.isPort = false;
-			portIn.element.removeClass("port_hovered");
-		});
-
-		portIn.element.on('mouseup', function (event) {
-			scope.$emit('portInMouseUp', {
-				id: idNode,
-				pos: portIn.offset
+		if (portIn) {
+			portIn.element.on('mouseenter', function (event) {
+				scope.isPort = true;
+				portIn.element.addClass("port_hovered");
 			});
-		});
 
-		portOut.element.on('mouseenter', function (event) {
-			scope.isPort = true;
-			portOut.element.addClass("port_hovered");
-		});
+			portIn.element.on('mouseleave', function (event) {
+				scope.isPort = false;
+				portIn.element.removeClass("port_hovered");
+			});
 
-		portOut.element.on('mouseleave', function (event) {
-			scope.isPort = false;
-			portOut.element.removeClass("port_hovered");
-		});
+			portIn.element.on('mouseup', function (event) {
+				scope.$emit('portInMouseUp', {
+					id: idNode,
+					pos: portIn.offset
+				});
+			});
+		}
+		if (portOut) {
+			portOut.element.on('mouseenter', function (event) {
+				scope.isPort = true;
+				portOut.element.addClass("port_hovered");
+			});
 
-		portOut.element.on('mousedown', function (event) {
-			if (event.button === 0) {
-				scope.$emit('portOutMouseDown', {
+			portOut.element.on('mouseleave', function (event) {
+				scope.isPort = false;
+				portOut.element.removeClass("port_hovered");
+			});
+
+			portOut.element.on('mousedown', function (event) {
+				if (event.button === 0) {
+					scope.$emit('portOutMouseDown', {
+						id: idNode,
+						pos: portOut.offset
+					});
+				}
+			});
+
+			portOut.element.on('mouseup', function (event) {
+				scope.$emit('portOutMouseUp', {
 					id: idNode,
 					pos: portOut.offset
 				});
-			}
-		});
-
-		portOut.element.on('mouseup', function (event) {
-			scope.$emit('portOutMouseUp', {
-				id: idNode,
-				pos: portOut.offset
 			});
-		});
+		}
 	}
 
 	function getOffsetPos(element, event) {

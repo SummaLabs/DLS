@@ -63,8 +63,21 @@ function ElementCtrl($scope, $element, $rootScope) {
 }
 
 function PaletteController($scope, networkLayerService) {
+    
 	$scope.categories = networkLayerService.getCategories();
 	$scope.types = networkLayerService.getLayers();
+    
+    
+	var categoryState = {};
+
+	this.categoryClick = function(category_name) {
+	    var state = categoryState[category_name];
+	    categoryState[category_name] = state ? false : true;
+	}
+
+	this.isHide = function(category_name) {
+	    return categoryState[category_name] ? false : true;
+	}
 }
 
 

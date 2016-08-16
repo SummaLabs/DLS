@@ -7,6 +7,7 @@ angular.module('graph', [
 angular.module('graph')
 	.directive('svgGraph', initComponent);
 
+
 function initComponent() {
 
 	const state = {
@@ -16,7 +17,7 @@ function initComponent() {
         DRAGGING: 3,
     }
 
-	function GraphController($scope, $rootScope, $window, $element, networkDataService) {
+	function GraphController($scope, $rootScope, $window, $element, networkDataService, coreService) {
 		var self = this;
 
 
@@ -24,12 +25,10 @@ function initComponent() {
             self.mouseMode = state.DEFAULT;
             self.nodes = networkDataService.getLayers();
             self.links = [];
-            self.scale = 1;
-
             self.activelink = {
                 nodes: []
             };
-
+            svgWatcher.bind(self)($scope, coreService);
             svgHandler.bind(self)($scope, $rootScope, $window, $element, networkDataService);
 		};
 	}
@@ -50,6 +49,15 @@ function initComponent() {
 
         }
 	}
+
+	function svgWatcher(scope, coreService) {
+	    var self = this;
+        scope.$watch(function () {
+            return coreService.param('scale');
+        }, function(newValue, oldValue) {
+            self.scale = newValue;
+        }, true);
+    }
 
 	function svgHandler($scope, $rootScope,$window, $element, networkDataService) {
 		var self = this;
@@ -88,7 +96,7 @@ function initComponent() {
 			if (self.mouseMode === state.DRAGGING && positionDrag) {
 				var pos = convertCoordinateFromClienToSvg($element, parentNode, positionDrag);
 				positionDrag = false;
-				var correctPos = { x: pos.x - data.offset.x, y: pos.y - data.offset.y}
+				var correctPos = { x: (pos.x - data.offset.x) / self.scale, y: (pos.y - data.offset.y) / self.scale}
 				if (correctPos.x > 0 && correctPos.y > 0) {
 					$scope.$apply( function() {
 						var node = {
@@ -100,7 +108,8 @@ function initComponent() {
 							selected: false,
 							template: data.data.template
 						};
-						
+
+
                     	self.nodes.push(node);
                     	networkDataService.notifyNetworkUpdate();
 					});
@@ -113,7 +122,7 @@ function initComponent() {
 			editedNode = getItemById(self.nodes, data.id);
 			self.mouseMode = state.MOVING;
 
-			prevMousePos = {x: editedNode.pos.x + data.pos.x, y: editedNode.pos.y + data.pos.y};
+			prevMousePos = {x: editedNode.pos.x * self.scale + data.pos.x, y: editedNode.pos.y * self.scale + data.pos.y};
 		});
 
 		$scope.$on('nodeMouseUp', function (event, data) {
@@ -193,8 +202,8 @@ function initComponent() {
 				var curMousePos = getOffsetPos($element, event);
 
 				var newNodePos = {
-				    x: editedNode.pos.x += curMousePos.x - prevMousePos.x,
-				    y: editedNode.pos.y += curMousePos.y - prevMousePos.y
+				    x: editedNode.pos.x += (curMousePos.x - prevMousePos.x) / self.scale,
+				    y: editedNode.pos.y += (curMousePos.y - prevMousePos.y) / self.scale
 				}
 				if (newNodePos.x < 0)
 				    newNodePos.x = 0;
@@ -207,6 +216,8 @@ function initComponent() {
 				prevMousePos = curMousePos;
 			} else if (self.mouseMode === state.JOINING  && event.buttons === 1) {
 				var curMousePos = getOffsetPos($element, event);
+				curMousePos.x =  curMousePos.x / self.scale;
+				curMousePos.y =  curMousePos.y / self.scale;
 				$scope.$apply( function() {
 					if (self.activelink.nodes.length === 1) {
 						self.activelink.nodes.push({
