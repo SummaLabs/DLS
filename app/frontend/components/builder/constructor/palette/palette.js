@@ -20,7 +20,7 @@ angular.module('palette')
         return {
             restrict: 'A',
             controller: ElementCtrl,
-            controllerAs: 'palette',
+            controllerAs: 'drag',
             scope: {
                paletteData: '=',
             },
@@ -63,8 +63,20 @@ function ElementCtrl($scope, $element, $rootScope) {
 }
 
 function PaletteController($scope, networkDataService) {
+
 	$scope.categories = networkDataService.getCategories();
 	$scope.types = networkDataService.getLayers();
+
+	var categoryState = {};
+
+	this.categoryClick = function(category_name) {
+	    var state = categoryState[category_name];
+	    categoryState[category_name] = state ? false : true;
+	}
+
+	this.isHide = function(category_name) {
+	    return categoryState[category_name] ? false : true;
+	}
 }
 
 

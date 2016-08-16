@@ -2,10 +2,10 @@
     <md-list>
         <md-list-item ng-repeat="category in categories">
             <div id="palette-header-{{ category.name }}">
-                <span class="unselectable">{{ category.name }}</span>
+                <span ng-click="palette.categoryClick(category.name)" class="unselectable">{{ category.name }}</span>
 
                 <md-list>
-                    <md-list-item class="palette_node" draggable ng-repeat="type in types track by $index" ng-if="type.category === category.name" palette-data="type" >
+                    <md-list-item ng-hide="palette.isHide(category.name)" class="palette_node" draggable ng-repeat="type in types track by $index" ng-if="type.category === category.name" palette-data="type" >
                         <div class="palette_label unselectable">{{ type.content }}</div>
                         <div class="palette_icon_container">
                             <div class="palette_icon" style="background-image: url({{type.icon}})"></div>
