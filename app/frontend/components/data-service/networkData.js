@@ -66,7 +66,7 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
     this.saveNetwork = function (name, description) {
         network.name = name;
         network.description = description;
-        network.network = filterNetwork(network.layers);
+        network.layers = filterNetwork(network.layers);
         var result = networkDataLoaderService.saveNetwork(network, name);
         result.then(
             function (response) {
