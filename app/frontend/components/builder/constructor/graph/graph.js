@@ -112,7 +112,7 @@ function initComponent() {
 
 
                     	self.nodes.push(node);
-                    	networkDataService.notifyNetworkUpdate();
+                    	networkDataService.pubNetworkUpdateEvent();
 					});
 				}
 			}
@@ -253,6 +253,7 @@ function initComponent() {
 			if (event.keyCode === 46) {
 				$scope.$apply( function() {
 					removeSelectedItems(self.nodes, self.links);
+					networkDataService.pubNetworkUpdateEvent();
 				});
 			}
 		});

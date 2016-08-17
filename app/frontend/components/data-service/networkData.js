@@ -8,7 +8,16 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
         CLEAR: 'network:clear'
     };
 
+    var isChangesSaved = false;
+    var network =
+    {
+        name: '',
+        description: '',
+        layers: []
+    };
+
     this.pubNetworkUpdateEvent = function() {
+        isChangesSaved = false;
         $rootScope.$emit(networkEvent.UPDATE, {});
     };
 
@@ -22,14 +31,6 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
 
     this.subClearNetworkEvent = function (callback) {
         $rootScope.$on(networkEvent.CLEAR, callback);
-    };
-
-    var isChangesSaved = false;
-    var network =
-    {
-        name: '',
-        description: '',
-        layers: []
     };
 
     this.isChangesSaved = function () {
@@ -50,9 +51,6 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
         future.then(function mySucces(response) {
             network.name = response.data.name;
             network.description = response.data.description;
-            // while (network.layers.length > 0) {
-            //     network.layers.pop();
-            // }
             response.data.layers.forEach(function (layer) {
                 network.layers.push(layer)
             });
@@ -68,8 +66,7 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
         network.description = description;
         network.layers = filterNetwork(network.layers);
         var result = networkDataLoaderService.saveNetwork(network, name);
-        result.then(
-            function (response) {
+        result.then(function (response) {
                 isChangesSaved = true;
             }, function (response) {}
         );
