@@ -1,23 +1,27 @@
 angular.module('networkDataService', [])
-    .service('networkDataService', ['networkDataLoaderService', '$rootScope', NetworkDataService]);
+    .service('networkDataService', ['networkDataLoaderService', '$rootScope', '$http', NetworkDataService]);
 
 
-function NetworkDataService(networkDataLoaderService, $rootScope) {
+function NetworkDataService(networkDataLoaderService, $rootScope, $http) {
+    var self = this;
+
     const networkEvent = {
         UPDATE: 'network:update',
         CLEAR: 'network:clear'
     };
 
     var isChangesSaved = false;
+
     var network =
     {
-        name: '',
+        name: 'New network',
         description: '',
         layers: []
     };
 
+    var savedNetworks = [];
+
     this.pubNetworkUpdateEvent = function() {
-        isChangesSaved = false;
         $rootScope.$emit(networkEvent.UPDATE, {});
     };
 
@@ -37,8 +41,8 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
         return network.layers.length == 0 || isChangesSaved;
     };
 
-    this.setChangesSaved = function () {
-        isChangesSaved = true;
+    this.setChangesSaved = function (state) {
+        isChangesSaved = state;
     };
     
     this.getNetwork = function() {
@@ -46,6 +50,7 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
     };
 
     this.loadNetwork = function(name) {
+        var self = this;
         this.pubClearNetworkEvent();
         var future = networkDataLoaderService.loadNetworkByName(name);
         future.then(function mySucces(response) {
@@ -54,11 +59,25 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
             response.data.layers.forEach(function (layer) {
                 network.layers.push(layer)
             });
+            self.pubNetworkUpdateEvent();
         }, function myError(response) {});
     };
 
     this.getLayers = function() {
         return network.layers;
+    };
+
+    this.loadSavedNetworks = function () {
+        $http({
+            method: "GET",
+            url: "/network/saved/names"
+        }).then(function mySucces(response) {
+            response.data.forEach(function(net_name) {
+                savedNetworks.push(net_name)
+            });
+        }, function myError(response) {});
+
+        return savedNetworks;
     };
 
     this.saveNetwork = function (name, description) {
@@ -68,8 +87,11 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
         var result = networkDataLoaderService.saveNetwork(network, name);
         result.then(function (response) {
                 isChangesSaved = true;
-            }, function (response) {}
+                self.pubNetworkUpdateEvent();
+            }, function (response) {
+            }
         );
+        savedNetworks.push(name);
     };
 
     function filterNetwork(rawNetwork) {

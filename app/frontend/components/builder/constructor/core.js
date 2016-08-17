@@ -35,8 +35,11 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 
 	constructorWatcher.bind(self)();
 	this.$onInit = function() {
-		networkDataService.subClearNetworkEvent(function ($event, data) {
-			console.log('NetworkClear');
+
+        $scope.networkName = networkDataService.getNetwork().name;
+
+		networkDataService.subNetworkUpdateEvent(function ($event, data) {
+			$scope.networkName = networkDataService.getNetwork().name;
 		});
 
 		$rootScope.$on('EditLayer', function ($event, data) {

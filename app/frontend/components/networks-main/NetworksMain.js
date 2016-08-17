@@ -17,14 +17,13 @@
                         { name: 'Network Architecture Template 4'}
                     ];
 
-                    this.savedNetworks = networkDataLoaderService.loadSavedNetworksNames()
+                    this.savedNetworks = networkDataService.loadSavedNetworks();
                 };
 
                 this.createOpenNetworkDialog = function ($event, name) {
-                    var networkName = "demo_network.json";
                     var loadNetworkFunc = function () {
                         networkDataService.loadNetwork(name);
-                        networkDataService.setChangesSaved();
+                        networkDataService.setChangesSaved(true);
                         $rootScope.tabSelectedIndex = 1;
                     };
                     if (!networkDataService.isChangesSaved()) {

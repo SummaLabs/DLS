@@ -112,6 +112,7 @@ function initComponent() {
 
 
                     	self.nodes.push(node);
+						networkDataService.setChangesSaved(false);
                     	networkDataService.pubNetworkUpdateEvent();
 					});
 				}

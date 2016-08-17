@@ -1,13 +1,18 @@
-<md-button class="md-primary md-raised" ng-click="$ctrl.saveNetworkDialog($event)">
-    Save
-</md-button>
-<div layout="row">
-    <palette flex = '20'></palette>
-    <div layout="column" flex = '80' id="workspace" style="overflow: auto; " tabindex="1">
-        <div>
-            <md-button ng-click="$ctrl.zoomOut($event)" class="md-warn md-raised md-hue-2">-</md-button>
-            <md-button ng-click="$ctrl.zoomIn($event)" class="md-warn md-raised md-hue-2">+</md-button>
+<div layout="column">
+    <div layout="row">
+        <md-button class="md-primary md-raised" ng-click="$ctrl.saveNetworkDialog($event)">
+            Save
+        </md-button>
+        <span class="md-headline">Network name: {{networkName}}</span>
+    </div>
+    <div layout="row">
+        <palette flex='20'></palette>
+        <div layout="column" flex='80' id="workspace" style="overflow: auto; " tabindex="1">
+            <div>
+                <md-button ng-click="$ctrl.zoomOut($event)" class="md-warn md-raised md-hue-2">-</md-button>
+                <md-button ng-click="$ctrl.zoomIn($event)" class="md-warn md-raised md-hue-2">+</md-button>
+            </div>
+            <svg-graph svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}" svg-color="#fff" pointer-events="all" focusable="false"></svg-graph>
         </div>
-        <svg-graph svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}" svg-color="#fff" pointer-events="all" focusable="false"></svg-graph>
     </div>
 </div>
