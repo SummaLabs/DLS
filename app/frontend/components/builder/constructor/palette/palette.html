@@ -1,4 +1,4 @@
-<md-content>
+<!--<md-content>
     <md-list>
         <md-list-item ng-repeat="category in categories">
             <div id="palette-header-{{ category.name }}">
@@ -16,4 +16,27 @@
             </div>
         </md-list-item>
     </md-list>
-</md-content>
+</md-content>-->
+
+  <md-sidenav class="md-sidenav-left md-whiteframe-z1" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
+    <md-toolbar md-scroll-shrink>
+      <div class="md-toolbar-tools">
+        <h3>
+          <span>Layers</span>
+        </h3>
+      </div>
+    </md-toolbar>
+    <md-content role="navigation">
+      <ul class="side-menu">
+        <li ng-repeat="category in categories" class="parent-list-item"
+            ng-class="{'parentActive' : vm.isSectionSelected(section)}">
+          <h2 class="menu-heading">
+            {{category.name}}
+          </h2>
+          <!--<menu-link section="section" ng-if="section.type === 'link'"></menu-link>-->
+          <menu-toggle section="section" ng-if="section.type === 'toggle'"></menu-toggle>
+        </li>
+      </ul>
+
+    </md-content>
+  </md-sidenav>

@@ -2,12 +2,13 @@
     Save
 </md-button>
 <div layout="row">
-    <palette flex = '20'></palette>
-    <div layout="column" flex = '80' id="workspace" style="overflow: auto; " tabindex="1">
+    <palette></palette>
+    <div layout="column" flex id="workspace" style="overflow: auto; " tabindex="1">
         <div>
             <md-button ng-click="$ctrl.zoomOut($event)" class="md-warn md-raised md-hue-2">-</md-button>
             <md-button ng-click="$ctrl.zoomIn($event)" class="md-warn md-raised md-hue-2">+</md-button>
         </div>
-        <svg-graph svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}" svg-color="#fff" pointer-events="all" focusable="false"></svg-graph>
+        <svg-graph nodes_data="$ctrl.nodes" svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}" svg-color="#fff" pointer-events="all" focusable="false"></svg-graph>
+    <svg-graph nodes_data="$ctrl.nodes" svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}" svg-color="#fff" pointer-events="all" focusable="false"></svg-graph>
     </div>
 </div>

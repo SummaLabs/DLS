@@ -96,7 +96,7 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
 
     this.addLayerToNetwork = function(layer) {
         network.network.push(layer);
-        this.notifyNetworkUpdate();
+//        this.notifyNetworkUpdate();
     };
 
     this.getLayerById = function(id) {

@@ -19,11 +19,12 @@ function initComponent() {
 
 	function GraphController($scope, $rootScope, $window, $element, networkDataService, coreService) {
 		var self = this;
+		self.counterNodesInit = 0;
 
 
 		self.$onInit = function() {
             self.mouseMode = state.DEFAULT;
-            self.nodes = networkDataService.getLayers();
+            self.nodes = $scope.nodesData;
             self.links = [];
             self.activelink = {
                 nodes: []
@@ -31,6 +32,21 @@ function initComponent() {
             svgWatcher.bind(self)($scope, coreService);
             svgHandler.bind(self)($scope, $rootScope, $window, $element, networkDataService);
 		};
+
+		self.addNode = function(node) {
+		    self.nodes.push(node);
+//		    networkDataService.notifyNetworkUpdate();
+		}
+
+		self.addLink = function(link) {
+		    self.links.push(link);
+		}
+
+		self.clearScene = function() {
+            self.nodes.length = 0;
+            self.links.length = 0;
+            self.counterNodesInit = 0;
+		}
 	}
 
 	return {
@@ -39,9 +55,10 @@ function initComponent() {
 		controllerAs: 'svg',
 		replace: true,
 		scope: {
-		   svgWidth: '@',
-		   svgHeight: '@',
-		   svgColor: '@'
+	        nodesData: '=',
+		    svgWidth: '@',
+		    svgHeight: '@',
+		    svgColor: '@'
 		},
 		templateUrl: 'frontend/components/builder/constructor/graph/graph.html',
 
@@ -53,16 +70,26 @@ function initComponent() {
 	function svgWatcher(scope, coreService) {
 	    var self = this;
         scope.$watch(function () {
-            return coreService.param('scale');
-        }, function(newValue, oldValue) {
-            self.scale = newValue;
-        }, true);
+                return coreService.param('scale');
+            }, function(newValue, oldValue) {
+                self.scale = newValue;
+            }
+        );
+        scope.$watch('nodesData.length', function(newValue, oldValue) {
+            if (!newValue)
+                self.clearScene();
+
+            else if (oldValue > newValue) {
+                self.counterNodesInit = newValue;
+            }
+            else if (oldValue === 0) {
+                self.nodes = scope.nodesData;
+            }
+        });
     }
 
 	function svgHandler($scope, $rootScope,$window, $element, networkDataService) {
 		var self = this;
-
-		var counterNodesInit = 0;
 
 		self.isItemClicked = false;
 
@@ -75,17 +102,14 @@ function initComponent() {
         // Custom events:
 		
 		networkDataService.subClearNetworkEvent(function ($event, data) {
-			self.nodes.length = 0;
-            self.links.length = 0;
-            counterNodesInit = 0;
+			self.clearScene();
 		});
 
         $scope.$on('nodeInit', function (event, data) {
-			counterNodesInit ++;
+			self.counterNodesInit ++;
 
-			if (counterNodesInit === self.nodes.length) {
+			if (self.counterNodesInit === self.nodes.length) {
 				self.links = parseNodesForLinks(self.nodes);
-                counterNodesInit = -9999;
 			}
 		});
 
@@ -109,10 +133,7 @@ function initComponent() {
 							selected: false,
 							template: data.data.template
 						};
-
-
-                    	self.nodes.push(node);
-                    	networkDataService.notifyNetworkUpdate();
+						self.addNode(node);
 					});
 				}
 			}
@@ -165,7 +186,7 @@ function initComponent() {
 					}
 
 					$scope.$apply( function() {
-						self.links.push(link);
+						addLink(link);
 					});
 				}
                 removeActiveLink();
@@ -258,9 +279,6 @@ function initComponent() {
 		});
 
         // system events:
-
-
-
 		$element.on('focus', function (event) {
 
 		});
@@ -277,9 +295,9 @@ function initComponent() {
 		nodes.forEach(function(node, i, array) {
 			if (node.wires  && node.wires.length > 0) {
 				for (var a = 0; a < node.wires.length; ++a) {
-					var nodeTo = getItemById(nodes, node.wires[a]);
+					let nodeTo = getItemById(nodes, node.wires[a]);
 
-					var link = newLink();
+					let link = newLink();
 					link.id = "" + node.id + nodeTo.id;
 					link.nodes = [node, nodeTo];
 					links.push(link);
