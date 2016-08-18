@@ -46,6 +46,7 @@ function initComponent() {
             self.nodes.length = 0;
             self.links.length = 0;
             self.counterNodesInit = 0;
+            coreService.param('scale', 1);
 		}
 	}
 
@@ -76,15 +77,20 @@ function initComponent() {
             }
         );
         scope.$watch('nodesData.length', function(newValue, oldValue) {
+        	if (newValue === 0) {
+        		console.log('clear');
+            	self.clearScene();
+            }
             if (!newValue)
                 self.clearScene();
-
             else if (oldValue > newValue) {
                 self.counterNodesInit = newValue;
             }
             else if (oldValue === 0) {
-                self.nodes = scope.nodesData;
+            	self.clearScene();
+            	console.log('clear');
             }
+            console.log(self.scale, newValue);
         });
     }
 
@@ -108,8 +114,8 @@ function initComponent() {
         $scope.$on('nodeInit', function (event, data) {
 			self.counterNodesInit ++;
 
-			if (self.counterNodesInit === self.nodes.length) {
-				self.links = parseNodesForLinks(self.nodes);
+			if (self.counterNodesInit === $scope.nodesData.length) {
+				self.links = parseNodesForLinks($scope.nodesData);
 			}
 		});
 
@@ -125,7 +131,7 @@ function initComponent() {
 				if (correctPos.x > 0 && correctPos.y > 0) {
 					$scope.$apply( function() {
 						var node = {
-							id: self.nodes.length + 1,
+							id: scope.nodesData.length + 1,
 							name : data.data.name,
 							content : data.data.content,
 							category : data.data.category,
@@ -141,8 +147,9 @@ function initComponent() {
 
 		$scope.$on('nodeMouseDown', function (event, data) {
 //		    $element[0].parentNode.focus();
-			editedNode = getItemById(self.nodes, data.id);
+			editedNode = getItemById($scope.nodesData, data.id);
 			self.mouseMode = state.MOVING;
+			console.log(data.id);
 
 			prevMousePos = {x: editedNode.pos.x * self.scale + data.pos.x, y: editedNode.pos.y * self.scale + data.pos.y};
 		});
@@ -156,7 +163,7 @@ function initComponent() {
 		});
 
 		$scope.$on('portOutMouseDown', function (event, data) {
-			var node = getItemById(self.nodes, data.id);
+			var node = getItemById($scope.nodesData, data.id);
 			self.mouseMode = state.JOINING;
 			self.activelink.nodes.length = 0;
 			self.activelink.nodes.push(node);
@@ -171,8 +178,8 @@ function initComponent() {
 
 		$scope.$on('portInMouseUp', function (event, data) {
 			if (self.mouseMode === state.JOINING) {
-				var nodeFrom = getItemById(self.nodes, self.activelink.nodes[0].id);
-				var nodeTo = getItemById(self.nodes, data.id);
+				var nodeFrom = getItemById($scope.nodesData, self.activelink.nodes[0].id);
+				var nodeTo = getItemById($scope.nodesData, data.id);
 
 				var link = newLink();
 				link.id = "" + nodeFrom.id + nodeTo.id;
@@ -210,7 +217,7 @@ function initComponent() {
 //		    $element[0].parentNode.focus();
 			if (!self.isItemClicked) {
 				$scope.$apply( function() {
-					selectItems (self.nodes, false);
+					selectItems ($scope.nodesData, false);
 					selectItems (self.links, false);
 				});
 			}
@@ -220,6 +227,7 @@ function initComponent() {
 		$element.on('mousemove', function (event) {
 
 			if (self.mouseMode === state.MOVING && event.buttons === 1) {
+
 
 				var curMousePos = getOffsetPos($element, event);
 
@@ -234,6 +242,7 @@ function initComponent() {
 				$scope.$apply( function() {
 					editedNode.pos.x = newNodePos.x;
 					editedNode.pos.y = newNodePos.y;
+					console.log(editedNode.pos);
 				});
 				prevMousePos = curMousePos;
 			} else if (self.mouseMode === state.JOINING  && event.buttons === 1) {
@@ -273,7 +282,7 @@ function initComponent() {
 		parentNode.on('keydown', function (event) {
 			if (event.keyCode === 46) {
 				$scope.$apply( function() {
-					removeSelectedItems(self.nodes, self.links);
+					removeSelectedItems($scope.nodesData, self.links);
 				});
 			}
 		});

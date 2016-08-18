@@ -63,8 +63,12 @@ function ElementCtrl($scope, $element, $rootScope) {
 }
 
 function PaletteController($scope, networkLayerService) {
-    
-	$scope.categories = networkLayerService.getCategories();
+
+    $scope.categories = networkLayerService.getCategories();
+    for (let a = 0; a < $scope.categories.length ; a++) {
+    	$scope.categories.state = false;
+    }
+
 	$scope.types = networkLayerService.getLayers();
     
     
@@ -77,6 +81,11 @@ function PaletteController($scope, networkLayerService) {
 
 	this.isHide = function(category_name) {
 	    return categoryState[category_name] ? false : true;
+	}
+
+	this.toggleOpen = function (section) {
+	console.log(section);
+		menu.toggleSelectSection(section);
 	}
 }
 
