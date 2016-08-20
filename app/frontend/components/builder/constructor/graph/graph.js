@@ -17,7 +17,7 @@ function initComponent() {
         DRAGGING: 3,
     }
 
-	function GraphController($scope, $rootScope, $window, $element, networkDataService, coreService) {
+	function GraphController($scope, $rootScope, $window, $element, networkDataService, networkLayerService, coreService) {
 		var self = this;
 
 
@@ -29,7 +29,7 @@ function initComponent() {
                 nodes: []
             };
             svgWatcher.bind(self)($scope, coreService);
-            svgHandler.bind(self)($scope, $rootScope, $window, $element, networkDataService);
+            svgHandler.bind(self)($scope, $rootScope, $window, $element, networkDataService, networkLayerService);
 		};
 	}
 
@@ -59,7 +59,7 @@ function initComponent() {
         }, true);
     }
 
-	function svgHandler($scope, $rootScope,$window, $element, networkDataService) {
+	function svgHandler($scope, $rootScope,$window, $element, networkDataService, networkLayerService) {
 		var self = this;
 
 		var counterNodesInit = 0;
@@ -97,7 +97,7 @@ function initComponent() {
 			if (self.mouseMode === state.DRAGGING && positionDrag) {
 				var pos = convertCoordinateFromClienToSvg($element, parentNode, positionDrag);
 				positionDrag = false;
-				var correctPos = { x: (pos.x - data.offset.x) / self.scale, y: (pos.y - data.offset.y) / self.scale}
+				var correctPos = { x: (pos.x - data.offset.x) / self.scale, y: (pos.y - data.offset.y) / self.scale};
 				if (correctPos.x > 0 && correctPos.y > 0) {
 					$scope.$apply( function() {
 						var node = {
@@ -107,10 +107,9 @@ function initComponent() {
 							category : data.data.category,
 							pos: correctPos,
 							selected: false,
-							template: data.data.template
+							template: data.data.template,
+							params: data.data.params
 						};
-
-
                     	self.nodes.push(node);
 						networkDataService.setChangesSaved(false);
                     	networkDataService.pubNetworkUpdateEvent();
