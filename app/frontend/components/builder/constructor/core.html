@@ -8,7 +8,6 @@
             <md-button ng-click="$ctrl.zoomOut($event)" class="md-warn md-raised md-hue-2">-</md-button>
             <md-button ng-click="$ctrl.zoomIn($event)" class="md-warn md-raised md-hue-2">+</md-button>
         </div>
-        <svg-graph nodes_data="$ctrl.nodes" svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}" svg-color="#fff" pointer-events="all" focusable="false"></svg-graph>
-    <svg-graph nodes_data="$ctrl.nodes" svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}" svg-color="#fff" pointer-events="all" focusable="false"></svg-graph>
+        <svg-graph control-item="$ctrl.svgControl" svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}" svg-color="#fff" pointer-events="all" focusable="false"></svg-graph>
     </div>
 </div>

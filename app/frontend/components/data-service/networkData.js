@@ -3,9 +3,13 @@ angular.module('networkDataService', [])
 
 
 function NetworkDataService(networkDataLoaderService, $rootScope) {
+
+    var self = this;
     const networkEvent = {
         UPDATE: 'network:update',
-        CLEAR: 'network:clear'
+        CLEAR: 'network:clear',
+        ADD_LAYER: 'network:add',
+        REMOVE_LAYER: 'network:remove'
     };
 
     this.pubNetworkUpdateEvent = function() {
@@ -22,6 +26,14 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
 
     this.subClearNetworkEvent = function (callback) {
         $rootScope.$on(networkEvent.CLEAR, callback);
+    };
+
+    this.pubNetworkAddLayerEvent = function(layer) {
+        $rootScope.$emit(networkEvent.ADD_LAYER, layer);
+    };
+
+    this.subNetworkAddLayerEvent = function(callback) {
+        $rootScope.$on(networkEvent.ADD_LAYER, callback);
     };
 
     var isChangesSaved = false;
@@ -45,6 +57,11 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
     };
 
     this.loadNetwork = function(name) {
+        network = {
+            name: '',
+            description: '',
+            layers: []
+        };
         this.pubClearNetworkEvent();
         var future = networkDataLoaderService.loadNetworkByName(name);
         future.then(function mySucces(response) {
@@ -56,6 +73,7 @@ function NetworkDataService(networkDataLoaderService, $rootScope) {
             response.data.layers.forEach(function (layer) {
                 network.layers.push(layer)
             });
+            self.pubNetworkUpdateEvent();
         }, function myError(response) {});
     };
 

@@ -32,92 +32,13 @@ function CoreService() {
 
 function ConstructorController($mdDialog, $scope, $rootScope, networkDataService, coreService, appConfig) {
     var self = this;
-    self.nodes = [
-    {
-      "id": 0,
-      "name": "data",
-      "content": "data",
-      "category": "input",
-      "pos": {
-        "x": 50,
-        "y": 200
-      },
-      "wires": [
-      ],
-      "params": {
-        "datasetType": "",
-        "datasetId": ""
-      },
-      "template": "frontend/components/layers/data/node-test-2.svg"
-    },
-    {
-      "id": 1,
-      "name": "convol",
-      "content": "convolution",
-      "category": "layer",
-      "pos": {
-        "x": 300,
-        "y": 100
-      },
-      "wires": [
-        0
-      ],
-      "params": {
-        "filtersCount": "",
-        "filterWidth": "",
-        "filterHeight": "",
-        "activationFunction": "",
-        "subsamplingType": "",
-        "subsamplingSize": ""
-      },
-      "template": "frontend/components/layers/convol/node-test-2.svg"
-    },
-    {
-      "id": 2,
-      "name": "dense",
-      "content": "dense",
-      "category": "layer",
-      "pos": {
-        "x": 500,
-        "y": 300
-      },
-      "wires": [
-        1
-      ],
-      "params": {
-        "activationFunction": "",
-        "neuronsCount": ""
-      },
-      "template": "frontend/components/layers/dense/node-test-4.svg"
-    },
-    {
-      "id": 3,
-      "name": "solver",
-      "content": "solver",
-      "category": "output",
-      "pos": {
-        "x": 750,
-        "y": 200
-      },
-      "wires": [
-        2
-      ],
-      "params": {
-        "lossFunction": "",
-        "epochsCount": "",
-        "snapshotInterval": "",
-        "validationInterval": "",
-        "batchSize": "",
-        "learningRate": "",
-        "optimizer": ""
-      },
-      "template": "frontend/components/layers/solver/node-test-4.svg"
-    }
-  ];/*networkDataService.getLayers();*/
+    self.svgWidth = appConfig.svgDefinitions.areaWidth;
+    self.svgHeight = appConfig.svgDefinitions.areaHeight;
+    self.svgControl = {};
+    constructorListeners();
 
-
-	constructorWatcher.bind(self)();
 	this.$onInit = function() {
+
 		networkDataService.subClearNetworkEvent(function ($event, data) {
 			console.log('NetworkClear');
 		});
@@ -189,88 +110,6 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
         if (scale > appConfig.svgDefinitions.scaleMin) {
             coreService.param('scale', scale);
         }
-        self.nodes = self.nodes = [
-    {
-      "id": 0,
-      "name": "data",
-      "content": "data",
-      "category": "input",
-      "pos": {
-        "x": 50,
-        "y": 200
-      },
-      "wires": [
-      ],
-      "params": {
-        "datasetType": "",
-        "datasetId": ""
-      },
-      "template": "frontend/components/layers/data/node-test-2.svg"
-    },
-    {
-      "id": 1,
-      "name": "convol",
-      "content": "convolution",
-      "category": "layer",
-      "pos": {
-        "x": 300,
-        "y": 100
-      },
-      "wires": [
-        0
-      ],
-      "params": {
-        "filtersCount": "",
-        "filterWidth": "",
-        "filterHeight": "",
-        "activationFunction": "",
-        "subsamplingType": "",
-        "subsamplingSize": ""
-      },
-      "template": "frontend/components/layers/convol/node-test-2.svg"
-    },
-    {
-      "id": 2,
-      "name": "dense",
-      "content": "dense",
-      "category": "layer",
-      "pos": {
-        "x": 500,
-        "y": 300
-      },
-      "wires": [
-        1
-      ],
-      "params": {
-        "activationFunction": "",
-        "neuronsCount": ""
-      },
-      "template": "frontend/components/layers/dense/node-test-4.svg"
-    },
-    {
-      "id": 3,
-      "name": "solver",
-      "content": "solver",
-      "category": "output",
-      "pos": {
-        "x": 750,
-        "y": 200
-      },
-      "wires": [
-        2
-      ],
-      "params": {
-        "lossFunction": "",
-        "epochsCount": "",
-        "snapshotInterval": "",
-        "validationInterval": "",
-        "batchSize": "",
-        "learningRate": "",
-        "optimizer": ""
-      },
-      "template": "frontend/components/layers/solver/node-test-4.svg"
-    }
-  ];
     };
 
     this.zoomIn = function(event) {
@@ -279,101 +118,34 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
         if (scale < appConfig.svgDefinitions.scaleMax) {
             coreService.param('scale', scale);
         }
-
-        console.log(self.nodes);
-        self.nodes.length = 0;
     };
 
-    function constructorWatcher() {
-        var self = this;
-        $scope.$watch(function () {
-            return coreService.param('scale');
-        }, function(newValue, oldValue) {
-            self.svgWidth = newValue * appConfig.svgDefinitions.areaWidth;
-            self.svgHeight = newValue * appConfig.svgDefinitions.areaHeight;
-        }, true);
+    function constructorListeners() {
 
-        self.nodes = [
-    {
-      "id": 0,
-      "name": "data",
-      "content": "data",
-      "category": "input",
-      "pos": {
-        "x": 50,
-        "y": 200
-      },
-      "wires": [
-      ],
-      "params": {
-        "datasetType": "",
-        "datasetId": ""
-      },
-      "template": "frontend/components/layers/data/node-test-2.svg"
-    },
-    {
-      "id": 1,
-      "name": "convol",
-      "content": "convolution",
-      "category": "layer",
-      "pos": {
-        "x": 300,
-        "y": 100
-      },
-      "wires": [
-        0
-      ],
-      "params": {
-        "filtersCount": "",
-        "filterWidth": "",
-        "filterHeight": "",
-        "activationFunction": "",
-        "subsamplingType": "",
-        "subsamplingSize": ""
-      },
-      "template": "frontend/components/layers/convol/node-test-2.svg"
-    },
-    {
-      "id": 2,
-      "name": "dense",
-      "content": "dense",
-      "category": "layer",
-      "pos": {
-        "x": 500,
-        "y": 300
-      },
-      "wires": [
-        1
-      ],
-      "params": {
-        "activationFunction": "",
-        "neuronsCount": ""
-      },
-      "template": "frontend/components/layers/dense/node-test-4.svg"
-    },
-    {
-      "id": 3,
-      "name": "solver",
-      "content": "solver",
-      "category": "output",
-      "pos": {
-        "x": 750,
-        "y": 200
-      },
-      "wires": [
-        2
-      ],
-      "params": {
-        "lossFunction": "",
-        "epochsCount": "",
-        "snapshotInterval": "",
-        "validationInterval": "",
-        "batchSize": "",
-        "learningRate": "",
-        "optimizer": ""
-      },
-      "template": "frontend/components/layers/solver/node-test-4.svg"
-    }
-  ];
+        networkDataService.subNetworkUpdateEvent(updateNetwork);
+
+        $scope.$on('graph:addNode', function (event, data) {
+            networkDataService.pubNetworkAddLayerEvent(data)
+			event.stopPropagation();
+		});
+
+		$scope.$on('graph:removeNode', function (event, data) {
+            networkDataService.pubNetworkUpdateEvent(data)
+			event.stopPropagation();
+		});
+
+		$scope.$on('graph:addLink', function (event, data) {
+            networkDataService.pubNetworkUpdateEvent(data)
+			event.stopPropagation();
+		});
+
+		$scope.$on('graph:removeLink', function (event, data) {
+            networkDataService.pubNetworkUpdateEvent(data)
+			event.stopPropagation();
+		});
+
+		function updateNetwork() {
+            self.svgControl.setNodes(networkDataService.getLayers());
+		};
     }
 }

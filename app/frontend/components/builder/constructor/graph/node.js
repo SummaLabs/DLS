@@ -31,8 +31,35 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
             $scope.$watch('nodeData.template', function(newType) {
                 if (newType != "" && newType != undefined) {
                     $http.get(newType, {cache: $templateCache}).success(function(html) {
+
+                        var portInOffset = calculatePortOffset(html, patternDefinitions.markerPortIn);
+                        var portOutOffset = calculatePortOffset(html, patternDefinitions.markerPortOut);
+//                        console.log(portOffset);
+
                         element.html(html);
                         $compile(element.contents())($scope);
+
+                        function calculatePortOffset (nodeHtml ,portId) {
+
+                            var svg = document.createElement('div');
+                            svg.style.position = 'absolute';
+                            svg.style.top = '-1000px';
+
+//                            var doc = new DOMParser().parseFromString('<svg>' + nodeHtml + '</svg>', 'application/xml');
+//                            svg.appendChild(svg.ownerDocument.importNode(doc.documentElement, true));
+                            svg.innerHTML = '<svg>' + nodeHtml + '</svg>';
+                            document.body.appendChild(svg);
+
+                            var port = angular.element(svg.querySelector('#' + portId));
+                            var portRect = port[0].getBoundingClientRect();
+
+                            document.body.removeChild(svg);
+                            return {
+                                x: portRect.left + (portRect.right - portRect.left) / 2,
+                                y: portRect.top  + (portRect.bottom - portRect.top) / 2 + 1000
+                            };
+                        }
+
 
                         var idNode = $scope.nodeData.id;
                         $scope.isPort = false;
@@ -43,18 +70,11 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
                         var parentNode = angular.element(element[0].parentNode);
                         var baseRect = parentNode[0].getBoundingClientRect();
 
-                        var portIn = portInit(
-							parentNode,
-							angular.element(element[0].querySelector('#' + patternDefinitions.markerPortIn)),
-							$scope.nodeData,
-							patternDefinitions.markerPortIn
-						);
-                        var portOut = portInit(
-							parentNode,
-							angular.element(element[0].querySelector('#' + patternDefinitions.markerPortOut)),
-							$scope.nodeData,
-							patternDefinitions.markerPortOut
-						);
+                        var portIn = angular.element(element[0].querySelector('#' + patternDefinitions.markerPortIn));
+                        var portOut = angular.element(element[0].querySelector('#' + patternDefinitions.markerPortOut));
+
+                        portIn = portInit(portIn, portInOffset, patternDefinitions.markerPortIn, idNode);
+                        portOut = portInit(portOut, portOutOffset, patternDefinitions.markerPortOut, idNode);
 
                         if (!rectNode && !textNode) {
 							message('File "' + newType + '" isn\'t valid!', 'error');
@@ -63,7 +83,6 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
                         $scope.nodeData.portIn = portIn;
                         $scope.nodeData.portOut = portOut;
-
 
                         textNode.text($scope.nodeData.content);
                         textNode.addClass('node_label');
@@ -75,7 +94,6 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
                         $scope.$emit('nodeInit', {
 							id: idNode
 						});
-
                     });
                 }
             })
@@ -90,27 +108,27 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 		});
 	}
 
-	function portInit(base, port, data, marker) {
+	function portInit(port, offset, marker, nodeId) {
 
 		if (!port[0])
 			return null;
 
-		var id = marker + '_' + data.id;
+		var id = marker + '_' + nodeId;
 		port.attr('id', id);
 
-        var baseRect = base[0].getBoundingClientRect();
-        var portRect = port[0].getBoundingClientRect();
+//        var baseRect = base[0].getBoundingClientRect();
+//        var portRect = port[0].getBoundingClientRect();
 
-        var portCoord = getPortCoord(baseRect, portRect);
+//        console.dir(baseRect);
+//        console.dir(portRect);
+
+//        var portCoord = getPortCoord(baseRect, portRect);
 
 		return {
 			element: port,
 			data: {
 				id: id,
-				offset: {
-				    x: portCoord.x / scale - data.pos.x,
-				    y: portCoord.y / scale - data.pos.y
-				}
+				offset: offset
 			}
 		}
 	}

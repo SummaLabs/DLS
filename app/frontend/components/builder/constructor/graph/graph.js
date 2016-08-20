@@ -19,12 +19,12 @@ function initComponent() {
 
 	function GraphController($scope, $rootScope, $window, $element, networkDataService, coreService) {
 		var self = this;
-		self.counterNodesInit = 0;
 
+		self.counterNodesInit = 0;
+		self.nodes = [];
 
 		self.$onInit = function() {
             self.mouseMode = state.DEFAULT;
-            self.nodes = $scope.nodesData;
             self.links = [];
             self.activelink = {
                 nodes: []
@@ -33,9 +33,29 @@ function initComponent() {
             svgHandler.bind(self)($scope, $rootScope, $window, $element, networkDataService);
 		};
 
+		$scope.controlItem.events = {
+            ADD_NODE: 'graph:addNode',
+            REMOVE_NODE: 'graph:removeNode',
+            ADD_LINK: 'graph:addLink',
+            REMOVE_LINK: 'graph:removeLink'
+        }
+
+        $scope.controlItem.addNode = function(node) {
+            console.log('addNode');
+            self.nodes.push(node);
+        }
+
+        $scope.controlItem.setNodes = function(nodes) {
+            console.log('setNodes');
+            self.clearScene();
+
+            for (let a = 0; a < nodes.length; a ++) {
+                $scope.controlItem.addNode(nodes[a]);
+            }
+        }
+
 		self.addNode = function(node) {
-		    self.nodes.push(node);
-//		    networkDataService.notifyNetworkUpdate();
+		    $scope.controlItem.addNode(node);
 		}
 
 		self.addLink = function(link) {
@@ -43,6 +63,7 @@ function initComponent() {
 		}
 
 		self.clearScene = function() {
+		    console.log('clear');
             self.nodes.length = 0;
             self.links.length = 0;
             self.counterNodesInit = 0;
@@ -56,7 +77,7 @@ function initComponent() {
 		controllerAs: 'svg',
 		replace: true,
 		scope: {
-	        nodesData: '=',
+		    controlItem: '=',
 		    svgWidth: '@',
 		    svgHeight: '@',
 		    svgColor: '@'
@@ -74,24 +95,10 @@ function initComponent() {
                 return coreService.param('scale');
             }, function(newValue, oldValue) {
                 self.scale = newValue;
+                self.width = self.scale * scope.svgWidth;
+                self.height = self.scale * scope.svgWidth;
             }
         );
-        scope.$watch('nodesData.length', function(newValue, oldValue) {
-        	if (newValue === 0) {
-        		console.log('clear');
-            	self.clearScene();
-            }
-            if (!newValue)
-                self.clearScene();
-            else if (oldValue > newValue) {
-                self.counterNodesInit = newValue;
-            }
-            else if (oldValue === 0) {
-            	self.clearScene();
-            	console.log('clear');
-            }
-            console.log(self.scale, newValue);
-        });
     }
 
 	function svgHandler($scope, $rootScope,$window, $element, networkDataService) {
@@ -113,9 +120,11 @@ function initComponent() {
 
         $scope.$on('nodeInit', function (event, data) {
 			self.counterNodesInit ++;
+			console.log('nodeInit');
 
-			if (self.counterNodesInit === $scope.nodesData.length) {
-				self.links = parseNodesForLinks($scope.nodesData);
+			if (self.counterNodesInit === self.nodes.length) {
+			    console.log(self.counterNodesInit);
+				self.links = parseNodesForLinks(self.nodes);
 			}
 		});
 
@@ -131,7 +140,7 @@ function initComponent() {
 				if (correctPos.x > 0 && correctPos.y > 0) {
 					$scope.$apply( function() {
 						var node = {
-							id: scope.nodesData.length + 1,
+							id: self.nodes.length + 1,
 							name : data.data.name,
 							content : data.data.content,
 							category : data.data.category,
@@ -147,7 +156,7 @@ function initComponent() {
 
 		$scope.$on('nodeMouseDown', function (event, data) {
 //		    $element[0].parentNode.focus();
-			editedNode = getItemById($scope.nodesData, data.id);
+			editedNode = getItemById(self.nodes, data.id);
 			self.mouseMode = state.MOVING;
 			console.log(data.id);
 
@@ -163,7 +172,7 @@ function initComponent() {
 		});
 
 		$scope.$on('portOutMouseDown', function (event, data) {
-			var node = getItemById($scope.nodesData, data.id);
+			var node = getItemById(self.nodes, data.id);
 			self.mouseMode = state.JOINING;
 			self.activelink.nodes.length = 0;
 			self.activelink.nodes.push(node);
@@ -178,8 +187,8 @@ function initComponent() {
 
 		$scope.$on('portInMouseUp', function (event, data) {
 			if (self.mouseMode === state.JOINING) {
-				var nodeFrom = getItemById($scope.nodesData, self.activelink.nodes[0].id);
-				var nodeTo = getItemById($scope.nodesData, data.id);
+				var nodeFrom = getItemById(self.nodes, self.activelink.nodes[0].id);
+				var nodeTo = getItemById(self.nodes, data.id);
 
 				var link = newLink();
 				link.id = "" + nodeFrom.id + nodeTo.id;
@@ -193,7 +202,7 @@ function initComponent() {
 					}
 
 					$scope.$apply( function() {
-						addLink(link);
+						self.addLink(link);
 					});
 				}
                 removeActiveLink();
@@ -217,7 +226,7 @@ function initComponent() {
 //		    $element[0].parentNode.focus();
 			if (!self.isItemClicked) {
 				$scope.$apply( function() {
-					selectItems ($scope.nodesData, false);
+					selectItems (self.nodes, false);
 					selectItems (self.links, false);
 				});
 			}
@@ -242,7 +251,7 @@ function initComponent() {
 				$scope.$apply( function() {
 					editedNode.pos.x = newNodePos.x;
 					editedNode.pos.y = newNodePos.y;
-					console.log(editedNode.pos);
+//					console.log(editedNode.pos);
 				});
 				prevMousePos = curMousePos;
 			} else if (self.mouseMode === state.JOINING  && event.buttons === 1) {
@@ -282,7 +291,7 @@ function initComponent() {
 		parentNode.on('keydown', function (event) {
 			if (event.keyCode === 46) {
 				$scope.$apply( function() {
-					removeSelectedItems($scope.nodesData, self.links);
+					removeSelectedItems(self.nodes, self.links);
 				});
 			}
 		});
