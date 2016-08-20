@@ -1,8 +1,8 @@
 angular.module('networkDataService', [])
-    .service('networkDataService', ['networkDataLoaderService', '$rootScope', '$http', NetworkDataService]);
+    .service('networkDataService', ['$rootScope', '$http', NetworkDataService]);
 
 
-function NetworkDataService(networkDataLoaderService, $rootScope, $http) {
+function NetworkDataService($rootScope, $http) {
     var self = this;
 
     const networkEvent = {
@@ -52,7 +52,7 @@ function NetworkDataService(networkDataLoaderService, $rootScope, $http) {
     this.loadNetwork = function(name) {
         var self = this;
         this.pubClearNetworkEvent();
-        var future = networkDataLoaderService.loadNetworkByName(name);
+        var future = loadNetworkByName(name);
         future.then(function mySucces(response) {
             network.name = response.data.name;
             network.description = response.data.description;
@@ -84,7 +84,7 @@ function NetworkDataService(networkDataLoaderService, $rootScope, $http) {
         network.name = name;
         network.description = description;
         network.layers = filterNetwork(network.layers);
-        var result = networkDataLoaderService.saveNetwork(network, name);
+        var result = saveNetwork(network, name);
         result.then(function (response) {
                 isChangesSaved = true;
                 self.pubNetworkUpdateEvent();
@@ -121,4 +121,20 @@ function NetworkDataService(networkDataLoaderService, $rootScope, $http) {
             }
         }
     };
+
+    function loadNetworkByName(name) {
+        return $http({
+            method: "GET",
+            url: "/network/load/" + name
+        })
+    }
+
+    function saveNetwork(network) {
+        return $http({
+            url: '/network/save',
+            method: 'POST',
+            data:network,
+            headers: {'Content-Type': 'application/json;charset=utf-8'}
+        })
+    }
 }

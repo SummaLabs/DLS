@@ -8,7 +8,7 @@
                 networkTemplates: '<',
                 savedNetworks: '<'
             },
-            controller: function ($mdDialog, $rootScope, networkDataService, networkDataLoaderService) {
+            controller: function ($mdDialog, $rootScope, networkDataService) {
                 this.$onInit = function () {
                     this.networkTemplates = [
                         { name: 'Network Architecture Template 1'},

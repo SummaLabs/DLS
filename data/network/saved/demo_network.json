@@ -2,399 +2,81 @@
   "layers": [
     {
       "category": "input", 
-      "wires": [], 
+      "wires": [
+        2
+      ], 
       "name": "data", 
       "pos": {
-        "y": 281.566650390625, 
-        "x": 346.5999755859375
-      }, 
-      "portIn": {
-        "data": {
-          "id": "in_0", 
-          "offset": {
-            "y": 44.02501678466797, 
-            "x": 18.108383178710938
-          }
-        }, 
-        "element": {
-          "0": {
-            "ng339": 164
-          }, 
-          "length": 1
-        }
+        "y": 294.2833251953125, 
+        "x": 48.29998779296875
       }, 
       "content": "data", 
       "params": {
-        "datasetType": "", 
-        "datasetId": ""
+        "datasetType": "Image", 
+        "datasetId": "load1"
       }, 
       "template": "frontend/components/layers/data/node-test-2.svg", 
-      "portOut": {
-        "data": {
-          "id": "out_0", 
-          "offset": {
-            "y": 44.02501678466797, 
-            "x": 158.3667221069336
-          }
-        }, 
-        "element": {
-          "0": {
-            "ng339": 165
-          }, 
-          "length": 1
-        }
-      }, 
-      "id": 0
-    }, 
-    {
-      "category": "layer", 
-      "wires": [
-        0
-      ], 
-      "name": "convol", 
-      "pos": {
-        "y": 45.2833251953125, 
-        "x": 465.29998779296875
-      }, 
-      "portIn": {
-        "data": {
-          "id": "in_1", 
-          "offset": {
-            "y": 44.02500915527344, 
-            "x": 18.108314514160156
-          }
-        }, 
-        "element": {
-          "0": {
-            "ng339": 179
-          }, 
-          "length": 1
-        }
-      }, 
-      "content": "convolution", 
-      "params": {
-        "subsamplingSize": "", 
-        "filterWidth": "", 
-        "subsamplingType": "", 
-        "filterHeight": "", 
-        "filtersCount": "", 
-        "activationFunction": ""
-      }, 
-      "template": "frontend/components/layers/convol/node-test-2.svg", 
-      "portOut": {
-        "data": {
-          "id": "out_1", 
-          "offset": {
-            "y": 44.02500915527344, 
-            "x": 158.3666534423828
-          }
-        }, 
-        "element": {
-          "0": {
-            "ng339": 180
-          }, 
-          "length": 1
-        }
-      }, 
       "id": 1
     }, 
     {
       "category": "layer", 
       "wires": [
-        1
-      ], 
-      "name": "dense", 
-      "pos": {
-        "y": 304.48333740234375, 
-        "x": 600.9833374023438
-      }, 
-      "portIn": {
-        "data": {
-          "id": "in_2", 
-          "offset": {
-            "y": 1.7916717529296875, 
-            "x": 85.50000762939453
-          }
-        }, 
-        "element": {
-          "0": {
-            "ng339": 176
-          }, 
-          "length": 1
-        }
-      }, 
-      "content": "dense", 
-      "params": {
-        "activationFunction": "", 
-        "neuronsCount": ""
-      }, 
-      "template": "frontend/components/layers/dense/node-test-4.svg", 
-      "portOut": {
-        "data": {
-          "id": "out_2", 
-          "offset": {
-            "y": 94.29167175292969, 
-            "x": 85.86670684814453
-          }
-        }, 
-        "element": {
-          "0": {
-            "ng339": 177
-          }, 
-          "length": 1
-        }
-      }, 
-      "id": 2
-    }, 
-    {
-      "category": "output", 
-      "wires": [
-        2
-      ], 
-      "name": "solver", 
-      "pos": {
-        "y": 94.48333740234375, 
-        "x": 753.9833984375
-      }, 
-      "portIn": {
-        "data": {
-          "id": "in_3", 
-          "offset": {
-            "y": 1.791656494140625, 
-            "x": 85.49994659423828
-          }
-        }, 
-        "element": {
-          "0": {
-            "ng339": 173
-          }, 
-          "length": 1
-        }
-      }, 
-      "content": "solver", 
-      "params": {
-        "optimizer": "", 
-        "snapshotInterval": "", 
-        "epochsCount": "", 
-        "batchSize": "", 
-        "learningRate": "", 
-        "lossFunction": "", 
-        "validationInterval": ""
-      }, 
-      "template": "frontend/components/layers/solver/node-test-4.svg", 
-      "portOut": {
-        "data": {
-          "id": "out_3", 
-          "offset": {
-            "y": 94.29167175292969, 
-            "x": 85.86664581298828
-          }
-        }, 
-        "element": {
-          "0": {
-            "ng339": 174
-          }, 
-          "length": 1
-        }
-      }, 
-      "id": 3
-    }, 
-    {
-      "category": "input", 
-      "wires": [
-        0
-      ], 
-      "name": "data", 
-      "pos": {
-        "y": 63.56666564941406, 
-        "x": 202.29998779296875
-      }, 
-      "portIn": {
-        "data": {
-          "id": "in_5", 
-          "offset": {
-            "y": 44.025001525878906, 
-            "x": 18.108314514160156
-          }
-        }, 
-        "element": {
-          "0": {
-            "ng339": 167
-          }, 
-          "length": 1
-        }
-      }, 
-      "content": "data", 
-      "template": "frontend/components/layers/data/node-test-2.svg", 
-      "portOut": {
-        "data": {
-          "id": "out_5", 
-          "offset": {
-            "y": 44.025001525878906, 
-            "x": 158.3666534423828
-          }
-        }, 
-        "element": {
-          "0": {
-            "ng339": 168
-          }, 
-          "length": 1
-        }
-      }, 
-      "id": 5
-    }, 
-    {
-      "category": "input", 
-      "wires": [
-        5
-      ], 
-      "name": "data", 
-      "pos": {
-        "y": 261, 
-        "x": 53
-      }, 
-      "portIn": {
-        "data": {
-          "id": "in_6", 
-          "offset": {
-            "y": 44.024986267089844, 
-            "x": 18.108322143554688
-          }
-        }, 
-        "element": {
-          "0": {
-            "ng339": 170
-          }, 
-          "length": 1
-        }
-      }, 
-      "content": "data", 
-      "template": "frontend/components/layers/data/node-test-2.svg", 
-      "portOut": {
-        "data": {
-          "id": "out_6", 
-          "offset": {
-            "y": 44.024986267089844, 
-            "x": 158.3666534423828
-          }
-        }, 
-        "element": {
-          "0": {
-            "ng339": 171
-          }, 
-          "length": 1
-        }
-      }, 
-      "id": 6
-    }
-  ], 
-  "network": [
-    {
-      "category": "input", 
-      "wires": [], 
-      "name": "data", 
-      "pos": {
-        "y": 281.566650390625, 
-        "x": 346.5999755859375
-      }, 
-      "content": "data", 
-      "params": {
-        "datasetType": "", 
-        "datasetId": ""
-      }, 
-      "template": "frontend/components/layers/data/node-test-2.svg", 
-      "id": 0
-    }, 
-    {
-      "category": "layer", 
-      "wires": [
-        0
+        3
       ], 
       "name": "convol", 
       "pos": {
-        "y": 45.2833251953125, 
-        "x": 465.29998779296875
+        "y": 143.2833251953125, 
+        "x": 310.29998779296875
       }, 
       "content": "convolution", 
       "params": {
-        "subsamplingSize": "", 
-        "filterWidth": "", 
-        "subsamplingType": "", 
-        "filterHeight": "", 
-        "filtersCount": "", 
-        "activationFunction": ""
+        "subsamplingSize": 32, 
+        "filterWidth": 32, 
+        "subsamplingType": "MaxPooling", 
+        "filterHeight": 32, 
+        "filtersCount": 32, 
+        "activationFunction": "ReLU"
       }, 
       "template": "frontend/components/layers/convol/node-test-2.svg", 
-      "id": 1
+      "id": 2
     }, 
     {
       "category": "layer", 
       "wires": [
-        1
+        4
       ], 
       "name": "dense", 
       "pos": {
-        "y": 304.48333740234375, 
-        "x": 600.9833374023438
+        "y": 306.48333740234375, 
+        "x": 595.9833374023438
       }, 
       "content": "dense", 
       "params": {
-        "activationFunction": "", 
-        "neuronsCount": ""
+        "activationFunction": "ReLU", 
+        "neuronsCount": 32
       }, 
       "template": "frontend/components/layers/dense/node-test-4.svg", 
-      "id": 2
-    }, 
-    {
-      "category": "output", 
-      "wires": [
-        2
-      ], 
-      "name": "solver", 
-      "pos": {
-        "y": 94.48333740234375, 
-        "x": 753.9833984375
-      }, 
-      "content": "solver", 
-      "params": {
-        "optimizer": "", 
-        "snapshotInterval": "", 
-        "epochsCount": "", 
-        "batchSize": "", 
-        "learningRate": "", 
-        "lossFunction": "", 
-        "validationInterval": ""
-      }, 
-      "template": "frontend/components/layers/solver/node-test-4.svg", 
       "id": 3
     }, 
     {
-      "category": "input", 
-      "wires": [
-        0
-      ], 
-      "name": "data", 
+      "category": "output", 
+      "name": "solver", 
       "pos": {
-        "y": 63.56666564941406, 
-        "x": 202.29998779296875
+        "y": 156.48333740234375, 
+        "x": 894.9833984375
       }, 
-      "content": "data", 
-      "template": "frontend/components/layers/data/node-test-2.svg", 
-      "id": 5
-    }, 
-    {
-      "category": "input", 
-      "wires": [
-        5
-      ], 
-      "name": "data", 
-      "pos": {
-        "y": 261, 
-        "x": 53
+      "content": "solver", 
+      "params": {
+        "optimizer": "SGD", 
+        "snapshotInterval": 32, 
+        "epochsCount": 32, 
+        "batchSize": 32, 
+        "learningRate": 32, 
+        "lossFunction": "CategoricalCrossEntropy", 
+        "validationInterval": ""
       }, 
-      "content": "data", 
-      "template": "frontend/components/layers/data/node-test-2.svg", 
-      "id": 6
+      "template": "frontend/components/layers/solver/node-test-4.svg", 
+      "id": 4
     }
   ], 
   "name": "demo_network", 
