@@ -1,31 +1,29 @@
-<form layout-margin ng-submit="onSubmit()">
-    <div layout="column">
-        <img src="frontend/assets/img/layers/data-input.png" layout-margin></img>
-        <md-divider></md-divider>
-        <md-input-container>
-            <label>Data Set Type</label>
-            <md-select ng-model="dataset_type" required>
-                <md-option ng-repeat="option in dataset_types" ng-value="option.value">
-                    {{option.text}}
-                </md-option>
-            </md-select>
-        </md-input-container>
-        <md-input-container>
-            <label>Select Data Set</label>
-            <md-select ng-model="dataset_id" required>
-                <md-option ng-repeat="option in dataset_ids" ng-value="option.value">
-                    {{option.text}}
-                </md-option>
-            </md-select>
-        </md-input-container>
-        <md-input-container>
-            <label>Data Set Id</label>
-            <input disabled type="text" value="{{name}}">
-        </md-input-container>
-        <md-input-container>
-            <label>Data Set Shape</label>
-            <input disabled ng-model="shape" type="text" value="Load shape">
-        </md-input-container>
+<form ng-submit="onSubmit()">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Edit Data Layer</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <div layout-margin>
+        <div layout="column">
+            <md-input-container>
+                <label>Data Set Type</label>
+                <md-select ng-model="dataset_type" required>
+                    <md-option ng-repeat="option in dataset_types" ng-value="option.value" ng-selected="$first">
+                        {{option.text}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container>
+                <label>Select Data Set</label>
+                <md-select ng-model="dataset_id" required>
+                    <md-option ng-repeat="option in dataset_ids" ng-value="option.value" ng-selected="$first">
+                        {{option.text}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+        <md-button type="submit" class="md-warn md-raised md-hue-2">Submit</md-button>
     </div>
-    <input type="submit" id="submit" value="Submit"/>
 </form>

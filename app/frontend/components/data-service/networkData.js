@@ -113,14 +113,9 @@ function NetworkDataService(networkDataLoaderService, $rootScope, $http) {
         return filteredNetwork;
     }
 
-    this.addLayerToNetwork = function(layer) {
-        network.network.push(layer);
-        this.notifyNetworkUpdate();
-    };
-
     this.getLayerById = function(id) {
-        for (var i = 0, len = network.length; i < len; i++) {
-            var layer = network[i];
+        for (var i = 0, len = network.layers.length; i < len; i++) {
+            var layer = network.layers[i];
             if(layer.id == id) {
                 return layer;
             }

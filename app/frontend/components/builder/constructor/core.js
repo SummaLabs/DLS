@@ -62,7 +62,7 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 
 			function buildTemplate(layerId, layerType) {
 				var template =
-					'<md-dialog>' +
+					'<md-dialog flex="25" ng-cloak>' +
 					'  <md-dialog-content>'+
 					'    <layer-editor layer-id="' + layerId + '" layer-type="' + layerType + '" do-on-submit="closeDialog()"></layer-editor>' +
 					'  </md-dialog-content>' +

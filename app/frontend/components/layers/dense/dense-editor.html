@@ -1,22 +1,28 @@
-<form layout-margin ng-submit="onSubmit()">
-    <div layout="column">
-        <img src="frontend/assets/img/layers/dense.png" layout-margin></img>
-        <md-divider></md-divider>
-        <md-input-container>
-            <label>Neurons Count</label>
-            <input ng-model="neurons_count" type="number" min="1" required>
-        </md-input-container>
-        <md-input-container>
-            <label>Acivation Function</label>
-            <md-select ng-model="activation_func" required>
-                <md-option ng-repeat="option in activation_funcs" ng-value="option.value">
-                    {{option.text}}
-                </md-option>
-            </md-select>
-        </md-input-container>
-        <md-checkbox ng-model="$ctrl.isTrainable">
-            Trainable
-        </md-checkbox>
+<form ng-submit="onSubmit()">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Edit Dense Layer</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <div layout-margin>
+        <div layout="column">
+            <md-input-container>
+                <label>Neurons Count</label>
+                <input ng-model="neurons_count" type="number" min="1" required>
+            </md-input-container>
+            <md-input-container>
+                <label>Acivation Function</label>
+                <md-select ng-model="activation_func" required>
+                    <md-option ng-repeat="option in activation_funcs" ng-value="option.value" ng-selected="$first">
+                        {{option.text}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+            <md-checkbox ng-model="$ctrl.isTrainable">
+                Trainable
+            </md-checkbox>
+        </div>
+        <md-button type="submit" class="md-warn md-raised md-hue-2">Submit</md-button>
     </div>
-    <input type="submit" id="submit" value="Submit"/>
 </form>
