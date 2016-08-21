@@ -9,39 +9,40 @@
         <div layout="column">
             <md-input-container>
                 <label>Loss Function</label>
-                <md-select ng-model="loss_func" required>
-                    <md-option ng-repeat="option in loss_funcs" ng-value="option.value" ng-selected="$first">
+                <md-select ng-model="lossFunction" ng-model-options="{trackBy: '$value'}" required>
+                    <md-option ng-repeat="option in lossFunctionList" ng-value="option.value">
                         {{option.text}}
                     </md-option>
                 </md-select>
             </md-input-container>
             <md-input-container>
                 <label>Epochs Count</label>
-                <input ng-model="epochs_count" type="number" min="1" required>
+                <input ng-model="epochsCount" type="number" min="1" required>
             </md-input-container>
             <md-input-container>
                 <label>Snapshot Interval </label>
-                <input ng-model="snapshot_interval" type="number" min="1" required>
+                <input ng-model="snapshotInterval" type="number" min="1" required>
             </md-input-container>
             <md-input-container>
                 <label>Validation Interval </label>
-                <input ng-model="validation_interval" type="number" min="1" required>
+                <input ng-model="validationInterval" type="number" min="1" required>
             </md-input-container>
             <md-input-container>
                 <label>Batch Size </label>
-                <input ng-model="batch_size" type="number" min="1" required>
+                <input ng-model="batchSize" type="number" min="1" required>
             </md-input-container>
             <md-input-container>
                 <label>Learning Rate </label>
-                <input ng-model="learning_rate" type="number" step="0.0001" min="0.0001" required>
+                <input ng-model="learningRate" type="number" step="0.0001" min="0.0001" required>
             </md-input-container>
             <md-input-container>
-                <label>Acivation Function</label>
-                <md-select ng-model="optimizer" type="text" required>
-                    <md-option ng-repeat="option in optimizers" ng-value="option.value" ng-selected="$first">
+                <label>Optimizer</label>
+                <md-select ng-model="optimizer" ng-model-options="{trackBy: '$value'}" required>
+                    <md-option ng-repeat="option in optimizers" ng-value="option.value">
                         {{option.text}}
                     </md-option>
                 </md-select>
+            </md-input-container>
         </div>
         <md-button type="submit" class="md-warn md-raised md-hue-2">Submit</md-button>
     </div>

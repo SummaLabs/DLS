@@ -38,6 +38,15 @@ function NetworkLayerService($http) {
 
         return layers;
     };
+    
+    this.getLayerByType = function(type) {
+        for (var i = 0, len = layers.length; i < len; i++) {
+            var layer = layers[i];
+            if(layer.name == type) {
+                return layer;
+            }
+        }
+    };
 
     this.setLayers = function(layers) {
         this.layers = layers;

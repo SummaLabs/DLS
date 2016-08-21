@@ -9,16 +9,16 @@
         <div layout="column">
             <md-input-container>
                 <label>Data Set Type</label>
-                <md-select ng-model="dataset_type" required>
-                    <md-option ng-repeat="option in dataset_types" ng-value="option.value" ng-selected="$first">
+                <md-select ng-model="datasetType" ng-model-options="{trackBy: '$value'}" required>
+                    <md-option ng-repeat="option in datasetTypeList" ng-value="option.value">
                         {{option.text}}
                     </md-option>
                 </md-select>
             </md-input-container>
             <md-input-container>
                 <label>Select Data Set</label>
-                <md-select ng-model="dataset_id" required>
-                    <md-option ng-repeat="option in dataset_ids" ng-value="option.value" ng-selected="$first">
+                <md-select ng-model="datasetId" ng-model-options="{trackBy: '$value'}" required>
+                    <md-option ng-repeat="option in datasetIdList" ng-value="option.value">
                         {{option.text}}
                     </md-option>
                 </md-select>

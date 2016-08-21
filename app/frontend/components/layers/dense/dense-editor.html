@@ -9,17 +9,17 @@
         <div layout="column">
             <md-input-container>
                 <label>Neurons Count</label>
-                <input ng-model="neurons_count" type="number" min="1" required>
+                <input ng-model="neuronsCount" type="number" min="1" required>
             </md-input-container>
             <md-input-container>
                 <label>Acivation Function</label>
-                <md-select ng-model="activation_func" required>
-                    <md-option ng-repeat="option in activation_funcs" ng-value="option.value" ng-selected="$first">
+                <md-select ng-model="activationFunction" ng-model-options="{trackBy: '$value'}" required>
+                    <md-option ng-repeat="option in activationFunctionList" ng-value="option.value">
                         {{option.text}}
                     </md-option>
                 </md-select>
             </md-input-container>
-            <md-checkbox ng-model="$ctrl.isTrainable">
+            <md-checkbox ng-model="isTrainable">
                 Trainable
             </md-checkbox>
         </div>
