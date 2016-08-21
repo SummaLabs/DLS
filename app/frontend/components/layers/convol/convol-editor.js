@@ -11,11 +11,11 @@
                 },
                 templateUrl: "frontend/components/layers/convol/convol-editor.html",
                 controller: function ($scope, networkDataService) {
-                    $scope.act_func_selected = {id: "ReLU", text: "ReLU"};
+                    $scope.act_func_selected = {value: "ReLU", text: "ReLU"};
                     $scope.act_funcs = [
-                            {id: "Sigmoid", text: "Sigmoid"},
-                            {id: "Tanh", text: "Tanh"},
-                            {id: "ReLU", text: "ReLU"}
+                            {value: "ReLU", text: "ReLU"},
+                            {value: "Sigmoid", text: "Sigmoid"},
+                            {value: "Tanh", text: "Tanh"}
                         ];
 
                     $scope.subsample_type_selected = {value: "MaxPooling", text: "Max Pooling"};
@@ -27,7 +27,7 @@
                     $scope.onSubmit = function () {
                         var layer = networkDataService.getLayerById($scope.layerId);
                         editLayer(layer);
-                        networkDataService.notifyNetworkUpdate();
+                        networkDataService.pubNetworkUpdateEvent();
                         $scope.doOnSubmit();
                     };
                     

@@ -17,7 +17,15 @@ function initComponent() {
         DRAGGING: 3,
     }
 
-	function GraphController($scope, $rootScope, $window, $element, networkDataService, coreService) {
+    const events = {
+        ADD_NODE: 'graph:addNode',
+        REMOVE_NODE: 'graph:removeNode',
+        ADD_LINK: 'graph:addLink',
+        REMOVE_LINK: 'graph:removeLink',
+        REMOVE_ITEMS: 'graph:removeItems'
+    }
+
+	function GraphController($scope, $rootScope, $window, $element, networkDataService, networkLayerService, coreService) {
 		var self = this;
 
 		self.counterNodesInit = 0;
@@ -30,44 +38,48 @@ function initComponent() {
                 nodes: []
             };
             svgWatcher.bind(self)($scope, coreService);
-            svgHandler.bind(self)($scope, $rootScope, $window, $element, networkDataService);
+            svgHandler.bind(self)($scope, $rootScope, $window, $element, networkDataService, networkLayerService);
 		};
 
-		$scope.controlItem.events = {
-            ADD_NODE: 'graph:addNode',
-            REMOVE_NODE: 'graph:removeNode',
-            ADD_LINK: 'graph:addLink',
-            REMOVE_LINK: 'graph:removeLink'
-        }
-
         $scope.controlItem.addNode = function(node) {
-            console.log('addNode');
             self.nodes.push(node);
         }
 
         $scope.controlItem.setNodes = function(nodes) {
-            console.log('setNodes');
-            self.clearScene();
 
+            if (arraysEqual(nodes, self.nodes)) {
+                return false;
+            }
+            self.clearScene();
             for (let a = 0; a < nodes.length; a ++) {
                 $scope.controlItem.addNode(nodes[a]);
             }
+            return true;
+        }
+
+        $scope.controlItem.getNodes = function() {
+            return self.nodes;
         }
 
 		self.addNode = function(node) {
 		    $scope.controlItem.addNode(node);
+		    self.emitEvent(events.ADD_NODE, {});
 		}
 
 		self.addLink = function(link) {
 		    self.links.push(link);
+		    networkDataService.setChangesSaved(false);
+		    self.emitEvent(events.ADD_LINK, {});
 		}
 
 		self.clearScene = function() {
-		    console.log('clear');
             self.nodes.length = 0;
             self.links.length = 0;
             self.counterNodesInit = 0;
             coreService.param('scale', 1);
+		}
+		self.emitEvent = function(eventType, data) {
+            $scope.$emit(eventType, data);
 		}
 	}
 
@@ -101,7 +113,7 @@ function initComponent() {
         );
     }
 
-	function svgHandler($scope, $rootScope,$window, $element, networkDataService) {
+	function svgHandler($scope, $rootScope,$window, $element, networkDataService, networkLayerService) {
 		var self = this;
 
 		self.isItemClicked = false;
@@ -120,10 +132,8 @@ function initComponent() {
 
         $scope.$on('nodeInit', function (event, data) {
 			self.counterNodesInit ++;
-			console.log('nodeInit');
 
 			if (self.counterNodesInit === self.nodes.length) {
-			    console.log(self.counterNodesInit);
 				self.links = parseNodesForLinks(self.nodes);
 			}
 		});
@@ -136,7 +146,7 @@ function initComponent() {
 			if (self.mouseMode === state.DRAGGING && positionDrag) {
 				var pos = convertCoordinateFromClienToSvg($element, parentNode, positionDrag);
 				positionDrag = false;
-				var correctPos = { x: (pos.x - data.offset.x) / self.scale, y: (pos.y - data.offset.y) / self.scale}
+				var correctPos = { x: (pos.x - data.offset.x) / self.scale, y: (pos.y - data.offset.y) / self.scale};
 				if (correctPos.x > 0 && correctPos.y > 0) {
 					$scope.$apply( function() {
 						var node = {
@@ -146,7 +156,8 @@ function initComponent() {
 							category : data.data.category,
 							pos: correctPos,
 							selected: false,
-							template: data.data.template
+							template: data.data.template,
+							params: data.data.params
 						};
 						self.addNode(node);
 					});
@@ -155,11 +166,8 @@ function initComponent() {
 		});
 
 		$scope.$on('nodeMouseDown', function (event, data) {
-//		    $element[0].parentNode.focus();
 			editedNode = getItemById(self.nodes, data.id);
 			self.mouseMode = state.MOVING;
-			console.log(data.id);
-
 			prevMousePos = {x: editedNode.pos.x * self.scale + data.pos.x, y: editedNode.pos.y * self.scale + data.pos.y};
 		});
 
@@ -292,6 +300,7 @@ function initComponent() {
 			if (event.keyCode === 46) {
 				$scope.$apply( function() {
 					removeSelectedItems(self.nodes, self.links);
+//					networkDataService.pubNetworkUpdateEvent();
 				});
 			}
 		});
@@ -306,6 +315,52 @@ function initComponent() {
 				self.activelink.nodes.length = 0;
 			});
 		}
+
+		function removeSelectedItems(nodes, links) {
+            var delNodes = [];
+            var delLinks = [];
+
+            for (var i = 0; i < nodes.length; ++i) {
+                if (nodes[i].selected) {
+                    delNodes.push(i);
+                }
+            }
+
+            for (var i = 0; i < links.length; ++i) {
+                if (links[i].selected) {
+                    delLinks.push(i);
+                }
+                else {
+                    for (var a = 0; a < delNodes.length; ++a) {
+                        var nodeId = nodes[delNodes[a]].id;
+                        if (links[i].nodes[0].id === nodeId || links[i].nodes[1].id === nodeId) {
+                            delLinks.push(i);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            var counterDel = 0;
+            for (var i = 0; i < delNodes.length; ++i) {
+                nodes.splice(delNodes[i] - counterDel, 1);
+                counterDel ++;
+            }
+
+            counterDel = 0;
+            for (var i = 0; i < delLinks.length; ++i) {
+                links.splice(delLinks[i] - counterDel, 1);
+                counterDel ++;
+            }
+
+            if (delNodes.length > 0 && delLinks.length > 0)
+                self.emitEvent(events.REMOVE_ITEMS, {});
+            else if (delNodes.length > 0)
+                self.emitEvent(events.REMOVE_NODE, {});
+            else if (delLinks.length > 0)
+                self.emitEvent(events.REMOVE_LINK, {});
+        }
+
 	}
 
 	function parseNodesForLinks(nodes) {
@@ -347,41 +402,6 @@ function initComponent() {
 		}
 	}
 
-	function removeSelectedItems(nodes, links) {
-		var delNodes = [];
-		var delLinks = [];
-		for (var i = 0; i < nodes.length; ++i) {
-			if (nodes[i].selected)
-				delNodes.push(i);
-		}
-
-		for (var i = 0; i < links.length; ++i) {
-			if (links[i].selected)
-				delLinks.push(i);
-			else {
-				for (var a = 0; a < delNodes.length; ++a) {
-					var nodeId = nodes[delNodes[a]].id;
-					if (links[i].nodes[0].id === nodeId || links[i].nodes[1].id === nodeId) {
-						delLinks.push(i);
-						break;
-					}
-				}
-			}
-		}
-
-		var counterDel = 0;
-		for (var i = 0; i < delNodes.length; ++i) {
-			nodes.splice(delNodes[i] - counterDel, 1);
-			counterDel ++;
-		}
-
-		counterDel = 0;
-		for (var i = 0; i < delLinks.length; ++i) {
-			links.splice(delLinks[i] - counterDel, 1);
-			counterDel ++;
-		}
-	}
-
 	function convertCoordinateFromClienToSvg($element, parentNode, clientCoord) {
 		var parentScrollPos = {
 			x: parentNode.scrollLeft ? parentNode.scrollLeft: 0,
@@ -416,5 +436,16 @@ function initComponent() {
 			}
 		}
 		return true;
+	}
+
+	function arraysEqual(a, b) {
+        if (a == null || b == null) return false;
+        if (a.length != b.length) return false;
+
+        for (var i = 0; i < a.length; ++i) {
+            if (a[i] !== b[i])
+                return false;
+        }
+        return true;
 	}
 }

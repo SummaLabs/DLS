@@ -12,7 +12,6 @@ angular.module('dlsApp', ['ngMaterial',
     'denseEditor',
     'solverEditor',
     'layerEditor',
-    'networkDataLoaderService',
     'networkDataService',
     'networkLayerService']);
 
