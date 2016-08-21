@@ -7,7 +7,9 @@ function NetworkDataService($rootScope, $http) {
 
     const networkEvent = {
         UPDATE: 'network:update',
-        CLEAR: 'network:clear'
+        CLEAR: 'network:clear',
+        ADD_LAYER: 'network:add',
+        REMOVE_LAYER: 'network:remove'
     };
 
     var isChangesSaved = false;
@@ -37,6 +39,14 @@ function NetworkDataService($rootScope, $http) {
         $rootScope.$on(networkEvent.CLEAR, callback);
     };
 
+    this.pubNetworkAddLayerEvent = function(layer) {
+        $rootScope.$emit(networkEvent.ADD_LAYER, layer);
+    };
+
+    this.subNetworkAddLayerEvent = function(callback) {
+        $rootScope.$on(networkEvent.ADD_LAYER, callback);
+    };
+
     this.isChangesSaved = function () {
         return network.layers.length == 0 || isChangesSaved;
     };
@@ -50,7 +60,12 @@ function NetworkDataService($rootScope, $http) {
     };
 
     this.loadNetwork = function(name) {
-        var self = this;
+        network = {
+            name: '',
+            description: '',
+            layers: []
+        };
+
         this.pubClearNetworkEvent();
         var future = loadNetworkByName(name);
         future.then(function mySucces(response) {
@@ -61,6 +76,10 @@ function NetworkDataService($rootScope, $http) {
             });
             self.pubNetworkUpdateEvent();
         }, function myError(response) {});
+    };
+
+    this.setLayers = function(layers) {
+        network.layers = layers;
     };
 
     this.getLayers = function() {

@@ -1,19 +1,22 @@
-<md-content>
-    <md-list>
-        <md-list-item ng-repeat="category in categories">
-            <div id="palette-header-{{ category.name }}">
-                <span ng-click="palette.categoryClick(category.name)" class="unselectable">{{ category.name }}</span>
+<md-sidenav class="site-sidenav md-sidenav-left md-whiteframe-z2"
+              md-component-id="left" hide-print
+              md-is-locked-open="$mdMedia('gt-sm')">
 
-                <md-list>
-                    <md-list-item ng-hide="palette.isHide(category.name)" class="palette_node" draggable ng-repeat="type in types track by $index" ng-if="type.category === category.name" palette-data="type" >
-                        <div class="palette_label unselectable">{{ type.content }}</div>
-                        <div class="palette_icon_container">
-                            <div class="palette_icon" style="background-image: url({{type.icon}})"></div>
-                        </div>
-                        <div class="palette_port palette_port_output" style="top: 9px;"></div>
-                    </md-list-item>
-                </md-list>
-            </div>
-        </md-list-item>
-    </md-list>
-</md-content>
+    <header class="nav-header">
+        <h2>Angular Material</h2>
+    </header>
+
+    <md-content flex role="navigation">
+      <ul class="docs-menu">
+        <li ng-repeat="category in categories">
+          <menu-toggle section-state="category.state" section="category"></menu-toggle>
+
+          <ul ng-show="category.state" id="{{category.name}}" class="menu-toggle-list">
+            <li ng-repeat="type in types track by $index" ng-if="type.category === category.name" draggable palette-data="type">
+              <menu-link section="type"></menu-link>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </md-content>
+  </md-sidenav>

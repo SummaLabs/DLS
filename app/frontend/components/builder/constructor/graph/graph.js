@@ -17,13 +17,22 @@ function initComponent() {
         DRAGGING: 3,
     }
 
+    const events = {
+        ADD_NODE: 'graph:addNode',
+        REMOVE_NODE: 'graph:removeNode',
+        ADD_LINK: 'graph:addLink',
+        REMOVE_LINK: 'graph:removeLink',
+        REMOVE_ITEMS: 'graph:removeItems'
+    }
+
 	function GraphController($scope, $rootScope, $window, $element, networkDataService, networkLayerService, coreService) {
 		var self = this;
 
+		self.counterNodesInit = 0;
+		self.nodes = [];
 
 		self.$onInit = function() {
             self.mouseMode = state.DEFAULT;
-            self.nodes = networkDataService.getLayers();
             self.links = [];
             self.activelink = {
                 nodes: []
@@ -31,6 +40,47 @@ function initComponent() {
             svgWatcher.bind(self)($scope, coreService);
             svgHandler.bind(self)($scope, $rootScope, $window, $element, networkDataService, networkLayerService);
 		};
+
+        $scope.controlItem.addNode = function(node) {
+            self.nodes.push(node);
+        }
+
+        $scope.controlItem.setNodes = function(nodes) {
+
+            if (arraysEqual(nodes, self.nodes)) {
+                return false;
+            }
+            self.clearScene();
+            for (let a = 0; a < nodes.length; a ++) {
+                $scope.controlItem.addNode(nodes[a]);
+            }
+            return true;
+        }
+
+        $scope.controlItem.getNodes = function() {
+            return self.nodes;
+        }
+
+		self.addNode = function(node) {
+		    $scope.controlItem.addNode(node);
+		    self.emitEvent(events.ADD_NODE, {});
+		}
+
+		self.addLink = function(link) {
+		    self.links.push(link);
+		    networkDataService.setChangesSaved(false);
+		    self.emitEvent(events.ADD_LINK, {});
+		}
+
+		self.clearScene = function() {
+            self.nodes.length = 0;
+            self.links.length = 0;
+            self.counterNodesInit = 0;
+            coreService.param('scale', 1);
+		}
+		self.emitEvent = function(eventType, data) {
+            $scope.$emit(eventType, data);
+		}
 	}
 
 	return {
@@ -39,9 +89,10 @@ function initComponent() {
 		controllerAs: 'svg',
 		replace: true,
 		scope: {
-		   svgWidth: '@',
-		   svgHeight: '@',
-		   svgColor: '@'
+		    controlItem: '=',
+		    svgWidth: '@',
+		    svgHeight: '@',
+		    svgColor: '@'
 		},
 		templateUrl: 'frontend/components/builder/constructor/graph/graph.html',
 
@@ -53,16 +104,17 @@ function initComponent() {
 	function svgWatcher(scope, coreService) {
 	    var self = this;
         scope.$watch(function () {
-            return coreService.param('scale');
-        }, function(newValue, oldValue) {
-            self.scale = newValue;
-        }, true);
+                return coreService.param('scale');
+            }, function(newValue, oldValue) {
+                self.scale = newValue;
+                self.width = self.scale * scope.svgWidth;
+                self.height = self.scale * scope.svgWidth;
+            }
+        );
     }
 
 	function svgHandler($scope, $rootScope,$window, $element, networkDataService, networkLayerService) {
 		var self = this;
-
-		var counterNodesInit = 0;
 
 		self.isItemClicked = false;
 
@@ -75,17 +127,14 @@ function initComponent() {
         // Custom events:
 		
 		networkDataService.subClearNetworkEvent(function ($event, data) {
-			self.nodes.length = 0;
-            self.links.length = 0;
-            counterNodesInit = 0;
+			self.clearScene();
 		});
 
         $scope.$on('nodeInit', function (event, data) {
-			counterNodesInit ++;
+			self.counterNodesInit ++;
 
-			if (counterNodesInit === self.nodes.length) {
+			if (self.counterNodesInit === self.nodes.length) {
 				self.links = parseNodesForLinks(self.nodes);
-                counterNodesInit = -9999;
 			}
 		});
 
@@ -110,19 +159,15 @@ function initComponent() {
 							template: data.data.template,
 							params: data.data.params
 						};
-                    	self.nodes.push(node);
-						networkDataService.setChangesSaved(false);
-                    	networkDataService.pubNetworkUpdateEvent();
+						self.addNode(node);
 					});
 				}
 			}
 		});
 
 		$scope.$on('nodeMouseDown', function (event, data) {
-//		    $element[0].parentNode.focus();
 			editedNode = getItemById(self.nodes, data.id);
 			self.mouseMode = state.MOVING;
-
 			prevMousePos = {x: editedNode.pos.x * self.scale + data.pos.x, y: editedNode.pos.y * self.scale + data.pos.y};
 		});
 
@@ -165,7 +210,7 @@ function initComponent() {
 					}
 
 					$scope.$apply( function() {
-						self.links.push(link);
+						self.addLink(link);
 					});
 				}
                 removeActiveLink();
@@ -200,6 +245,7 @@ function initComponent() {
 
 			if (self.mouseMode === state.MOVING && event.buttons === 1) {
 
+
 				var curMousePos = getOffsetPos($element, event);
 
 				var newNodePos = {
@@ -213,6 +259,7 @@ function initComponent() {
 				$scope.$apply( function() {
 					editedNode.pos.x = newNodePos.x;
 					editedNode.pos.y = newNodePos.y;
+//					console.log(editedNode.pos);
 				});
 				prevMousePos = curMousePos;
 			} else if (self.mouseMode === state.JOINING  && event.buttons === 1) {
@@ -253,15 +300,12 @@ function initComponent() {
 			if (event.keyCode === 46) {
 				$scope.$apply( function() {
 					removeSelectedItems(self.nodes, self.links);
-					networkDataService.pubNetworkUpdateEvent();
+//					networkDataService.pubNetworkUpdateEvent();
 				});
 			}
 		});
 
         // system events:
-
-
-
 		$element.on('focus', function (event) {
 
 		});
@@ -271,6 +315,52 @@ function initComponent() {
 				self.activelink.nodes.length = 0;
 			});
 		}
+
+		function removeSelectedItems(nodes, links) {
+            var delNodes = [];
+            var delLinks = [];
+
+            for (var i = 0; i < nodes.length; ++i) {
+                if (nodes[i].selected) {
+                    delNodes.push(i);
+                }
+            }
+
+            for (var i = 0; i < links.length; ++i) {
+                if (links[i].selected) {
+                    delLinks.push(i);
+                }
+                else {
+                    for (var a = 0; a < delNodes.length; ++a) {
+                        var nodeId = nodes[delNodes[a]].id;
+                        if (links[i].nodes[0].id === nodeId || links[i].nodes[1].id === nodeId) {
+                            delLinks.push(i);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            var counterDel = 0;
+            for (var i = 0; i < delNodes.length; ++i) {
+                nodes.splice(delNodes[i] - counterDel, 1);
+                counterDel ++;
+            }
+
+            counterDel = 0;
+            for (var i = 0; i < delLinks.length; ++i) {
+                links.splice(delLinks[i] - counterDel, 1);
+                counterDel ++;
+            }
+
+            if (delNodes.length > 0 && delLinks.length > 0)
+                self.emitEvent(events.REMOVE_ITEMS, {});
+            else if (delNodes.length > 0)
+                self.emitEvent(events.REMOVE_NODE, {});
+            else if (delLinks.length > 0)
+                self.emitEvent(events.REMOVE_LINK, {});
+        }
+
 	}
 
 	function parseNodesForLinks(nodes) {
@@ -278,9 +368,9 @@ function initComponent() {
 		nodes.forEach(function(node, i, array) {
 			if (node.wires  && node.wires.length > 0) {
 				for (var a = 0; a < node.wires.length; ++a) {
-					var nodeTo = getItemById(nodes, node.wires[a]);
+					let nodeTo = getItemById(nodes, node.wires[a]);
 
-					var link = newLink();
+					let link = newLink();
 					link.id = "" + node.id + nodeTo.id;
 					link.nodes = [node, nodeTo];
 					links.push(link);
@@ -309,41 +399,6 @@ function initComponent() {
 			for(var i = 0; i < array.length; ++i) {
 				array[i].selected = options;
 			}
-		}
-	}
-
-	function removeSelectedItems(nodes, links) {
-		var delNodes = [];
-		var delLinks = [];
-		for (var i = 0; i < nodes.length; ++i) {
-			if (nodes[i].selected)
-				delNodes.push(i);
-		}
-
-		for (var i = 0; i < links.length; ++i) {
-			if (links[i].selected)
-				delLinks.push(i);
-			else {
-				for (var a = 0; a < delNodes.length; ++a) {
-					var nodeId = nodes[delNodes[a]].id;
-					if (links[i].nodes[0].id === nodeId || links[i].nodes[1].id === nodeId) {
-						delLinks.push(i);
-						break;
-					}
-				}
-			}
-		}
-
-		var counterDel = 0;
-		for (var i = 0; i < delNodes.length; ++i) {
-			nodes.splice(delNodes[i] - counterDel, 1);
-			counterDel ++;
-		}
-
-		counterDel = 0;
-		for (var i = 0; i < delLinks.length; ++i) {
-			links.splice(delLinks[i] - counterDel, 1);
-			counterDel ++;
 		}
 	}
 
@@ -381,5 +436,16 @@ function initComponent() {
 			}
 		}
 		return true;
+	}
+
+	function arraysEqual(a, b) {
+        if (a == null || b == null) return false;
+        if (a.length != b.length) return false;
+
+        for (var i = 0; i < a.length; ++i) {
+            if (a[i] !== b[i])
+                return false;
+        }
+        return true;
 	}
 }

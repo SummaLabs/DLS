@@ -52,6 +52,7 @@ function link() {
 
 			scope.from.x += newValue - oldValue;
 			updatePos(element, scope.from, scope.to);
+//			console.log(scope.linkData.nodes[0].pos);
 		});
 
 		scope.$watch('linkData.nodes[0].pos.y', function(newValue, oldValue) {

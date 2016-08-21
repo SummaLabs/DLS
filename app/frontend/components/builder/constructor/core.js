@@ -32,10 +32,12 @@ function CoreService() {
 
 function ConstructorController($mdDialog, $scope, $rootScope, networkDataService, coreService, appConfig) {
     var self = this;
+    self.svgWidth = appConfig.svgDefinitions.areaWidth;
+    self.svgHeight = appConfig.svgDefinitions.areaHeight;
+    self.svgControl = {};
+    constructorListeners();
 
-	constructorWatcher.bind(self)();
 	this.$onInit = function() {
-
         $scope.networkName = networkDataService.getNetwork().name;
 
 		networkDataService.subNetworkUpdateEvent(function ($event, data) {
@@ -119,13 +121,47 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
         }
     };
 
-    function constructorWatcher() {
-        var self = this;
-        $scope.$watch(function () {
-            return coreService.param('scale');
-        }, function(newValue, oldValue) {
-            self.svgWidth = newValue * appConfig.svgDefinitions.areaWidth;
-            self.svgHeight = newValue * appConfig.svgDefinitions.areaHeight;
-        }, true);
+    function constructorListeners() {
+
+        networkDataService.subNetworkUpdateEvent(updateNetwork);
+
+        $scope.$on('graph:addNode', function (event, data) {
+            console.log('graph:addNode');
+            networkDataService.setLayers(self.svgControl.getNodes());
+            networkDataService.setChangesSaved(false);
+			event.stopPropagation();
+		});
+
+		$scope.$on('graph:removeNode', function (event, data) {
+		    console.log('graph:removeNode');
+		    networkDataService.setLayers(self.svgControl.getNodes());
+            networkDataService.setChangesSaved(false);
+			event.stopPropagation();
+		});
+
+		$scope.$on('graph:addLink', function (event, data) {
+		    console.log('graph:addLink');
+		    networkDataService.setLayers(self.svgControl.getNodes());
+		    networkDataService.setChangesSaved(false);
+			event.stopPropagation();
+		});
+
+		$scope.$on('graph:removeLink', function (event, data) {
+		    console.log('graph:removeLink');
+		    networkDataService.setLayers(self.svgControl.getNodes());
+		    networkDataService.setChangesSaved(false);
+			event.stopPropagation();
+		});
+
+		$scope.$on('graph:removeItems', function (event, data) {
+		    console.log('graph:removeItems');
+		    networkDataService.setLayers(self.svgControl.getNodes());
+		    networkDataService.setChangesSaved(false);
+			event.stopPropagation();
+		});
+
+		function updateNetwork() {
+            self.svgControl.setNodes(networkDataService.getLayers());
+		};
     }
 }
