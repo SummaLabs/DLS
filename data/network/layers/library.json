@@ -18,13 +18,13 @@
     "category": "layer",
     "selected": false,
     "params": {
-      "filtersCount": "64",
-      "filterWidth": "3",
-      "filterHeight": "3",
+      "filtersCount": 64,
+      "filterWidth": 3,
+      "filterHeight": 3,
       "activationFunction": "relu",
       "subsamplingType": "max_pooling",
-      "subsamplingSize": "2",
-      "isTrainable":"true"
+      "subsamplingSize": 2,
+      "isTrainable":true
     },
     "template": "frontend/components/layers/convol/node-test-2.svg"
   },
@@ -35,9 +35,9 @@
     "category": "layer",
     "selected": false,
     "params": {
-       "neuronsCount": "1024",
+       "neuronsCount": 1024,
       "activationFunction": "relu",
-      "isTrainable":"true"
+      "isTrainable":true
     },
     "template": "frontend/components/layers/dense/node-test-4.svg"
   },
@@ -49,11 +49,11 @@
     "selected": false,
     "params": {
       "lossFunction": "categorical_crossentropy",
-      "epochsCount": "2048",
-      "snapshotInterval": "100",
-      "validationInterval": "100",
-      "batchSize": "1024",
-      "learningRate": "0.01",
+      "epochsCount": 2048,
+      "snapshotInterval": 100,
+      "validationInterval": 100,
+      "batchSize": 1024,
+      "learningRate": 0.01,
       "optimizer": "SGD"
     },
     "template": "frontend/components/layers/solver/node-test-4.svg"

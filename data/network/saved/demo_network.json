@@ -35,9 +35,9 @@
       }, 
       "content": "dense", 
       "params": {
-        "isTrainable": "true", 
+        "isTrainable": true,
         "activationFunction": "relu", 
-        "neuronsCount": "1024"
+        "neuronsCount": 1024
       }, 
       "template": "frontend/components/layers/dense/node-test-4.svg", 
       "id": 2
@@ -70,12 +70,12 @@
       "content": "solver", 
       "params": {
         "optimizer": "SGD", 
-        "snapshotInterval": "100", 
-        "epochsCount": "2048", 
-        "batchSize": "1024", 
-        "learningRate": "0.01", 
+        "snapshotInterval": 100,
+        "epochsCount": 2048,
+        "batchSize": 1024,
+        "learningRate": 0.01,
         "lossFunction": "categorical_crossentropy", 
-        "validationInterval": "100"
+        "validationInterval": 100
       }, 
       "template": "frontend/components/layers/solver/node-test-4.svg", 
       "id": 4
