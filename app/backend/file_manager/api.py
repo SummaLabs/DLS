@@ -9,41 +9,66 @@ from datetime import datetime
 
 file_manager = flask.Blueprint('file_manager', __name__)
 
-REPOSITORY_BASE_PATH = '/home/leko/FILE_MANAGER'
+REPOSITORY_BASE_PATH = '/home/galeko/FILE_MANAGER'
+ONLY_FOLDERS = False
 
 
 @file_manager.route('/listUrl', methods=["POST"])
-def list_url():
+def list():
     if request.method == "POST":
         params = json.loads(request.data)
         cur_path = REPOSITORY_BASE_PATH + params['path']
+
         response_json = {'result': []}
         for path, dirs, files in os.walk(cur_path):
             for name in dirs:
                 file_path = os.path.join(path, name)
-                print (file_path)
-                meta = os.stat(file_path)
-                response_json['result'].append({
-                    'date': datetime.fromtimestamp(meta.st_mtime).strftime('%Y-%m-%d %H:%M:%S'),
-                    'size': meta.st_size,
-                    'rights': permissions_to_unix_name(os.stat(file_path)),
-                    'name': name,
-                    'type': 'dir'
-                })
+                response_json['result'].append(get_file_info(name, file_path))
+            if not ONLY_FOLDERS:
+                for name in files:
+                    file_path = os.path.join(path, name)
+                    response_json['result'].append(get_file_info(name, file_path))
 
-            for name in files:
-                file_path = os.path.join(path, name)
-                meta = os.stat(file_path)
-                response_json['result'].append({
-                    'date': datetime.fromtimestamp(meta.st_mtime).strftime('%Y-%m-%d %H:%M:%S'),
-                    'size': meta.st_size,
-                    'rights': permissions_to_unix_name(os.stat(file_path)),
-                    'name': name,
-                    'type': 'file'
-                })
             del dirs[:]
 
     return Response(json.dumps(response_json), mimetype='application/json')
+
+@file_manager.route('/createFolderUrl', methods=["POST"])
+def create_folder():
+    params = json.loads(request.data)
+    new_dir = REPOSITORY_BASE_PATH + params['newPath']
+
+    response_json = {'result': []}
+
+    try:
+        os.makedirs(new_dir)
+        response_json['result'].append({
+            'success': 'true'
+        })
+    except OSError as exception:
+        error_message = "Error({0}): {1}".format(exception.errno, exception.strerror)
+
+        if not os.path.isdir(new_dir):
+            error_message = "target 'dirname' is not a directory: " + new_dir
+        response_json['result'].append({
+            'success': 'false',
+            'error': error_message
+        })
+
+    return Response(json.dumps(response_json), mimetype='application/json')
+
+def get_file_info(file_name, file_path):
+    meta = os.stat(file_path)
+
+    file_info = {}
+    file_info['date'] = datetime.fromtimestamp(meta.st_mtime).strftime('%Y-%m-%d %H:%M:%S')
+    file_info['size'] = meta.st_size if stat.S_ISDIR(meta.st_mode) else ''
+    file_info['rights'] = permissions_to_unix_name(os.stat(file_path))
+    file_info['name'] = file_name
+    file_info['type'] = 'dir' if stat.S_ISDIR(meta.st_mode) else 'file'
+
+    return file_info
+
 
 def permissions_to_unix_name(st):
     is_dir = 'd' if stat.S_ISDIR(st.st_mode) else '-'
