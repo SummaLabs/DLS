@@ -95,7 +95,7 @@
 }
 
 
-
+/*
 .site-sidenav {
   background: #106CC8;
 }
@@ -220,4 +220,8 @@ body[dir=rtl] .docs-menu .md-button {
   text-transform: none;
   text-rendering: optimizeLegibility;
   font-weight: 500;
-}
+}*/
+
+.listdemoBasicUsage md-divider {
+  margin-top: 10px;
+  margin-bottom: 0; }

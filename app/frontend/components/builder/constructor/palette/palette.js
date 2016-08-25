@@ -9,7 +9,6 @@ var paletteDefinition = {
 	controller: PaletteController,
 	controllerAs: 'palette',
 	bindings: {
-
 	}
 }
 
@@ -64,15 +63,27 @@ function ElementCtrl($scope, $element, $rootScope) {
 
 function PaletteController($scope, networkLayerService) {
 
-    $scope.categories = networkLayerService.getCategories();
-    for (let a = 0; a < $scope.categories.length ; a++) {
-    	$scope.categories.state = false;
-    }
+	self = this;
+	self.treeItems = [];
 
-	$scope.types = networkLayerService.getLayers();
-    
-    
-	var categoryState = {};
+	networkLayerService.getCategories().then(
+		function succes(categories) {
+            console.log(categories);
+            networkLayerService.getLayers().then(
+				function succes(layers) {
+            		console.log(layers);
+            		self.treeItems = createTree(categories, layers);
+					console.dir(self.treeItems);
+
+				}, function error(data) {
+					console.log(data);
+				}
+			);
+
+        }, function error(data) {
+            console.log(data);
+        }
+    );
 
 	this.categoryClick = function(category_name) {
 	    var state = categoryState[category_name];
@@ -88,6 +99,35 @@ function PaletteController($scope, networkLayerService) {
 		menu.toggleSelectSection(section);
 	}
 }
+
+function createTree(categories, layers) {
+	console.log(categories, layers);
+	let tree = []
+	var idCounter = 0;
+	categories.forEach(function(category, i, array) {
+		let items = [];
+		layers.forEach(function(item, i, array) {
+			if (item.category === category.name) {
+				items.push({
+					type: 'item',
+					name: item.name,
+					id: ++idCounter,
+					template: item.template,
+					params: item.params
+				});
+			}
+		});
+		tree.push({
+			type: 'category',
+			name: category.name,
+			children: [],
+			items: items
+		});
+	});
+	return tree;
+}
+
+
 
 
 

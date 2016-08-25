@@ -1,11 +1,12 @@
-<md-button class="md-button-toggle"
-    ng-click="toggle()"
-    aria-controls="{{category.name}}"
-    aria-expanded="{{isOpen()}}">
-  <div flex layout="row">
-    {{section.name}}
-    <span flex></span>
-  </div>
-</md-button>
-
+<md-content ng-click="toggle()">
+  <md-list flex>
+    <md-subheader class="md-no-sticky">{{section.name}}</md-subheader>
+    <md-list-item ng-show="section.state" ng-repeat="layer in section.items track by $index" class="md-3-line">
+        <div palette-data="layer" class="md-list-item-text" layout="column" draggable>
+        <p>{{ layer.name }}</p>
+      </div>
+    </md-list-item>
+    <md-divider ></md-divider>
+   </md-list>
+</md-content>
 

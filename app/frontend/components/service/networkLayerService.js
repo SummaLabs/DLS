@@ -4,41 +4,40 @@ angular.module('networkLayerService', [])
 function NetworkLayerService($http) {
     var categories = [];
     var layers = [];
-    
+
     this.getCategories = function() {
-        $http({
+        var request = $http({
             method: "GET",
             url: "/network/layer/categories"
         }).then(function mySucces(response) {
+        	layers.length = 0;
             response.data.forEach(function(layer) {
                 categories.push(layer)
             });
+            return categories;
         }, function myError(response) {
             console.log(response);
         });
 
-        return categories;
-    };
-
-    this.setCategories = function(categories) {
-        this.categories = categories
+        return request;
     };
 
     this.getLayers = function() {
-        $http({
+        var request = $http({
             method: "GET",
             url: "/network/layers"
         }).then(function mySucces(response) {
             response.data.forEach(function(layer) {
                 layers.push(layer)
             });
+            return layers;
         }, function myError(response) {
             console.log(response);
         });
 
-        return layers;
+        return request;
     };
-    
+
     this.getLayerByType = function(type) {
         for (var i = 0, len = layers.length; i < len; i++) {
             var layer = layers[i];
@@ -48,7 +47,7 @@ function NetworkLayerService($http) {
         }
     };
 
-    this.setLayers = function(layers) {
-        this.layers = layers;
+    this.setLayers = function(new_layers) {
+        layers = new_layers;
     };
 }

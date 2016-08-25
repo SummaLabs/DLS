@@ -152,7 +152,7 @@ function initComponent() {
 						var node = {
 							id: self.nodes.length + 1,
 							name : data.data.name,
-							content : data.data.content,
+//							content : data.data.content,
 							category : data.data.category,
 							pos: correctPos,
 							selected: false,
