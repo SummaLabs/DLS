@@ -7,8 +7,8 @@
       ], 
       "name": "convol", 
       "pos": {
-        "y": 188, 
-        "x": 397
+        "y": 139.566650390625, 
+        "x": 642.5999755859375
       }, 
       "content": "convolution", 
       "params": {
@@ -30,12 +30,12 @@
       ], 
       "name": "dense", 
       "pos": {
-        "y": 277.48333740234375, 
-        "x": 622.9833374023438
+        "y": 295.933349609375, 
+        "x": 895.933349609375
       }, 
       "content": "dense", 
       "params": {
-        "isTrainable": true,
+        "isTrainable": true, 
         "activationFunction": "relu", 
         "neuronsCount": 1024
       }, 
@@ -49,8 +49,8 @@
       ], 
       "name": "data", 
       "pos": {
-        "y": 158, 
-        "x": 60
+        "y": 326.8499755859375, 
+        "x": 397.9000244140625
       }, 
       "content": "data", 
       "params": {
@@ -64,21 +64,37 @@
       "category": "output", 
       "name": "solver", 
       "pos": {
-        "y": 172, 
-        "x": 929
+        "y": 167.48333740234375, 
+        "x": 1119.9833984375
       }, 
       "content": "solver", 
       "params": {
         "optimizer": "SGD", 
-        "snapshotInterval": 100,
-        "epochsCount": 2048,
-        "batchSize": 1024,
-        "learningRate": 0.01,
+        "snapshotInterval": 100, 
+        "epochsCount": 2048, 
+        "batchSize": 1024, 
+        "learningRate": 0.01, 
         "lossFunction": "categorical_crossentropy", 
         "validationInterval": 100
       }, 
       "template": "frontend/components/layers/solver/node-test-4.svg", 
       "id": 4
+    }, 
+    {
+      "wires": [
+        3
+      ], 
+      "name": "data", 
+      "pos": {
+        "y": 95.88333129882812, 
+        "x": 118.29998779296875
+      }, 
+      "params": {
+        "datasetType": "", 
+        "datasetId": ""
+      }, 
+      "template": "frontend/components/layers/data/node-test-2.svg", 
+      "id": 5
     }
   ], 
   "name": "demo_network", 
