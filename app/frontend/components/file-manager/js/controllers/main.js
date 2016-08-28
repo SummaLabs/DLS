@@ -167,6 +167,7 @@
         $scope.modal = function(id, hide, returnElement) {
             var element = $('#' + id);
             element.modal(hide ? 'hide' : 'show');
+            $('.modal-backdrop').remove();
             $scope.apiMiddleware.apiHandler.error = '';
             $scope.apiMiddleware.apiHandler.asyncSuccess = false;
             return returnElement ? element : true;

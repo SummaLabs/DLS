@@ -3,13 +3,14 @@ from flask import Response
 
 import json
 import os
+import shutil
 import stat
 import flask
 from datetime import datetime
 
 file_manager = flask.Blueprint('file_manager', __name__)
 
-REPOSITORY_BASE_PATH = '/home/galeko/FILE_MANAGER'
+REPOSITORY_BASE_PATH = '/home/leko/FILE_MANAGER'
 ONLY_FOLDERS = False
 
 
@@ -32,6 +33,88 @@ def list():
             del dirs[:]
 
     return Response(json.dumps(response_json), mimetype='application/json')
+
+@file_manager.route('/renameUrl', methods=["POST"])
+def rename():
+    params = json.loads(request.data)
+    response_json = {'result': []}
+
+    src_name = REPOSITORY_BASE_PATH + params['item']
+    dst_name = REPOSITORY_BASE_PATH + params['newItemPath']
+
+
+
+    try:
+        os.rename(src_name, dst_name)
+        response_json['result'].append({
+            'success': 'true'
+        })
+    except OSError as exception:
+        error_message = "Error({0}): {1}".format(exception.errno, exception.strerror)
+
+        response_json['result'].append({
+            'success': 'false',
+            'error': error_message
+        })
+
+    return Response(json.dumps(response_json), mimetype='application/json')
+
+@file_manager.route('/moveUrl', methods=["POST"])
+def move():
+    params = json.loads(request.data)
+    response_json = {'result': []}
+
+    src_items = params['items']
+    dst_path = REPOSITORY_BASE_PATH + params['newPath']
+
+    try:
+        for src in src_items:
+            shutil.move(src, dst_path)
+
+        response_json['result'].append({
+            'success': 'true'
+        })
+    except:
+        error_message = "Could not move files to {0}".format(dst_path)
+
+        response_json['result'].append({
+            'success': 'false',
+            'error': error_message
+        })
+
+    return Response(json.dumps(response_json), mimetype='application/json')
+
+
+@file_manager.route('/removeUrl', methods=["POST"])
+def remove():
+    params = json.loads(request.data)
+    response_json = {'result': []}
+
+    items = params['items']
+    try:
+        for item in items:
+            full_path = REPOSITORY_BASE_PATH + item
+            meta = os.stat(full_path)
+
+            if stat.S_ISDIR(meta.st_mode):
+                shutil.rmtree(full_path)
+            else:
+                os.remove(full_path)
+
+        response_json['result'].append({
+            'success': 'true'
+        })
+    except:
+        error_message = "Could not remove files!"
+        print (error_message)
+        response_json['result'].append({
+            'success': 'false',
+            'error': error_message
+        })
+
+    return Response(json.dumps(response_json), mimetype='application/json')
+
+
 
 @file_manager.route('/createFolderUrl', methods=["POST"])
 def create_folder():
@@ -56,6 +139,7 @@ def create_folder():
         })
 
     return Response(json.dumps(response_json), mimetype='application/json')
+
 
 def get_file_info(file_name, file_path):
     meta = os.stat(file_path)
