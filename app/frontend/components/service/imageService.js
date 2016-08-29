@@ -2,9 +2,9 @@ angular.module('imageService', [])
     .service('imageService', ['$http', ImageService]);
 
 function ImageService($http) {
-    var classifiedImages = [];
 
     this.loadClassifiedImages = function() {
+        var classifiedImages = [];
         $http({
             method: "GET",
             url: "/images/classified/load"
