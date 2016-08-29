@@ -10,6 +10,9 @@ sockets = Sockets(app=app)
 import network.api
 app.register_blueprint(network.api.blueprint, url_prefix='/network')
 
+import images.api
+app.register_blueprint(images.api.blueprint, url_prefix='/images')
+
 @app.route('/')
 @app.route('/index')
 def index():

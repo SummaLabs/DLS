@@ -1,0 +1,92 @@
+[
+  {
+    "path": "/home/sergo/Work/Gitlab/DLS/app/frontend/assets/img/layers/dense.png",
+    "classProbabilities": [
+      {"name": "Class 1", "value": "90%"},
+      {"name": "Class 2", "value": "10%"},
+      {"name": "Class 3", "value": "5%"},
+      {"name": "Class 4", "value": "3%"},
+      {"name": "Class 5", "value": "1%"},
+      {"name": "Class 6", "value": "1%"},
+      {"name": "Class 7", "value": "1%"},
+      {"name": "Class 8", "value": "1%"},
+      {"name": "Class 9", "value": "1%"},
+      {"name": "Class 10", "value": "90%"}
+    ]
+  },
+    {
+    "path": "/home/sergo/Work/Gitlab/DLS/app/frontend/assets/img/layers/dense.png",
+    "classProbabilities": [
+      {"name": "Class 1", "value": "90%"},
+      {"name": "Class 2", "value": "10%"},
+      {"name": "Class 3", "value": "5%"},
+      {"name": "Class 4", "value": "3%"},
+      {"name": "Class 5", "value": "1%"},
+      {"name": "Class 6", "value": "1%"},
+      {"name": "Class 7", "value": "1%"},
+      {"name": "Class 8", "value": "1%"},
+      {"name": "Class 9", "value": "1%"},
+      {"name": "Class 10", "value": "90%"}
+    ]
+  },
+    {
+    "path": "/home/sergo/Work/Gitlab/DLS/app/frontend/assets/img/layers/dense.png",
+    "classProbabilities": [
+      {"name": "Class 1", "value": "90%"},
+      {"name": "Class 2", "value": "10%"},
+      {"name": "Class 3", "value": "5%"},
+      {"name": "Class 4", "value": "3%"},
+      {"name": "Class 5", "value": "1%"},
+      {"name": "Class 6", "value": "1%"},
+      {"name": "Class 7", "value": "1%"},
+      {"name": "Class 8", "value": "1%"},
+      {"name": "Class 9", "value": "1%"},
+      {"name": "Class 10", "value": "90%"}
+    ]
+  },
+    {
+    "path": "/home/sergo/Work/Gitlab/DLS/app/frontend/assets/img/layers/dense.png",
+    "classProbabilities": [
+      {"name": "Class 1", "value": "90%"},
+      {"name": "Class 2", "value": "10%"},
+      {"name": "Class 3", "value": "5%"},
+      {"name": "Class 4", "value": "3%"},
+      {"name": "Class 5", "value": "1%"},
+      {"name": "Class 6", "value": "1%"},
+      {"name": "Class 7", "value": "1%"},
+      {"name": "Class 8", "value": "1%"},
+      {"name": "Class 9", "value": "1%"},
+      {"name": "Class 10", "value": "90%"}
+    ]
+  },
+    {
+    "path": "/home/sergo/Work/Gitlab/DLS/app/frontend/assets/img/layers/dense.png",
+    "classProbabilities": [
+      {"name": "Class 1", "value": "90%"},
+      {"name": "Class 2", "value": "10%"},
+      {"name": "Class 3", "value": "5%"},
+      {"name": "Class 4", "value": "3%"},
+      {"name": "Class 5", "value": "1%"},
+      {"name": "Class 6", "value": "1%"},
+      {"name": "Class 7", "value": "1%"},
+      {"name": "Class 8", "value": "1%"},
+      {"name": "Class 9", "value": "1%"},
+      {"name": "Class 10", "value": "90%"}
+    ]
+  },
+    {
+    "path": "/home/sergo/Work/Gitlab/DLS/app/frontend/assets/img/layers/dense.png",
+    "classProbabilities": [
+      {"name": "Class 1", "value": "90%"},
+      {"name": "Class 2", "value": "10%"},
+      {"name": "Class 3", "value": "5%"},
+      {"name": "Class 4", "value": "3%"},
+      {"name": "Class 5", "value": "1%"},
+      {"name": "Class 6", "value": "1%"},
+      {"name": "Class 7", "value": "1%"},
+      {"name": "Class 8", "value": "1%"},
+      {"name": "Class 9", "value": "1%"},
+      {"name": "Class 10", "value": "90%"}
+    ]
+  }
+]

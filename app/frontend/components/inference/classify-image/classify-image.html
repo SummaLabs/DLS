@@ -2,7 +2,7 @@
     <md-content>
         <md-list flex>
             <md-list-item class="md-3-line" ng-repeat="item in $ctrl.images" ng-click="null">
-                <img ng-src="{{item.path}}?{{$index}}" alt=""/>
+                <img ng-src="data:image/JPEG;base64,{{item.content}}" alt=""/>
                 <div class="md-list-item-text" layout-padding>
                     <h2 class="md-title">{{item.path}}</h2>
                     <md-list layout="row">

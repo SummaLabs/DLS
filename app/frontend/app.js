@@ -15,7 +15,8 @@ angular.module('dlsApp', ['ngMaterial',
     'networkDataService',
     'networkLayerService',
     'applyModelMenu',
-    'classifyImage']);
+    'classifyImage',
+    'imageService']);
 
 
 angular.module('dlsApp')
