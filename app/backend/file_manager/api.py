@@ -10,7 +10,7 @@ from datetime import datetime
 
 file_manager = flask.Blueprint('file_manager', __name__)
 
-REPOSITORY_BASE_PATH = '/home/leko/FILE_MANAGER'
+REPOSITORY_BASE_PATH = '/home/galeko/FILE_MANAGER'
 ONLY_FOLDERS = False
 
 

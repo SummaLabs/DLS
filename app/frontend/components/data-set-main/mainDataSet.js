@@ -74,16 +74,29 @@
                     ]
                 };
 
-                self.createDialog = function() {
-                    $mdDialog.show(
-                        $mdDialog.alert()
-                            .title('Primary Action')
-                            .textContent('Primary actions can be used for one click actions')
-                            .ariaLabel('Primary click demo')
-                            .ok('Awesome!')
-                            .targetEvent(event)
-                    );
+                this.createDialog = function(event) {
+                	$mdDialog.show({
+						controller: DialogController,
+						templateUrl: 'frontend/components/dialog/file-manager.html',
+						parent: angular.element(document.body),
+						targetEvent: event,
+						clickOutsideToClose:true,
+//						fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+					});
                 };
             }
+
+
         });
 })();
+
+function DialogController($scope, $mdDialog) {
+
+	$scope.select = function(answer) {
+		$mdDialog.hide(answer);
+	};
+
+	$scope.cancel = function() {
+		$mdDialog.cancel();
+	};
+};
