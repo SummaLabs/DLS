@@ -1,19 +1,10 @@
 <md-sidenav class="site-sidenav md-sidenav-left md-whiteframe-z2"
               md-component-id="left" hide-print
               md-is-locked-open="$mdMedia('gt-sm')">
-
-    <md-toolbar layout="row" class="md-hue-3">
+    <md-toolbar layout="row" class=" md-primary md-hue-1">
       <div class="md-toolbar-tools">
         <span>LAYERS</span>
       </div>
     </md-toolbar>
-
-    <md-content>
-      <md-list flex>
-        <md-list-item ng-repeat="category in palette.treeItems" class="md-3-line" ng-repeat="item in todos" ng-click="null">
-            <menu-toggle section-state="category.state" section="category"></menu-toggle>
-        </md-list-item>
-        <md-divider ></md-divider>
-       </md-list>
-    </md-content>
-
+    <menu-toggle flex ng-repeat="category in palette.treeItems" section="category"></menu-toggle>
+</md-sidenav>

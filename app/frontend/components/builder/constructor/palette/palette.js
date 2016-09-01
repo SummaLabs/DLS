@@ -18,12 +18,11 @@ angular.module('palette')
     .directive('draggable', function() {
         return {
             restrict: 'A',
-            controller: ElementCtrl,
-            controllerAs: 'palette',
+            controller: DraggableCtrl,
             scope: {
-               paletteData: '=',
+               draggable: '=',
             },
-            link: function(scope, element, $rootScope){
+            link: function(scope, element, attr){
                 element[0].draggable = true;
             }
         }
@@ -33,9 +32,12 @@ function PaletteService() {
 
 }
 
-function ElementCtrl($scope, $element, $rootScope) {
+function DraggableCtrl($scope, $element, $rootScope, $compile, $templateCache, $http) {
 
     var elemOffset;
+	var dragIcon = document.createElement('img');
+	dragIcon.src = 'frontend/components/layers/data/node-test-2.png';
+
 
     $element.on('dragstart', function (event) {
 
@@ -45,16 +47,18 @@ function ElementCtrl($scope, $element, $rootScope) {
             y: event.clientY - elementRect.top
         }
 
-        event.target.style.opacity = '0.6';
+        event.target.style.opacity = '0.8';
         event.dataTransfer.effectAllowed = 'move';
-        event.dataTransfer.setData('text/html', this.innerHTML);
+
+		event.dataTransfer.setDragImage(dragIcon, elemOffset.x, elemOffset.y);
+		event.dataTransfer.setData('text/html', this.innerHTML);
         $rootScope.$emit('palette_drag_start', { });
     });
 
     $element.on('dragend', function (event) {
         event.target.style.opacity = '1';
         $rootScope.$emit('palette_drag_end', {
-            data: $scope.paletteData,
+            data: $scope.draggable,
             offset: elemOffset
         });
     });
@@ -67,13 +71,10 @@ function PaletteController($scope, networkLayerService) {
 	self.treeItems = [];
 
 	networkLayerService.getCategories().then(
-		function succes(categories) {
-            console.log(categories);
+		function success(categories) {
             networkLayerService.getLayers().then(
-				function succes(layers) {
-            		console.log(layers);
+				function success(layers) {
             		self.treeItems = createTree(categories, layers);
-					console.dir(self.treeItems);
 
 				}, function error(data) {
 					console.log(data);
@@ -101,7 +102,6 @@ function PaletteController($scope, networkLayerService) {
 }
 
 function createTree(categories, layers) {
-	console.log(categories, layers);
 	let tree = []
 	var idCounter = 0;
 	categories.forEach(function(category, i, array) {

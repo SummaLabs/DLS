@@ -1,0 +1,15 @@
+<md-content>
+    <md-list flex>
+        <md-toolbar class="md-primary unselectable" ng-click="toggle()" tabIndex = "-1">
+            <div class="md-toolbar-tools">
+                <h2 class="md-flex">{{section.name}}</h2>
+            </div>
+        </md-toolbar>
+        <div ng-show="section.state" ng-repeat="layer in section.items" draggable="layer">
+            <md-list-item>
+                <p>{{ layer.name }}</p>
+            </md-list-item>
+        </div>
+        <md-divider ></md-divider>
+    </md-list>
+</md-content>

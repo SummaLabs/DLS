@@ -34,7 +34,6 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
                         var portInOffset = calculatePortOffset(html, patternDefinitions.markerPortIn);
                         var portOutOffset = calculatePortOffset(html, patternDefinitions.markerPortOut);
-//                        console.log(portOffset);
 
                         element.html(html);
                         $compile(element.contents())($scope);
@@ -84,8 +83,8 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
                         $scope.nodeData.portIn = portIn;
                         $scope.nodeData.portOut = portOut;
 
-                        textNode.text($scope.nodeData.content);
-                        textNode.addClass('node_label');
+                        textNode.text($scope.nodeData.name);
+                        textNode.addClass('unselectable');
 
                         nodeWatcher($scope, rectNode);
 						nodeEventsHandler($scope, $rootScope, element, rectNode, idNode);
@@ -115,14 +114,6 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
 		var id = marker + '_' + nodeId;
 		port.attr('id', id);
-
-//        var baseRect = base[0].getBoundingClientRect();
-//        var portRect = port[0].getBoundingClientRect();
-
-//        console.dir(baseRect);
-//        console.dir(portRect);
-
-//        var portCoord = getPortCoord(baseRect, portRect);
 
 		return {
 			element: port,
