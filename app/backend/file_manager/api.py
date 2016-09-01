@@ -10,7 +10,7 @@ from datetime import datetime
 
 file_manager = flask.Blueprint('file_manager', __name__)
 
-REPOSITORY_BASE_PATH = '/home/galeko/FILE_MANAGER'
+REPOSITORY_BASE_PATH = '/home/leko/FILE_MANAGER'
 ONLY_FOLDERS = False
 
 
@@ -33,6 +33,7 @@ def list():
             del dirs[:]
 
     return Response(json.dumps(response_json), mimetype='application/json')
+
 
 @file_manager.route('/renameUrl', methods=["POST"])
 def rename():
@@ -58,6 +59,7 @@ def rename():
         })
 
     return Response(json.dumps(response_json), mimetype='application/json')
+
 
 @file_manager.route('/moveUrl', methods=["POST"])
 def move():
@@ -115,7 +117,6 @@ def remove():
     return Response(json.dumps(response_json), mimetype='application/json')
 
 
-
 @file_manager.route('/createFolderUrl', methods=["POST"])
 def create_folder():
     params = json.loads(request.data)
@@ -144,12 +145,12 @@ def create_folder():
 def get_file_info(file_name, file_path):
     meta = os.stat(file_path)
 
-    file_info = {}
-    file_info['date'] = datetime.fromtimestamp(meta.st_mtime).strftime('%Y-%m-%d %H:%M:%S')
-    file_info['size'] = meta.st_size if stat.S_ISDIR(meta.st_mode) else ''
-    file_info['rights'] = permissions_to_unix_name(os.stat(file_path))
-    file_info['name'] = file_name
-    file_info['type'] = 'dir' if stat.S_ISDIR(meta.st_mode) else 'file'
+    file_info = {
+        'date': datetime.fromtimestamp(meta.st_mtime).strftime('%Y-%m-%d %H:%M:%S'),
+        'size': meta.st_size if stat.S_ISDIR(meta.st_mode) else '',
+        'rights': permissions_to_unix_name(os.stat(file_path)), 'name': file_name,
+        'type': 'dir' if stat.S_ISDIR(meta.st_mode) else 'file'
+    }
 
     return file_info
 
