@@ -3,7 +3,6 @@ from flask import Response
 from os.path import dirname
 
 import json
-import re
 import os
 import flask
 import base64
@@ -28,3 +27,16 @@ def load_classified_images():
                     image['content'] = encode
                     classified_images_return.append(image)
             return Response(json.dumps(classified_images_return), mimetype='application/json')
+
+
+@blueprint.route('/classified/download')
+def download_classifide_mages_json():
+    layers_path = os.path.join(classified_images_dir, classified_images_file)
+
+    with open(layers_path, 'r') as f:
+        file_content = f.read()
+    return Response(
+        file_content,
+        mimetype="text/csv",
+        headers={"Content-disposition":
+                 "attachment; filename=myplot.csv"})

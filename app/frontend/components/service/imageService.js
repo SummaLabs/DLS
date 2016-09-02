@@ -18,4 +18,12 @@ function ImageService($http) {
 
         return classifiedImages;
     };
+    
+    this.loadClassifiedImagesAsJsonFile = function() {
+        return $http({
+            method: "GET",
+            url: "/images/classified/download",
+            responseType: 'arraybuffer'
+        })
+    }
 }

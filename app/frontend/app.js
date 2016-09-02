@@ -32,4 +32,6 @@ angular.module('dlsApp')
             scaleMax: 4.0,
             scaleFactor: 1.2
         }
-    });
+    }).config(['$compileProvider', function ($compileProvider) {
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(|blob|):/);
+}]);

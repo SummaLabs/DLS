@@ -20,10 +20,19 @@
                         targetEvent: $event,
                         templateUrl: "/frontend/components/inference/apply-model-menu/apply-model-dialog.html",
                         locals: {},
-                        controller: function ($scope, $mdDialog) {
+                        controller: function ($scope, $mdDialog, $window, imageService) {
                             $scope.closeDialog = function () {
                                 $mdDialog.hide();
-                            }
+                            };
+
+                            var future = imageService.loadClassifiedImagesAsJsonFile();
+                            future.then(function mySucces(response) {
+                                var data = response.data;
+                                var blob = new Blob([data], {type: 'text/plain'});
+                                var url = $window.URL || $window.webkitURL;
+                                $scope.fileUrl = url.createObjectURL(blob);
+                            }, function myError(response) {
+                            });
                         }
                     });
                 };
