@@ -9,7 +9,7 @@
             },
             controller: function (imageService) {
                 this.$onInit = function () {
-                    this.images = imageService.loadClassifiedImages();
+                    this.images = imageService.loadClassifiedImages(3);
                 };
             }
         });

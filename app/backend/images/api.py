@@ -13,8 +13,8 @@ classified_images_file = "classified-images-123123123123.json"
 classified_images_dir = os.path.join(dirname(dirname(dirname(dirname(__file__)))), 'data/app/tmp')
 
 
-@blueprint.route('/classified/load')
-def load_classified_images():
+@blueprint.route('/classified/load/<path:class_number>')
+def load_classified_images(class_number):
     layers_path = os.path.join(classified_images_dir, classified_images_file)
 
     if request.method == 'GET':
@@ -23,10 +23,24 @@ def load_classified_images():
             classified_images_loaded = json.load(f)
             for image in classified_images_loaded:
                 with open(image['path'], "rb") as image_file:
-                    encode = base64.b64encode(image_file.read())
-                    image['content'] = encode
-                    classified_images_return.append(image)
+                    imageEncode = base64.b64encode(image_file.read())
+                    classified_images_return.append(create_image_n_classes(image, int(class_number), imageEncode))
             return Response(json.dumps(classified_images_return), mimetype='application/json')
+
+
+def create_image_n_classes(classified_image, n, imageEncode):
+    n_class_probabilities = []
+    class_probabilities = classified_image['classProbabilities']
+    for index in range(len(class_probabilities)):
+        if index < n:
+            n_class_probabilities.append(class_probabilities[index])
+
+    path_ = classified_image['path']
+    head, tail = os.path.split(path_)
+
+    return {'name': tail,
+            'content': imageEncode,
+            'classProbabilities': n_class_probabilities}
 
 
 @blueprint.route('/classified/download')
@@ -39,4 +53,4 @@ def download_classifide_mages_json():
         file_content,
         mimetype="text/csv",
         headers={"Content-disposition":
-                 "attachment; filename=myplot.csv"})
+                     "attachment; filename=myplot.csv"})

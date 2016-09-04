@@ -1,21 +1,19 @@
-<div>
-    <md-content>
-        <md-list flex>
-            <md-list-item class="md-3-line" ng-repeat="item in $ctrl.images" ng-click="null">
-                <img ng-src="data:image/JPEG;base64,{{item.content}}" alt=""/>
-                <div class="md-list-item-text" layout-padding>
-                    <h2 class="md-title">{{item.path}}</h2>
-                    <md-list layout="row">
-                        <md-list-item class="md-2-line veggie-option" ng-repeat="classProbability in item.classProbabilities" layout-wrap>
-                            <div class="md-item-text md-whiteframe-z1" flex>
-                                <h3>{{classProbability.name}}</h3>
-                                <p>{{classProbability.value}}</p>
+<md-content>
+    <md-list>
+        <md-list-item ng-repeat="image in $ctrl.images" ng-click="null">
+            <div layout="row" layout-fill>
+                <img ng-src="data:image/JPEG;base64,{{image.content}}" flex="30" layout-margin alt=""/>
+                <div  class="md-item-text md-whiteframe-z1" layout="column" layout-margin flex>
+                    <md-list>
+                        <md-list-item ng-repeat="classProbability in image.classProbabilities">
+                            <div layout="column" layout-fill>
+                                <p>{{classProbability.value}}% - {{classProbability.name}}</p>
+                                <md-progress-linear md-mode="determinate" ng-class="{'md-warn' : $index == 0}" value="{{classProbability.value}}"></md-progress-linear>
                             </div>
                         </md-list-item>
                     </md-list>
                 </div>
-                <md-divider></md-divider>
-            </md-list-item>
-        </md-list>
-    </md-content>
-</div>
+            </div>
+        </md-list-item>
+    </md-list>
+</md-content>
