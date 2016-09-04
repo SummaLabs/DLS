@@ -31,3 +31,33 @@ md-tab-item {
     user-select: none;
 }
 
+.frame-cfg {
+  padding: 8px;
+}
+
+.frame-cfg-section {
+  border-radius: 4px;
+  background: whitesmoke;
+}
+
+.frame-cfg-toolbar {
+  border-radius: 4px 4px 0 0;
+  padding: 8px;
+  padding-left: 32px;
+  /*font-weight: bold;*/
+}
+
+.frame-cfg-body {
+  margin: 16px;
+}
+
+
+/*md-toolbar h3 {*/
+  /*margin: auto;*/
+  /*font-weight: 500;*/
+/*}*/
+
+/*md-toolbar div md-icon {*/
+  /*height: 48px;*/
+  /*width: 48px;*/
+/*}*/

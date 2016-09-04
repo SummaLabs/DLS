@@ -7,9 +7,66 @@
             bindings: {
                 models: '<'
             },
-            controller: function ($mdDialog) {
-                this.$onInit = function () {
-                    this.models = [
+            controller: function ($scope, $mdDialog, $timeout) {
+                var self = this;
+                self.hidden = false;
+                self.isOpen = false;
+                self.hover = false;
+                $scope.$watch('eventIsOpen', function (isOpen) {
+                    if (isOpen) {
+                        $timeout(function () {
+                            $scope.tooltipVisible = self.isOpen;
+                        }, 600);
+                    } else {
+                        $scope.tooltipVisible = self.isOpen;
+                    }
+                });
+                self.items = [
+                    {name: "Text Data", icon: "text_fields", direction: "bottom"},
+                    {name: "Image 3D", icon: "photo_library", direction: "top"},
+                    {name: "Image 2D", icon: "photo", direction: "bottom"}
+                ];
+                //
+                self.openDialogCreateDataset = function ($event, item) {
+                    if(item.name=='Image 2D') {
+                        $mdDialog.show({
+                            controller: DialogControllerCreateDatasetImage2D,
+                            templateUrl: '/frontend/components/dialog/dialog-create-dataset-image2d.html',
+                            parent: angular.element(document.body),
+                            targetEvent: $event,
+                            clickOutsideToClose: true,
+                            fullscreen: true // Only for -xs, -sm breakpoints.
+                        });
+                    // .then(function (answer) {
+                    //         // $scope.status = 'You said the information was "' + answer + '".';
+                    //     }, function () {
+                    //         // $scope.status = 'You cancelled the dialog.';
+                    //     });
+                    } else {
+                        $mdDialog.show(
+                        $mdDialog.alert()
+                            .title('Currently not implemented :(')
+                            .textContent('Dataset type [' + item.name + '] is not implemented yet!')
+                            .ariaLabel('Primary click demo')
+                            .ok('Ok')
+                            .targetEvent(event)
+                    );
+                    }
+                };
+                function DialogControllerCreateDatasetImage2D($scope, $mdDialog) {
+                    $scope.hide = function () {
+                        $mdDialog.hide();
+                    };
+                    $scope.cancel = function () {
+                        $mdDialog.cancel();
+                    };
+                    $scope.answer = function (answer) {
+                        $mdDialog.hide(answer);
+                    };
+                }
+                //
+                self.$onInit = function () {
+                    self.models = [
                         { name: 'Data Set 1'},
                         { name: 'Data Set 2'},
                         { name: 'Data Set 3'},
@@ -17,7 +74,7 @@
                     ]
                 };
 
-                this.createDialog = function() {
+                self.createDialog = function() {
                     $mdDialog.show(
                         $mdDialog.alert()
                             .title('Primary Action')

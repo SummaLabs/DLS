@@ -13,7 +13,8 @@ angular.module('dlsApp', ['ngMaterial',
     'solverEditor',
     'layerEditor',
     'networkDataService',
-    'networkLayerService']);
+    'networkLayerService',
+    'createImgDataset']);
 
 
 angular.module('dlsApp')
