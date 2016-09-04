@@ -1,0 +1,33 @@
+{
+  "formImage": {
+    "imgTypeSelectedId": "color",
+    "imgSizes": {
+      "x": 256,
+      "y": 256
+    },
+    "resizeTransformSelectedId": "squash"
+  },
+  "formFileImport": {
+    "selectedType": "txt",
+    "fromDir": {
+      "isUseSeparateValDir": false,
+      "percentForValidation": 25,
+      "percentForTesting": 0,
+      "pathToImageFolder": "",
+      "pathToImageFolderVal": ""
+    },
+    "fromTxt": {
+      "isUseSeparateVal": true,
+      "isUseRelativeDir": true,
+      "percentForValidation": 25,
+      "pathToImagesTxt": "../../../data-test/dataset-image2d/simple4c_test/idx-all-relpath-train.csv",
+      "pathToImagesTxtVal": "../../../data-test/dataset-image2d/simple4c_test/idx-all-relpath-val.csv",
+      "pathTorRelativeDir": "../../../data-test/dataset-image2d/simple4c_test"
+    }
+  },
+  "formDbBackend": {
+    "dbBackendSelectedId": "lmdb",
+    "imageEncodingsSelectedId": "jpeg",
+    "isUseThreading": false
+  }
+}

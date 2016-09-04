@@ -1,0 +1,31 @@
+{
+  "formImage": {
+    "imgTypeSelectedId": "color",
+    "imgSizes": {
+      "x": 256,
+      "y": 256
+    },
+    "resizeTransformSelectedId": "fill"
+  },
+  "formFileImport": {
+    "selectedType": "dir",
+    "fromDir": {
+      "isUseSeparateValDir": true,
+      "percentForValidation": 21,
+      "percentForTesting": 0,
+      "pathToImageFolder": "../data/simple4c_test",
+      "pathToImageFolderVal": "../data/simple4c_test"
+    },
+    "fromTxt": {
+      "formFileImport": null,
+      "minSamplesPerClass": null,
+      "maxSamplesPerClass": null,
+      "validationImages": null,
+      "testImages": null
+    }
+  },
+  "formDbBackend": {
+    "dbBackendSelectedId": "lmdb",
+    "imageEncodingsSelectedId": "jpeg"
+  }
+}
