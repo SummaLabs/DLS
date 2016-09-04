@@ -1,0 +1,6 @@
+/train_db/
+/val_db/
+*.json
+*.txt
+*.binaryproto
+*.jpg
