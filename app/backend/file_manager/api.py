@@ -147,7 +147,7 @@ def get_file_info(file_name, file_path):
 
     file_info = {
         'date': datetime.fromtimestamp(meta.st_mtime).strftime('%Y-%m-%d %H:%M:%S'),
-        'size': meta.st_size if stat.S_ISDIR(meta.st_mode) else '',
+        'size': meta.st_size if not stat.S_ISDIR(meta.st_mode) else '',
         'rights': permissions_to_unix_name(os.stat(file_path)), 'name': file_name,
         'type': 'dir' if stat.S_ISDIR(meta.st_mode) else 'file'
     }

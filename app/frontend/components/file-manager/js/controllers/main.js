@@ -1,8 +1,8 @@
 (function(angular, $) {
     'use strict';
     angular.module('FileManagerApp').controller('FileManagerCtrl', [
-        '$scope', '$rootScope', '$window', '$translate', 'fileManagerConfig', 'item', 'fileNavigator', 'apiMiddleware',
-        function($scope, $rootScope, $window, $translate, fileManagerConfig, Item, FileNavigator, ApiMiddleware) {
+        '$scope', '$rootScope', '$window', '$translate', 'fileManagerConfig', 'item', 'fileNavigator', 'apiMiddleware','appConfig',
+        function($scope, $rootScope, $window, $translate, fileManagerConfig, Item, FileNavigator, ApiMiddleware, appConfig) {
 
         var $storage = $window.localStorage;
         $scope.config = fileManagerConfig;
@@ -18,9 +18,9 @@
         $scope.uploadFileList = [];
         $scope.viewTemplate = $storage.getItem('viewTemplate') || 'main-icons.html';
         $scope.fileList = [];
-        $scope.temps = [];
+        $rootScope.selectedFiles = [];
 
-        $scope.$watch('temps', function() {
+        $scope.$watch('selectedFiles', function() {
             if ($scope.singleSelection()) {
                 $scope.temp = $scope.singleSelection();
             } else {
@@ -31,7 +31,7 @@
         });
 
         $scope.fileNavigator.onRefresh = function() {
-            $scope.temps = [];
+            $rootScope.selectedFiles = [];
             $scope.query = '';
             $rootScope.selectedModalPath = $scope.fileNavigator.currentPath;
         };
@@ -50,15 +50,18 @@
         };
 
         $scope.isSelected = function(item) {
-            return $scope.temps.indexOf(item) !== -1;
+
+            return $rootScope.selectedFiles.indexOf(item) !== -1;
         };
 
         $scope.selectOrUnselect = function(item, $event) {
-            var indexInTemp = $scope.temps.indexOf(item);
+            var indexInTemp = $rootScope.selectedFiles.indexOf(item);
             var isRightClick = $event && $event.which == 3;
 
+
+
             if ($event && $event.target.hasAttribute('prevent')) {
-                $scope.temps = [];
+                $rootScope.selectedFiles = [];
                 return;
             }
             if (! item || (isRightClick && $scope.isSelected(item))) {
@@ -67,58 +70,64 @@
             if ($event && $event.shiftKey && !isRightClick) {
                 var list = $scope.fileList;
                 var indexInList = list.indexOf(item);
-                var lastSelected = $scope.temps[0];
+                var lastSelected = $rootScope.selectedFiles[0];
                 var i = list.indexOf(lastSelected);
                 var current = undefined;
                 if (lastSelected && list.indexOf(lastSelected) < indexInList) {
-                    $scope.temps = [];
+                    $rootScope.selectedFiles = [];
                     while (i <= indexInList) {
                         current = list[i];
-                        !$scope.isSelected(current) && $scope.temps.push(current);
+                        !$scope.isSelected(current) && $rootScope.selectedFiles.push(current);
                         i++;
                     }
                     return;
                 }
                 if (lastSelected && list.indexOf(lastSelected) > indexInList) {
-                    $scope.temps = [];
+                    $rootScope.selectedFiles = [];
                     while (i >= indexInList) {
                         current = list[i];
-                        !$scope.isSelected(current) && $scope.temps.push(current);
+                        !$scope.isSelected(current) && $rootScope.selectedFiles.push(current);
                         i--;
                     }
                     return;
                 }
             }
             if ($event && !isRightClick && ($event.ctrlKey || $event.metaKey)) {
-                $scope.isSelected(item) ? $scope.temps.splice(indexInTemp, 1) : $scope.temps.push(item);
+                if (!appConfig.fileManager.pickFolder && !appConfig.fileManager.pickFile)
+                    return;
+                if (item.isFolder() !== appConfig.fileManager.pickFolder &&
+                    !item.isFolder() !== appConfig.fileManager.pickFile)
+                    return;
+                $scope.isSelected(item) ? $rootScope.selectedFiles.splice(indexInTemp, 1) : $rootScope.selectedFiles.push(item);
                 return;
             }
-            $scope.temps = [item];
+            $rootScope.selectedFiles = [item];
         };
 
         $scope.singleSelection = function() {
-            return $scope.temps.length === 1 && $scope.temps[0];
+            return $rootScope.selectedFiles.length === 1 && $rootScope.selectedFiles[0];
         };
 
         $scope.totalSelecteds = function() {
             return {
-                total: $scope.temps.length
+                total: $rootScope.selectedFiles.length
             };
         };
 
         $scope.selectionHas = function(type) {
-            return $scope.temps.find(function(item) {
+            return $rootScope.selectedFiles.find(function(item) {
                 return item && item.model.type === type;
             });
         };
 
         $scope.prepareNewFolder = function() {
             var item = new Item(null, $scope.fileNavigator.currentPath);
-            $scope.temps = [item];
+            $rootScope.selectedFiles = [item];
             return item;
         };
 
         $scope.smartClick = function(item) {
+
             var pick = $scope.config.allowedActions.pickFiles;
             if (item.isFolder()) {
                 return $scope.fileNavigator.folderClick(item);
@@ -190,7 +199,7 @@
         };
 
         $scope.changePermissions = function() {
-            $scope.apiMiddleware.changePermissions($scope.temps, $scope.temp).then(function() {
+            $scope.apiMiddleware.changePermissions($rootScope.selectedFiles, $scope.temp).then(function() {
                 $scope.modal('changepermissions', true);
             });
         };
@@ -203,7 +212,7 @@
             if (item) {
                 return $scope.apiMiddleware.download(item);
             }
-            return $scope.apiMiddleware.downloadMultiple($scope.temps);
+            return $scope.apiMiddleware.downloadMultiple($rootScope.selectedFiles);
         };
 
         $scope.copy = function() {
@@ -220,7 +229,7 @@
                     return false;
                 }
             }
-            $scope.apiMiddleware.copy($scope.temps, $rootScope.selectedModalPath).then(function() {
+            $scope.apiMiddleware.copy($rootScope.selectedFiles, $rootScope.selectedModalPath).then(function() {
                 $scope.fileNavigator.refresh();
                 $scope.modal('copy', true);
             });
@@ -239,7 +248,7 @@
                 return false;
             }
 
-            $scope.apiMiddleware.compress($scope.temps, name, $rootScope.selectedModalPath).then(function() {
+            $scope.apiMiddleware.compress($rootScope.selectedFiles, name, $rootScope.selectedModalPath).then(function() {
                 $scope.fileNavigator.refresh();
                 if (! $scope.config.compressAsync) {
                     return $scope.modal('compress', true);
@@ -276,19 +285,19 @@
         };
 
         $scope.remove = function() {
-            $scope.apiMiddleware.remove($scope.temps).then(function() {
+            $scope.apiMiddleware.remove($rootScope.selectedFiles).then(function() {
                 $scope.fileNavigator.refresh();
                 $scope.modal('remove', true);
             });
         };
 
         $scope.move = function() {           
-            var anyItem = $scope.singleSelection() || $scope.temps[0];
+            var anyItem = $scope.singleSelection() || $rootScope.selectedFiles[0];
             if (anyItem && validateSamePath(anyItem)) {
                 $scope.apiMiddleware.apiHandler.error = $translate.instant('error_cannot_move_same_path');
                 return false;
             }
-            $scope.apiMiddleware.move($scope.temps, $rootScope.selectedModalPath).then(function() {
+            $scope.apiMiddleware.move($rootScope.selectedFiles, $rootScope.selectedModalPath).then(function() {
                 $scope.fileNavigator.refresh();
                 $scope.modal('move', true);
             });

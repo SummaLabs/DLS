@@ -30,5 +30,9 @@ angular.module('dlsApp')
             scaleMin: 0.2,
             scaleMax: 4.0,
             scaleFactor: 1.2
+        },
+        fileManager: {
+            pickFile: true,
+            pickFolder: true
         }
     });

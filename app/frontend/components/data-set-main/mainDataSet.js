@@ -7,7 +7,7 @@
             bindings: {
                 models: '<'
             },
-            controller: function ($scope, $mdDialog, $timeout) {
+            controller: function ($scope, $mdDialog, $timeout, appConfig) {
                 var self = this;
                 self.hidden = false;
                 self.isOpen = false;
@@ -75,25 +75,30 @@
                 };
 
                 this.createDialog = function(event) {
+                    appConfig.fileManager.pickFile = true;
+                    appConfig.fileManager.pickFolder = false;
                 	$mdDialog.show({
-						controller: DialogController,
+						controller: DialogControllerFS,
 						templateUrl: 'frontend/components/dialog/file-manager.html',
 						parent: angular.element(document.body),
 						targetEvent: event,
-						clickOutsideToClose:true,
-//						fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+						clickOutsideToClose:false
 					});
                 };
             }
-
-
         });
 })();
 
-function DialogController($scope, $mdDialog) {
+function DialogControllerFS($scope, $mdDialog, $rootScope) {
 
 	$scope.select = function(answer) {
 		$mdDialog.hide(answer);
+
+        console.log('/' + $rootScope.selectedModalPath.join('/'));
+		$rootScope.selectedFiles.forEach(function(item, i, array) {
+            console.log(item.model.fullPath(), item.model.name,
+                        item.model.type, item.model.size );
+		});
 	};
 
 	$scope.cancel = function() {
