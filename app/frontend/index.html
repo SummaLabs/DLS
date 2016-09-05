@@ -13,6 +13,13 @@
     <link rel="stylesheet" href="/frontend/assets/css/angular-material.css"/>
     <link rel="stylesheet" href="/frontend/assets/css/app.css"/>
     <link rel="stylesheet" href="/frontend/assets/css/constructor.css"/>
+
+    <!-- FILE MANAGER -->
+
+    <link rel="stylesheet" href="/frontend/assets/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/frontend/assets/css/fm/angular-filemanager.min.css"/>
+    <!-- END -->   
+
 </head>
 
 <body ng-app="dlsApp" layout="column">
@@ -36,6 +43,9 @@
     </md-tab>
     <md-tab label="DataSetTest" class="unselectable">
         <create-img-dataset></create-img-dataset>
+    </md-tab>
+    <md-tab label="File Manager" class="unselectable">
+        <angular-filemanager></angular-filemanager>
     </md-tab>
 </md-tabs>
 
@@ -65,8 +75,27 @@
 <script src="/frontend/components/layers/layer-editor.js"></script>
 <script src="/frontend/components/service/networkDataService.js"></script>
 <script src="/frontend/components/service/networkLayerService.js"></script>
-
 <script src="/frontend/components/data-set-create-image2d/CreateImgDataset.js"></script>
+
+<!-- FILE MANAGER -->
+<script src="/frontend/lib/angular-translate.min.js"></script>
+<script src="/frontend/lib/ng-file-upload.min.js"></script>
+<script src="/frontend/lib/jquery.min.js"></script>
+<script src="/frontend/lib/bootstrap.min.js"></script>
+
+<script src="frontend/components/file-manager/js/app.js"></script>
+<script src="frontend/components/file-manager/js/directives/directives.js"></script>
+<script src="frontend/components/file-manager/js/filters/filters.js"></script>
+<script src="frontend/components/file-manager/js/providers/config.js"></script>
+<script src="frontend/components/file-manager/js/entities/chmod.js"></script>
+<script src="frontend/components/file-manager/js/entities/item.js"></script>
+<script src="frontend/components/file-manager/js/services/apihandler.js"></script>
+<script src="frontend/components/file-manager/js/services/apimiddleware.js"></script>
+<script src="frontend/components/file-manager/js/services/filenavigator.js"></script>
+<script src="frontend/components/file-manager/js/providers/translations.js"></script>
+<script src="frontend/components/file-manager/js/controllers/main.js"></script>
+<script src="frontend/components/file-manager/js/controllers/selector-controller.js"></script>
+<!-- END -->
 
 </body>
 </html>

@@ -3,17 +3,21 @@ from flask import send_from_directory
 from app.backend import app
 
 import os
+from os.path import dirname
+
 from flask_sockets import Sockets
+import network.api
+from file_manager.api import file_manager
 
 sockets = Sockets(app=app)
 
-import network.api
 app.register_blueprint(network.api.blueprint, url_prefix='/network')
+app.register_blueprint(file_manager, url_prefix='/fm')
 
 @app.route('/')
 @app.route('/index')
 def index():
-    user = {'nickname': 'Denis'}
+    user = {'nickname': 'unknown'}
     return render_template("index.html", title='Home', user=user)
 
 
@@ -40,3 +44,8 @@ def route_static_icons(filename):
 def template(filename):
     rootDir = os.path.dirname(__file__)
     return send_from_directory(os.path.join(rootDir, 'static', 'views'), filename)
+
+@app.route('/src/templates/<path:filename>')
+def file_manager(filename):
+    rootDir = os.path.dirname(__file__)
+    return send_from_directory(os.path.join(dirname(rootDir), 'frontend', 'components', 'file-manager', 'templates'), filename)
