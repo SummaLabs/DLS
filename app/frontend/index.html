@@ -28,15 +28,34 @@
     <h3>Deep Learning Studio</h3>
 </md-toolbar>
 
-<md-tabs md-selected="tabSelectedIndex" md-dynamic-height md-border-bottom md-autoselect>
-    <md-tab label="Networks" class="unselectable">
-        <network-main></network-main>
+<!--md-tabs md-selected="tabSelectedIndex" md-dynamic-height md-border-bottom md-autoselect-->
+<md-tabs md-selected="5" md-dynamic-height md-border-bottom md-autoselect>
+    <md-tab class="unselectable">
+        <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="networks">apps</md-icon>
+            Networks
+        </md-tab-label>
+        <md-tab-body>
+            <network-main></network-main>
+        </md-tab-body>
     </md-tab>
-    <md-tab label="Builder" class="unselectable">
-        <constructor></constructor>
+    <md-tab class="unselectable">
+        <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="builder">build</md-icon>
+            Builder
+        </md-tab-label>
+        <md-tab-body>
+            <constructor></constructor>
+        </md-tab-body>
     </md-tab>
-    <md-tab label="Models" class="unselectable">
-        <model-main></model-main>
+    <md-tab class="unselectable">
+        <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="models">device_hub</md-icon>
+            Models
+        </md-tab-label>
+        <md-tab-body>
+            <model-main></model-main>
+        </md-tab-body>
     </md-tab>
     <md-tab label="Data" class="unselectable">
         <main-data-set></main-data-set>
@@ -44,8 +63,31 @@
     <md-tab label="DataSetTest" class="unselectable">
         <create-img-dataset></create-img-dataset>
     </md-tab>
-    <md-tab label="File Manager" class="unselectable">
+    <md-tab class="unselectable">
+        <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="dataset">widgets</md-icon>
+            DataSetBuilder
+        </md-tab-label>
+        <md-tab-body>
+            <dataset-builder></dataset-builder>
+        </md-tab-body>
+    </md-tab>
+    <md-tab class="unselectable">
+        <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="file manager">folder</md-icon>
+            File Manager
+        </md-tab-label>
+        <md-tab-body>
+        </md-tab-body>
         <!--<angular-filemanager></angular-filemanager>-->
+    </md-tab>
+    <md-tab class="unselectable">
+        <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="settings">settings</md-icon>
+            Settings
+        </md-tab-label>
+        <md-tab-body>
+        </md-tab-body>
     </md-tab>
 </md-tabs>
 
@@ -76,6 +118,7 @@
 <script src="/frontend/components/service/networkDataService.js"></script>
 <script src="/frontend/components/service/networkLayerService.js"></script>
 <script src="/frontend/components/data-set-create-image2d/CreateImgDataset.js"></script>
+<script src="/frontend/components/builder/dataset/DatasetBuilder.js"></script>
 
 <!-- FILE MANAGER -->
 <script src="/frontend/lib/angular-translate.min.js"></script>

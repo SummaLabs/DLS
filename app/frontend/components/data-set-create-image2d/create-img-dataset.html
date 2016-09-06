@@ -6,7 +6,7 @@
                     <div layout="row" flex>
                         <md-input-container flex>
                             <label>Dataset name</label>
-                            <input name="datasetName" required ng-model="$ctrl.formDbBackend.datasetname">
+                            <input name="datasetName" required ng-model="$ctrl.formDbBackend.datasetname" aria-label="dataset-name">
                             <div ng-messages="datasetCreateForm.datasetName.$error" multiple md-auto-hide="false" role="alert">
                                 <div ng-message="required">Please input a valid Dataset Name</div>
                             </div>
@@ -47,7 +47,8 @@
                                         <div layout="row" style="padding-top: 24px;">
                                             <md-input-container flex>
                                                 <label>Training Images</label>
-                                                <input type="text" required name="trainingImages" ng-model="$ctrl.formFileImport.fromDir.pathToImageFolder">
+                                                <input type="text" required name="trainingImages"
+                                                       ng-model="$ctrl.formFileImport.fromDir.pathToImageFolder" aria-label="train-images">
                                                 <div ng-messages="datasetCreateForm.trainingImages.$error" multiple md-auto-hide="false" role="alert">
                                                     <div ng-message="required">Please input a valid Path to folder with images</div>
                                                 </div>
@@ -255,7 +256,7 @@
 
                                     <md-input-container>
                                         <md-tab-label>DB backend</md-tab-label>
-                                        <md-select ng-model="$ctrl.formDbBackend.dbBackendSelectedId">
+                                        <md-select ng-model="$ctrl.formDbBackend.dbBackendSelectedId" aria-label="dbBackendSelectedId">
                                             <md-option ng-value="db.id"
                                                        ng-repeat="db in $ctrl.formDbBackend.dbBackends">{{ db.value }}</md-option>
                                         </md-select>
@@ -263,7 +264,7 @@
 
                                     <md-input-container>
                                         <md-tab-label>DB backend</md-tab-label>
-                                        <md-select ng-model="$ctrl.formDbBackend.imageEncodingsSelectedId">
+                                        <md-select ng-model="$ctrl.formDbBackend.imageEncodingsSelectedId" aria-label="imageEncodingsSelectedId">
                                             <md-option ng-value="encoding.id"
                                                        ng-repeat="encoding in $ctrl.formDbBackend.imageEncodings">{{ encoding.value }}</md-option>
                                         </md-select>

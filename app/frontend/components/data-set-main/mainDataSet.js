@@ -7,7 +7,8 @@
             bindings: {
                 models: '<'
             },
-            controller: function ($scope, $mdDialog, $timeout, appConfig) {
+            controller: function ($scope, $rootScope, $mdDialog, $timeout, appConfig) {
+                $rootScope.intabSelectedIndex = 4;
                 var self = this;
                 self.hidden = false;
                 self.isOpen = false;

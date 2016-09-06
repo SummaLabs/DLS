@@ -15,6 +15,7 @@ angular.module('dlsApp', ['ngMaterial',
     'networkDataService',
     'networkLayerService',
     'createImgDataset',
+    'datasetBuilder',
     'FileManagerApp']);
 
 

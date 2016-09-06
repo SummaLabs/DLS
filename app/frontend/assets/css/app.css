@@ -51,6 +51,30 @@ md-tab-item {
   margin: 16px;
 }
 
+.avatar {
+    font-size: 128px;
+    position: relative;
+    width: 128px;
+    height: 128px;
+    border: 1px solid #ddd;
+    border-radius: 10%;
+    display: inline-block;
+    overflow: hidden;
+    margin: 0px;
+    vertical-align: middle;
+    zoom: 0.70;
+    transform: translateZ(0);
+    -webkit-transform: scale(0.70);
+    -moz-transform: scale(0.70);
+}
+
+.avatar-selected {
+    color: orangered;
+}
+
+.txt-list-item {
+    text-align: left;
+}
 
 /*md-toolbar h3 {*/
   /*margin: auto;*/
