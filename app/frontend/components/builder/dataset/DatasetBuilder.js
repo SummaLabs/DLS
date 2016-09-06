@@ -21,35 +21,39 @@ angular.module('datasetBuilder', ['ngMaterial'])
                 $scope.tooltipVisible = self.isOpen;
             }
         });
-        self.items = [
-            {name: "Text Data", icon: "text_fields", direction: "bottom"},
-            {name: "Image 3D", icon: "photo_library", direction: "top"},
-            {name: "Image 2D", icon: "photo", direction: "bottom"}
-        ];
-        self.datasetTypes = {
-            image2d:{
-                typeId:   "image2d",
-                textName: "Create Image2D Dataset",
-                iconName: "photo"
-            },
-            image3d:{
-                typeId:   "image3d",
-                textName: "Create Image3D Dataset",
-                info:     "Create Image3D Dataset",
-                iconName: "photo_library"
-            },
-            text1:{
-                typeId:   "text1",
-                textName: "Create Text Dataset",
-                iconName: "text_fields"
-            },
-            import_csv:{
-                typeId:   "import_csv",
-                textName: "Import CSV Dataset",
-                iconName: "assignment"
-            }
+        self.$onInit = function () {
+            self.items = [
+                {name: "Text Data", icon: "text_fields", direction: "bottom"},
+                {name: "Image 3D", icon: "photo_library", direction: "top"},
+                {name: "Image 2D", icon: "photo", direction: "bottom"}
+            ];
+            self.datasetTypes = {
+                image2d:{
+                    typeId:   "image2d",
+                    textName: "Create Image2D Dataset",
+                    iconName: "photo"
+                },
+                image3d:{
+                    typeId:   "image3d",
+                    textName: "Create Image3D Dataset",
+                    info:     "Create Image3D Dataset",
+                    iconName: "photo_library"
+                },
+                text1:{
+                    typeId:   "text1",
+                    textName: "Create Text Dataset",
+                    iconName: "text_fields"
+                },
+                import_csv:{
+                    typeId:   "import_csv",
+                    textName: "Import CSV Dataset",
+                    iconName: "assignment"
+                }
+            };
+            self.datasetTypesKeys=self.datasetTypes.keys;
+            // self.selected=self.datasetTypes.image2d;
         };
-        self.datasetTypesKeys=self.datasetTypes.keys;
+
         self.toggleList = function () {
             console.log('::toggleList()');
         };
