@@ -50,7 +50,7 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 			$mdDialog.show({
 				clickOutsideToClose: true,
 				parent: parentEl,
-				targetEvent: $event,
+				targetEvent: null,
 				template: dialogTemplate,
 				locals: {},
 				controller: DialogController

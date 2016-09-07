@@ -30,7 +30,7 @@
     user-select: none;
 }
 
-.node_label {
+/*.node_label {
     pointer-events: none;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -38,11 +38,12 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-}
+}*/
 
 .function_label {
     font-size: 12px;
 }
+/*
 .node {
     fill: none;
     stroke: #999;
@@ -75,10 +76,11 @@
     stroke-width: 10;
     cursor: crosshair;
 }
+*/
 
 .link_line {
     stroke: green;
-    stroke-width: 2;
+    stroke-width: 5;
     stroke-opacity: .8;
     fill: none;
     pointer-events: stroke;
@@ -86,7 +88,7 @@
 
 .link_line_active {
     stroke: green;
-    stroke-width: 3;
+    stroke-width: 10;
     stroke-opacity: 1;
 }
 

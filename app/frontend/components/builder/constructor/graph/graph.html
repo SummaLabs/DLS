@@ -2,7 +2,8 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:ev="http://www.w3.org/2001/xml-events"
     id = "svg"
-    ng-attr-width="{{svg.width}}" ng-attr-height="{{svg.height}}">
+    ng-attr-width="{{svg.width}}" ng-attr-height="{{svg.height}}"
+    pointer-events="all">
     <g id = "view" ng-attr-transform="scale({{svg.scale}})">
         <rect ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}" fill="{{svgColor}}"></rect>
         <nodelink ng-if="svg.activelink.nodes.length === 2" link-data="svg.activelink"/>

@@ -7,8 +7,10 @@
        id="g3971">
       <rect
         id="border"
-         onclick="evt.target.setAttribute('stroke','grey');"
-         onmouseover=""
+         onclick="evt.target.setAttribute('style', ~evt.target.getAttribute('style').indexOf(';stroke:red') ? evt.target.getAttribute('style').replace(';stroke:red', '') : evt.target.getAttribute('style') + ';stroke:red');"
+         onclick="evt.target.setAttribute('style', ~evt.target.getAttribute('style').indexOf(';stroke:red') ? evt.target.getAttribute('style').replace(';stroke:red', '') : evt.target.getAttribute('style') + ';stroke:red');"
+         onclick="evt.target.setAttribute('style', ~evt.target.getAttribute('style').indexOf(';stroke:red') ? evt.target.getAttribute('style').replace(';stroke:red', '') : evt.target.getAttribute('style') + ';stroke:red');"
+
          style="fill:#ceeaff;fill-opacity:1;stroke:#c95b02;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          width="139.61801"
          height="108.30583"
