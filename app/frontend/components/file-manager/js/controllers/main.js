@@ -67,7 +67,7 @@
             if (! item || (isRightClick && $scope.isSelected(item))) {
                 return;
             }
-            if ($event && $event.shiftKey && !isRightClick) {
+            if ($event && $event.shiftKey && !isRightClick && !appConfig.fileManager.singleSelection) {
                 var list = $scope.fileList;
                 var indexInList = list.indexOf(item);
                 var lastSelected = $rootScope.selectedFiles[0];
@@ -92,7 +92,7 @@
                     return;
                 }
             }
-            if ($event && !isRightClick && ($event.ctrlKey || $event.metaKey)) {
+            if ($event && !isRightClick && ($event.ctrlKey || $event.metaKey) && !appConfig.fileManager.singleSelection) {
                 if (!appConfig.fileManager.pickFolder && !appConfig.fileManager.pickFile)
                     return;
                 if (item.isFolder() !== appConfig.fileManager.pickFolder &&
@@ -101,6 +101,9 @@
                 $scope.isSelected(item) ? $rootScope.selectedFiles.splice(indexInTemp, 1) : $rootScope.selectedFiles.push(item);
                 return;
             }
+            if (item.isFolder() !== appConfig.fileManager.pickFolder &&
+                    !item.isFolder() !== appConfig.fileManager.pickFile)
+                    return;
             $rootScope.selectedFiles = [item];
         };
 

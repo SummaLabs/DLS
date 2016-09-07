@@ -30,8 +30,8 @@
                 <p> {{ model.name }} </p>
                 <md-progress-linear md-mode="determinate" value="60"></md-progress-linear>
                 <p>In Progress</p>
-                <md-button class="md-secondary" ng-click="$ctrl.createDialog()">Open</md-button>
-                <md-button class="md-secondary" ng-click="$ctrl.createDialog()">Delete</md-button>
+                <md-button class="md-secondary" ng-click="$ctrl.createDialog($event)">Open</md-button>
+                <md-button class="md-secondary" ng-click="$ctrl.createDialog($event)">Delete</md-button>
             </md-list-item>
         </md-list>
     </div>

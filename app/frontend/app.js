@@ -34,6 +34,7 @@ angular.module('dlsApp')
         },
         fileManager: {
             pickFile: true,
-            pickFolder: true
+            pickFolder: true,
+            singleSelection: true
         }
     });

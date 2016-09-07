@@ -77,7 +77,8 @@
 
                 this.createDialog = function(event) {
                     appConfig.fileManager.pickFile = true;
-                    appConfig.fileManager.pickFolder = false;
+                    appConfig.fileManager.pickFolder = true;
+                    appConfig.fileManager.singleSelection = true;
                 	$mdDialog.show({
 						controller: DialogControllerFS,
 						templateUrl: 'frontend/components/dialog/file-manager.html',
