@@ -54,3 +54,13 @@ def download_classifide_mages_json():
         mimetype="text/csv",
         headers={"Content-disposition":
                      "attachment; filename=myplot.csv"})
+
+
+@blueprint.route('/dataset/roc/load/<path:id>')
+def load_images_data_set_roc(id):
+    images_path = os.path.join(classified_images_dir, id)
+
+    if request.method == 'GET':
+        with open(images_path, 'r') as f:
+            image_data_set_roc = json.load(f)
+            return Response(json.dumps(image_data_set_roc), mimetype='application/json')

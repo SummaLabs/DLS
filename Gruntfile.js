@@ -60,6 +60,13 @@ module.exports = function (grunt) {
                         src: '<%= globalConfig.node_modules_path %>/d3/build/d3.min.js',
                         dest: '<%= globalConfig.lib %>/',
                         filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: '<%= globalConfig.node_modules_path %>/angular-google-chart/ng-google-chart.js',
+                        dest: '<%= globalConfig.lib %>/',
+                        filter: 'isFile'
                     }
                 ]
             }

@@ -13,12 +13,12 @@
                 };
 
                 var parentEl = angular.element(document.body);
-                this.createDialog = function ($event) {
+                this.createImagesDialog = function ($event) {
                     $mdDialog.show({
                         clickOutsideToClose: true,
                         parent: parentEl,
                         targetEvent: $event,
-                        templateUrl: "/frontend/components/inference/apply-model-menu/apply-model-dialog.html",
+                        templateUrl: "/frontend/components/inference/apply-model-menu/apply-model-dialog-images.html",
                         locals: {},
                         controller: function ($scope, $mdDialog, $window, imageService) {
                             $scope.closeDialog = function () {
@@ -33,6 +33,21 @@
                                 $scope.fileUrl = url.createObjectURL(blob);
                             }, function myError(response) {
                             });
+                        }
+                    });
+                };
+                
+                this.createDataSetDialog = function ($event) {
+                    $mdDialog.show({
+                        clickOutsideToClose: true,
+                        parent: parentEl,
+                        targetEvent: $event,
+                        templateUrl: "/frontend/components/inference/apply-model-menu/apply-model-dialog-dataset.html",
+                        locals: {},
+                        controller: function ($scope, $mdDialog) {
+                            $scope.closeDialog = function () {
+                                $mdDialog.hide();
+                            };
                         }
                     });
                 };

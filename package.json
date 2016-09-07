@@ -15,7 +15,8 @@
     "angular-aria": "^1.5.5",
     "angular-messages": "^1.5.5",
     "angular-material": "git+https://github.com/angular/bower-material.git#master",
-    "d3": "^4.x.x"
+    "d3": "^4.x.x",
+    "angular-google-chart": "^0.1.0"
   },
   "devDependencies": {
     "grunt": "^1.0.1",

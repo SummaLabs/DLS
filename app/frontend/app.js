@@ -16,7 +16,9 @@ angular.module('dlsApp', ['ngMaterial',
     'networkLayerService',
     'applyModelMenu',
     'classifyImage',
-    'imageService']);
+    'imageService',
+    'googlechart', 
+    'classifyDataSet']);
 
 
 angular.module('dlsApp')

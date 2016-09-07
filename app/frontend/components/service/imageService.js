@@ -25,5 +25,12 @@ function ImageService($http) {
             url: "/images/classified/download",
             responseType: 'arraybuffer'
         })
+    };
+    
+    this.loadDataSetROC = function(id) {
+        return $http({
+            method: "GET",
+            url: "/images/dataset/roc/load/" + id
+        })
     }
 }
