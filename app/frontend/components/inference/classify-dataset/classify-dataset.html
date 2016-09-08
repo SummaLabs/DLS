@@ -1,15 +1,3 @@
-<!--<md-content>-->
-    <!--<md-list>-->
-        <!--<md-list-item ng-repeat="data in $ctrl.listDats">-->
-            <!--<div layout-padding layout="row" layout-fill>-->
-                <!--<div flex ng-cloak google-chart chart="{{data.plot}}" class="md-item-text md-whiteframe-z1"-->
-                     <!--style="height: 800px; width: 800px"></div>-->
-            <!--</div>-->
-        <!--</md-list-item>-->
-    <!--</md-list>-->
-<!--</md-content>-->
-
-
 <md-content>
     <md-card>
         <md-card-title>
@@ -18,7 +6,7 @@
             </md-card-title-text>
         </md-card-title>
         <md-card-content>
-            <div layout="row" layout-align="space-between center">
+            <div ng-show="classNames.length > 1" layout="row" layout-align="space-between center">
                 <md-select placeholder="Classes" ng-model="classNameSelected" class="md-no-underline">
                     <md-option ng-value="className" ng-repeat="className in classNames">{{className}}</md-option>
                 </md-select>
