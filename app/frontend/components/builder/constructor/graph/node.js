@@ -138,10 +138,10 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 		scope.$watch('nodeData.selected', function(newValue, oldValue) {
 			if (newValue) {
 				rectNode.addClass("node_active");
-				rectNode.attr('stroke-dasharray', '5,5');
+//				rectNode.attr('stroke-dasharray', '5,5');
 			} else {
 				rectNode.removeClass("node_active");
-				rectNode.attr('stroke-dasharray', '');
+//				rectNode.attr('stroke-dasharray', '');
 			}
 		});
 

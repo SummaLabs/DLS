@@ -125,7 +125,7 @@ function initComponent() {
 		var parentNode = angular.element($element[0].parentNode);
 
 		var positionDrag = {x:0, y: 0};
-		var activeNode = {
+		var activeItem = {
 			id: -1,
 			type: null
 		};
@@ -243,8 +243,8 @@ function initComponent() {
 
 		$scope.$on('selectedItem', function (event, data) {
 			self.isItemClicked = true;
-			activeNode.id = data.id;
-			activeNode.type = data.type;
+			activeItem.id = data.id;
+			activeItem.type = data.type;
 		});
 
 		//Mouse events:
@@ -262,7 +262,7 @@ function initComponent() {
 					selectItems (self.nodes, false);
 					selectItems (self.links, false);
 				});
-				activeNode.id = -1;
+				activeItem.id = -1;
 			}
 			self.isItemClicked = false;
 		});
@@ -324,20 +324,28 @@ function initComponent() {
 		parentNode.on('keydown', function (event) {
 			if (event.keyCode === 46) {
 				$scope.$apply( function() {
-					if (activeNode.id >= 0) {
-						if (activeNode.type === 'node') {
+					if (activeItem.id >= 0) {
+					    console.log(activeItem.type);
+						if (activeItem.type === 'node') {
 							self.nodes.forEach(function(node, index, array){
-								if (node.id === activeNode.id) {
+								if (node.id === activeItem.id) {
 									self.nodes.splice(index, 1);
+									self.links.forEach(function(link, index_l, array){
+									    if (link.nodes.length === 2) {
+                                            if (link.nodes[0].id === activeItem.id || link.nodes[1].id === activeItem.id ) {
+                                                self.links.splice(index_l, 1);
+                                            }
+                                        }
+							});
 								}
 							});
-						} /*else if (activeNode.type === 'link') {
-							self.nodes.forEach(function(node, index, array){
-								if (node.id === activeNode.id) {
+						} else if (activeItem.type === 'link') {
+							self.links.forEach(function(link, index, array){
+								if (link.id === activeItem.id) {
 									self.links.splice(index, 1);
 								}
 							});
-						}*/
+						}
 					} else
 						removeSelectedItems(self.nodes, self.links);
 //					networkDataService.pubNetworkUpdateEvent();
