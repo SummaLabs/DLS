@@ -184,7 +184,14 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 					type: 'node',
 					selected: scope.nodeData.selected
 				});
+			} else if (!scope.isPort) {
+				scope.$emit('selectedItem', {
+					id: idNode,
+					type: 'node',
+					selected: scope.nodeData.selected
+				});
 			}
+
         }
 
         function doDoubleClickAction($rootScope) {
@@ -216,7 +223,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 			if (event.ctrlKey)
 				return;
 			rectNode.removeClass("node_selected");
-			scope.$emit('nodeMouseUp', { });
+			scope.$emit('nodeMouseUp', event);
 		});
 	}
 

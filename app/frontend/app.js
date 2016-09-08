@@ -30,7 +30,8 @@ angular.module('dlsApp')
             areaHeight: 2000,
             scaleMin: 0.2,
             scaleMax: 4.0,
-            scaleFactor: 1.2
+            scaleFactor: 1.2,
+            gridStep: 25
         },
         fileManager: {
             pickFile: true,
