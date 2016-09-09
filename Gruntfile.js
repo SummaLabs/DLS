@@ -47,6 +47,44 @@ module.exports = function (grunt) {
                         dest: '<%= globalConfig.lib %>/',
                         filter: 'isFile'
                     },
+                    // ***** FILE MANAGER
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: '<%= globalConfig.node_modules_path %>/angular-translate/dist/angular-translate.min.js',
+                        dest: '<%= globalConfig.lib %>/',
+                        filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: '<%= globalConfig.node_modules_path %>/ng-file-upload/dist/ng-file-upload.min.js',
+                        dest: '<%= globalConfig.lib %>/',
+                        filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: '<%= globalConfig.node_modules_path %>/jquery/dist/jquery.min.js',
+                        dest: '<%= globalConfig.lib %>/',
+                        filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: '<%= globalConfig.node_modules_path %>/bootstrap/dist/js/bootstrap.min.js',
+                        dest: '<%= globalConfig.lib %>/',
+                        filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: '<%= globalConfig.node_modules_path %>/bootstrap/dist/css/bootstrap.min.css',
+                        dest: '<%= globalConfig.styles %>/',
+                        filter: 'isFile'
+                    },
+                    // ***** END
+
                     {
                         expand: true,
                         flatten: true,

@@ -16,7 +16,13 @@
     "angular-messages": "^1.5.5",
     "angular-material": "git+https://github.com/angular/bower-material.git#master",
     "d3": "^4.x.x",
+    "angular-translate": "~2.9.1",
+    "bootstrap": "~3.3.2",
+    "jquery": "~2.2.0",
+    "bootswatch": "3.3.6+1",
+    "ng-file-upload": "^12.0.1",
     "angular-google-chart": "^0.1.0"
+
   },
   "devDependencies": {
     "grunt": "^1.0.1",

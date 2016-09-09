@@ -7,9 +7,19 @@
     <meta name="description" content="">
     <meta name="viewport" content="initial-scale=1" />
     <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,700'>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <link rel="stylesheet" href="/frontend/assets/css/angular-material.css"/>
     <link rel="stylesheet" href="/frontend/assets/css/app.css"/>
     <link rel="stylesheet" href="/frontend/assets/css/constructor.css"/>
+
+    <!-- FILE MANAGER -->
+
+    <link rel="stylesheet" href="/frontend/assets/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/frontend/assets/css/fm/angular-filemanager.min.css"/>
+    <!-- END -->
+
 </head>
 
 <body ng-app="dlsApp" layout="column">
@@ -19,23 +29,72 @@
 </md-toolbar>
 
 <md-tabs md-selected="tabSelectedIndex" md-dynamic-height md-border-bottom md-autoselect>
-    <md-tab label="Networks" class="unselectable">
-        <network-main></network-main>
+<!--md-tabs md-selected="4" md-dynamic-height md-border-bottom md-autoselect-->
+    <md-tab class="unselectable">
+        <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="networks">apps</md-icon>
+            Networks
+        </md-tab-label>
+        <md-tab-body>
+            <network-main></network-main>
+        </md-tab-body>
     </md-tab>
-    <md-tab label="Builder" class="unselectable">
-        <constructor></constructor>
+    <md-tab class="unselectable">
+        <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="builder">build</md-icon>
+            Builder
+        </md-tab-label>
+        <md-tab-body>
+            <constructor></constructor>
+        </md-tab-body>
     </md-tab>
-    <md-tab label="Models" class="unselectable">
-        <model-main></model-main>
+    <md-tab class="unselectable">
+        <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="models">device_hub</md-icon>
+            Models
+        </md-tab-label>
+        <md-tab-body>
+            <model-main></model-main>
+        </md-tab-body>
     </md-tab>
     <md-tab label="Data" class="unselectable">
         <main-data-set></main-data-set>
+    </md-tab>
+    <!--md-tab label="DataSetTest" class="unselectable">
+        <create-img-dataset></create-img-dataset>
+    </md-tab-->
+    <md-tab class="unselectable">
+        <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="dataset">widgets</md-icon>
+            DataSetBuilder
+        </md-tab-label>
+        <md-tab-body>
+            <dataset-builder></dataset-builder>
+        </md-tab-body>
+    </md-tab>
+    <md-tab class="unselectable">
+        <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="file manager">folder</md-icon>
+            File Manager
+        </md-tab-label>
+        <md-tab-body>
+        </md-tab-body>
+        <!--<angular-filemanager></angular-filemanager>-->
+    </md-tab>
+    <md-tab class="unselectable">
+        <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="settings">settings</md-icon>
+            Settings
+        </md-tab-label>
+        <md-tab-body>
+        </md-tab-body>
     </md-tab>
 </md-tabs>
 
 <script src="/frontend/lib/angular.js"></script>
 <script src="/frontend/lib/angular-animate.js"></script>
 <script src="/frontend/lib/angular-aria.js"></script>
+<script src="/frontend/lib/angular-messages.js"></script>
 <script type="text/javascript" src="/frontend/lib/angular-material.js"></script>
 <script src="/frontend/lib/ng-google-chart.js"></script>
 
@@ -45,8 +104,7 @@
 <script src="/frontend/components/main-menu/MainMenu.js"></script>
 <script src="/frontend/components/builder/constructor/core.js"></script>
 <script src="/frontend/components/builder/constructor/palette/palette.js"></script>
-<script src="/frontend/components/builder/constructor/palette/menuToggle.js"></script>
-<script src="/frontend/components/builder/constructor/palette/menuLink.js"></script>
+<script src="/frontend/components/builder/constructor/palette/layersPanel.js"></script>
 <script src="/frontend/components/builder/constructor/graph/graph.js"></script>
 <script src="/frontend/components/builder/constructor/graph/node.js"></script>
 <script src="/frontend/components/builder/constructor/graph/link.js"></script>
@@ -60,10 +118,32 @@
 <script src="/frontend/components/layers/layer-editor.js"></script>
 <script src="/frontend/components/service/networkDataService.js"></script>
 <script src="/frontend/components/service/networkLayerService.js"></script>
+<script src="/frontend/components/data-set-create-image2d/CreateImgDataset.js"></script>
+<script src="/frontend/components/builder/dataset/DatasetBuilder.js"></script>
 <script src="/frontend/components/inference/apply-model-menu/applyModelMenu.js"></script>
 <script src="/frontend/components/inference/classify-image/classifyImage.js"></script>
 <script src="/frontend/components/service/imageService.js"></script>
 <script src="/frontend/components/inference/classify-dataset/classifyDataset.js"></script>
+
+<!-- FILE MANAGER -->
+<script src="/frontend/lib/angular-translate.min.js"></script>
+<script src="/frontend/lib/ng-file-upload.min.js"></script>
+<script src="/frontend/lib/jquery.min.js"></script>
+<script src="/frontend/lib/bootstrap.min.js"></script>
+
+<script src="frontend/components/file-manager/js/app.js"></script>
+<script src="frontend/components/file-manager/js/directives/directives.js"></script>
+<script src="frontend/components/file-manager/js/filters/filters.js"></script>
+<script src="frontend/components/file-manager/js/providers/config.js"></script>
+<script src="frontend/components/file-manager/js/entities/chmod.js"></script>
+<script src="frontend/components/file-manager/js/entities/item.js"></script>
+<script src="frontend/components/file-manager/js/services/apihandler.js"></script>
+<script src="frontend/components/file-manager/js/services/apimiddleware.js"></script>
+<script src="frontend/components/file-manager/js/services/filenavigator.js"></script>
+<script src="frontend/components/file-manager/js/providers/translations.js"></script>
+<script src="frontend/components/file-manager/js/controllers/main.js"></script>
+<script src="frontend/components/file-manager/js/controllers/selector-controller.js"></script>
+<!-- END -->
 
 </body>
 </html>

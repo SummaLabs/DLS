@@ -7,12 +7,12 @@ import re
 import os
 import flask
 
-blueprint = flask.Blueprint(__name__, __name__)
+network = flask.Blueprint(__name__, __name__)
 
 layers_dir = os.path.join(dirname(dirname(dirname(dirname(__file__)))),  'data/network/layers')
 saved_dir = os.path.join(dirname(dirname(dirname(dirname(__file__)))), 'data/network/saved')
 
-@blueprint.route('/layer/categories')
+@network.route('/layer/categories')
 def network_layer_categories():
     layers_path = os.path.join(layers_dir, 'categories.json')
 
@@ -20,7 +20,7 @@ def network_layer_categories():
         with open(layers_path, 'r') as f:
             return Response(json.dumps(json.load(f)), mimetype='application/json')
 
-@blueprint.route('/layers')
+@network.route('/layers')
 def network_layers():
     layers_path = os.path.join(layers_dir, 'library.json')
 
@@ -28,7 +28,7 @@ def network_layers():
         with open(layers_path, 'r') as f:
             return Response(json.dumps(json.load(f)), mimetype='application/json')
 
-@blueprint.route('/saved/names')
+@network.route('/saved/names')
 def load_saved_network_names():
     networks_names = []
 
@@ -40,7 +40,7 @@ def load_saved_network_names():
             return Response(json.dumps(networks_names), mimetype='application/json')
 
 
-@blueprint.route('/load/<path:filename>')
+@network.route('/load/<path:filename>')
 def load_network(filename):
     saved_path = os.path.join(saved_dir, str(filename) + ".json")
 
@@ -49,7 +49,7 @@ def load_network(filename):
             return Response(json.dumps(json.load(f)), mimetype='application/json')
 
 
-@blueprint.route('/save', methods=["POST"])
+@network.route('/save', methods=["POST"])
 def save_network():
     if request.method == "POST":
         net_config = json.loads(request.data)

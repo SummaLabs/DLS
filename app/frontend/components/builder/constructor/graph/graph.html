@@ -2,9 +2,22 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:ev="http://www.w3.org/2001/xml-events"
     id = "svg"
-    ng-attr-width="{{svg.width}}" ng-attr-height="{{svg.height}}">
+    ng-attr-width="{{svg.width}}" ng-attr-height="{{svg.height}}"
+    pointer-events="all">
+
+    <rect ng-attr-width="{{svg.width}}" ng-attr-height="{{svg.width}}" fill="{{svgColor}}"></rect>
+
+    <line ng-repeat="line in svg.grid.vertical"
+          ng-attr-x1="{{line.x}}" ng-attr-y1="{{line.y}}"
+          ng-attr-x2="{{line.x2}}" ng-attr-y2="{{line.y2}}"
+          style="stroke:rgb(111,111,111);stroke-width:0.5" />
+
+    <line ng-repeat="line in svg.grid.horizontal"
+          ng-attr-x1="{{line.x}}" ng-attr-y1="{{line.y}}"
+          ng-attr-x2="{{line.x2}}" ng-attr-y2="{{line.y2}}"
+          style="stroke:rgb(111,111,111);stroke-width:0.5" />
+
     <g id = "view" ng-attr-transform="scale({{svg.scale}})">
-        <rect ng-attr-width="{{svgWidth}}" ng-attr-height="{{svgHeight}}" fill="{{svgColor}}"></rect>
         <nodelink ng-if="svg.activelink.nodes.length === 2" link-data="svg.activelink"/>
         <nodelink ng-if="svg.idNodesInit" ng-repeat="link in svg.links" link-data="link"/>
         <node ng-repeat="node in svg.nodes" node-data="node" ng-init="svg.idNodesInit = true" ></node>

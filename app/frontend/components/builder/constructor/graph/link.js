@@ -84,16 +84,16 @@ function link() {
 		});
 
 		element.on('click', function (event) {
-			if (!event.ctrlKey)
-				return;
-			scope.$apply( function() {
-				scope.linkData.selected = !scope.linkData.selected;
-			});
-			scope.$emit('selectedItem', {
-				id: scope.linkData.id,
-				type: 'link',
-				selected: scope.linkData.selected
-			});
+			if (event.ctrlKey) {
+                scope.$apply( function() {
+                    scope.linkData.selected = !scope.linkData.selected;
+                });
+            }
+            scope.$emit('selectedItem', {
+                id: scope.linkData.id,
+                type: 'link',
+                selected: scope.linkData.selected
+            });
 		});
 	}
 

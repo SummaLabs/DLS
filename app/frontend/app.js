@@ -14,6 +14,9 @@ angular.module('dlsApp', ['ngMaterial',
     'layerEditor',
     'networkDataService',
     'networkLayerService',
+    'createImgDataset',
+    'datasetBuilder',
+    'FileManagerApp',
     'applyModelMenu',
     'classifyImage',
     'imageService',
@@ -32,7 +35,13 @@ angular.module('dlsApp')
             areaHeight: 2000,
             scaleMin: 0.2,
             scaleMax: 4.0,
-            scaleFactor: 1.2
+            scaleFactor: 1.2,
+            gridStep: 25
+        },
+        fileManager: {
+            pickFile: true,
+            pickFolder: true,
+            singleSelection: true
         }
     }).config(['$compileProvider', function ($compileProvider) {
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(|blob|):/);
