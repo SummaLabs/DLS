@@ -7,13 +7,13 @@ import os
 import flask
 import base64
 
-blueprint = flask.Blueprint(__name__, __name__)
+images = flask.Blueprint(__name__, __name__)
 
 classified_images_file = "classified-images-123123123123.json"
 classified_images_dir = os.path.join(dirname(dirname(dirname(dirname(__file__)))), 'data/app/tmp')
 
 
-@blueprint.route('/classified/load/<path:class_number>')
+@images.route('/classified/load/<path:class_number>')
 def load_classified_images(class_number):
     layers_path = os.path.join(classified_images_dir, classified_images_file)
 
@@ -43,7 +43,7 @@ def create_image_n_classes(classified_image, n, imageEncode):
             'classProbabilities': n_class_probabilities}
 
 
-@blueprint.route('/classified/download')
+@images.route('/classified/download')
 def download_classifide_mages_json():
     layers_path = os.path.join(classified_images_dir, classified_images_file)
 
@@ -56,7 +56,7 @@ def download_classifide_mages_json():
                      "attachment; filename=myplot.csv"})
 
 
-@blueprint.route('/dataset/roc/load/<path:id>')
+@images.route('/dataset/roc/load/<path:id>')
 def load_images_data_set_roc(id):
     images_path = os.path.join(classified_images_dir, id)
 

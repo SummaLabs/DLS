@@ -8,11 +8,13 @@ from os.path import dirname
 from flask_sockets import Sockets
 from app.backend.network.api import network
 from app.backend.file_manager.api import file_manager
+from app.backend.images.api import images
 
 sockets = Sockets(app=app_flask)
 
 app_flask.register_blueprint(network, url_prefix='/network')
 app_flask.register_blueprint(file_manager, url_prefix='/fm')
+app_flask.register_blueprint(images, url_prefix='/images')
 
 @app_flask.route('/')
 @app_flask.route('/index')
