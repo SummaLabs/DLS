@@ -1,0 +1,26 @@
+<div align="column" flex>
+    <div align="row">
+        <div>Loaded data form Page <strong>{{paging.current}}</strong>,
+            from <strong>{{$ctrl.currentIdx.from}}</strong>
+            to <strong>{{$ctrl.currentIdx.to}}</strong>
+        </div>
+        <hr>
+        <div align="row" layout-padding="">
+            <cl-paging flex cl-pages="paging.total"
+                       cl-steps="10"
+                       cl-page-changed="paging.onPageChanged()"
+                       cl-align="start start"
+                       cl-current-page="paging.current"></cl-paging>
+        </div>
+        <md-grid-list md-cols="2" md-cols-gt-xs="3" md-cols-md="4" md-cols-gt-md="6" md-row-height="1:1" md-gutter="12px">
+            <md-grid-tile ng-repeat="idx in $ctrl.currentListIdx">
+                <img ng-src="/dbpreview/getimgdata/{{idx.idx}}" class="db-img-preview md-whiteframe-8dp">
+                <md-grid-tile-footer layout-padding="4px">
+                    <h2 style="font-weight: 800;">
+                        {{idx.info}} : {{idx.pos}}
+                    </h2>
+                </md-grid-tile-footer>
+            </md-grid-tile>
+        </md-grid-list>
+    </div>
+</div>

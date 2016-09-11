@@ -21,7 +21,10 @@ angular.module('dlsApp', ['ngMaterial',
     'classifyImage',
     'imageService',
     'googlechart', 
-    'classifyDataSet']);
+    'classifyDataSet',
+    'datasetImage2dPreview',
+    'cl.paging'
+]);
 
 
 angular.module('dlsApp')
