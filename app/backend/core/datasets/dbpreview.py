@@ -18,7 +18,11 @@ class Dataset:
     mapUrl=None
     def __init__(self, pathRoot):
         if not os.path.isdir(pathRoot):
-            raise Exception('Cant find directory [%s]' % pathRoot)
+            strError = 'Cant find directory [%s]' % pathRoot
+            print (strError)
+            self.mapUrl = {}
+            return
+            # raise Exception()
         self.wdir = os.path.abspath(pathRoot)
         tlstDir=[os.path.basename(xx) for xx in glob.glob('%s/*' % self.wdir) if os.path.isdir(xx)]
         self.mapUrl = {}
@@ -44,7 +48,7 @@ class Dataset:
             return f.read()
 
 ###############################
-dataSetProvider = Dataset(os.path.abspath('data-test/dataset-image2d/simple4c_test'))
+dataSetProvider = Dataset(os.path.abspath('data-test/dataset-image2d/simple4c_testq'))
 
 ###############################
 @dbpreview.route('/datasetinfo/', methods=['GET', 'POST'])
