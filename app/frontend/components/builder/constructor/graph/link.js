@@ -19,8 +19,8 @@ function link() {
 		link: function($scope, element, attrs) {
 
 			$scope.from = {
-			    x: $scope.linkData.nodes[0].pos.x + $scope.linkData.nodes[0].portOut.data.offset.x,
-			    y: $scope.linkData.nodes[0].pos.y + $scope.linkData.nodes[0].portOut.data.offset.y
+			    x: $scope.linkData.nodes[0].pos.x + $scope.linkData.nodes[0].displayData.portOut.offsetCenter.x,
+			    y: $scope.linkData.nodes[0].pos.y + $scope.linkData.nodes[0].displayData.portOut.offsetCenter.y
 			}
 
 			if($scope.linkData.nodes[1].id === 'activePoint') {
@@ -28,8 +28,8 @@ function link() {
 			} else {
 
 				$scope.to = {
-                    x: $scope.linkData.nodes[1].pos.x + $scope.linkData.nodes[1].portIn.data.offset.x,
-                    y: $scope.linkData.nodes[1].pos.y + $scope.linkData.nodes[1].portIn.data.offset.y
+                    x: $scope.linkData.nodes[1].pos.x + $scope.linkData.nodes[1].displayData.portIn.offsetCenter.x,
+                    y: $scope.linkData.nodes[1].pos.y + $scope.linkData.nodes[1].displayData.portIn.offsetCenter.y
                 }
 			}
 			linkWatcher.bind(this)($scope, element);
@@ -49,14 +49,11 @@ function link() {
 		});
 
 		scope.$watch('linkData.nodes[0].pos.x', function(newValue, oldValue) {
-
 			scope.from.x += newValue - oldValue;
 			updatePos(element, scope.from, scope.to);
-//			console.log(scope.linkData.nodes[0].pos);
 		});
 
 		scope.$watch('linkData.nodes[0].pos.y', function(newValue, oldValue) {
-
 			scope.from.y += newValue - oldValue;
 			updatePos(element, scope.from, scope.to);
 		});

@@ -92,6 +92,14 @@
     stroke-opacity: 1;
 }
 
+#sel_rect {
+    stroke: #000099;
+    stroke-width: 1;
+    stroke-dasharray: 10 5;
+    fill: #3333ff;
+    fill-opacity: 0.1;
+}
+
 #workspace:focus {
   background: Silver;
 }

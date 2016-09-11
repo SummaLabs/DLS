@@ -12,9 +12,10 @@ function initComponent() {
 
 	const state = {
         DEFAULT: 0,
-        MOVING: 1,
-        JOINING: 2,
-        DRAGGING: 3,
+        SELECTION: 1,
+        MOVING: 2,
+        JOINING: 3,
+        DRAGGING: 4,
     }
 
     const events = {
@@ -38,6 +39,13 @@ function initComponent() {
             self.links = [];
             self.activelink = {
                 nodes: []
+            };
+            self.selRect = {
+                isShown: false,
+                x: 0,
+                y: 0,
+                width: 0,
+                height: 0
             };
             svgWatcher.bind(self)($scope, coreService);
             svgHandler.bind(self)($scope, $rootScope, $window, $element, networkDataService, networkLayerService, appConfig);
@@ -183,18 +191,14 @@ function initComponent() {
 
 				var curMousePos = getOffsetPos($element, data);
 
-				var newNodePos = {
-				    x: editedNode.pos.x += (curMousePos.x - prevMousePos.x) / self.scale,
-				    y: editedNode.pos.y += (curMousePos.y - prevMousePos.y) / self.scale
-				}
-				if (newNodePos.x < 0)
-				    newNodePos.x = 0;
-				if (newNodePos.y < 0)
-				    newNodePos.y = 0;
-				$scope.$apply( function() {
-					editedNode.pos.x = newNodePos.x - (newNodePos.x % appConfig.svgDefinitions.gridStep);
-					editedNode.pos.y = newNodePos.y - (newNodePos.y % appConfig.svgDefinitions.gridStep);
-				});
+               $scope.$apply( function() {
+                    moveNode(editedNode,
+                        (curMousePos.x - prevMousePos.x) / self.scale,
+                        (curMousePos.y - prevMousePos.y) / self.scale,
+                        appConfig.svgDefinitions.gridStep
+                    );
+                });
+
 				prevMousePos = curMousePos;
 			} else if (self.mouseMode === state.JOINING) {
 				removeActiveLink();
@@ -256,36 +260,48 @@ function initComponent() {
 		});
 
 		$element.on('click', function (event) {
-//		    $element[0].parentNode.focus();
-			if (!self.isItemClicked) {
-				$scope.$apply( function() {
-					selectItems (self.nodes, false);
-					selectItems (self.links, false);
-				});
-				activeItem.id = -1;
-			}
-			self.isItemClicked = false;
+
+		});
+
+		$element.on('mousedown', function (event) {
+			if (self.mouseMode === state.DEFAULT) {
+
+			    if (!self.isItemClicked) {
+                    $scope.$apply( function() {
+                        selectItems (self.nodes, false);
+                        selectItems (self.links, false);
+                    });
+                    activeItem.id = -1;
+                }
+                self.isItemClicked = false;
+
+			    var curMousePos = getOffsetPos($element, event);
+
+			    $scope.$apply( function() {
+			        prevMousePos = curMousePos;
+                    self.selRect = rect(curMousePos.x, curMousePos.y, curMousePos.x, curMousePos.y);
+                    self.selRect.isShown = true;
+                });
+                self.mouseMode = state.SELECTION;
+		    }
 		});
 
 		$element.on('mousemove', function (event) {
+            if (self.mouseMode === state.SELECTION) {
+			    var curMousePos = getOffsetPos($element, event);
+			    $scope.$apply( function() {
+                    self.selRect = rect(prevMousePos.x, prevMousePos.y, curMousePos.x, curMousePos.y);
+                    self.selRect.isShown = true;
+                });
 
-			if (self.mouseMode === state.MOVING && event.buttons === 1) {
+		    } else if (self.mouseMode === state.MOVING && event.buttons === 1) {
 
 
 				var curMousePos = getOffsetPos($element, event);
-
-				var newNodePos = {
-				    x: editedNode.pos.x += (curMousePos.x - prevMousePos.x) / self.scale,
-				    y: editedNode.pos.y += (curMousePos.y - prevMousePos.y) / self.scale
-				}
-				if (newNodePos.x < 0)
-				    newNodePos.x = 0;
-				if (newNodePos.y < 0)
-				    newNodePos.y = 0;
 				$scope.$apply( function() {
-					editedNode.pos.x = newNodePos.x ;
-					editedNode.pos.y = newNodePos.y ;
-				});
+                    moveNode(editedNode, (curMousePos.x - prevMousePos.x) / self.scale,
+                                         (curMousePos.y - prevMousePos.y) / self.scale);
+                });
 				prevMousePos = curMousePos;
 			} else if (self.mouseMode === state.JOINING  && event.buttons === 1) {
 				var curMousePos = getOffsetPos($element, event);
@@ -305,17 +321,37 @@ function initComponent() {
 		});
 
 		$element.on('mouseup', function (event) {
-			if (self.mouseMode === state.JOINING) {
+
+		    if (self.mouseMode === state.SELECTION) {
+			    var curMousePos = getOffsetPos($element, event);
+			    $scope.$apply( function() {
+                    selectNodesInsideRect(self.nodes, self.selRect);
+                    self.selRect = rect(0,0,0,0);
+                    self.selRect.isShown = false;
+                });
+
+		    } else if (self.mouseMode === state.JOINING) {
 				removeActiveLink();
-				self.mouseMode = state.DEFAULT;
 			}
             self.mouseMode = state.DEFAULT;
 		});
 
 		$element.on('mouseleave', function (event) {
-            if (self.mouseMode === state.MOVING) {
-                self.mouseMode = state.DEFAULT;
+
+		    if (self.mouseMode === state.DEFAULT) {
+
+		    } else if (self.mouseMode === state.MOVING) {
+
+            } else if (self.mouseMode === state.SELECTION) {
+                $scope.$apply( function() {
+			        self.selRect = rect(0,0,0,0);
+                    self.selRect.isShown = false;
+                });
+            } else if (self.mouseMode === state.JOINING) {
+                removeActiveLink();
             }
+
+            self.mouseMode = state.DEFAULT;
 		});
 
         // keyboard events:
@@ -325,18 +361,21 @@ function initComponent() {
 			if (event.keyCode === 46) {
 				$scope.$apply( function() {
 					if (activeItem.id >= 0) {
-					    console.log(activeItem.type);
 						if (activeItem.type === 'node') {
 							self.nodes.forEach(function(node, index, array){
 								if (node.id === activeItem.id) {
 									self.nodes.splice(index, 1);
-									self.links.forEach(function(link, index_l, array){
+									var ind = 0;
+									while (ind < self.links.length)	{
+									    var link = self.links[ind];
 									    if (link.nodes.length === 2) {
                                             if (link.nodes[0].id === activeItem.id || link.nodes[1].id === activeItem.id ) {
-                                                self.links.splice(index_l, 1);
+                                                self.links.splice(ind, 1);
+                                                continue;
                                             }
                                         }
-							});
+                                        ind++;
+							        }
 								}
 							});
 						} else if (activeItem.type === 'link') {
@@ -348,7 +387,6 @@ function initComponent() {
 						}
 					} else
 						removeSelectedItems(self.nodes, self.links);
-//					networkDataService.pubNetworkUpdateEvent();
 				});
 			}
 		});
@@ -459,6 +497,26 @@ function initComponent() {
 		return {};
 	}
 
+	function selectNodesInsideRect(nodes, rect) {
+	    var listSelected = []
+		for (var i = 0; i < nodes.length ; i ++) {
+			if (isPointInRect({x: nodes[i].pos.x, y: nodes[i].pos.y}, rect)
+			    && isPointInRect({  x: nodes[i].pos.x + nodes[i].displayData.node.width,
+			                        y: nodes[i].pos.y + nodes[i].displayData.node.height }, rect)) {
+				listSelected.push(nodes[i]);
+				nodes[i].selected = true;
+			}
+		}
+		return listSelected;
+	}
+
+	function isPointInRect(point, rect) {
+	    if (point.x >= rect.x && point.x <= rect.x + rect.width
+	        && point.y >= rect.y && point.y <= rect.y + rect.height)
+	        return true;
+	    return false;
+	}
+
 	function selectItems (array, options) {
 		if (typeof options == 'undefined') {
 			for(var i = 0; i < array.length; ++i) {
@@ -517,4 +575,140 @@ function initComponent() {
         }
         return true;
 	}
+
+
+	function rect(x1, y1, x2, y2) {
+	    var rect = {};
+
+	    rect.width = Math.abs(x1 - x2);
+	    rect.height = Math.abs(y1 - y2);
+
+	    if (x1 > x2)
+	        rect.x = x2;
+	    else rect.x = x1;
+
+	    if (y1 > y2)
+	        rect.y = y2;
+	    else rect.y = y1;
+
+	    return rect;
+	}
+
+	function moveNode(node, offsetX, offsetY, step) {
+	    if (!step)
+	        step = 1;
+        var newPos = {
+            x: node.pos.x += offsetX,
+            y: node.pos.y += offsetY
+        }
+        if (newPos.x < 0)
+            newPos.x = 0;
+        if (newPos.y < 0)
+            newPos.y = 0;
+        node.pos.x = newPos.x - newPos.x % step;
+        node.pos.y = newPos.y - newPos.y % step;
+    }
+
+
+//    id: self.nodes.length + 1,
+//    name : data.data.name,
+//    category : data.data.category,
+//    pos: correctPos,
+//    selected: false,
+//    template: data.data.template,
+//    params: data.data.params
+
+
+//    id: '',
+//    nodes: [],
+//    selected: false
+
+    function Node() {
+        this.id;
+        this.name;
+        this.type;
+        this.selected = false;
+        this.template;
+        this.pos = {
+            x: 0,
+            y: 0
+        }
+    }
+
+    function Link() {
+        this.id;
+        this.nodes = [];
+        this.selected = false;
+    }
+
+    function Data() {
+        var nodes = [];
+        var links = []
+        var idList = [];
+
+        this.addNode = function(name, type, template) {
+            var node = new Node();
+            node.name = name;
+            node.type = type;
+            node.template = template;
+            node.id = 'id_' + generateId();
+            nodes.push(node);
+            return node;
+        }
+
+        this.getNodeById = function(id) {
+            return getItemById(nodes, id);
+        }
+
+        this.removeNode = function(id) {
+            nodes.forEach(function(node, index, array){
+                if (node.id === id) {
+                    nodes.splice(index, 1);
+                    var ind = 0;
+                    while (ind < links.length)	{
+                        var link = links[ind];
+                        if (link.nodes.length === 2) {
+                            if (link.nodes[0].id === id || link.nodes[1].id === id ) {
+                                links.splice(ind, 1);
+                                continue;
+                            }
+                        }
+                        ind++;
+                    }
+                }
+            });
+        }
+
+        this.addLink = function(from, to) {
+            var link = new Link();
+            link.id = from.id + '_' + to.id;
+            link.nodes = [from, to];
+            links.push(link);
+            return link;
+        }
+
+        this.getLinkById = function(id) {
+            return getItemById(links, id);
+        }
+
+        function generateId() {
+            var id;
+            while (true) {
+                id = Math.floor(Math.random() * 0x10000).toString(16);
+                if (idList.indexOf(id) === -1) {
+                    idList.push(id);
+                    return id;
+                }
+            }
+        }
+
+        function getItemById(array, id) {
+            for (var i = 0; i < array.length ; i ++) {
+                if (array[i].id === id) {
+                    return array[i];
+                }
+            }
+        }
+    }
 }
+
