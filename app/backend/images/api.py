@@ -21,7 +21,7 @@ def load_classified_images(class_number):
         classified_images_return = []
         with open(layers_path, 'r') as f:
             classified_images_loaded = json.load(f)
-            for image in classified_images_loaded:
+            for image in classified_images_loaded['images']:
                 with open(image['path'], "rb") as image_file:
                     imageEncode = base64.b64encode(image_file.read())
                     classified_images_return.append(create_image_n_classes(image, int(class_number), imageEncode))
@@ -44,16 +44,40 @@ def create_image_n_classes(classified_image, n, imageEncode):
 
 
 @images.route('/classified/download')
-def download_classifide_mages_json():
+def download_classified_images_csv():
     layers_path = os.path.join(classified_images_dir, classified_images_file)
-
     with open(layers_path, 'r') as f:
-        file_content = f.read()
+        classified_images_json = json.load(f)
+        classes = classified_images_json['classes']
+        images = classified_images_json['images']
+        # csv header
+        csv = "path,"
+        classes_len = len(classes)
+        for index in range(classes_len):
+            csv += classes[index]
+            if index < classes_len:
+                csv += ","
+        csv += '\n'
+        # csv content
+        for image in images:
+            csv += image['path'] + ','
+            for classProbability in image['classProbabilities']:
+                classes_len = len(classes)
+                for index in range(classes_len):
+                    classes_index_ = classes[index]
+                    name_ = classProbability['name']
+                    if classes_index_ == name_:
+                        csv += classProbability['value']
+                        if index < classes_len - 1:
+                            csv += ","
+                        else:
+                            csv += '\n'
+
     return Response(
-        file_content,
+        csv,
         mimetype="text/csv",
         headers={"Content-disposition":
-                     "attachment; filename=myplot.csv"})
+                     "attachment; classified_images.csv"})
 
 
 @images.route('/dataset/roc/load/<path:id>')
