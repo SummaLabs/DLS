@@ -48,7 +48,7 @@ class Dataset:
             return f.read()
 
 ###############################
-dataSetProvider = Dataset(os.path.abspath('data-test/dataset-image2d/simple4c_testq'))
+dataSetProvider = Dataset(os.path.abspath('data-test/dataset-image2d/simple4c_test'))
 
 ###############################
 @dbpreview.route('/datasetinfo/', methods=['GET', 'POST'])
