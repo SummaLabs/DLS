@@ -9,12 +9,10 @@ angular.module('datasetImage2dPaging', ['ngMaterial', 'cl.paging'])
     restrict: 'E',
     templateUrl: '/frontend/components/preview/dataset-image2d-preview/dataset-image2d-paging.html',
      bindings: {
+         paramDatabase: '@',
+         paramClass:    '@'
      },
-    scope: {
-        paramdb:  '>paramdb',
-        paramcls: '>paramcls'
-    },
-    controller: function ($scope, $attrs, $http, $timeout) {
+    controller: function ($scope, $http) {
         var self        = this;
         self.$onInit = function () {
             $scope.currentPage = 0;
@@ -36,6 +34,36 @@ angular.module('datasetImage2dPaging', ['ngMaterial', 'cl.paging'])
                     console.log(response);
                 });
             };
+            //
+            self.numPerPage = 24;
+            var urlInfo = '/dbpreview/datasetinfo/';
+            $http({
+                method: 'GET',
+                url: urlInfo
+            }).then(function successCallback(response) {
+                var tdata = response.data;
+                var tnum  = tdata[self.paramDatabase];
+                self.listIndexes=[];
+                $scope.paging.totalImages = tnum;
+                var tmpCnt = 0;
+                for(var ii=0; ii<$scope.paging.totalImages; ii+=self.numPerPage) {
+                    var pStartImg = ii;
+                    var pStopImg  = ii+self.numPerPage;
+                    if (pStopImg>=$scope.paging.totalImages) {
+                        pStopImg = $scope.paging.totalImages;
+                    }
+                    var tmp = {
+                        from:   pStartImg,
+                        to:     pStopImg
+                    };
+                    self.listIndexes.push(tmp);
+                    tmpCnt++;
+                }
+                $scope.paging.total = tmpCnt;
+                loadPages();
+            },function errorCallback(response) {
+                console.log(response);
+            });
         };
         //
         function loadPages() {
@@ -51,7 +79,7 @@ angular.module('datasetImage2dPaging', ['ngMaterial', 'cl.paging'])
                     params: {
                         from:   self.currentIdx.from,
                         to:     self.currentIdx.to,
-                        dbid:   self.parDB
+                        dbid:   self.paramDatabase
                     }
                 }).then(
                     function successCallback(response) {
@@ -63,43 +91,6 @@ angular.module('datasetImage2dPaging', ['ngMaterial', 'cl.paging'])
                 );
             }
         }
-        //
-        $timeout(
-            function () {
-                self.parCls     = $attrs.paramcls;
-                self.parDB      = $attrs.paramdb;
-                self.numPerPage = 24;
-                var urlInfo = '/dbpreview/datasetinfo/';
-                $http({
-                    method: 'GET',
-                    url: urlInfo
-                }).then(function successCallback(response) {
-                    var tdata = response.data;
-                    var tnum  = tdata[self.parCls];
-                    self.listIndexes=[];
-                    $scope.paging.totalImages = tnum;
-                    var tmpCnt = 0;
-                    for(var ii=0; ii<$scope.paging.totalImages; ii+=self.numPerPage) {
-                        var pStartImg = ii;
-                        var pStopImg  = ii+self.numPerPage;
-                        if (pStopImg>=$scope.paging.totalImages) {
-                            pStopImg = $scope.paging.totalImages;
-                        }
-                        var tmp = {
-                            from:   pStartImg,
-                            to:     pStopImg
-                        };
-                        self.listIndexes.push(tmp);
-                        tmpCnt++;
-                    }
-                    $scope.paging.total = tmpCnt;
-                    loadPages();
-                },function errorCallback(response) {
-                    console.log(response);
-                });
-            }
-        );
-
     }
 });
 
