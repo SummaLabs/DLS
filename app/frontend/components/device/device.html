@@ -1,0 +1,19 @@
+<md-list>
+    <md-subheader class="md-primary">MEMORY</md-subheader>
+    <md-list-item class="md-2-line">
+        <md-list ng-cloak>
+            <md-list-item ng-repeat="(key,val) in $ctrl.deviceInfo.info.mem">
+                <p> {{ key }} : {{ val }} </p>
+            </md-list-item>
+        </md-list>
+    </md-list-item>
+    <md-divider></md-divider>
+    <md-subheader class="md-primary">GPU's</md-subheader>
+    <md-list-item class="md-2-line">
+        <md-radio-group ng-model="$ctrl.deviceInfo.info.gpuSelected">
+            <md-radio-button ng-repeat="gpu in $ctrl.deviceInfo.info.gpu" ng-value="gpu.id">
+                <p> {{gpu.id}}, memory: {{gpu.mem}} MiB </p>
+            </md-radio-button>
+        </md-radio-group>
+    </md-list-item>
+</md-list>
