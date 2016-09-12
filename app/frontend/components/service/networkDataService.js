@@ -87,16 +87,10 @@ function NetworkDataService($rootScope, $http) {
     };
 
     this.loadSavedNetworks = function () {
-        $http({
+        return $http({
             method: "GET",
             url: "/network/saved/names"
-        }).then(function mySucces(response) {
-            response.data.forEach(function(net_name) {
-                savedNetworks.push(net_name)
-            });
-        }, function myError(response) {});
-
-        return savedNetworks;
+        });
     };
 
     this.saveNetwork = function (name, description) {

@@ -9,6 +9,7 @@
                 savedNetworks: '<'
             },
             controller: function ($mdDialog, $rootScope, networkDataService) {
+                var self = this;
                 this.$onInit = function () {
                     this.networkTemplates = [
                         { name: 'Network Architecture Template 1'},
@@ -17,14 +18,21 @@
                         { name: 'Network Architecture Template 4'}
                     ];
 
-                    this.savedNetworks = networkDataService.loadSavedNetworks();
+                    self.savedNetworks = [];
+                    var future = networkDataService.loadSavedNetworks();
+                    future.then(function mySucces(response) {
+                        response.data.forEach(function (net_name) {
+                            self.savedNetworks.push(net_name)
+                        });
+                    }, function myError(response) {
+                    });
                 };
 
                 this.createOpenNetworkDialog = function ($event, name) {
                     var loadNetworkFunc = function () {
                         networkDataService.loadNetwork(name);
                         networkDataService.setChangesSaved(true);
-                        $rootScope.tabSelectedIndex = 1;
+                        $rootScope.$broadcast('switchTab', {id: 1});
                     };
                     if (!networkDataService.isChangesSaved()) {
                         showSaveNetworkDialog($event, loadNetworkFunc);

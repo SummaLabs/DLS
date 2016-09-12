@@ -43,6 +43,13 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         flatten: true,
+                        src: '<%= globalConfig.node_modules_path %>/angular-ui-router/release/angular-ui-router.min.js',
+                        dest: '<%= globalConfig.lib %>/',
+                        filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
                         src: '<%= globalConfig.node_modules_path %>/angular-messages/angular-messages.js',
                         dest: '<%= globalConfig.lib %>/',
                         filter: 'isFile'

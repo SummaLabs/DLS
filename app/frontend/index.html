@@ -22,80 +22,59 @@
 
 </head>
 
-<body ng-app="dlsApp" layout="column">
+<body ng-app="dlsApp" ng-controller="mainCtrl" layout="column">
 <md-toolbar layout="row">
     <main-menu></main-menu>
     <h3>Deep Learning Studio</h3>
 </md-toolbar>
 
-<md-tabs md-selected="tabSelectedIndex" md-dynamic-height md-border-bottom md-autoselect>
-<!--md-tabs md-selected="4" md-dynamic-height md-border-bottom md-autoselect-->
+<md-tabs md-selected="selectedIndex" md-dynamic-height md-border-bottom md-autoselect>
     <md-tab class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="networks">apps</md-icon>
             Networks
         </md-tab-label>
-        <md-tab-body>
-            <network-main></network-main>
-        </md-tab-body>
     </md-tab>
     <md-tab class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="builder">build</md-icon>
             Builder
         </md-tab-label>
-        <md-tab-body>
-            <constructor></constructor>
-        </md-tab-body>
     </md-tab>
     <md-tab class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="models">device_hub</md-icon>
             Models
         </md-tab-label>
-        <md-tab-body>
-            <model-main></model-main>
-        </md-tab-body>
     </md-tab>
     <md-tab label="Data" class="unselectable">
-        <main-data-set></main-data-set>
+        <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="dataset">widgets</md-icon>
+            Data Set
+        </md-tab-label>
     </md-tab>
-    <!--md-tab label="DataSetTest" class="unselectable">
-        <create-img-dataset></create-img-dataset>
-    </md-tab-->
     <md-tab class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="dataset">widgets</md-icon>
             DataSetBuilder
         </md-tab-label>
-        <md-tab-body>
-            <dataset-builder></dataset-builder>
-        </md-tab-body>
-    </md-tab>
-    <md-tab class="unselectable">
-        <md-tab-label>
-            <md-icon md-font-library="material-icons" aria-label="file manager">folder</md-icon>
-            File Manager
-        </md-tab-label>
-        <md-tab-body>
-        </md-tab-body>
-        <!--<angular-filemanager></angular-filemanager>-->
     </md-tab>
     <md-tab class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="settings">settings</md-icon>
             Settings
         </md-tab-label>
-        <md-tab-body>
-        </md-tab-body>
     </md-tab>
 </md-tabs>
+
+<div id="content" ui-view flex> </div>
 
 <script src="/frontend/lib/angular.js"></script>
 <script src="/frontend/lib/angular-animate.js"></script>
 <script src="/frontend/lib/angular-aria.js"></script>
 <script src="/frontend/lib/angular-messages.js"></script>
 <script type="text/javascript" src="/frontend/lib/angular-material.js"></script>
+<script src="/frontend/lib/angular-ui-router.min.js"></script>
 <script src="/frontend/lib/ng-google-chart.js"></script>
 
 <script src="/frontend/lib/d3.min.js"></script>

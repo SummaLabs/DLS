@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('dlsApp', ['ngMaterial',
+angular.module('dlsApp', ['ngMaterial', "ui.router",
 
     'mainMenu',
     'constructorCore',
@@ -44,5 +44,56 @@ angular.module('dlsApp')
             singleSelection: true
         }
     }).config(['$compileProvider', function ($compileProvider) {
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(|blob|):/);
-}]);
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(|blob|):/);
+    }]).config(function($stateProvider, $urlRouterProvider) {
+        $urlRouterProvider.otherwise('/networks');
+        $stateProvider
+        .state('networks', {
+            url: "/networks",
+            template: "<network-main></network-main>"
+        }).state('designer', {
+            url: "/designer",
+            template: "<constructor></constructor>"
+        }).state('models', {
+            url: "/models",
+            template: "<model-main></model-main>"
+        }).state('data-set', {
+            url: "/data-set",
+            template: "<main-data-set></main-data-set>"
+        }).state('data-set-builder', {
+            url: "/data-set-builder",
+            template: "<dataset-builder></dataset-builder>"
+        }).state('settings', {
+            url: "/settings",
+            template: "<span>Settings</span>"
+        });
+    }).controller('mainCtrl', function($scope, $location, $log) {
+        $scope.selectedIndex = 0;
+
+        $scope.$watch('selectedIndex', function(current, old) {
+            switch (current) {
+                case 0:
+                    $location.url("/networks");
+                    break;
+                case 1:
+                    $location.url("/designer");
+                    break;
+                case 2:
+                    $location.url("/models");
+                    break;
+                case 3:
+                    $location.url("/data-set");
+                    break;
+                case 4:
+                    $location.url("/data-set-builder");
+                    break;
+                case 5:
+                    $location.url("/settings");
+                    break;
+            }
+        });
+
+        $scope.$on('switchTab', function (event, data) {
+            $scope.selectedIndex = data.id;
+        });
+    });
