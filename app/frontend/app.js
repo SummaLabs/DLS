@@ -23,7 +23,9 @@ angular.module('dlsApp', ['ngMaterial',
     'googlechart', 
     'classifyDataSet',
     'datasetImage2dPreview',
-    'cl.paging'
+    'cl.paging',
+    
+    'dbinfoService'
 ]);
 
 

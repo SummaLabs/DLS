@@ -58,7 +58,13 @@
         </md-tab-body>
     </md-tab>
     <md-tab label="Data" class="unselectable">
-        <main-data-set></main-data-set>
+        <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="models">layers</md-icon>
+            Data
+        </md-tab-label>
+        <md-tab-body>
+            <main-data-set></main-data-set>
+        </md-tab-body>
     </md-tab>
     <md-tab label="Preview" class="unselectable">
         <dataset-image2d-preview></dataset-image2d-preview>
@@ -130,6 +136,10 @@
 <script src="/frontend/lib/material-angular-paging.js"></script>
 <script src="/frontend/components/preview/dataset-image2d-preview/dataset-image2d-paging.js"></script>
 <script src="/frontend/components/preview/dataset-image2d-preview/dataset-image2d-preview.js"></script>
+
+<!-- Services: BEGIN-->
+<script src="/frontend/components/service/dbinfoService.js"></script>
+<!-- Services: END-->
 
 <!-- FILE MANAGER -->
 <script src="/frontend/lib/angular-translate.min.js"></script>
