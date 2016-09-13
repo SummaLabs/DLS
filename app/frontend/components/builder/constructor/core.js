@@ -123,44 +123,40 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 
     function constructorListeners() {
 
-        networkDataService.subNetworkUpdateEvent(updateNetwork);
+        networkDataService.subNetworkUpdateEvent(setUpNetwork);
 
         $scope.$on('graph:addNode', function (event, data) {
             console.log('graph:addNode');
-            networkDataService.setLayers(self.svgControl.getNodes());
-            networkDataService.setChangesSaved(false);
-			event.stopPropagation();
+            updateNetwork(event, data);
 		});
 
 		$scope.$on('graph:removeNode', function (event, data) {
 		    console.log('graph:removeNode');
-		    networkDataService.setLayers(self.svgControl.getNodes());
-            networkDataService.setChangesSaved(false);
-			event.stopPropagation();
+		    updateNetwork(event, data);
 		});
 
 		$scope.$on('graph:addLink', function (event, data) {
 		    console.log('graph:addLink');
-		    networkDataService.setLayers(self.svgControl.getNodes());
-		    networkDataService.setChangesSaved(false);
-			event.stopPropagation();
+		    updateNetwork(event, data);
 		});
 
 		$scope.$on('graph:removeLink', function (event, data) {
 		    console.log('graph:removeLink');
-		    networkDataService.setLayers(self.svgControl.getNodes());
-		    networkDataService.setChangesSaved(false);
-			event.stopPropagation();
+		    updateNetwork(event, data);
 		});
 
 		$scope.$on('graph:removeItems', function (event, data) {
 		    console.log('graph:removeItems');
-		    networkDataService.setLayers(self.svgControl.getNodes());
-		    networkDataService.setChangesSaved(false);
-			event.stopPropagation();
+		    updateNetwork(event, data);
 		});
 
-		function updateNetwork() {
+		function updateNetwork(event, data) {
+			networkDataService.setLayers(self.svgControl.getNodes());
+		    networkDataService.setChangesSaved(false);
+			event.stopPropagation();
+		}
+
+		function setUpNetwork() {
             self.svgControl.setNodes(networkDataService.getLayers());
 		};
     }

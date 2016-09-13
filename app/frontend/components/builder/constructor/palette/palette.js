@@ -67,24 +67,16 @@ function DraggableCtrl($scope, $element, $rootScope, $compile, $templateCache, $
 
 function PaletteController($scope, networkLayerService) {
 
-	self = this;
+	var self = this;
 	self.treeItems = [];
 
-	networkLayerService.getCategories().then(
-		function success(categories) {
-            networkLayerService.getLayers().then(
-				function success(layers) {
-            		self.treeItems = createTree(categories, layers);
+	networkLayerService.loadCategoryLayerTree();
 
-				}, function error(data) {
-					console.log(data);
-				}
-			);
-
-        }, function error(data) {
-            console.log(data);
-        }
-    );
+	networkLayerService.subLayersUpdateEvent(function() {
+		var categories = networkLayerService.getCategories();
+		var layers = networkLayerService.getLayers();
+		self.treeItems = createTree(categories, layers);
+	});
 
 	this.categoryClick = function(category_name) {
 	    var state = categoryState[category_name];

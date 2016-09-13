@@ -1,8 +1,8 @@
 angular.module('networkDataService', [])
-    .service('networkDataService', ['$rootScope', '$http', NetworkDataService]);
+    .service('networkDataService', ['$rootScope', '$http', '$timeout', NetworkDataService]);
 
 
-function NetworkDataService($rootScope, $http) {
+function NetworkDataService($rootScope, $http, $timeout) {
     var self = this;
 
     const networkEvent = {
@@ -60,22 +60,25 @@ function NetworkDataService($rootScope, $http) {
     };
 
     this.loadNetwork = function(name) {
-        network = {
-            name: '',
-            description: '',
-            layers: []
-        };
+        $timeout(function () {
+            network = {
+                name: '',
+                description: '',
+                layers: []
+            };
 
-        this.pubClearNetworkEvent();
-        var future = loadNetworkByName(name);
-        future.then(function mySucces(response) {
-            network.name = response.data.name;
-            network.description = response.data.description;
-            response.data.layers.forEach(function (layer) {
-                network.layers.push(layer)
+            self.pubClearNetworkEvent();
+            var future = loadNetworkByName(name);
+            future.then(function mySucces(response) {
+                network.name = response.data.name;
+                network.description = response.data.description;
+                response.data.layers.forEach(function (layer) {
+                    network.layers.push(layer)
+                });
+                self.pubNetworkUpdateEvent();
+            }, function myError(response) {
             });
-            self.pubNetworkUpdateEvent();
-        }, function myError(response) {});
+        }, 1000)
     };
 
     this.setLayers = function(layers) {
