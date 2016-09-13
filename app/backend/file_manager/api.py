@@ -7,12 +7,15 @@ import shutil
 import stat
 import flask
 from datetime import datetime
+from app.backend.api import app_flask
 
 file_manager = flask.Blueprint('file_manager', __name__)
 
-REPOSITORY_BASE_PATH = '/home/leko/FILE_MANAGER'
+# REPOSITORY_BASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),'../../../data-test')
+REPOSITORY_BASE_PATH = app_flask.config['DLS_FILEMANAGER_BASE_PATH']
 ONLY_FOLDERS = False
 
+print ('--> %s' % REPOSITORY_BASE_PATH)
 
 @file_manager.route('/listUrl', methods=["POST"])
 def list():

@@ -1,6 +1,8 @@
 'use strict';
 module.exports = function (grunt) {
     var staticPath = 'app/frontend/';
+    var inpPathExt = 'ext_modules';
+    var outPathExt = staticPath + 'lib';
     var globalConfig = {
         icons: staticPath + 'assets/icons',
         styles: staticPath + 'assets/css',
@@ -112,6 +114,14 @@ module.exports = function (grunt) {
                         src: '<%= globalConfig.node_modules_path %>/angular-google-chart/ng-google-chart.js',
                         dest: '<%= globalConfig.lib %>/',
                         filter: 'isFile'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src: [
+                            inpPathExt + '/material-angular-paging.js'
+                        ],
+                        dest: outPathExt
                     }
                 ]
             }

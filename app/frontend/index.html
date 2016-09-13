@@ -49,15 +49,33 @@
     </md-tab>
     <md-tab label="Data" class="unselectable">
         <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="models">layers</md-icon>
+            Data
+        </md-tab-label>
+        <md-tab-body>
+            <main-data-set></main-data-set>
+        </md-tab-body>
+    </md-tab>
+    <md-tab label="Preview" class="unselectable">
+        <dataset-image2d-preview></dataset-image2d-preview>
+    </md-tab>
+    <!--md-tab label="DataSetTest" class="unselectable">
+        <create-img-dataset></create-img-dataset>
+    </md-tab-->
+    <md-tab class="unselectable">
+        <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="dataset">widgets</md-icon>
             Data Set
         </md-tab-label>
     </md-tab>
     <md-tab class="unselectable">
         <md-tab-label>
-            <md-icon md-font-library="material-icons" aria-label="dataset">widgets</md-icon>
-            DataSetBuilder
+            <md-icon md-font-library="material-icons" aria-label="file manager">folder</md-icon>
+            File Manager
         </md-tab-label>
+        <md-tab-body>
+            <angular-filemanager></angular-filemanager>
+        </md-tab-body>
     </md-tab>
     <md-tab class="unselectable">
         <md-tab-label>
@@ -103,6 +121,13 @@
 <script src="/frontend/components/inference/classify-image/classifyImage.js"></script>
 <script src="/frontend/components/service/imageService.js"></script>
 <script src="/frontend/components/inference/classify-dataset/classifyDataset.js"></script>
+<script src="/frontend/lib/material-angular-paging.js"></script>
+<script src="/frontend/components/preview/dataset-image2d-preview/dataset-image2d-paging.js"></script>
+<script src="/frontend/components/preview/dataset-image2d-preview/dataset-image2d-preview.js"></script>
+
+<!-- Services: BEGIN-->
+<script src="/frontend/components/service/dbinfoService.js"></script>
+<!-- Services: END-->
 
 <!-- FILE MANAGER -->
 <script src="/frontend/lib/angular-translate.min.js"></script>

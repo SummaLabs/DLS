@@ -33,7 +33,7 @@
                         <section class="md-whiteframe-z2 frame-cfg-section">
                             <md-toolbar class="md-primary frame-cfg-toolbar" layout-align="center">
                                 <div layout="row" layout-align="center center">
-                                    Image transformation
+                                    Input formats
                                     <span flex></span>
                                     <md-button layout="column" class="md-fab md-mini" aria-label="Quick Help" layout-align="center center">
                                         <md-tooltip>Image transformation basic options</md-tooltip>
@@ -53,7 +53,7 @@
                                                     <div ng-message="required">Please input a valid Path to folder with images</div>
                                                 </div>
                                             </md-input-container>
-                                            <md-button class="md-fab" layout="column" layout-align="center center">
+                                            <md-button class="md-fab" layout="column" layout-align="center center" ng-click="$ctrl.setTrainImagesDir('dir-train')">
                                                 <i class="material-icons">folder</i>
                                             </md-button>
                                         </div>
@@ -71,7 +71,7 @@
                                                            ng-model="$ctrl.formFileImport.fromDir.percentForValidation"
                                                            min="1" max="99"
                                                            required
-                                                           step="5">
+                                                           step="1">
                                                     <div ng-messages="datasetCreateForm.percentValidation.$error" multiple md-auto-hide="false" role="alert">
                                                         <div ng-message="required">Please input a number between 1 and 100 %</div>
                                                         <div ng-message="min">Minimum number is 1%</div>
@@ -89,7 +89,7 @@
                                                         <div ng-message="required">Please input a path to folder with validation set of images</div>
                                                     </div>
                                                 </md-input-container>
-                                                <md-button class="md-fab" layout="column" layout-align="center center">
+                                                <md-button class="md-fab" layout="column" layout-align="center center" ng-click="$ctrl.setTrainImagesDir('dir-val')"">
                                                     <i class="material-icons">folder</i>
                                                 </md-button>
                                             </div>
@@ -105,7 +105,7 @@
                                                     <div ng-message="required">Please input a valid Path to CSV-formatted file</div>
                                                 </div>
                                             </md-input-container>
-                                            <md-button class="md-fab" layout="column" layout-align="center center">
+                                            <md-button class="md-fab" layout="column" layout-align="center center" ng-click="$ctrl.setTrainImagesDir('file-train')">
                                                 <i class="material-icons">folder</i>
                                             </md-button>
                                         </div>
@@ -141,7 +141,7 @@
                                                         <div ng-message="required">Please input a path to a valid CSV file with validation set of images</div>
                                                     </div>
                                                 </md-input-container>
-                                                <md-button class="md-fab" layout="column" layout-align="center center">
+                                                <md-button class="md-fab" layout="column" layout-align="center center" ng-click="$ctrl.setTrainImagesDir('file-val')">
                                                     <i class="material-icons">folder</i>
                                                 </md-button>
                                             </div>
