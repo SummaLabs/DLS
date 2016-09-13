@@ -3,7 +3,7 @@
     <md-list-item class="md-2-line">
         <md-list ng-cloak>
             <md-list-item ng-repeat="(key,val) in $ctrl.deviceInfo.info.mem">
-                <p> {{ key }} : {{ val }} </p>
+                <p> {{ key }} : {{ val }} MiB </p>
             </md-list-item>
         </md-list>
     </md-list-item>
@@ -12,7 +12,7 @@
     <md-list-item class="md-2-line">
         <md-radio-group ng-model="$ctrl.deviceInfo.info.gpuSelected">
             <md-radio-button ng-repeat="gpu in $ctrl.deviceInfo.info.gpu" ng-value="gpu.id">
-                <p> {{gpu.id}}, memory: {{gpu.mem}} MiB </p>
+                <p> {{gpu.name}} </p>
             </md-radio-button>
         </md-radio-group>
     </md-list-item>
