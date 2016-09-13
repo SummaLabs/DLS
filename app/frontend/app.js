@@ -79,7 +79,7 @@ angular.module('dlsApp')
             template: "<angular-filemanager></angular-filemanager>"
         }).state('settings', {
             url: "/settings",
-            template: "<span>Settings</span>"
+            template: "<settings></settings>"
         });
     }).controller('mainCtrl', function($rootScope, $scope, $location) {
 
