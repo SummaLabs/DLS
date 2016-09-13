@@ -118,7 +118,7 @@ function initComponent() {
             }, function(newValue, oldValue) {
                 self.scale = newValue;
                 self.width = self.scale * scope.svgWidth;
-                self.height = self.scale * scope.svgWidth;
+                self.height = self.scale * scope.svgHeight;
             }
         );
     }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en"  >
 <head>
     <title>Deap Learning Studio</title>
     <meta charset="utf-8">
@@ -22,19 +22,20 @@
 
 </head>
 
-<body ng-app="dlsApp" layout="column">
+<body ng-app="dlsApp" layout="column"  layout-fill>
 <md-toolbar layout="row">
     <main-menu></main-menu>
     <h3>Deep Learning Studio</h3>
 </md-toolbar>
-
-<md-tabs md-selected="tabSelectedIndex" md-dynamic-height md-border-bottom md-autoselect>
+     <!--md-dynamic-height-->
+<md-tabs md-selected="tabSelectedIndex" md-border-bottom md-autoselect md-dynamic-height>
 <!--md-tabs md-selected="4" md-dynamic-height md-border-bottom md-autoselect-->
     <md-tab class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="networks">apps</md-icon>
             Networks
         </md-tab-label>
+        <!--layout="column" layout-align="center stretch"-->
         <md-tab-body>
             <network-main></network-main>
         </md-tab-body>
@@ -45,7 +46,7 @@
             Builder
         </md-tab-label>
         <md-tab-body>
-            <constructor></constructor>
+             <constructor></constructor>
         </md-tab-body>
     </md-tab>
     <md-tab class="unselectable">
@@ -72,14 +73,15 @@
             <dataset-builder></dataset-builder>
         </md-tab-body>
     </md-tab>
-    <md-tab class="unselectable">
+    <md-tab class="unselectable" flex>
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="file manager">folder</md-icon>
             File Manager
         </md-tab-label>
-        <md-tab-body>
+        <md-tab-body flex>
+            <angular-filemanager></angular-filemanager>
         </md-tab-body>
-        <!--<angular-filemanager></angular-filemanager>-->
+
     </md-tab>
     <md-tab class="unselectable">
         <md-tab-label>
@@ -90,7 +92,6 @@
         </md-tab-body>
     </md-tab>
 </md-tabs>
-
 <script src="/frontend/lib/angular.js"></script>
 <script src="/frontend/lib/angular-animate.js"></script>
 <script src="/frontend/lib/angular-aria.js"></script>

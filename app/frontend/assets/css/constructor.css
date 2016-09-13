@@ -100,6 +100,21 @@
     fill-opacity: 0.1;
 }
 
+#workspace {
+	overflow: auto;
+	padding: 10px 10px 10px 10px;
+	height:600px;
+}
+
+
+md-tab-content {
+	overflow: hidden;
+}
+
 #workspace:focus {
   background: Silver;
+}
+
+#svg {
+	overflow: visible;
 }
