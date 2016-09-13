@@ -12,9 +12,9 @@ def get_system_info():
 
     info = {}
     gpu_info = generate_gpu_info()
-    gpu_info.extend(generate_cpu_info())
     info['mem'] = generate_mem_info()
     info['gpu'] = gpu_info
+    info['cpu'] = generate_cpu_info()
     info['gpuSelected'] = gpu_info[0]['id']
     return Response(json.dumps(info), mimetype='application/json')
 
@@ -39,25 +39,36 @@ def generate_mem_info():
 
 # Query GPU Info from OS
 def generate_gpu_info():
+    gpu_info = []
     try:
-        bash_command = "nvidia-smi --query-gpu=index,name,uuid,memory.total,memory.free,memory.used --format=csv"
+        bash_command = "nvidia-smi --query-gpu=index,name,uuid,memory.total,memory.free,memory.used,count --format=csv"
         process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE)
         output = process.communicate()[0]
+        lines = output.split("\n")
+        lines.pop(0)
+        for l in lines:
+            tokens = l.split(", ")
+            if len(tokens) > 6:
+                gpu_info.append({'id': tokens[0], 'name': tokens[1], 'mem': tokens[3], 'cores': tokens[6]})
     except OSError:
         # Some mock value for testing on machines without NVidia GPU
-        output = '0, GeForce GTX 970, GPU-44c183fb-7d05-843f-f970-ba894485499e, 4095 MiB, 3325 MiB, 770 MiB'
-    tokens = output.split(", ")
-    gpu_info = [{'id': tokens[0], 'name': tokens[1], 'mem': tokens[3]}]
+        gpu_info.append({'id': 'not NVidia', 'name': 'not NVidia', 'mem': ''})
     return gpu_info
 
 
 # Query CPU Info from OS
 def generate_cpu_info():
-    bash_command = "cat /proc/cpuinfo | grep 'model name' | uniq"
+    bash_command = "cat /proc/cpuinfo"
     process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE)
     output = process.communicate()[0]
-    cpu = output.split("\n")[4].split(":")[1]
-    cpu_info = [{'id': 'cpu', 'name': cpu, 'mem': ""}]
+    lines = output.split("\n")
+    if len(lines) > 12:
+        cpu = lines[4].split(":")[1]
+        cores = lines[12].split(":")[1]
+        cache = lines[8].split(":")[1]
+        cpu_info = {'id': 'cpu', 'name': cpu, 'cores': cores, 'cache': cache}
+    else:
+        cpu_info = {'id': 'cpu', 'name': '-', 'cores': '-', 'cache': '-'}
     return cpu_info
 
 
