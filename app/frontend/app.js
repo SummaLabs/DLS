@@ -67,10 +67,37 @@ angular.module('dlsApp')
             url: "/settings",
             template: "<span>Settings</span>"
         });
-    }).controller('mainCtrl', function($scope, $location, $log) {
-        $scope.selectedIndex = 0;
+    }).controller('mainCtrl', function($rootScope, $scope, $location) {
 
-        $scope.$watch('selectedIndex', function(current, old) {
+    $rootScope.$on('$stateChangeSuccess',
+        function (event, toState, toParams, fromState, fromParams) {
+            if (fromState.name == '') {
+                switch (toState.name) {
+                    case "networks":
+                        $scope.selectedIndex = 0;
+                        break;
+                    case "designer":
+                        $scope.selectedIndex = 1;
+                        break;
+                    case "models":
+                        $scope.selectedIndex = 2;
+                        break;
+                    case "data-set":
+                        $scope.selectedIndex = 3;
+                        break;
+                    case "data-set-builder":
+                        $scope.selectedIndex = 4;
+                        break;
+                    case "settings":
+                        $scope.selectedIndex = 5;
+                        break;
+                }
+            }
+        }
+    );
+
+    $scope.$watch('selectedIndex', function (current, old) {
+        if (current != null && old != null) {
             switch (current) {
                 case 0:
                     $location.url("/networks");
@@ -91,7 +118,8 @@ angular.module('dlsApp')
                     $location.url("/settings");
                     break;
             }
-        });
+        }
+    });
 
         $scope.$on('switchTab', function (event, data) {
             $scope.selectedIndex = data.id;
