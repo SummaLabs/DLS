@@ -24,8 +24,11 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'classifyDataSet',
     'datasetImage2dPreview',
     'cl.paging',
-    
-    'dbinfoService'
+    'dbinfoService',
+    'settings',
+    'device',
+    'deviceService'
+                  
 ]);
 
 
