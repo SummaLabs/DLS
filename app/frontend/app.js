@@ -65,9 +65,15 @@ angular.module('dlsApp')
         }).state('data-set', {
             url: "/data-set",
             template: "<main-data-set></main-data-set>"
+        }).state('preview', {
+            url: "/preview",
+            template: "<dataset-image2d-preview></dataset-image2d-preview>"
         }).state('data-set-builder', {
             url: "/data-set-builder",
             template: "<dataset-builder></dataset-builder>"
+        }).state('file-manager', {
+            url: "/file-manager",
+            template: "<angular-filemanager></angular-filemanager>"
         }).state('settings', {
             url: "/settings",
             template: "<span>Settings</span>"
@@ -90,11 +96,17 @@ angular.module('dlsApp')
                     case "data-set":
                         $scope.selectedIndex = 3;
                         break;
-                    case "data-set-builder":
+                    case "preview":
                         $scope.selectedIndex = 4;
                         break;
-                    case "settings":
+                    case "data-set-builder":
                         $scope.selectedIndex = 5;
+                        break;
+                    case "file-manager":
+                        $scope.selectedIndex = 6;
+                        break;
+                    case "settings":
+                        $scope.selectedIndex = 7;
                         break;
                 }
             }
@@ -117,16 +129,22 @@ angular.module('dlsApp')
                     $location.url("/data-set");
                     break;
                 case 4:
-                    $location.url("/data-set-builder");
+                    $location.url("/preview");
                     break;
                 case 5:
+                    $location.url("/data-set-builder");
+                    break;
+                case 6:
+                    $location.url("/file-manager");
+                    break;
+                case 7:
                     $location.url("/settings");
                     break;
             }
         }
     });
 
-        $scope.$on('switchTab', function (event, data) {
+    $scope.$on('switchTab', function (event, data) {
             $scope.selectedIndex = data.id;
-        });
+    });
     });
