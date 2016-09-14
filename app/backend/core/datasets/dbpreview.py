@@ -7,6 +7,8 @@ from flask import request, Response, make_response
 from flask import render_template
 from flask import send_from_directory
 
+from app.backend.file_manager.api import getRealPathFromFMUrlPath, validateSeverPathFromUrlPath
+
 import json
 import time
 
@@ -75,6 +77,20 @@ def get_image_data(imageid):
         tdata = None
         print (err)
     return tdata
+
+###############################
+@dbpreview.route('/getserverpath/<path:ppath>', methods=['GET', 'POST'])
+def get_server_path(ppath):
+    return getRealPathFromFMUrlPath(ppath)
+
+@dbpreview.route('/checkpath/<path:ppath>', methods=['GET', 'POST'])
+def check_server_path(ppath):
+    tmp = validateSeverPathFromUrlPath(ppath)
+    tret = {
+        'isdir':  tmp[0],
+        'isfile': tmp[1]
+    }
+    return Response(json.dumps(tret), mimetype='application/json')
 
 ###############################
 if __name__ == '__main__':
