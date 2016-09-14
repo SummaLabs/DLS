@@ -71,8 +71,6 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
                         $scope.$emit('nodeInit', {
 							id: idNode
 						});
-
-						console.log(idNode);
                     });
                 }
             })

@@ -30,12 +30,26 @@ function CoreService() {
     };
 }
 
-function ConstructorController($mdDialog, $scope, $rootScope, networkDataService, coreService, appConfig) {
+function ConstructorController($mdDialog, $scope, $rootScope, networkDataService, networkLayerService, coreService, appConfig) {
     var self = this;
     self.svgWidth = appConfig.svgDefinitions.areaWidth;
     self.svgHeight = appConfig.svgDefinitions.areaHeight;
     self.svgControl = {};
     constructorListeners();
+
+    function doUpdateNetwork() {
+		var nodes = self.svgControl.getNodes();
+
+		nodes.forEach(function(node, i, ar){
+			var layer = networkDataService.getLayerById(node.id);
+			if (layer) {
+				node.params = layer.params;
+			} else {
+				node.params = networkLayerService.getLayerByType(node.name);
+			}
+		});
+		networkDataService.setLayers(nodes)
+    }
 
 	this.$onInit = function() {
         $scope.networkName = networkDataService.getNetwork().name;
@@ -45,6 +59,7 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 		});
 
 		$rootScope.$on('EditLayer', function ($event, data) {
+			doUpdateNetwork();
 			var parentEl = angular.element(document.body);
 			var dialogTemplate = buildTemplate(data.id, data.layerType);
 			$mdDialog.show({
@@ -76,6 +91,7 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 	};
 
 	this.saveNetworkDialog = function ($event) {
+		doUpdateNetwork();
 		var parentEl = angular.element(document.body);
 		$mdDialog.show({
 			clickOutsideToClose: true,
@@ -88,6 +104,7 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 		});
 
 		function DialogController($scope, $mdDialog) {
+
 			$scope.network =
 			{
 				name: networkDataService.getNetwork().name,
@@ -123,7 +140,7 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 
     function constructorListeners() {
 
-        networkDataService.subNetworkUpdateEvent(updateNetwork);
+        networkDataService.subNetworkUpdateEvent(isUpdateNetwork);
 
         $scope.$on('graph:addNode', function (event, data) {
             console.log('graph:addNode');
@@ -160,8 +177,8 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 			event.stopPropagation();
 		});
 
-		function updateNetwork() {
-            self.svgControl.setNodes(networkDataService.getLayers());
+		function isUpdateNetwork() {
+            self.svgControl.setLayers(networkDataService.getLayers());
 		};
     }
 }

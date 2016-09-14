@@ -39,24 +39,23 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         schemaWatcher();
         schemaEvents();
         initBackground(self, $scope, appConfig.svgDefinitions.gridStep);
-       /* svgWatcher.bind(self)($scope, coreService);
-        svgHandler.bind(self)($scope, $rootScope, $window, $element, networkDataService, networkLayerService, appConfig);
-   */ };
+	};
 
-    $scope.controlItem.addNode = function(layer) {
+    $scope.controlItem.addLayer = function(layer) {
         var node = schema.addNode(layer.name, layer.category, layer.template, layer.id);
         if (!node)
             return false;
-        node.position(layer.pos.x, layer.pos.y);
+		node.position(layer.pos.x, layer.pos.y);
+
         return true;
     }
 
-    $scope.controlItem.setNodes = function(layers) {
+    $scope.controlItem.setLayers = function(layers) {
 
         schema.clear();
 
         for (let a = 0; a < layers.length; a ++) {
-            if(!$scope.controlItem.addNode(layers[a]))
+            if(!$scope.controlItem.addLayer(layers[a]))
                 return false;
         }
 
@@ -73,8 +72,27 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
     }
 
     $scope.controlItem.getNodes = function() {
-        return self.nodes;
+        return schema.getSchema();
     }
+
+    function addNode(name, type, template, pos) {
+        var node = schema.addNode(name, type, template);
+        if (!node)
+            return false;
+
+        node.position(pos.x, pos.y);
+        self.emitEvent(events.ADD_NODE, {});
+        return true;
+    }
+
+	function addLink(nodeFrom, nodeTo) {
+		schema.addLink(nodeFrom, nodeTo);
+		self.emitEvent(events.ADD_LINK, {});
+	}
+
+	function clearScene() {
+		schema.clear();
+	}
 
     self.emitEvent = function(eventType, data) {
         $scope.$emit(eventType, data);
@@ -131,17 +149,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 				var correctPos = { x: (pos.x - data.offset.x) / self.scale, y: (pos.y - data.offset.y) / self.scale};
 				if (correctPos.x > 0 && correctPos.y > 0) {
 					$scope.$apply( function() {
-						var node = {
-							id: self.nodes.length + 1,
-							name : data.data.name,
-//							content : data.data.content,
-							category : data.data.category,
-							pos: correctPos,
-							selected: false,
-							template: data.data.template,
-							params: data.data.params
-						};
-						self.addNode(node);
+						addNode(data.data.name, data.data.category, data.data.template, correctPos)
 					});
 				}
 			}
@@ -194,7 +202,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 				var nodeTo = schema.getNodeById(data.id);
 
                 $scope.$apply( function() {
-                    schema.addLink(nodeFrom, nodeTo);
+                    addLink(nodeFrom, nodeTo);
                 });
                 removeActiveLink();
 			}
@@ -318,16 +326,20 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 					if (activeItem.id >= 0) {
 						if (activeItem.type === 'node') {
 							schema.removeNode(activeItem.id);
+							self.emitEvent(events.REMOVE_NODE, {});
 						} else if (activeItem.type === 'link') {
 							self.links.forEach(function(link, index, array){
 								if (link.id === activeItem.id) {
 									self.links.splice(index, 1);
 								}
 							});
+							self.emitEvent(events.REMOVE_LINK, {});
 						}
-					} else
-						schema.removeSelectedItems();
-				});
+					} else {
+						if (schema.removeSelectedItems())
+                			self.emitEvent(events.REMOVE_ITEMS, {});
+                	}
+           		});
 			}
 		});
 
@@ -367,6 +379,20 @@ function initBackground(self, scope, step) {
 function getOffsetPos(element, event) {
     var elementRect = element[0].getBoundingClientRect();
     return {x: event.clientX - elementRect.left, y: event.clientY - elementRect.top};
+}
+
+function convertCoordinateFromClienToSvg($element, parentNode, clientCoord) {
+	var parentScrollPos = {
+		x: parentNode.scrollLeft ? parentNode.scrollLeft: 0,
+		y: parentNode.scrollTop ? parentNode.scrollTop: 0
+	};
+
+	var svgRect = $element[0].getBoundingClientRect();
+
+	return {
+		x: clientCoord.x - svgRect.left +  parentScrollPos.x,
+		y: clientCoord.y - svgRect.top + parentScrollPos.y
+	};
 }
 
 function isPointInRect(point, rect) {
@@ -462,6 +488,27 @@ function Schema() {
     var links = []
     var idList = [];
 
+    this.getSchema = function() {
+    	var schema = [];
+
+    	nodes.forEach(function(node, i, ar){
+    		var layer = Object.create(null);
+    		layer.id = node.id;
+			layer.name = node.name;
+			layer.category = node.type;
+			layer.template = node.template;
+			layer.pos = node.pos;
+			layer.wires = [];
+			links.forEach(function(link, i, ar){
+				if (link.nodes[0].id === layer.id) {
+					layer.wires.push(link.nodes[1].id);
+				}
+			});
+    		schema.push(layer);
+    	});
+    	return schema;
+    }
+
     this.addNode = function(name, type, template, id) {
         var node = new Node();
         if (id && checkIdForUnique(id)) {
@@ -539,6 +586,10 @@ function Schema() {
             links.splice(delLinks[i] - counterDel, 1);
             counterDel ++;
         }
+        if (delNodes.length > 0 || delLinks.length > 0) {
+        	return true;
+        }
+        return false;
     }
 
     this.selectNodesInsideRect = function(rect) {
@@ -564,7 +615,6 @@ function Schema() {
         if (this.getLinkById(from.id + '_' + to.id))
             return;
 
-        console.log('dsadsa');
         var link = new Link();
         link.id = from.id + '_' + to.id;
 
