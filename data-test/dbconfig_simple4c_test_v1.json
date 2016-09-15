@@ -2,8 +2,8 @@
   "formImage": {
     "imgTypeSelectedId": "color",
     "imgSizes": {
-      "x": 256,
-      "y": 256
+      "x": 128,
+      "y": 128
     },
     "resizeTransformSelectedId": "squash"
   },
