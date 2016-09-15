@@ -29,5 +29,6 @@
     "dbBackendSelectedId": "lmdb",
     "imageEncodingsSelectedId": "jpeg",
     "isUseThreading": false
-  }
+  },
+  "datasetname": "mnist-small-10k"
 }
