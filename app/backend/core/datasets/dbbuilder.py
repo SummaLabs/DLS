@@ -100,7 +100,7 @@ class DBImage2DBuilder:
             tret = '[DBImage2DBuilder] : %s' % self.imgReader2D.toString()
             return tret
         else:
-            "DBImage2DBuilder() is not initialized yet!"
+            return "DBImage2DBuilder() is not initialized yet!"
     def __str__(self):
         return self.toString()
     def __repr__(self):

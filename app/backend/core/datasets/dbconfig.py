@@ -11,6 +11,8 @@ import json
 from enum import Enum
 from functools import wraps
 
+from app.backend.api import app_flask
+
 #################################################
 class DBTypes(Enum):
     texttable   = 'text-table'
@@ -71,7 +73,13 @@ class DBImage2DConfig:
             else:
                 inst.raiseErrorNotInitialized()
         return wrapped
-    def __init__(self, pathCfg=None):
+    def __init__(self, pathCfg=None, isUseFMRootDir=True):
+        self.isUseFMRootDir = isUseFMRootDir
+        if self.isUseFMRootDir:
+            #FIXME: is a good way?
+            self.pathRootDir = app_flask.config['DLS_FILEMANAGER_BASE_PATH']
+        else:
+            self.pathRootDir = None
         self.cfg    = None
         self.path   = None
         if pathCfg is not None:
@@ -106,21 +114,14 @@ class DBImage2DConfig:
     # api
     @checkInit
     def getImageSize(self):
-        # if self.isInitialized():
         sizW = self.cfg['formImage']['imgSizes']['x']
         sizH = self.cfg['formImage']['imgSizes']['y']
         return (sizW,sizH)
-        # else:
-        #     self.raiseErrorNotInitialized()
     @checkInit
     def getImageMode(self):
-        # if self.isInitialized():
         return self.cfg['formImage']['imgTypeSelectedId']
-        # else:
-        #     self.raiseErrorNotInitialized()
     @checkInit
     def getNumChannels(self):
-        # if self.isInitialized():
         paramValue=self.cfg['formImage']['imgTypeSelectedId']
         if paramValue == "color":
             return 3
@@ -128,8 +129,6 @@ class DBImage2DConfig:
             return 1
         else:
             return self.raiseIncorrectParameterValue('imgTypeSelectedId', paramValue)
-        # else:
-        #     self.raiseErrorNotInitialized()
     def getImageShape(self):
         # shape in Caffe notation: [NumberOfRows, NumberOfCols, NumberOfChannels]
         numc,numr=self.getImageSize()
@@ -137,34 +136,24 @@ class DBImage2DConfig:
         return (numch,numr,numc)
     @checkInit
     def getTransformType(self):
-        # if self.isInitialized():
         tkey='resizeTransformSelectedId'
         paramValue = self.cfg['formImage'][tkey]
         if paramValue in TFTypes.getTfTypes():
             return paramValue
         else:
             self.raiseIncorrectParameterValue(tkey, paramValue)
-        # else:
-        #     self.raiseErrorNotInitialized()
     @checkInit
     def getPercentValidation(self):
-        # if self.isInitialized():
         tkey='percentForValidation'
         ret = self.cfg['formFileImport']['fromDir'][tkey]
         return ret
-        # else:
-        #     self.raiseErrorNotInitialized()
     @checkInit
     def getDbType(self):
-        # if self.isInitialized():
         tkey = 'dbBackendSelectedId'
         ret = self.cfg['formDbBackend'][tkey]
         return ret
-        # else:
-        #     self.raiseErrorNotInitialized()
     @checkInit
     def getImageEncoding(self):
-        # if self.isInitialized():
         tkey = 'imageEncodingsSelectedId'
         ret = self.cfg['formDbBackend'][tkey]
         #TODO: check this point
@@ -174,69 +163,69 @@ class DBImage2DConfig:
             return 'png'
         else:
             return 'none'
-        # else:
-        #     self.raiseErrorNotInitialized()
     @checkInit
     def getImportDatasetType(self):
-        # if self.isInitialized():
         tkey = 'selectedType'
         ret = self.cfg['formFileImport'][tkey]
         if ret in ['dir','txt']:
             return ret
         else:
             self.raiseIncorrectParameterValue(tkey, ret)
-        # else:
-        #     self.raiseErrorNotInitialized()
     @checkInit
     def isSeparateValDir(self):
-        # if self.isInitialized():
         ret = self.cfg['formFileImport']['fromDir']['isUseSeparateValDir']
         return ret
-        # else:
-        #     self.raiseErrorNotInitialized()
     @checkInit
     def getValidationDir(self):
-        # if self.isInitialized():
-        ret = self.cfg['formFileImport']['fromDir']['pathToImageFolderVal']
+        tval = self.cfg['formFileImport']['fromDir']['pathToImageFolderVal']
+        if self.isUseFMRootDir:
+            ret = "%s/%s" % (self.pathRootDir, tval)
+        else:
+            ret = tval
         return ret
-        # else:
-        #     self.raiseErrorNotInitialized()
     @checkInit
     def getTrainingDir(self):
-        # if self.isInitialized():
-        ret = self.cfg['formFileImport']['fromDir']['pathToImageFolder']
+        tval = self.cfg['formFileImport']['fromDir']['pathToImageFolder']
+        if self.isUseFMRootDir:
+            ret = "%s/%s" % (self.pathRootDir, tval)
+        else:
+            ret = tval
         return os.path.abspath(ret)
-        # else:
-        #     self.raiseErrorNotInitialized()
     @checkInit
     def isSeparateValTxt(self):
-        # if self.isInitialized():
         ret = self.cfg['formFileImport']['fromTxt']['isUseSeparateVal']
         return ret
-        # else:
-        #     self.raiseErrorNotInitialized()
     @checkInit
     def isUseRelativeDir(self):
-        # if self.isInitialized():
         ret = self.cfg['formFileImport']['fromTxt']['isUseRelativeDir']
         return ret
-        # else:
-        #     self.raiseErrorNotInitialized()
     @checkInit
     def getPercentValidationTxt(self):
         ret = self.cfg['formFileImport']['fromTxt']['percentForValidation']
         return ret
     @checkInit
     def getRelativeDirPath(self):
-        ret = self.cfg['formFileImport']['fromTxt']['pathTorRelativeDir']
+        tval = self.cfg['formFileImport']['fromTxt']['pathTorRelativeDir']
+        if self.isUseFMRootDir:
+            ret = "%s/%s" % (self.pathRootDir, tval)
+        else:
+            ret = tval
         return ret
     @checkInit
     def getPathToImageTxt(self):
-        ret = self.cfg['formFileImport']['fromTxt']['pathToImagesTxt']
+        tval = self.cfg['formFileImport']['fromTxt']['pathToImagesTxt']
+        if self.isUseFMRootDir:
+            ret = "%s/%s" % (self.pathRootDir, tval)
+        else:
+            ret = tval
         return ret
     @checkInit
     def getPathToImageTxtVal(self):
-        ret = self.cfg['formFileImport']['fromTxt']['pathToImagesTxtVal']
+        tval = self.cfg['formFileImport']['fromTxt']['pathToImagesTxtVal']
+        if self.isUseFMRootDir:
+            ret = "%s/%s" % (self.pathRootDir, tval)
+        else:
+            ret = tval
         return ret
     # Parsing:
     def prepareInfoAbout(self):
