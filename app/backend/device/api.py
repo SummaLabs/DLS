@@ -1,5 +1,6 @@
 from flask import Response
 
+import os
 import json
 import flask
 import subprocess
@@ -26,8 +27,10 @@ def retrieve_tokens(s, line_num):
 
 # Get Memory Summary info
 def generate_mem_info():
+    tenv = os.environ.copy()
+    tenv['LC_ALL'] = "C"
     bash_command = "free -m"
-    process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE)
+    process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE, env=tenv)
     output = process.communicate()[0]
     mem_values = retrieve_tokens(output, 1)
     names_values = retrieve_tokens(output, 0)
@@ -41,8 +44,10 @@ def generate_mem_info():
 def generate_gpu_info():
     gpu_info = []
     try:
+        tenv = os.environ.copy()
+        tenv['LC_ALL']="C"
         bash_command = "nvidia-smi --query-gpu=index,name,uuid,memory.total,memory.free,memory.used,count --format=csv"
-        process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE)
+        process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE, env=tenv)
         output = process.communicate()[0]
         lines = output.split("\n")
         lines.pop(0)
@@ -59,7 +64,9 @@ def generate_gpu_info():
 # Query CPU Info from OS
 def generate_cpu_info():
     bash_command = "cat /proc/cpuinfo"
-    process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE)
+    tenv = os.environ.copy()
+    tenv['LC_ALL'] = "C"
+    process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE, env=tenv)
     output = process.communicate()[0]
     lines = output.split("\n")
     if len(lines) > 12:
