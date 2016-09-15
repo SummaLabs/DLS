@@ -8,6 +8,7 @@ from flask import render_template
 from flask import send_from_directory
 
 from app.backend.file_manager.api import getRealPathFromFMUrlPath, validateSeverPathFromUrlPath
+from dbbuilder import DBImage2DBuilder, DBImage2DConfig
 
 import json
 import time
@@ -15,7 +16,72 @@ import time
 dbpreview = Blueprint(__name__, __name__)
 
 ###############################
-class Dataset:
+class DatasetImage2dInfo:
+    fconfig=DBImage2DBuilder.fconfig
+    dbVal=DBImage2DBuilder.lmdbVal
+    dbTrain=DBImage2DBuilder.lmdbTrain
+    fmeanData=DBImage2DBuilder.fmeanData
+    fmeanImage=DBImage2DBuilder.fmeanImage
+    flabels=DBImage2DBuilder.flabels
+    #
+    pathDB=None
+    pathConfig=None
+    pathMeanData=None
+    pathMeanImage=None
+    pathLabels=None
+    #
+    cfg=None
+    def __init__(self, pathDB):
+        self.pathDB = pathDB
+        if os.path.isdir(self.pathDB):
+            self.pathConfig     = os.path.join(self.pathDB, self.fconfig)
+            self.pathMeanData   = os.path.join(self.pathDB, self.fmeanData)
+            self.pathMeanImage  = os.path.join(self.pathDB, self.fmeanImage)
+            self.pathLabels     = os.path.join(self.pathDB, self.flabels)
+            self.pathDbTrain    = os.path.join(self.pathDB, self.dbTrain)
+            self.pathDbVal      = os.path.join(self.pathDB, self.dbVal)
+    def checkIsAValidImage2dDir(self):
+        isValidDir=True
+        if not os.path.isfile(self.pathConfig):
+            isValidDir = False
+        if not os.path.isfile(self.pathMeanData):
+            isValidDir = False
+        if not os.path.isfile(self.pathMeanImage):
+            isValidDir = False
+        if not os.path.isfile(self.pathLabels):
+            isValidDir = False
+        if (not os.path.isdir(self.pathDbTrain)) or (not os.path.isdir(self.pathDbVal)):
+            isValidDir = False
+        return isValidDir
+    def isInitialized(self):
+        return (self.cfg is not None)
+    def loadDBInfo(self):
+        if self.checkIsAValidImage2dDir():
+            self.cfg = DBImage2DConfig(self.pathConfig)
+            if not self.cfg.isInitialized():
+                strErr = 'Invalid DB config JSON file [%s]' % self.pathConfig
+                raise Exception(strErr)
+            print (self.cfg)
+        else:
+            strErr = 'Path [%s] is not a valid Image2D DB directory' % self.pathDB
+            raise Exception(strErr)
+    def getInfo(self):
+        tret = {
+            'type': self.cfg.getDbType,
+            'name': self.cfg.getDBName,
+            'date': self.cfg,
+            'data': [
+                {
+                    ''
+                }
+            ]
+        }
+
+class DatasetsWatcher:
+    pass
+
+###############################
+class DatasetForTests:
     wdir=None
     mapUrl=None
     def __init__(self, pathRoot):
@@ -50,7 +116,7 @@ class Dataset:
             return f.read()
 
 ###############################
-dataSetProvider = Dataset(os.path.abspath('data-test/dataset-image2d/simple4c_test'))
+dataSetProvider = DatasetForTests(os.path.abspath('data-test/dataset-image2d/simple4c_test'))
 
 ###############################
 @dbpreview.route('/datasetinfo/', methods=['GET', 'POST'])

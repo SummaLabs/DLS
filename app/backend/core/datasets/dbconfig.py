@@ -41,21 +41,21 @@ class TFTypes:
         return [TFTypes.squash, TFTypes.crop, TFTypes.fill, TFTypes.cropFill]
 
 #################################################
-class DLSDBInfo:
-    dbType = DBTypes.image2dcls
-    def getDBType(self):
-        return self.dbType
-    def setDBTypeFromStr(self, strType):
-        return DBTypes.getTypeFromString(strType)
-    def setDBType(self, dbType):
-        self.dbType = dbType
-
-class DLSDBInfoImageDB:
-    pathInfo='dbinfo.json'
-    pathLabels='labels.txt'
-    pathMeanImage='mean.binaryproto'
-    pathTrainTxt='train.txt'
-    pathValTxt='val.txt'
+# class DLSDBInfo:
+#     dbType = DBTypes.image2dcls
+#     def getDBType(self):
+#         return self.dbType
+#     def setDBTypeFromStr(self, strType):
+#         return DBTypes.getTypeFromString(strType)
+#     def setDBType(self, dbType):
+#         self.dbType = dbType
+#
+# class DLSDBInfoImageDB:
+#     pathInfo='dbinfo.json'
+#     pathLabels='labels.txt'
+#     pathMeanImage='mean.binaryproto'
+#     pathTrainTxt='train.txt'
+#     pathValTxt='val.txt'
 
 #################################################
 class DBImage2DConfig:
@@ -112,6 +112,10 @@ class DBImage2DConfig:
         #TODO: append validation code!
         pass
     # api
+    @checkInit
+    def getDBName(self):
+        tret = self.cfg['datasetname']
+        return tret
     @checkInit
     def getImageSize(self):
         sizW = self.cfg['formImage']['imgSizes']['x']
