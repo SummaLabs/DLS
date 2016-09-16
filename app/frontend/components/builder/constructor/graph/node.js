@@ -32,12 +32,12 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
                 if (newType != "" && newType != undefined) {
                     $http.get(newType, {cache: $templateCache}).success(function(html) {
 
+                        var idNode = $scope.nodeData.id;
                         $scope.nodeData.displayData = calculateProportions(html, patternDefinitions);
 
                         element.html(html);
                         $compile(element.contents())($scope);
 
-                        var idNode = $scope.nodeData.id;
                         $scope.isPort = false;
 
                         var rectNode = angular.element(element[0].querySelector('#' + patternDefinitions.markerRect));
@@ -90,7 +90,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
         var portInRect = portIn[0].getBoundingClientRect();
         var portOut = angular.element(svg.querySelector('#' + patternDefinitions.markerPortOut));
         var portOutRect = portOut[0].getBoundingClientRect();
-        var rect = angular.element(svg.querySelector('#' + patternDefinitions.markerRect));
+        var rect = angular.element(svg);
         var elementRect = rect[0].getBoundingClientRect();
 
         displayData.portIn = {
@@ -113,6 +113,8 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
             height: portOutRect.bottom - portOutRect.top
         }
 
+
+
         displayData.node = {
             offsetCenter: {
                 x: elementRect.left + (elementRect.right - elementRect.left) / 2,
@@ -122,7 +124,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
             height: elementRect.bottom - elementRect.top
         }
         document.body.removeChild(svg);
-
+        console.log(displayData.node.width, displayData.node.height)
         return displayData;
 	}
 
@@ -164,10 +166,9 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 		element.on('mousedown', function (event) {
 			if (scope.isPort || event.ctrlKey || event.button !== 0)
 				return;
-			var offsetMousePos = getOffsetPos(element, event);
 			scope.$emit('nodeMouseDown', {
 				id: idNode,
-				pos: {x: offsetMousePos.x, y: offsetMousePos.y}
+				event: event
 			});
 		});
 

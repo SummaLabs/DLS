@@ -6,7 +6,7 @@
         .directive('convolEditor', function () {
             return {
                 scope: {
-                    layerId: '=',
+                    layerId: '@',
                     doOnSubmit: '&'
                 },
                 templateUrl: "frontend/components/layers/convol/convol-editor.html",

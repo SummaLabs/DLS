@@ -42,13 +42,11 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 		var nodes = self.svgControl.getNodes();
 
 		nodes.forEach(function(node, i, ar){
-			console.log(networkDataService.getLayerById(node.id));
 			var layer = networkDataService.getLayerById(node.id);
 			if (layer) {
 				node.params = layer.params;
 			} else {
 				node.params = networkLayerService.getLayerByType(node.name).params;
-				console.log(node.params);
 			}
 		});
 		networkDataService.setLayers(nodes)
@@ -82,12 +80,11 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 
 			function buildTemplate(layerId, layerType) {
 				var template =
-					'<md-dialog flex="25" ng-cloak>' +
+					'<md-dialog flex="25" aria-label="' + layerType + '">' +
 					'  <md-dialog-content>'+
-					'    <layer-editor layer-id="' + layerId + '" layer-type="' + layerType + '" do-on-submit="closeDialog()"></layer-editor>' +
+					'    <layer-editor layer-id="\'' + layerId + '\'" layer-type="' + layerType + '" do-on-submit="closeDialog()"></layer-editor>' +
 					'  </md-dialog-content>' +
 					'</md-dialog>';
-
 				return template;
 			}
 		});

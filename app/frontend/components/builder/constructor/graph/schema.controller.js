@@ -144,7 +144,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		$scope.$on('nodeMouseDown', function (event, data) {
 		    self.mouseMode = state.MOVING;
 			editedNode = schema.getNodeById(data.id);
-			prevMousePos = editedNode.position().getScaledPos(self.scale).getAddedPos(data.pos);
+			prevMousePos = getOffsetPos($element, data.event);
 		});
 
 		$scope.$on('nodeMouseUp', function (event, data) {
@@ -152,10 +152,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 			if (self.mouseMode === state.MOVING) {
 
 				var curMousePos = getOffsetPos($element, data);
-
-               $scope.$apply( function() {
-
-               		console.log(curMousePos.y - prevMousePos.y, self.scale);
+                $scope.$apply( function() {
                     editedNode.move(
                         (curMousePos.x - prevMousePos.x) / self.scale,
                         (curMousePos.y - prevMousePos.y) / self.scale,
@@ -163,7 +160,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
                     );
                 });
 
-				prevMousePos = curMousePos;
+                prevMousePos = curMousePos;
 			} else if (self.mouseMode === state.JOINING) {
 				removeActiveLink();
 			}
@@ -453,7 +450,6 @@ function Node() {
     }
 
     this.move = function(offsetX, offsetY, step) {
-
         if (!step)
             step = 1;
         var newPos = this.pos.getAddedPos(offsetX, offsetY);

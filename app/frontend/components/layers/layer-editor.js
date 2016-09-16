@@ -8,10 +8,10 @@
             function buildTemplate(layerId, layerType) {
                 var layerDirectives =
                 {
-                    'data':'<input-data-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></input-data-editor>',
-                    'convol':'<convol-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></convol-editor>',
-                    'dense':'<dense-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></dense-editor>',
-                    'solver':'<solver-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></solver-editor>'
+                    'data':'<input-data-editor layer-id="\'' + layerId + '\'" do-on-submit="doOnSubmit()"></input-data-editor>',
+                    'convol':'<convol-editor layer-id="\'' + layerId + '\'" do-on-submit="doOnSubmit()"></convol-editor>',
+                    'dense':'<dense-editor layer-id="\'' + layerId + '\'" do-on-submit="doOnSubmit()"></dense-editor>',
+                    'solver':'<solver-editor layer-id="\'' + layerId + '\'" do-on-submit="doOnSubmit()"></solver-editor>'
                 };
                 return layerDirectives[layerType];
             }
