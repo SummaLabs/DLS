@@ -117,6 +117,33 @@ class DBImage2DConfig:
         tret = self.cfg['datasetname']
         return tret
     @checkInit
+    def getDBType(self):
+        tret = self.cfg['dbType']
+        return tret
+    # Parameters after postprocessing of the created Dataset
+    @checkInit
+    def getDateCreationStr(self):
+        tret = self.cfg['dbinfo']['date']['str']
+        return tret
+    @checkInit
+    def getDateCreationJson(self):
+        tret = self.cfg['dbinfo']['date']
+        return tret
+
+    @checkInit
+    def getTimeCreationStr(self):
+        tret = self.cfg['dbinfo']['time']['str']
+        return tret
+    @checkInit
+    def getTimeCreationJson(self):
+        tret = self.cfg['dbinfo']['time']
+        return tret
+    @checkInit
+    def getDBInfoJson(self):
+        tret = self.cfg['dbinfo']
+        return tret
+    # Basic parameters
+    @checkInit
     def getImageSize(self):
         sizW = self.cfg['formImage']['imgSizes']['x']
         sizH = self.cfg['formImage']['imgSizes']['y']
@@ -152,7 +179,7 @@ class DBImage2DConfig:
         ret = self.cfg['formFileImport']['fromDir'][tkey]
         return ret
     @checkInit
-    def getDbType(self):
+    def getDbBackendType(self):
         tkey = 'dbBackendSelectedId'
         ret = self.cfg['formDbBackend'][tkey]
         return ret

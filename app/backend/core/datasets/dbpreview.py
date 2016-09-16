@@ -42,16 +42,18 @@ class DatasetImage2dInfo:
             self.pathDbVal      = os.path.join(self.pathDB, self.dbVal)
     def checkIsAValidImage2dDir(self):
         isValidDir=True
+        if not os.path.isdir(self.pathDB):
+            return False
         if not os.path.isfile(self.pathConfig):
-            isValidDir = False
+            return False
         if not os.path.isfile(self.pathMeanData):
-            isValidDir = False
+            return False
         if not os.path.isfile(self.pathMeanImage):
-            isValidDir = False
+            return False
         if not os.path.isfile(self.pathLabels):
-            isValidDir = False
+            return False
         if (not os.path.isdir(self.pathDbTrain)) or (not os.path.isdir(self.pathDbVal)):
-            isValidDir = False
+            return False
         return isValidDir
     def isInitialized(self):
         return (self.cfg is not None)
@@ -61,21 +63,17 @@ class DatasetImage2dInfo:
             if not self.cfg.isInitialized():
                 strErr = 'Invalid DB config JSON file [%s]' % self.pathConfig
                 raise Exception(strErr)
-            print (self.cfg)
+            # print (self.cfg)
         else:
             strErr = 'Path [%s] is not a valid Image2D DB directory' % self.pathDB
             raise Exception(strErr)
     def getInfo(self):
         tret = {
-            'type': self.cfg.getDbType,
-            'name': self.cfg.getDBName,
-            'date': self.cfg,
-            'data': [
-                {
-                    ''
-                }
-            ]
+            'type': self.cfg.getDBType(),
+            'name': self.cfg.getDBName(),
+            'info': self.cfg.getDBInfoJson(),
         }
+        return tret
 
 class DatasetsWatcher:
     pass
