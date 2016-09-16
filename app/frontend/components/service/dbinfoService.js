@@ -6,20 +6,46 @@ angular.module('dbinfoService', [])
     .service('dbinfoService', ['$http', DBInfoService]);
 
 function DBInfoService($http) {
-    this.getServerPathFromUrlPath = function(urlPath) {
+    var self = this;
+    self.getDatasetsInfoStatList = function () {
+        return $http({
+                method: 'POST',
+                url: '/dbpreview/dbinfolist/'
+            });
+    };
+    self.getInfoStatAboutDB = function (dbID) {
+        return $http({
+                method: 'POST',
+                url: '/dbpreview/dbinfo/' + dbID
+            });
+    };
+    self.getInfoStatWithHistsAboutDB = function (dbID) {
+        return $http({
+                method: 'POST',
+                url: '/dbpreview/dbinfohist/' + dbID
+            });
+    };
+    self.getImagePreviewForDB = function (dbID) {
+        return $http({
+                method: 'POST',
+                url: '/dbpreview/dbimgpreview/' + dbID
+            });
+    };
+    //
+    self.getServerPathFromUrlPath = function(urlPath) {
         return $http({
             method: "GET",
             url: "/dbpreview/getserverpath/" + urlPath
         });
     };
-    this.chekServerPathFromUrlPath = function (urlPath) {
+    self.chekServerPathFromUrlPath = function (urlPath) {
         return $http({
             method: "GET",
             url: "/dbpreview/checkpath/" + urlPath
         });
     };
     //
-    this.getDatasetInfo = function (dbId) {
+    self.getDatasetInfo = function (dbId) {
         return $http({
                 method: 'POST',
                 url: '/dbpreview/datasetinfo/',
@@ -28,7 +54,7 @@ function DBInfoService($http) {
                 }
             });
     };
-    this.getDatasetRange = function (dbId, pfrom, pto) {
+    self.getDatasetRange = function (dbId, pfrom, pto) {
         return $http({
             method: 'POST',
             url:    '/dbpreview/datasetrange/',

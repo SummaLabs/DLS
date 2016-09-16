@@ -24,7 +24,23 @@
         </md-fab-speed-dial>
     </div>
 
-    <div flex layout-margin style="margin-top: 80px">
+    <div flex="80" class='md-padding' layout="row" layout-wrap>
+        <md-card ng-repeat="db in $ctrl.datasets">
+            <img ng-src="/dbpreview/dbimgpreview/{{db.id}}" class="md-card-image md-whiteframe-2dp" alt="user avatar">
+            <md-card-content>
+                <h2>{{db.name}}</h2>
+                <p>{{db.type}}, <strong>{{db.shapestr}}</strong>, {{db.info.date.str}} ({{db.info.time.str}})</p>
+            </md-card-content>
+          <div class="md-actions" layout="row" layout-align="end center">
+            <md-button class="">
+                <md-icon md-font-library="material-icons" aria-label="models">visibility</md-icon>
+                Info
+            </md-button>
+            <md-button class="md-warn">Delete</md-button>
+          </div>
+        </md-card>
+    </div>
+    <!--div flex layout-margin style="margin-top: 80px">
         <md-list ng-cloak>
             <md-list-item ng-repeat="model in $ctrl.models">
                 <p> {{ model.name }} </p>
@@ -34,10 +50,10 @@
                 <md-button class="md-secondary" ng-click="$ctrl.createDialog($event)">Delete</md-button>
             </md-list-item>
         </md-list>
-    </div>
+    </div-->
 
-    <div layout="row">
+    <!--div layout="row">
         <md-button class="md-secondary" ng-click="$ctrl.createDialog($event)">Create New Data Set</md-button>
-    </div>
+    </div-->
 
 </div>

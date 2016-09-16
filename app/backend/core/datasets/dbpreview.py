@@ -6,6 +6,7 @@ from flask import Flask, Blueprint
 from flask import request, Response, make_response
 from flask import render_template
 from flask import send_from_directory
+from app.backend.api import app_flask
 
 from app.backend.file_manager.api import getRealPathFromFMUrlPath, validateSeverPathFromUrlPath
 from dbbuilder import DBImage2DBuilder, DBImage2DConfig
@@ -23,6 +24,7 @@ class DatasetImage2dInfo:
     fmeanData=DBImage2DBuilder.fmeanData
     fmeanImage=DBImage2DBuilder.fmeanImage
     flabels=DBImage2DBuilder.flabels
+    fpreview='preview_5x3.jpg'
     #
     pathDB=None
     pathConfig=None
@@ -40,6 +42,8 @@ class DatasetImage2dInfo:
             self.pathLabels     = os.path.join(self.pathDB, self.flabels)
             self.pathDbTrain    = os.path.join(self.pathDB, self.dbTrain)
             self.pathDbVal      = os.path.join(self.pathDB, self.dbVal)
+            self.pathPreview    = os.path.join(self.pathDB, self.fpreview)
+            self.dbId           = os.path.basename(self.pathDB)
     def checkIsAValidImage2dDir(self):
         isValidDir=True
         if not os.path.isdir(self.pathDB):
@@ -54,6 +58,8 @@ class DatasetImage2dInfo:
             return False
         if (not os.path.isdir(self.pathDbTrain)) or (not os.path.isdir(self.pathDbVal)):
             return False
+        if not os.path.isfile(self.pathPreview):
+            return False
         return isValidDir
     def isInitialized(self):
         return (self.cfg is not None)
@@ -63,28 +69,129 @@ class DatasetImage2dInfo:
             if not self.cfg.isInitialized():
                 strErr = 'Invalid DB config JSON file [%s]' % self.pathConfig
                 raise Exception(strErr)
-            # print (self.cfg)
         else:
             strErr = 'Path [%s] is not a valid Image2D DB directory' % self.pathDB
             raise Exception(strErr)
+    def getId(self):
+        return self.dbId
+    def toString(self):
+        if self.isInitialized():
+            tstr = '%s (%s)' % (self.cfg.getDBName(), self.getId())
+        else:
+            tstr = 'DatasetImage2dInfo is not initialized'
+        return tstr
+    def __str__(self):
+        return self.toString()
+    def __repr__(self):
+        return self.toString()
     def getInfoStat(self):
+        tshape=self.cfg.getImageShape()
         tret = {
+            'id'  : self.getId(),
             'type': self.cfg.getDBType(),
             'name': self.cfg.getDBName(),
             'info': self.cfg.getDBInfoJson(),
+            'shape': {
+                'channels': tshape[0],
+                'width':    tshape[2],
+                'height':   tshape[1],
+            },
+            'shapestr': '%dx%dx%d' % (tshape[2], tshape[1], tshape[0])
         }
         return tret
     def getInfoStatWithHists(self):
-        tret = {
-            'type': self.cfg.getDBType(),
-            'name': self.cfg.getDBName(),
-            'info': self.cfg.getDBInfoJson(),
-            'hist': self.cfg.getDBInfoHistsJson(),
-        }
+        tret=self.getInfoStat()
+        tret['hist'] = self.cfg.getDBInfoHistsJson()
         return tret
+    def getPreviewImageDataRaw(self):
+        with open(self.pathPreview, 'r') as f:
+            return f.read()
 
 class DatasetsWatcher:
-    pass
+    dirDatasets=None
+    dictDbInfo=[]
+    def __init__(self, pathDir=None):
+        if pathDir is None:
+            dirRoot = app_flask.config['DLS_FILEMANAGER_BASE_PATH']
+            self.dirDatasets = os.path.join(dirRoot, '../data/datasets')
+        else:
+            self.dirDatasets = pathDir
+    def refreshDatasetsInfo(self):
+        if os.path.isdir(self.dirDatasets):
+            self.dictDbInfo={}
+            lstDBDir = glob.glob('%s/dbset-*' % self.dirDatasets)
+            for ii,pp in enumerate(lstDBDir):
+                tmpDbInfo = DatasetImage2dInfo(pp)
+                try:
+                    tmpDbInfo.loadDBInfo()
+                    self.dictDbInfo[tmpDbInfo.getId()] = tmpDbInfo
+                except Exception as err:
+                    print ('ERROR::DatasetsWatcher:refreshDatasetsInfo() DB [%s] is invalid \n\tmsg: %s' % (pp, err))
+        else:
+            raise Exception('Cant find directory with datasets [%s]' % self.dirDatasets)
+    def toString(self):
+        tstr = '%s' % self.dictDbInfo.values()
+        return tstr
+    def __str__(self):
+        return self.toString()
+    def __repr__(self):
+        return self.toString()
+    # api
+    def getDatasetsInfoStatList(self):
+        tret=[]
+        for db in self.dictDbInfo.values():
+            tret.append(db.getInfoStat())
+        return tret
+    def getDatasetsInfoStatWitHistsList(self):
+        tret = []
+        for db in self.dictDbInfo.values():
+            tret.append(db.getInfoStatWithHists())
+        return tret
+    def getInfoStatAboutDB(self, dbId):
+        if self.dictDbInfo.has_key(dbId):
+            return self.dictDbInfo[dbId].getInfoStat()
+    def getInfoStatWithHistsAboutDB(self, dbId):
+        if self.dictDbInfo.has_key(dbId):
+            return self.dictDbInfo[dbId].getInfoStatWithHists()
+    def getImageDataRawForDB(self, dbId):
+        if self.dictDbInfo.has_key(dbId):
+            return self.dictDbInfo[dbId].getPreviewImageDataRaw()
+
+###############################
+datasetWatcher              = DatasetsWatcher()
+datasetWatcher.refreshDatasetsInfo()
+#FIXME: only for DEBUG!
+if len(datasetWatcher.dictDbInfo.keys())<1:
+    print ('!!! WARNING !!!! Datasets not found! Please prepare datasets:\n\tjust run script: $DLS_GIT_ROOT/data-test/run01-create-test-DLS-datasets.sh')
+else:
+    print ('\nAvailable datasets: ')
+    for ii,db in enumerate(datasetWatcher.dictDbInfo.values()):
+        print ('%d : %s' % (ii, db))
+
+###############################
+@dbpreview.route('/dbinfolist/', methods=['GET', 'POST'])
+def dbpreview_db_infolist():
+    jsonData = json.dumps(datasetWatcher.getDatasetsInfoStatList())
+    return Response(jsonData, mimetype='application/json')
+
+@dbpreview.route('/dbinfo/<string:dbid>', methods=['GET', 'POST'])
+def dbpreview_db_info(dbid):
+    jsonData = json.dumps(datasetWatcher.getInfoStatAboutDB(dbid))
+    return Response(jsonData, mimetype='application/json')
+
+@dbpreview.route('/dbinfohist/<string:dbid>', methods=['GET', 'POST'])
+def dbpreview_db_infohist(dbid):
+    jsonData = json.dumps(datasetWatcher.getInfoStatWithHistsAboutDB(dbid))
+    return Response(jsonData, mimetype='application/json')
+
+@dbpreview.route('/dbimgpreview/<string:dbid>', methods=['GET', 'POST'])
+def dbpreview_db_imgpreview(dbid):
+    try:
+        tdata = datasetWatcher.getImageDataRawForDB(dbid)
+    except Exception as err:
+        tdata = None
+        print (err)
+    return tdata
 
 ###############################
 class DatasetForTests:
@@ -107,8 +214,8 @@ class DatasetForTests:
         for vv in self.mapUrl.values():
             tmpApp += vv
         self.mapUrl['all'] = tmpApp
-        for ii,vv in enumerate(self.mapUrl.values()):
-            print ('%d : %s' % (ii, vv[0]))
+        # for ii,vv in enumerate(self.mapUrl.values()):
+        #     print ('%d : %s' % (ii, vv[0]))
     def getInfo(self):
         tret={}
         for kk,vv in self.mapUrl.items():
@@ -122,12 +229,12 @@ class DatasetForTests:
             return f.read()
 
 ###############################
-dataSetProvider = DatasetForTests(os.path.abspath('data-test/dataset-image2d/simple4c_test'))
+# Only for tests API: must be deleted in feature
+dataSetProviderOnlyForTests = DatasetForTests(os.path.abspath('data-test/dataset-image2d/simple4c_test'))
 
-###############################
 @dbpreview.route('/datasetinfo/', methods=['GET', 'POST'])
 def dataset_info():
-    jsonData = json.dumps(dataSetProvider.getInfo())
+    jsonData = json.dumps(dataSetProviderOnlyForTests.getInfo())
     return Response(jsonData, mimetype='application/json')
 
 @dbpreview.route('/datasetrange/', methods=['GET', 'POST'])
@@ -135,7 +242,7 @@ def dataset_range():
     dbid  = request.args['dbid']
     tfrom = int(request.args['from'])
     tto   = int(request.args['to'])
-    tmp   = dataSetProvider.mapUrl[dbid]
+    tmp   = dataSetProviderOnlyForTests.mapUrl[dbid]
     tret  = []
     for xx in range(tfrom,tto):
         tret.append(tmp[xx])
@@ -144,7 +251,7 @@ def dataset_range():
 @dbpreview.route('/getimgdata/<path:imageid>')
 def get_image_data(imageid):
     try:
-        tdata = dataSetProvider.getImageSrcFromDataset(imageid)
+        tdata = dataSetProviderOnlyForTests.getImageSrcFromDataset(imageid)
     except Exception as err:
         tdata = None
         print (err)
