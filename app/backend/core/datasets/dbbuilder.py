@@ -11,6 +11,8 @@ import json
 import lmdb
 import matplotlib.pyplot as plt
 
+from datetime import datetime
+
 import copy
 
 import shutil
@@ -169,19 +171,48 @@ class DBImage2DBuilder:
             tpathLabels = self.getParhLabels()
             # (5) save labels to file
             with open(tpathLabels, 'w') as f:
-                for ll in self.imgReader2D.listLabels:
+                tmp = sorted(self.imgReader2D.listLabels)
+                for ll in tmp:
                     f.write('%s\n' % ll)
             # (6) save DB-config
             tpathCfg = self.getPathDbConfig()
             newCfg = copy.copy(self.cfg2D.cfg)
             newCfg['dbType']='image2d'
+            tdateTime=datetime.now()
+            strDate=tdateTime.strftime('%Y.%m.%d')
+            strTime=tdateTime.strftime('%H:%M:%S')
+            # prepare histograms
+            tretLabels=sorted(self.imgReader2D.listLabels)
+            tretLabelHistTrain  = [(ll, len(self.imgReader2D.listTrainPath[ll])) for ll in tretLabels]
+            tretLabelHistVal    = [(ll, len(self.imgReader2D.listValPath[ll]  )) for ll in tretLabels]
+            # prepare date & time
+            tretDate={
+                'str':   strDate,
+                'year':  tdateTime.strftime('%Y'),
+                'month': tdateTime.strftime('%m'),
+                'day':   tdateTime.strftime('%m')
+            }
+            tretTime={
+                'str':  strTime,
+                'hour': tdateTime.strftime('%H'),
+                'min':  tdateTime.strftime('%M'),
+                'sec':  tdateTime.strftime('%S'),
+            }
             dbStats={
                 'numLabels' : self.imgReader2D.numLabels,
                 'numTrain'  : self.imgReader2D.numTrainImages,
                 'numVal'    : self.imgReader2D.numValImages,
-                'numTotal'  : (self.imgReader2D.numTrainImages + self.imgReader2D.numValImages)
+                'numTotal'  : (self.imgReader2D.numTrainImages + self.imgReader2D.numValImages),
+                'date'      : tretDate,
+                'time'      : tretTime
+            }
+            dbHists={
+                'labels': tretLabels,
+                'histTrain': tretLabelHistTrain,
+                'histVal': tretLabelHistVal
             }
             newCfg['dbinfo'] = dbStats
+            newCfg['dbhist'] = dbHists
             with open(tpathCfg,'w') as f:
                 f.write(json.dumps(newCfg, indent=4))
         else:
