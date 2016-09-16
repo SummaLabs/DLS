@@ -142,6 +142,9 @@ class DBImage2DConfig:
     def getDBInfoJson(self):
         tret = self.cfg['dbinfo']
         return tret
+    def getDBInfoHistsJson(self):
+        tret = self.cfg['dbhist']
+        return tret
     # Basic parameters
     @checkInit
     def getImageSize(self):

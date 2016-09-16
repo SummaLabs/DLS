@@ -13,15 +13,27 @@ import skimage.color as skcolor
 import copy
 import matplotlib.pyplot as plt
 from dbconfig import TFTypes, DBImage2DConfig
-import skimage.io as skio
 import PIL.Image
 import dlscaffe.caffedls_pb2 as dlscaffe_pb2
+import lmdb
 
 try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
 
+#################################################
+def convertImage2PreviewStyle(pimg, pshape=(64,64), bnd=2, bval=0):
+    if len(pimg.shape)==3:
+        tret = pimg
+    else:
+        tret = skcolor.gray2rgb(pimg)
+    tret = sktr.resize(tret, pshape, preserve_range=True).astype(np.uint8)
+    tret[:+bnd, :, :] = bval
+    tret[-bnd:, :, :] = bval
+    tret[:, :+bnd, :] = bval
+    tret[:, -bnd:, :] = bval
+    return tret
 
 #################################################
 class ImageTransformer2D:
@@ -76,6 +88,44 @@ class ImageTransformer2D:
 
     def __repr__(self):
         return self.toString()
+
+    @staticmethod
+    def generateImagePreview(pathLMDB, nr=3, nc=5, foutNameMask='preview_%sx%s.jpg', fdirOut=None):
+        if not os.path.isdir(pathLMDB):
+            raise Exception('Cant find LMDB directory [%s]' % pathLMDB)
+        tsizInBytes = 4 * (1024 ** 3)
+        with lmdb.open(pathLMDB, map_size=tsizInBytes) as env:
+            with env.begin(write=False) as  txn:
+                lstKeys = [key for key, _ in txn.cursor()]
+                rndIndex = np.random.randint(len(lstKeys), size=nr * nc).tolist()
+                lstImg = []
+                for kk in rndIndex:
+                    tkey = lstKeys[kk]
+                    timg = ImageTransformer2D.decodeLmdbItem2Image(txn.get(tkey))
+                    timg = convertImage2PreviewStyle(timg)
+                    lstImg.append(timg)
+                imgPreview = None
+                for cc in range(nc):
+                    tcimg = np.concatenate(lstImg[cc * nr:(cc + 1) * nr])
+                    if imgPreview is None:
+                        imgPreview = tcimg
+                    else:
+                        imgPreview = np.concatenate((imgPreview, tcimg), axis=1)
+                if fdirOut is not None:
+                    fimgOut = os.path.join(fdirOut, foutNameMask % (nc, nr))
+                    skio.imsave(fimgOut, imgPreview)
+                return imgPreview
+
+    @staticmethod
+    def decodeLmdbItem2Image(pval):
+        tdat = dlscaffe_pb2.Datum()
+        tshape = (tdat.height, tdat.width, tdat.channels)
+        tdat.ParseFromString(pval)
+        if tdat.encoded:
+            timg = skio.imread(StringIO(tdat.data))
+        else:
+            timg = np.fromstring(tdat.data, dtype=np.uint8).reshape(tshape)
+        return timg
 
     @staticmethod
     def cvtImage2Datum(timg, imgEncoding, idxLabel):

@@ -67,11 +67,19 @@ class DatasetImage2dInfo:
         else:
             strErr = 'Path [%s] is not a valid Image2D DB directory' % self.pathDB
             raise Exception(strErr)
-    def getInfo(self):
+    def getInfoStat(self):
         tret = {
             'type': self.cfg.getDBType(),
             'name': self.cfg.getDBName(),
             'info': self.cfg.getDBInfoJson(),
+        }
+        return tret
+    def getInfoStatWithHists(self):
+        tret = {
+            'type': self.cfg.getDBType(),
+            'name': self.cfg.getDBName(),
+            'info': self.cfg.getDBInfoJson(),
+            'hist': self.cfg.getDBInfoHistsJson(),
         }
         return tret
 

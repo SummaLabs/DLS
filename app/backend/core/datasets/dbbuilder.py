@@ -215,6 +215,8 @@ class DBImage2DBuilder:
             newCfg['dbhist'] = dbHists
             with open(tpathCfg,'w') as f:
                 f.write(json.dumps(newCfg, indent=4))
+            #generate preview
+            ImageTransformer2D.generateImagePreview(tpathLmdbTrain,nr=3,nc=5,fdirOut=self.wdir)
         else:
             raise Exception("Cant build dataset, DBImage2DBuilder() is not initialized yet!")
 
