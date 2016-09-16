@@ -27,7 +27,8 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'dbinfoService',
     'settings',
     'device',
-    'deviceService'
+    'deviceService',
+    "angularUtils.directives.uiBreadcrumbs"
                   
 ]);
 
@@ -64,7 +65,16 @@ angular.module('dlsApp')
             template: "<constructor></constructor>"
         }).state('models', {
             url: "/models",
-            template: "<model-main></model-main>"
+            template: "<model-main></model-main>",
+            data: {
+                displayName: 'Models'
+            }
+        }).state('classify-image', {
+            url: "/models/classify-image",
+            template: "<classify-image></classify-image>",
+            data: {
+                displayName: 'Classify Image'
+            }
         }).state('data-set', {
             url: "/data-set",
             template: "<main-data-set></main-data-set>"
