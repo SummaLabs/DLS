@@ -66,7 +66,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
                         schema.addLink(schema.getNodeById(layers[a].id), schema.getNodeById(layerId));
                     });
             }
-        }, 10);
+        }, 400);
 
         return true;
     }
@@ -124,20 +124,6 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
         // Custom events:
 
-/*
-		networkDataService.subClearNetworkEvent(function ($event, data) {
-			self.clearScene();
-		});
-*/
-
-/*        $scope.$on('nodeInit', function (event, data) {
-			self.counterNodesInit ++;
-
-			if (self.counterNodesInit === self.nodes.length) {
-				self.links = parseNodesForLinks(self.nodes);
-			}
-		});*/
-
 		$rootScope.$on('palette_drag_start', function (event, data) {
 			self.mouseMode = state.DRAGGING;
 		});
@@ -168,6 +154,8 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 				var curMousePos = getOffsetPos($element, data);
 
                $scope.$apply( function() {
+
+               		console.log(curMousePos.y - prevMousePos.y, self.scale);
                     editedNode.move(
                         (curMousePos.x - prevMousePos.x) / self.scale,
                         (curMousePos.y - prevMousePos.y) / self.scale,
@@ -465,6 +453,7 @@ function Node() {
     }
 
     this.move = function(offsetX, offsetY, step) {
+
         if (!step)
             step = 1;
         var newPos = this.pos.getAddedPos(offsetX, offsetY);
@@ -472,8 +461,8 @@ function Node() {
             newPos.x = 0;
         if (newPos.y < 0)
             newPos.y = 0;
-        this.pos.x = newPos.x - newPos.x % step;
-        this.pos.y = newPos.y - newPos.y % step;
+        this.pos.x = newPos.x - (newPos.x % step) + 0.5;
+        this.pos.y = newPos.y - (newPos.y % step) + 0.5;
     }
 }
 

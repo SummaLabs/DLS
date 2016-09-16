@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"  >
+<html lang="en" style="height:100%;" >
 <head>
     <title>Deap Learning Studio</title>
     <meta charset="utf-8">
@@ -22,13 +22,15 @@
 
 </head>
 
-<body ng-app="dlsApp" layout="column"  layout-fill>
+<body ng-app="dlsApp" layout="column"   style="height:100%;">
+
+<!--<constructor style="height:100%;"></constructor>-->
 <md-toolbar layout="row">
     <main-menu></main-menu>
     <h3>Deep Learning Studio</h3>
 </md-toolbar>
      <!--md-dynamic-height-->
-<md-tabs md-selected="tabSelectedIndex" md-border-bottom md-autoselect md-dynamic-height>
+<md-tabs md-selected="tabSelectedIndex" md-border-bottom md-autoselect  flex>
 <!--md-tabs md-selected="4" md-dynamic-height md-border-bottom md-autoselect-->
     <md-tab class="unselectable">
         <md-tab-label>
@@ -36,17 +38,17 @@
             Networks
         </md-tab-label>
         <!--layout="column" layout-align="center stretch"-->
-        <md-tab-body>
-            <network-main></network-main>
+        <md-tab-body style="height:100%;">
+            <network-main style="height:100%;"></network-main>
         </md-tab-body>
     </md-tab>
-    <md-tab class="unselectable">
+    <md-tab class="unselectable" layout-fill>
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="builder">build</md-icon>
             Builder
         </md-tab-label>
         <md-tab-body>
-             <constructor></constructor>
+             <constructor style="height:100%;"> </constructor>
         </md-tab-body>
     </md-tab>
     <md-tab class="unselectable">

@@ -9,6 +9,7 @@ angular.module('constructorCore', [
 var editorDefinition = {
 	templateUrl: 'frontend/components/builder/constructor/core.html',
 	controller: ConstructorController,
+	replace: true,
 	bindings: {
 	}
 };
@@ -41,11 +42,13 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 		var nodes = self.svgControl.getNodes();
 
 		nodes.forEach(function(node, i, ar){
+			console.log(networkDataService.getLayerById(node.id));
 			var layer = networkDataService.getLayerById(node.id);
 			if (layer) {
 				node.params = layer.params;
 			} else {
-				node.params = networkLayerService.getLayerByType(node.name);
+				node.params = networkLayerService.getLayerByType(node.name).params;
+				console.log(node.params);
 			}
 		});
 		networkDataService.setLayers(nodes)
@@ -144,35 +147,30 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 
         $scope.$on('graph:addNode', function (event, data) {
             console.log('graph:addNode');
-            networkDataService.setLayers(self.svgControl.getNodes());
             networkDataService.setChangesSaved(false);
 			event.stopPropagation();
 		});
 
 		$scope.$on('graph:removeNode', function (event, data) {
 		    console.log('graph:removeNode');
-		    networkDataService.setLayers(self.svgControl.getNodes());
             networkDataService.setChangesSaved(false);
 			event.stopPropagation();
 		});
 
 		$scope.$on('graph:addLink', function (event, data) {
 		    console.log('graph:addLink');
-		    networkDataService.setLayers(self.svgControl.getNodes());
 		    networkDataService.setChangesSaved(false);
 			event.stopPropagation();
 		});
 
 		$scope.$on('graph:removeLink', function (event, data) {
 		    console.log('graph:removeLink');
-		    networkDataService.setLayers(self.svgControl.getNodes());
 		    networkDataService.setChangesSaved(false);
 			event.stopPropagation();
 		});
 
 		$scope.$on('graph:removeItems', function (event, data) {
 		    console.log('graph:removeItems');
-		    networkDataService.setLayers(self.svgControl.getNodes());
 		    networkDataService.setChangesSaved(false);
 			event.stopPropagation();
 		});
