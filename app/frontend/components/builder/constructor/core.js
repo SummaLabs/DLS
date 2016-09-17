@@ -82,7 +82,7 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 				var template =
 					'<md-dialog flex="25" aria-label="' + layerType + '">' +
 					'  <md-dialog-content>'+
-					'    <layer-editor layer-id="\'' + layerId + '\'" layer-type="' + layerType + '" do-on-submit="closeDialog()"></layer-editor>' +
+					'    <layer-editor layer-id="' + layerId + '" layer-type="' + layerType + '" do-on-submit="closeDialog()"></layer-editor>' +
 					'  </md-dialog-content>' +
 					'</md-dialog>';
 				return template;

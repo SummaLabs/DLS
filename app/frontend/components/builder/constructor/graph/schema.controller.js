@@ -45,7 +45,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         var node = schema.addNode(layer.name, layer.category, layer.template, layer.id);
         if (!node)
             return false;
-		node.position(layer.pos.x, layer.pos.y);
+		node.position(layer.pos.x, layer.pos.y, appConfig.svgDefinitions.gridStep);
 
         return true;
     }
@@ -80,7 +80,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         if (!node)
             return false;
 
-        node.position(pos.x, pos.y);
+        node.position(pos.x, pos.y, appConfig.svgDefinitions.gridStep);
         self.emitEvent(events.ADD_NODE, {});
         return true;
     }
@@ -308,7 +308,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		parentNode.on('keydown', function (event) {
 			if (event.keyCode === 46) {
 				$scope.$apply( function() {
-					if (activeItem.id >= 0) {
+					if (activeItem.id) {
 						if (activeItem.type === 'node') {
 							schema.removeNode(activeItem.id);
 							self.emitEvent(events.REMOVE_NODE, {});
@@ -400,9 +400,11 @@ function selectItems (array, options) {
 }
 
 
-function Position(x, y) {
-    this.x = x;
-    this.y = y;
+function Position(x, y, step) {
+    if (!step)
+        step = 1;
+    this.x = x - x % step;
+    this.y = y - y % step;
 
     this.getScaledPos = function(scale) {
         return new Position(this.x * scale, this.y * scale);
@@ -442,11 +444,12 @@ function Node() {
     this.template;
     this.pos = new Position(0, 0);
 
-    this.position = function(x, y) {
+
+    this.position = function(x, y, step) {
         if (!arguments.length)
             return this.pos;
 
-        this.pos = new Position(x, y);
+        this.pos = new Position(x, y, step);
     }
 
     this.move = function(offsetX, offsetY, step) {

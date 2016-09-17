@@ -90,7 +90,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
         var portInRect = portIn[0].getBoundingClientRect();
         var portOut = angular.element(svg.querySelector('#' + patternDefinitions.markerPortOut));
         var portOutRect = portOut[0].getBoundingClientRect();
-        var rect = angular.element(svg);
+        var rect = angular.element(svg.firstElementChild.firstElementChild);
         var elementRect = rect[0].getBoundingClientRect();
 
         displayData.portIn = {
@@ -124,7 +124,6 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
             height: elementRect.bottom - elementRect.top
         }
         document.body.removeChild(svg);
-        console.log(displayData.node.width, displayData.node.height)
         return displayData;
 	}
 
