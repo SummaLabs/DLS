@@ -1,20 +1,31 @@
-<div layout="row" flex="grow">
-    <md-content flex="30">
-        <md-subheader class="md-no-sticky">Model Names</md-subheader>
-        <md-list layout-padding>
-            <md-list-item class="md-1-line" ng-repeat="model in $ctrl.models" ng-click="$ctrl.$selectModel(model)">
-                <div class="md-list-item-text" ng-class="{'selected' : model == $ctrl.selected }">
-                    <h3> {{ model.name }} </h3>
-                </div>
-            </md-list-item>
-        </md-list>
-    </md-content>
-    <md-divider></md-divider>
-    <md-content flex="grow">
-        <div layout-padding layout="row">
-            <h3> {{ $ctrl.selected.name }} </h3>
-            <apply-model-menu></apply-model-menu>
-        </div>
-    </md-content>
-</div>
+<section style="height:100%" layout="column" flex>
+    <div layout="row" flex="grow">
+        <md-content flex="30">
+            <md-subheader class="md-no-sticky">Model Names</md-subheader>
+            <md-list layout-padding>
+                <md-list-item class="md-1-line" ng-repeat="model in $ctrl.models" ng-click="$ctrl.$selectModel(model)">
+                    <div class="md-list-item-text" ng-class="{'selected' : model == $ctrl.selected }">
+                        <h3> {{ model.name }} </h3>
+                    </div>
+                </md-list-item>
+            </md-list>
+        </md-content>
+        <md-divider></md-divider>
+        <md-content layout="row" flex="grow">
+            <div layout-padding layout="row" layout-align="end start">
+                <h3> {{ $ctrl.selected.name }} </h3>
+                <apply-model-menu></apply-model-menu>
+                <md-button ng-click="$ctrl.$toggleSidenav()" class="md-raised">ROC Analysis</md-button>
+            </div>
 
+            <md-sidenav class="md-sidenav-right" md-component-id="right" md-disable-backdrop md-whiteframe="4">
+
+                <md-toolbar class="md-theme-indigo" layout="row" layout-align="start center">
+                    <md-button ng-click="$ctrl.$toggleSidenav()">Close</md-button>
+                </md-toolbar>
+                <classify-data-set></classify-data-set>
+            </md-sidenav>
+
+        </md-content>
+    </div>
+</section>

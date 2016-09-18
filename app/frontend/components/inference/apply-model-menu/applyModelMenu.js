@@ -38,7 +38,6 @@
                                 });
 
                                 self.createImagesDialog(event);
-
                             };
 
                             $scope.cancel = function () {
