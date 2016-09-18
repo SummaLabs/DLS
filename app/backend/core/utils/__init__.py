@@ -9,6 +9,40 @@ import sys
 import glob
 
 #################################################
+def getDirectorySizeInBytes(dirPath ='.'):
+    """
+    from http://stackoverflow.com/questions/1392413/calculating-a-directory-size-using-python
+    reqursively calculate size of files in directory
+    :param dirPath: directory path
+    :return: size in bytes
+    """
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(dirPath):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            total_size += os.path.getsize(fp)
+    return total_size
+
+def humanReadableSize(sizeInBytes):
+    """
+    from http://stackoverflow.com/questions/1392413/calculating-a-directory-size-using-python
+    get size from bytes to human readable format
+    :param sizeInBytes: siz in bytes
+    :return: human readable string
+    """
+    B = "B"
+    KB = "KB"
+    MB = "MB"
+    GB = "GB"
+    TB = "TB"
+    UNITS = [B, KB, MB, GB, TB]
+    HUMANFMT = "%0.1f %s"
+    HUMANRADIX = 1024.
+    for u in UNITS[:-1]:
+        if sizeInBytes < HUMANRADIX : return HUMANFMT % (sizeInBytes, u)
+        sizeInBytes /= HUMANRADIX
+    return HUMANFMT % (sizeInBytes,  UNITS[-1])
+
 def getUniqueTaskId(prefix=None):
     """
     unique id generator for varius DLS tasks
