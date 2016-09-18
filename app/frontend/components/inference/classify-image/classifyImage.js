@@ -7,9 +7,14 @@
             bindings: {
                 images: '<'
             },
-            controller: function (imageService) {
+            controller: function (imageService, $timeout) {
+                var self = this;
                 this.$onInit = function () {
-                    this.images = imageService.loadClassifiedImages(3);
+                    this.images = [];
+                    $timeout(function () {
+                        self.images = imageService.loadClassifiedImages(3);
+                    }, 8000);
+
                 };
             }
         });

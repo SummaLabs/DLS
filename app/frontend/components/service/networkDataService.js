@@ -78,7 +78,7 @@ function NetworkDataService($rootScope, $http, $timeout) {
                 self.pubNetworkUpdateEvent();
             }, function myError(response) {
             });
-        }, 1000)
+        }, 400)
     };
 
     this.setLayers = function(layers) {

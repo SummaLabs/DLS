@@ -11,11 +11,9 @@
     </md-content>
     <md-divider></md-divider>
     <md-content flex="grow">
-        <md-subheader class="md-no-sticky"><ui-breadcrumbs displayname-property="data.displayName" abstract-proxy-property="data.proxy" template-url="/frontend/components/breadcrumbs/uiBreadcrumbs.tpl.html"></ui-breadcrumbs></md-subheader>
         <div layout-padding layout="row">
             <h3> {{ $ctrl.selected.name }} </h3>
             <apply-model-menu></apply-model-menu>
-            <a ui-sref="classify-image">Click Link</a>
         </div>
     </md-content>
 </div>

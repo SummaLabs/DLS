@@ -27,9 +27,7 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'dbinfoService',
     'settings',
     'device',
-    'deviceService',
-    "angularUtils.directives.uiBreadcrumbs"
-                  
+    'deviceService'
 ]);
 
 

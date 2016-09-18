@@ -21,17 +21,6 @@
                 this.$selectModel = function( model ) {
                     this.selected = angular.isNumber(model) ? $scope.models[model] : model;
                 };
-
-                this.createDialog = function() {
-                    $mdDialog.show(
-                        $mdDialog.alert()
-                            .title('Primary Action')
-                            .textContent('Primary actions can be used for one click actions')
-                            .ariaLabel('Primary click demo')
-                            .ok('Awesome!')
-                            .targetEvent(event)
-                    );
-                };
             }
         });
 })();

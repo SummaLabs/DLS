@@ -8,7 +8,7 @@
                 networkTemplates: '<',
                 savedNetworks: '<'
             },
-            controller: function ($mdDialog, $rootScope, $location, networkDataService) {
+            controller: function ($mdDialog, $rootScope, $state, networkDataService) {
                 var self = this;
                 this.$onInit = function () {
                     this.networkTemplates = [
@@ -32,8 +32,7 @@
                     var loadNetworkFunc = function () {
                         networkDataService.loadNetwork(name);
                         networkDataService.setChangesSaved(true);
-                        // $rootScope.$broadcast('switchTab', {id: 1});
-                        $location.url("/designer");
+                        $state.go('designer');
                     };
                     if (!networkDataService.isChangesSaved()) {
                         showSaveNetworkDialog($event, loadNetworkFunc);
