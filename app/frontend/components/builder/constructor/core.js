@@ -40,16 +40,21 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 
     function doUpdateNetwork() {
 		var nodes = self.svgControl.getNodes();
+		var layers = networkDataService.getLayers();
 
 		nodes.forEach(function(node, i, ar){
 			var layer = networkDataService.getLayerById(node.id);
-			if (layer) {
-				node.params = layer.params;
-			} else {
-				node.params = networkLayerService.getLayerByType(node.name).params;
+			if (!layer) {
+				layer = networkLayerService.getLayerByType(node.name);
+				layers.push(layer);
 			}
+
+			layer.id = node.id;
+			layer.name = node.name;
+			layer.category = node.category;
+			layer.pos = node.pos;
 		});
-		networkDataService.setLayers(nodes)
+		networkDataService.setLayers(layers);
     }
 
 	this.$onInit = function() {

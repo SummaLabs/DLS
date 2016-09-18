@@ -21,6 +21,10 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
     self.$onInit = function() {
         self.counterNodesInit = 0;
+        self.viewX = 0;
+        self.viewY = 0;
+        self.viewWidth = 400;
+        self.viewHeight = 400;
 
         self.mouseMode = state.DEFAULT;
         self.links = schema.getLinks();
@@ -75,8 +79,8 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         return schema.getSchema();
     }
 
-    function addNode(name, type, template, pos) {
-        var node = schema.addNode(name, type, template);
+    function addNode(name, category, template, pos) {
+        var node = schema.addNode(name, category, template);
         if (!node)
             return false;
 
@@ -117,10 +121,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		var parentNode = angular.element($element[0].parentNode);
 
 		var positionDrag = {x:0, y: 0};
-		var activeItem = {
-			id: -1,
-			type: null
-		};
+		var activeItem = {};
 
         // Custom events:
 
@@ -144,6 +145,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		$scope.$on('nodeMouseDown', function (event, data) {
 		    self.mouseMode = state.MOVING;
 			editedNode = schema.getNodeById(data.id);
+//			editedNode.isActive = true;
 			prevMousePos = getOffsetPos($element, data.event);
 		});
 
@@ -196,8 +198,15 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
 		$scope.$on('selectedItem', function (event, data) {
 			self.isItemClicked = true;
-			activeItem.id = data.id;
-			activeItem.type = data.type;
+			$scope.$apply( function() {
+                if (activeItem && activeItem.id === data.id) {
+                    activeItem.isActive = !activeItem.isActive;
+                } else {
+                    activeItem.isActive = false;
+                    activeItem = schema.getItemById(data.id, data.type);
+                    activeItem.isActive = true;
+                }
+            });
 		});
 
 		//Mouse events:
@@ -212,6 +221,16 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
 		});
 
+		angular.element(window).on('resize', function (event) {
+            var divSvg = document.getElementById('workspace');
+            console.log(divSvg);
+            var divSvgRect = divSvg.getBoundingClientRect();
+            $scope.$apply( function() {
+                self.viewWidth = divSvgRect.width - 10;
+                self.viewHeight = divSvgRect.height - 10;
+            });
+		});
+
 		$element.on('mousedown', function (event) {
 			if (self.mouseMode === state.DEFAULT) {
 
@@ -220,7 +239,8 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
                         selectItems (self.nodes, false);
                         selectItems (self.links, false);
                     });
-                    activeItem.id = -1;
+                    activeItem.isActive = false;
+                    activeItem = -1;
                 }
                 self.isItemClicked = false;
 
@@ -228,7 +248,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
 			    $scope.$apply( function() {
 			        prevMousePos = curMousePos;
-                    self.selRect = rect(curMousePos.x, curMousePos.y, curMousePos.x, curMousePos.y);
+                    self.selRect = Rect(curMousePos.x, curMousePos.y, curMousePos.x, curMousePos.y);
                     self.selRect.isShown = true;
                 });
                 self.mouseMode = state.SELECTION;
@@ -239,7 +259,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
             if (self.mouseMode === state.SELECTION) {
 			    var curMousePos = getOffsetPos($element, event);
 			    $scope.$apply( function() {
-                    self.selRect = rect(prevMousePos.x, prevMousePos.y, curMousePos.x, curMousePos.y);
+                    self.selRect = Rect(prevMousePos.x, prevMousePos.y, curMousePos.x, curMousePos.y);
                     self.selRect.isShown = true;
                 });
 
@@ -273,8 +293,8 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		    if (self.mouseMode === state.SELECTION) {
 			    var curMousePos = getOffsetPos($element, event);
 			    $scope.$apply( function() {
-                    schema.selectNodesInsideRect(self.selRect);
-                    self.selRect = rect(0,0,0,0);
+                    schema.selectNodesInsideRect(self.selRect.scale(1 / self.scale));
+                    self.selRect = Rect(0,0,0,0);
                     self.selRect.isShown = false;
                 });
 
@@ -292,7 +312,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
             } else if (self.mouseMode === state.SELECTION) {
                 $scope.$apply( function() {
-			        self.selRect = rect(0,0,0,0);
+			        self.selRect = Rect(0,0,0,0);
                     self.selRect.isShown = false;
                 });
             } else if (self.mouseMode === state.JOINING) {
@@ -308,18 +328,11 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		parentNode.on('keydown', function (event) {
 			if (event.keyCode === 46) {
 				$scope.$apply( function() {
-					if (activeItem.id) {
-						if (activeItem.type === 'node') {
-							schema.removeNode(activeItem.id);
-							self.emitEvent(events.REMOVE_NODE, {});
-						} else if (activeItem.type === 'link') {
-							self.links.forEach(function(link, index, array){
-								if (link.id === activeItem.id) {
-									self.links.splice(index, 1);
-								}
-							});
-							self.emitEvent(events.REMOVE_LINK, {});
-						}
+					if (activeItem && activeItem.isActive) {
+					    if (schema.removeItem(activeItem.id, activeItem.type)) {
+					        self.emitEvent(activeItem.type === 'node' ? events.REMOVE_NODE : events.REMOVE_LINK, {});
+					    }
+						activeItem = -1;
 					} else {
 						if (schema.removeSelectedItems())
                 			self.emitEvent(events.REMOVE_ITEMS, {});
@@ -390,257 +403,11 @@ function isPointInRect(point, rect) {
 function selectItems (array, options) {
     if (typeof options == 'undefined') {
         for(var i = 0; i < array.length; ++i) {
-            array[i].selected = true;
+            array[i].isActive = true;
         }
     } else {
         for(var i = 0; i < array.length; ++i) {
-            array[i].selected = options;
-        }
-    }
-}
-
-
-function Position(x, y, step) {
-    if (!step)
-        step = 1;
-    this.x = x - x % step;
-    this.y = y - y % step;
-
-    this.getScaledPos = function(scale) {
-        return new Position(this.x * scale, this.y * scale);
-    }
-
-    this.getAddedPos = function(offset, offsetY) {
-        if (arguments.length === 1)
-            return new Position(this.x + offset.x, this.y + offset.y);
-        else if (arguments.length === 2)
-            return new Position(this.x + offset, this.y + offsetY);
-        else return new Position(this.x, this.y);
-    }
-}
-
-function rect(x1, y1, x2, y2) {
-    var rect = {};
-
-    rect.width = Math.abs(x1 - x2);
-    rect.height = Math.abs(y1 - y2);
-
-    if (x1 > x2)
-        rect.x = x2;
-    else rect.x = x1;
-
-    if (y1 > y2)
-        rect.y = y2;
-    else rect.y = y1;
-
-    return rect;
-}
-
-function Node() {
-    this.id;
-    this.name;
-    this.type;
-    this.selected = false;
-    this.template;
-    this.pos = new Position(0, 0);
-
-
-    this.position = function(x, y, step) {
-        if (!arguments.length)
-            return this.pos;
-
-        this.pos = new Position(x, y, step);
-    }
-
-    this.move = function(offsetX, offsetY, step) {
-        if (!step)
-            step = 1;
-        var newPos = this.pos.getAddedPos(offsetX, offsetY);
-        if (newPos.x < 0)
-            newPos.x = 0;
-        if (newPos.y < 0)
-            newPos.y = 0;
-        this.pos.x = newPos.x - (newPos.x % step) + 0.5;
-        this.pos.y = newPos.y - (newPos.y % step) + 0.5;
-    }
-}
-
-function Link() {
-    this.id;
-    this.nodes = [];
-    this.selected = false;
-}
-
-function Schema() {
-    var nodes = [];
-    var links = []
-    var idList = [];
-
-    this.getSchema = function() {
-    	var schema = [];
-
-    	nodes.forEach(function(node, i, ar){
-    		var layer = Object.create(null);
-    		layer.id = node.id;
-			layer.name = node.name;
-			layer.category = node.type;
-			layer.template = node.template;
-			layer.pos = node.pos;
-			layer.wires = [];
-			links.forEach(function(link, i, ar){
-				if (link.nodes[0].id === layer.id) {
-					layer.wires.push(link.nodes[1].id);
-				}
-			});
-    		schema.push(layer);
-    	});
-    	return schema;
-    }
-
-    this.addNode = function(name, type, template, id) {
-        var node = new Node();
-        if (id && checkIdForUnique(id)) {
-            node.id = id;
-        } else {
-            node.id = 'node_' + generateId();
-        }
-
-        node.name = name;
-        node.type = type;
-        node.template = template;
-        nodes.push(node);
-        return node;
-    }
-
-    this.getNodeById = function(id) {
-        return getItemById(nodes, id);
-    }
-
-    this.getNodes = function() {
-        return nodes;
-    }
-
-    this.removeNode = function(id) {
-        nodes.forEach(function(node, index, array){
-            if (node.id === id) {
-                nodes.splice(index, 1);
-                var ind = 0;
-                while (ind < links.length)	{
-                    var link = links[ind];
-                    if (link.nodes.length === 2) {
-                        if (link.nodes[0].id === id || link.nodes[1].id === id ) {
-                            links.splice(ind, 1);
-                            continue;
-                        }
-                    }
-                    ind++;
-                }
-            }
-        });
-    }
-
-    this.removeSelectedItems = function() {
-        var delNodes = [];
-        var delLinks = [];
-
-        for (var i = 0; i < nodes.length; ++i) {
-            if (nodes[i].selected) {
-                delNodes.push(i);
-            }
-        }
-
-        for (var i = 0; i < links.length; ++i) {
-            if (links[i].selected) {
-                delLinks.push(i);
-            }
-            else {
-                for (var a = 0; a < delNodes.length; ++a) {
-                    var nodeId = nodes[delNodes[a]].id;
-                    if (links[i].nodes[0].id === nodeId || links[i].nodes[1].id === nodeId) {
-                        delLinks.push(i);
-                        break;
-                    }
-                }
-            }
-        }
-
-        var counterDel = 0;
-        for (var i = 0; i < delNodes.length; ++i) {
-            nodes.splice(delNodes[i] - counterDel, 1);
-            counterDel ++;
-        }
-        counterDel = 0;
-        for (var i = 0; i < delLinks.length; ++i) {
-            links.splice(delLinks[i] - counterDel, 1);
-            counterDel ++;
-        }
-        if (delNodes.length > 0 || delLinks.length > 0) {
-        	return true;
-        }
-        return false;
-    }
-
-    this.selectNodesInsideRect = function(rect) {
-        var listSelected = []
-        for (var i = 0; i < nodes.length ; i ++) {
-            if (isPointInRect({x: nodes[i].pos.x, y: nodes[i].pos.y}, rect)
-                && isPointInRect({  x: nodes[i].pos.x + nodes[i].displayData.node.width,
-                                    y: nodes[i].pos.y + nodes[i].displayData.node.height }, rect)) {
-                nodes[i].selected = true;
-                listSelected.push(nodes[i]);
-            }
-        }
-        return listSelected;
-    }
-
-    this.clear = function() {
-        nodes.length = 0;
-        links.length = 0;
-        idList.length = 0;
-    }
-
-    this.addLink = function(from, to) {
-        if (this.getLinkById(from.id + '_' + to.id))
-            return;
-
-        var link = new Link();
-        link.id = from.id + '_' + to.id;
-
-        link.nodes = [from, to];
-        links.push(link);
-        return link;
-    }
-
-    this.getLinkById = function(id) {
-        return getItemById(links, id);
-    }
-
-    this.getLinks = function() {
-        return links;
-    }
-
-    function generateId() {
-        var id;
-        while (true) {
-            id = Math.floor(Math.random() * 0x10000).toString(16);
-            if (checkIdForUnique(id)) {
-                idList.push(id);
-                return id;
-            }
-        }
-    }
-
-    function checkIdForUnique(id) {
-        if (idList.indexOf(id) === -1)
-            return true;
-        return false;
-    }
-
-    function getItemById(array, id) {
-        for (var i = 0; i < array.length ; i ++) {
-            if (array[i].id === id) {
-                return array[i];
-            }
+            array[i].isActive = options;
         }
     }
 }

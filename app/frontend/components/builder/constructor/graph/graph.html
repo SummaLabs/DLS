@@ -2,9 +2,10 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:ev="http://www.w3.org/2001/xml-events"
     id = "svg"
-     ng-attr-width="{{svg.width}}px"
-    ng-attr-height="{{svg.height}}px"
-    pointer-events="all">
+     ng-attr-width="{{svg.viewWidth}}"
+    ng-attr-height="{{svg.viewHeight}}"
+    pointer-events="all"
+    ng-attr-viewBox="{{svg.viewX}} {{svg.viewY}} {{svg.viewWidth}} {{svg.viewHeight}}" >
 
     <rect ng-attr-width="{{svg.width}}" ng-attr-height="{{svg.height}}" fill="{{svgColor}}"></rect>
 

@@ -145,7 +145,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 	}
 
 	function nodeWatcher(scope, rectNode){
-		scope.$watch('nodeData.selected', function(newValue, oldValue) {
+		scope.$watch('nodeData.isActive', function(newValue, oldValue) {
 			if (newValue) {
 				rectNode.addClass("node_active");
 			} else {
@@ -183,19 +183,19 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
             if (!scope.isPort && event.ctrlKey) {
 				scope.$apply( function() {
-					scope.nodeData.selected = !scope.nodeData.selected;
+					scope.nodeData.isActive = !scope.nodeData.isActive;
 				});
 
 				scope.$emit('selectedItem', {
 					id: idNode,
 					type: 'node',
-					selected: scope.nodeData.selected
+					selected: scope.nodeData.isActive
 				});
 			} else if (!scope.isPort) {
 				scope.$emit('selectedItem', {
 					id: idNode,
 					type: 'node',
-					selected: scope.nodeData.selected
+					selected: scope.nodeData.isActive
 				});
 			}
 

@@ -76,7 +76,7 @@
 
 .node_active {
     stroke-width: 3;
-    stroke-dasharray: 10 5;
+    stroke-dasharray: 10 10;
 }
 
 .link_line {

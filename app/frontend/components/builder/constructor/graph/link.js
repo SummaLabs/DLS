@@ -38,7 +38,7 @@ function link() {
 	}
 
 	function linkWatcher(scope, element) {
-		scope.$watch('linkData.selected', function(newValue, oldValue) {
+		scope.$watch('linkData.isActive', function(newValue, oldValue) {
 			if (newValue) {
 				element.addClass("link_line_active");
 				element.attr('stroke-dasharray', '5,5');
@@ -75,7 +75,7 @@ function link() {
 		});
 
 		element.on('mouseleave', function (event) {
-			if (!scope.linkData.selected) {
+			if (!scope.linkData.isActive) {
 				element.removeClass("link_line_active");
 			}
 		});
@@ -83,13 +83,13 @@ function link() {
 		element.on('click', function (event) {
 			if (event.ctrlKey) {
                 scope.$apply( function() {
-                    scope.linkData.selected = !scope.linkData.selected;
+                    scope.linkData.isActive = !scope.linkData.isActive;
                 });
             }
             scope.$emit('selectedItem', {
                 id: scope.linkData.id,
                 type: 'link',
-                selected: scope.linkData.selected
+                selected: scope.linkData.isActive
             });
 		});
 	}
