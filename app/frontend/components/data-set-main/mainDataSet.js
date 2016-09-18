@@ -24,11 +24,11 @@
                 //     return dbinfoService.getImagePreviewForDB(dbId);
                 // };
                 //
-                self.items = [
-                    {name: "Text Data", icon: "text_fields", direction: "bottom"},
-                    {name: "Image 3D", icon: "photo_library", direction: "top"},
-                    {name: "Image 2D", icon: "photo", direction: "bottom"}
-                ];
+                self.items = {
+                    'text':    {name: "Text Data", icon: "text_fields", direction: "bottom"},
+                    'image3d': {name: "Image 3D", icon: "photo_library", direction: "top"},
+                    'image2d': {name: "Image 2D", icon: "photo", direction: "bottom"}
+                };
                 //
                 self.openDialogCreateDataset = function ($event, item) {
                     if(item.name=='Image 2D') {
