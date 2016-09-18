@@ -7,6 +7,7 @@ from flask import request, Response, make_response
 from flask import render_template
 from flask import send_from_directory
 from app.backend.api import app_flask
+from app.backend.core import utils
 
 from app.backend.file_manager.api import getRealPathFromFMUrlPath, validateSeverPathFromUrlPath
 from dbbuilder import DBImage2DBuilder, DBImage2DConfig
@@ -31,6 +32,10 @@ class DatasetImage2dInfo:
     pathMeanData=None
     pathMeanImage=None
     pathLabels=None
+    #
+    sizeInBytesTrain=0
+    sizeInBytesVal=0
+    sizeInBytesTotal=0
     #
     cfg=None
     def __init__(self, pathDB):
@@ -69,6 +74,17 @@ class DatasetImage2dInfo:
             if not self.cfg.isInitialized():
                 strErr = 'Invalid DB config JSON file [%s]' % self.pathConfig
                 raise Exception(strErr)
+            try:
+                self.sizeInBytesTrain   = utils.getDirectorySizeInBytes(self.pathDbTrain)
+                self.sizeInBytesVal     = utils.getDirectorySizeInBytes(self.pathDbVal)
+                self.sizeInBytesTotal   = self.sizeInBytesTrain+self.sizeInBytesVal
+            except Exception as terr:
+                strErr = 'Cant calculate size for dir, Error: %s' % (terr)
+                print (strErr)
+                self.sizeInBytesTrain = 0
+                self.sizeInBytesVal   = 0
+                self.sizeInBytesTotal = 0
+                # raise Exception(strErr)
         else:
             strErr = 'Path [%s] is not a valid Image2D DB directory' % self.pathDB
             raise Exception(strErr)
@@ -86,6 +102,19 @@ class DatasetImage2dInfo:
         return self.toString()
     def getInfoStat(self):
         tshape=self.cfg.getImageShape()
+        if self.sizeInBytesTrain > 0:
+            tsizeTrainStr=utils.humanReadableSize(self.sizeInBytesTrain)
+        else:
+            tsizeTrainStr='???'
+        if self.sizeInBytesVal > 0:
+            tsizeValStr = utils.humanReadableSize(self.sizeInBytesVal)
+        else:
+            tsizeValStr = '???'
+        if self.sizeInBytesTotal > 0:
+            tsizeTotalStr = utils.humanReadableSize(self.sizeInBytesTotal)
+        else:
+            tsizeTotalStr = '???'
+
         tret = {
             'id'  : self.getId(),
             'type': self.cfg.getDBType(),
@@ -96,7 +125,15 @@ class DatasetImage2dInfo:
                 'width':    tshape[2],
                 'height':   tshape[1],
             },
-            'shapestr': '%dx%dx%d' % (tshape[2], tshape[1], tshape[0])
+            'shapestr': '%dx%dx%d' % (tshape[2], tshape[1], tshape[0]),
+            'size' : {
+                'train' :   self.sizeInBytesTrain,
+                'val':      self.sizeInBytesTrain,
+                'total':    self.sizeInBytesTrain,
+                'trainstr': tsizeTrainStr,
+                'valstr':   tsizeValStr,
+                'totalstr': tsizeTotalStr
+            }
         }
         return tret
     def getInfoStatWithHists(self):
