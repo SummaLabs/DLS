@@ -82,6 +82,29 @@ md-tab-item {
     border-radius: 4px;
 }
 
+.dbpreview-chip-samples-main {
+    background: lightcoral;
+}
+.dbpreview-chip-samples-other {
+    background: lightgoldenrodyellow;
+}
+
+.dbpreview-chip-size-main {
+    background: lightblue;
+}
+.dbpreview-chip-size-other {
+    background: lightcyan;
+}
+
+
+/*.db-preview-grid {*/
+    /*.md-whiteframe-16dp;*/
+/*}*/
+
+/*.db-preview-grid:hover {*/
+    /*.md-whiteframe-16dp;*/
+/*}*/
+
 /*md-toolbar h3 {*/
   /*margin: auto;*/
   /*font-weight: 500;*/

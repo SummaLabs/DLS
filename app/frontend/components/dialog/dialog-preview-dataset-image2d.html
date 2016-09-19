@@ -1,0 +1,86 @@
+<md-dialog aria-label="Preview Image 2D Dataset" flex="100" ng-cloak>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Image 2D Dataset Preview</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <md-tabs md-dynamic-height md-border-bottom>
+            <md-tab class="unselectable">
+                <md-tab-label>
+                    <md-icon md-font-library="material-icons" aria-label="info">info</md-icon>
+                    Info
+                </md-tab-label>
+                <md-tab-body>
+                    <div flex layout="column">
+                        <div layout="row" layout-padding>
+                            <div>
+                                <img ng-src="/dbpreview/dbimgmean/{{ dbid }}" />
+                            </div>
+                            <md-list role="list" layout="row">
+                                <md-list-item class="md-2-line layout-row" layout-padding>
+                                    <div class="md-item-text md-whiteframe-z1 flex" style="background: lightgoldenrodyellow">
+                                        <h4>Name: <strong>{{ dbInfo.name }}</strong></h4>
+                                        <hr>
+                                        <h4>Date of creation: <strong>{{ dbInfo.info.date.str }} ({{ dbInfo.info.time.str }})</strong></h4>
+                                        <hr>
+                                        <h4>Shape: <strong>{{ dbInfo.shapestr }}</strong></h4>
+                                    </div>
+                                </md-list-item>
+
+                                <md-list-item class="md-2-line layout-row" layout-padding>
+                                    <div class="md-item-text md-whiteframe-z1 flex" style="background: lightgoldenrodyellow">
+                                        <h4>Samples:</h4>
+                                        <hr>
+                                        <h4>
+                                            Total: <strong>{{ dbInfo.info.numTotal }}</strong><br>
+                                            Train: <strong>{{ dbInfo.info.numTrain }}</strong><br>
+                                            Val: <strong>{{ dbInfo.info.numVal }}</strong><br>
+                                        </h4>
+                                    </div>
+                                </md-list-item>
+                                <md-list-item class="md-2-line layout-row" layout-padding>
+                                    <h4>Labels</h4>
+                                    <md-chips>
+                                        <md-chip ng-repeat="cc in dbInfo.hist.labels">
+                                            {{ cc }}
+                                        </md-chip>
+                                    </md-chips>
+                                </md-list-item>
+
+
+                            </md-list>
+                        </div>
+                    </div>
+                </md-tab-body>
+            </md-tab>
+            <md-tab class="unselectable">
+                <md-tab-label>
+                    <md-icon md-font-library="material-icons" aria-label="preview-images">crop_original</md-icon>
+                    Preview-Train
+                </md-tab-label>
+                <md-tab-body>
+                    Fuck#2
+                </md-tab-body>
+            </md-tab>
+            <md-tab class="unselectable">
+                <md-tab-label>
+                    <md-icon md-font-library="material-icons" aria-label="preview-images">crop_original</md-icon>
+                    Preview-Validation
+                </md-tab-label>
+                <md-tab-body>
+                    Fuck#3
+                </md-tab-body>
+            </md-tab>
+            <md-tab class="unselectable">
+            </md-tab>
+        </md-tabs>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button ng-click="answer('cancel')">
+            Cancel
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>
