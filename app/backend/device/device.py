@@ -9,6 +9,11 @@ def generate_system_info():
     info = {}
     gpu_info = generate_gpu_info()
     # gpu_info.append(gpu_info[0])
+    gpu_pids = generate_gpu_pids()
+
+    for g in gpu_info:
+        g['gpu_pids'] = filter(lambda x: x['gpu'] == g['id'], gpu_pids)
+
     info['mem'] = generate_mem_info()
     info['gpu'] = gpu_info
     info['cpu'] = generate_cpu_info()
@@ -58,6 +63,33 @@ def generate_gpu_info():
         gpu_info.append({'id': 'not NVidia', 'name': 'not NVidia', 'mem': '0', 'mem_free': '10', 'mem_used': '20',
                                  'util_gpu': '10', 'util_mem': '0'})
     return gpu_info
+
+
+# Query GPU Processes info
+def generate_gpu_pids():
+    gpu_pids = []
+    try:
+        tenv = os.environ.copy()
+        tenv['LC_ALL']="C"
+        bash_command = "nvidia-smi pmon -c 1"
+        process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE, env=tenv)
+        output = process.communicate()[0]
+        lines = output.split("\n")
+        lines.pop(0)
+        lines.pop(0)
+        for l in lines:
+            tokens = l.split(" ")
+            tokens = filter(lambda x: x != '', tokens)
+
+            if len(tokens) > 6:
+                gpu_pids.append({'gpu': tokens[0], 'pid': tokens[1], 'type': tokens[2], 'sm': tokens[3], 'mem': tokens[4], 'enc': tokens[5],
+                                 'dec': tokens[6], 'cmd': tokens[7]})
+    except OSError:
+        # Some mock value for testing on machines without NVidia GPU
+        gpu_pids.append(
+            {'gpu': '0', 'pid': '0', 'type': '-', 'sm': '0', 'mem': '0', 'enc': '0',
+             'dec': '0', 'cmd': '-'})
+    return gpu_pids
 
 
 # Query CPU Info from OS
