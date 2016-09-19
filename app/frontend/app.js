@@ -60,7 +60,7 @@ angular.module('dlsApp')
             template: "<network-main></network-main>"
         }).state('designer', {
             url: "/designer",
-            template: "<constructor></constructor>"
+            template: "<constructor  style='height:100%;'></constructor>"
         }).state('models', {
             url: "/models",
             template: "<model-main></model-main>",
