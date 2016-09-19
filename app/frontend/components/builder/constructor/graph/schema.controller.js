@@ -223,11 +223,10 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
 		angular.element(window).on('resize', function (event) {
             var divSvg = document.getElementById('workspace');
-            console.log(divSvg);
-            var divSvgRect = divSvg.getBoundingClientRect();
+//            var divSvgRect = divSvg.getBoundingClientRect();
             $scope.$apply( function() {
-                self.viewWidth = divSvgRect.width - 10;
-                self.viewHeight = divSvgRect.height - 10;
+                self.viewWidth = divSvg.offsetWidth - 10;
+                self.viewHeight = divSvg.offsetHeight - 10;
             });
 		});
 

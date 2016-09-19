@@ -119,6 +119,20 @@
 	height:100%;
 }
 
+#viewport {
+	background: #789;
+	position: absolute;
+    right: 0;
+    bottom: 0;
+    height:200px;
+    width:200px;
+}
+#viewport div{
+	background: white;
+    height:50px;
+    width:50px;
+}
+
 md-tab-content {
 	overflow: hidden;
 }

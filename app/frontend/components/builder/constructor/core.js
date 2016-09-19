@@ -53,6 +53,7 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 			layer.name = node.name;
 			layer.category = node.category;
 			layer.pos = node.pos;
+			layer.wires = node.wires;
 		});
 		networkDataService.setLayers(layers);
     }
