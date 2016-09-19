@@ -28,49 +28,49 @@
     <h3>Deep Learning Studio</h3>
 </md-toolbar>
 
-<md-tabs md-selected="selectedIndex" md-dynamic-height md-border-bottom md-autoselect>
-    <md-tab class="unselectable">
+<md-tabs md-dynamic-height md-border-bottom >
+    <md-tab ui-sref="networks" class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="networks">apps</md-icon>
             Networks
         </md-tab-label>
     </md-tab>
-    <md-tab class="unselectable">
+    <md-tab ui-sref="designer" class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="builder">build</md-icon>
             Designer
         </md-tab-label>
     </md-tab>
-    <md-tab class="unselectable">
+    <md-tab ui-sref="models" class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="models">device_hub</md-icon>
             Models
         </md-tab-label>
     </md-tab>
-    <md-tab label="Data" class="unselectable">
+    <md-tab ui-sref="data-set" label="Data" class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="models">layers</md-icon>
             Data Set
         </md-tab-label>
     </md-tab>
-    <md-tab label="Preview" class="unselectable">
+    <md-tab ui-sref="preview" label="Preview" class="unselectable">
     </md-tab>
     <!--md-tab label="DataSetTest" class="unselectable">
         <create-img-dataset></create-img-dataset>
     </md-tab-->
-    <md-tab class="unselectable">
+    <md-tab ui-sref="data-set-builder" class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="dataset">widgets</md-icon>
             DataSetBuilder
         </md-tab-label>
     </md-tab>
-    <md-tab class="unselectable">
+    <md-tab ui-sref="file-manager" class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="file manager">folder</md-icon>
             File Manager
         </md-tab-label>
     </md-tab>
-    <md-tab class="unselectable">
+    <md-tab ui-sref="settings" class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="settings">settings</md-icon>
             Settings
@@ -147,6 +147,8 @@
 
 <script src="frontend/components/device/device.js"></script>
 <script src="frontend/components/service/deviceService.js"></script>
+
+<script src="/frontend/components/breadcrumbs/uiBreadcrumbs.js"></script>
 
 </body>
 </html>
