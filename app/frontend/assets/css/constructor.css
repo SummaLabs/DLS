@@ -120,7 +120,7 @@
 }
 
 #viewport {
-	background: #789;
+	background: #6699ff;
 	position: absolute;
     right: 0;
     bottom: 0;
@@ -128,7 +128,8 @@
     width:200px;
 }
 #viewport div{
-	background: white;
+    position: relative;
+	background: #ccddff;
     height:50px;
     width:50px;
 }

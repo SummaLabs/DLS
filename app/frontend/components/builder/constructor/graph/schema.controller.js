@@ -17,14 +17,17 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
     }
 
     var self = this;
+    var viewX = 0;
+    var viewY = 0;
     var schema = new Schema();
 
     self.$onInit = function() {
         self.counterNodesInit = 0;
-        self.viewX = 0;
-        self.viewY = 0;
-        self.viewWidth = 400;
-        self.viewHeight = 400;
+        self.viewWidth = 0;
+        self.viewHeight = 0;
+
+        resize();
+        viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
 
         self.mouseMode = state.DEFAULT;
         self.links = schema.getLinks();
@@ -44,6 +47,14 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         schemaEvents();
         initBackground(self, $scope, appConfig.svgDefinitions.gridStep);
 	};
+
+	$scope.controlItem.viewportPos = function(x, y) {
+	    $scope.$apply( function() {
+            viewX = x;
+            viewY = y;
+            viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
+        });
+	}
 
     $scope.controlItem.addLayer = function(layer) {
         var node = schema.addNode(layer.name, layer.category, layer.template, layer.id);
@@ -222,12 +233,11 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		});
 
 		angular.element(window).on('resize', function (event) {
-            var divSvg = document.getElementById('workspace');
-//            var divSvgRect = divSvg.getBoundingClientRect();
             $scope.$apply( function() {
-                self.viewWidth = divSvg.offsetWidth - 10;
-                self.viewHeight = divSvg.offsetHeight - 10;
+                resize();
+                viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
             });
+
 		});
 
 		$element.on('mousedown', function (event) {
@@ -349,6 +359,17 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         $scope.$apply( function() {
             self.activelink.nodes.length = 0;
         });
+    }
+
+    function viewBox(x, y, width, height) {
+        $element.attr('viewBox', x + ' ' + y + ' ' + width + ' ' + height);
+    }
+
+    function resize() {
+        var divSvg = document.getElementById('workspace');
+
+        self.viewWidth = divSvg.offsetWidth - 10;
+        self.viewHeight = divSvg.offsetHeight - 10;
     }
 }
 
