@@ -9,6 +9,7 @@ angular.module('constructorCore', [
 var editorDefinition = {
 	templateUrl: 'frontend/components/builder/constructor/core.html',
 	controller: ConstructorController,
+	replace: true,
 	bindings: {
 	}
 };
@@ -30,12 +31,32 @@ function CoreService() {
     };
 }
 
-function ConstructorController($mdDialog, $scope, $rootScope, networkDataService, coreService, appConfig) {
+function ConstructorController($mdDialog, $scope, $rootScope, networkDataService, networkLayerService, coreService, appConfig) {
     var self = this;
     self.svgWidth = appConfig.svgDefinitions.areaWidth;
     self.svgHeight = appConfig.svgDefinitions.areaHeight;
     self.svgControl = {};
     constructorListeners();
+
+    function doUpdateNetwork() {
+		var nodes = self.svgControl.getNodes();
+		var layers = networkDataService.getLayers();
+
+		nodes.forEach(function(node, i, ar){
+			var layer = networkDataService.getLayerById(node.id);
+			if (!layer) {
+				layer = networkLayerService.getLayerByType(node.name);
+				layers.push(layer);
+			}
+
+			layer.id = node.id;
+			layer.name = node.name;
+			layer.category = node.category;
+			layer.pos = node.pos;
+			layer.wires = node.wires;
+		});
+		networkDataService.setLayers(layers);
+    }
 
 	this.$onInit = function() {
         $scope.networkName = networkDataService.getNetwork().name;
@@ -45,6 +66,7 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 		});
 
 		$rootScope.$on('EditLayer', function ($event, data) {
+			doUpdateNetwork();
 			var parentEl = angular.element(document.body);
 			var dialogTemplate = buildTemplate(data.id, data.layerType);
 			$mdDialog.show({
@@ -64,18 +86,18 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 
 			function buildTemplate(layerId, layerType) {
 				var template =
-					'<md-dialog flex="25" ng-cloak>' +
+					'<md-dialog flex="25" aria-label="' + layerType + '">' +
 					'  <md-dialog-content>'+
 					'    <layer-editor layer-id="' + layerId + '" layer-type="' + layerType + '" do-on-submit="closeDialog()"></layer-editor>' +
 					'  </md-dialog-content>' +
 					'</md-dialog>';
-
 				return template;
 			}
 		});
 	};
 
 	this.saveNetworkDialog = function ($event) {
+		doUpdateNetwork();
 		var parentEl = angular.element(document.body);
 		$mdDialog.show({
 			clickOutsideToClose: true,
@@ -88,6 +110,7 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 		});
 
 		function DialogController($scope, $mdDialog) {
+
 			$scope.network =
 			{
 				name: networkDataService.getNetwork().name,
@@ -127,37 +150,41 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 
         $scope.$on('graph:addNode', function (event, data) {
             console.log('graph:addNode');
-            updateNetwork(event, data);
+            networkDataService.setChangesSaved(false);
+			event.stopPropagation();
 		});
 
 		$scope.$on('graph:removeNode', function (event, data) {
 		    console.log('graph:removeNode');
-		    updateNetwork(event, data);
+            networkDataService.setChangesSaved(false);
+			event.stopPropagation();
 		});
 
 		$scope.$on('graph:addLink', function (event, data) {
 		    console.log('graph:addLink');
-		    updateNetwork(event, data);
+		    networkDataService.setChangesSaved(false);
+			event.stopPropagation();
 		});
 
 		$scope.$on('graph:removeLink', function (event, data) {
 		    console.log('graph:removeLink');
-		    updateNetwork(event, data);
+		    networkDataService.setChangesSaved(false);
+			event.stopPropagation();
 		});
 
 		$scope.$on('graph:removeItems', function (event, data) {
 		    console.log('graph:removeItems');
-		    updateNetwork(event, data);
-		});
-
-		function updateNetwork(event, data) {
-			networkDataService.setLayers(self.svgControl.getNodes());
 		    networkDataService.setChangesSaved(false);
 			event.stopPropagation();
 		}
 
-		function setUpNetwork() {
-            self.svgControl.setNodes(networkDataService.getLayers());
+		$scope.$on('viewport::changed', function (event, data) {
+            self.svgControl.viewportPos(data.x, data.y);
+            event.stopPropagation();
+		});
+
+		function isUpdateNetwork() {
+            self.svgControl.setLayers(networkDataService.getLayers());
 		};
     }
 }

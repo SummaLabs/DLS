@@ -32,48 +32,26 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
                 if (newType != "" && newType != undefined) {
                     $http.get(newType, {cache: $templateCache}).success(function(html) {
 
-                        var portInOffset = calculatePortOffset(html, patternDefinitions.markerPortIn);
-                        var portOutOffset = calculatePortOffset(html, patternDefinitions.markerPortOut);
+                        var idNode = $scope.nodeData.id;
+                        $scope.nodeData.displayData = calculateProportions(html, patternDefinitions);
 
                         element.html(html);
                         $compile(element.contents())($scope);
 
-                        function calculatePortOffset (nodeHtml ,portId) {
-
-                            var svg = document.createElement('div');
-                            svg.style.position = 'absolute';
-                            svg.style.top = '-1000px';
-
-//                            var doc = new DOMParser().parseFromString('<svg>' + nodeHtml + '</svg>', 'application/xml');
-//                            svg.appendChild(svg.ownerDocument.importNode(doc.documentElement, true));
-                            svg.innerHTML = '<svg>' + nodeHtml + '</svg>';
-                            document.body.appendChild(svg);
-
-                            var port = angular.element(svg.querySelector('#' + portId));
-                            var portRect = port[0].getBoundingClientRect();
-
-                            document.body.removeChild(svg);
-                            return {
-                                x: portRect.left + (portRect.right - portRect.left) / 2,
-                                y: portRect.top  + (portRect.bottom - portRect.top) / 2 + 1000
-                            };
-                        }
-
-
-                        var idNode = $scope.nodeData.id;
                         $scope.isPort = false;
 
                         var rectNode = angular.element(element[0].querySelector('#' + patternDefinitions.markerRect));
                         var textNode = angular.element(element[0].querySelector('#' + patternDefinitions.markerText));
 
-                        var parentNode = angular.element(element[0].parentNode);
-                        var baseRect = parentNode[0].getBoundingClientRect();
-
                         var portIn = angular.element(element[0].querySelector('#' + patternDefinitions.markerPortIn));
                         var portOut = angular.element(element[0].querySelector('#' + patternDefinitions.markerPortOut));
 
-                        portIn = portInit(portIn, portInOffset, patternDefinitions.markerPortIn, idNode);
-                        portOut = portInit(portOut, portOutOffset, patternDefinitions.markerPortOut, idNode);
+
+                        $scope.nodeData.displayData.portIn.element = portIn;
+                        $scope.nodeData.displayData.portOut.element = portOut;
+
+                        portInit(portIn, patternDefinitions.markerPortIn, idNode);
+                        portInit(portOut, patternDefinitions.markerPortOut, idNode);
 
                         if (!rectNode && !textNode) {
 							message('File "' + newType + '" isn\'t valid!', 'error');
@@ -99,6 +77,56 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
         }
 	}
 
+	function calculateProportions(nodeHtml, patternDefinitions) {
+	    var displayData = {};
+
+        var svg = document.createElement('div');
+        svg.style.position = 'absolute';
+        svg.style.top = '-1000px';
+        svg.innerHTML = '<svg>' + nodeHtml + '</svg>';
+        document.body.appendChild(svg);
+
+        var portIn = angular.element(svg.querySelector('#' + patternDefinitions.markerPortIn));
+        var portInRect = portIn[0].getBoundingClientRect();
+        var portOut = angular.element(svg.querySelector('#' + patternDefinitions.markerPortOut));
+        var portOutRect = portOut[0].getBoundingClientRect();
+        var rect = angular.element(svg.firstElementChild.firstElementChild);
+        var elementRect = rect[0].getBoundingClientRect();
+
+        displayData.portIn = {
+            element: null,
+            offsetCenter: {
+                x: portInRect.left + (portInRect.right - portInRect.left) / 2,
+                y: portInRect.top  + (portInRect.bottom - portInRect.top) / 2 + 1000
+            },
+            width: portInRect.right - portInRect.left,
+            height: portInRect.bottom - portInRect.top
+        }
+
+        displayData.portOut = {
+            element: null,
+            offsetCenter: {
+                x: portOutRect.left + (portOutRect.right - portOutRect.left) / 2,
+                y: portOutRect.top  + (portOutRect.bottom - portOutRect.top) / 2 + 1000
+            },
+            width: portOutRect.right - portOutRect.left,
+            height: portOutRect.bottom - portOutRect.top
+        }
+
+
+
+        displayData.node = {
+            offsetCenter: {
+                x: elementRect.left + (elementRect.right - elementRect.left) / 2,
+                y: elementRect.top  + (elementRect.bottom - elementRect.top) / 2 + 1000
+            },
+            width: elementRect.right - elementRect.left,
+            height: elementRect.bottom - elementRect.top
+        }
+        document.body.removeChild(svg);
+        return displayData;
+	}
+
 	function message(message, type) {
 		$scope.$emit('node_message', {
 			id: idNode,
@@ -107,41 +135,21 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 		});
 	}
 
-	function portInit(port, offset, marker, nodeId) {
+	function portInit(port, marker, nodeId) {
 
 		if (!port[0])
 			return null;
 
 		var id = marker + '_' + nodeId;
 		port.attr('id', id);
-
-		return {
-			element: port,
-			data: {
-				id: id,
-				offset: offset
-			}
-		}
-	}
-
-	function getPortCoord(svgRect, portRect) {
-        var portWidth = portRect.right - portRect.left;
-        var portHeight = portRect.bottom - portRect.top;
-
-        return {
-            x: portRect.left - svgRect.left + portWidth / 2,
-            y: portRect.top - svgRect.top + portHeight / 2
-        }
 	}
 
 	function nodeWatcher(scope, rectNode){
-		scope.$watch('nodeData.selected', function(newValue, oldValue) {
+		scope.$watch('nodeData.isActive', function(newValue, oldValue) {
 			if (newValue) {
 				rectNode.addClass("node_active");
-//				rectNode.attr('stroke-dasharray', '5,5');
 			} else {
 				rectNode.removeClass("node_active");
-//				rectNode.attr('stroke-dasharray', '');
 			}
 		});
 
@@ -157,10 +165,9 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 		element.on('mousedown', function (event) {
 			if (scope.isPort || event.ctrlKey || event.button !== 0)
 				return;
-			var offsetMousePos = getOffsetPos(element, event);
 			scope.$emit('nodeMouseDown', {
 				id: idNode,
-				pos: {x: offsetMousePos.x, y: offsetMousePos.y}
+				event: event
 			});
 		});
 
@@ -176,19 +183,19 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
             if (!scope.isPort && event.ctrlKey) {
 				scope.$apply( function() {
-					scope.nodeData.selected = !scope.nodeData.selected;
+					scope.nodeData.isActive = !scope.nodeData.isActive;
 				});
 
 				scope.$emit('selectedItem', {
 					id: idNode,
 					type: 'node',
-					selected: scope.nodeData.selected
+					selected: scope.nodeData.isActive
 				});
 			} else if (!scope.isPort) {
 				scope.$emit('selectedItem', {
 					id: idNode,
 					type: 'node',
-					selected: scope.nodeData.selected
+					selected: scope.nodeData.isActive
 				});
 			}
 
@@ -229,47 +236,44 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
 	function portEventsHandler(scope, portIn, portOut, idNode) {
 		if (portIn) {
-			portIn.element.on('mouseenter', function (event) {
+			portIn.on('mouseenter', function (event) {
 				scope.isPort = true;
-				portIn.element.addClass("port_hovered");
+				portIn.addClass("port_hovered");
 			});
 
-			portIn.element.on('mouseleave', function (event) {
+			portIn.on('mouseleave', function (event) {
 				scope.isPort = false;
-				portIn.element.removeClass("port_hovered");
+				portIn.removeClass("port_hovered");
 			});
 
-			portIn.element.on('mouseup', function (event) {
+			portIn.on('mouseup', function (event) {
 				scope.$emit('portInMouseUp', {
-					id: idNode,
-					pos: portIn.offset
+					id: idNode
 				});
 			});
 		}
 		if (portOut) {
-			portOut.element.on('mouseenter', function (event) {
+			portOut.on('mouseenter', function (event) {
 				scope.isPort = true;
-				portOut.element.addClass("port_hovered");
+				portOut.addClass("port_hovered");
 			});
 
-			portOut.element.on('mouseleave', function (event) {
+			portOut.on('mouseleave', function (event) {
 				scope.isPort = false;
-				portOut.element.removeClass("port_hovered");
+				portOut.removeClass("port_hovered");
 			});
 
-			portOut.element.on('mousedown', function (event) {
+			portOut.on('mousedown', function (event) {
 				if (event.button === 0) {
 					scope.$emit('portOutMouseDown', {
-						id: idNode,
-						pos: portOut.offset
+						id: idNode
 					});
 				}
 			});
 
-			portOut.element.on('mouseup', function (event) {
+			portOut.on('mouseup', function (event) {
 				scope.$emit('portOutMouseUp', {
-					id: idNode,
-					pos: portOut.offset
+					id: idNode
 				});
 			});
 		}

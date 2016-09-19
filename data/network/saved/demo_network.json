@@ -21,7 +21,7 @@
         "activationFunction": "sigmoid"
       }, 
       "template": "frontend/components/layers/convol/node-test-2.svg", 
-      "id": 1
+      "id": "node_1"
     }, 
     {
       "category": "layer", 
@@ -45,7 +45,7 @@
     {
       "category": "input", 
       "wires": [
-        1
+        "node_1"
       ], 
       "name": "data", 
       "pos": {

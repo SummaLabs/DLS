@@ -56,10 +56,6 @@
     stroke: grey !important;
 }
 
-.node_active {
-    stroke-width: 3;
-    stroke: grey !important;
-}
 
 .port {
     fill:grey;
@@ -78,6 +74,11 @@
 }
 */
 
+.node_active {
+    stroke-width: 3;
+    stroke-dasharray: 10 10;
+}
+
 .link_line {
     stroke: green;
     stroke-width: 5;
@@ -92,6 +93,59 @@
     stroke-opacity: 1;
 }
 
+#sel_rect {
+    stroke: #000099;
+    stroke-width: 1;
+    stroke-dasharray: 10 5;
+    fill: #3333ff;
+    fill-opacity: 0.1;
+}
+
+.constructor {
+	height:100%;
+	max-width: 100%;
+}
+.constructor div:first-child {
+	max-width: 100%;
+}
+
+.constructor div:last-child {
+	max-width: 100%;
+    height: calc(100% - 48px);
+}
+
+#workspace {
+	overflow: auto;
+	height:100%;
+}
+
+#viewport {
+	background: #6699ff;
+	position: absolute;
+    right: 0;
+    bottom: 0;
+    height:200px;
+    width:200px;
+}
+#viewport div{
+    position: relative;
+	background: #ccddff;
+    height:50px;
+    width:50px;
+}
+
+md-tab-content {
+	overflow: hidden;
+}
+
+md-tab-content > div:first-child {
+	height:100%;
+}
+
 #workspace:focus {
   background: Silver;
+}
+
+#svg {
+	overflow: visible;
 }

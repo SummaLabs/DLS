@@ -8,8 +8,8 @@
        x="0.14288139"
        height="92.85714"
        width="175.71428"
-       id="rect"
-       style="fill:#d3d6e7;fill-opacity:1;stroke:#282828;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       id="border"
+       style="fill:#d3d6e7;fill-opacity:1;stroke:#282828;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1" />
     <ellipse
        ry="11.785714"
        rx="12.5"

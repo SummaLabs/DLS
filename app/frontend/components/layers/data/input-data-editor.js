@@ -5,7 +5,7 @@
         .directive('inputDataEditor', function () {
             return {
                 scope: {
-                    layerId: '=',
+                    layerId: '@',
                     doOnSubmit: '&'
                 },
                 templateUrl: "frontend/components/layers/data/input-data-editor.html",
