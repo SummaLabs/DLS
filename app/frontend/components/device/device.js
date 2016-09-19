@@ -14,78 +14,49 @@
                         $scope.deviceInfo = {
                                 info: JSON.parse(msg)
                             }
-                            //console.log(self.deviceInfo.info)
-
-                        if ($scope.memChart) {
+                        if ($scope.memChart && $scope.memLineChart) {
                             var memInfo = $scope.deviceInfo.info.mem;
                             var gpus = $scope.deviceInfo.info.gpu
                             var used = memInfo.used / 1000;
                             var free = memInfo.free / 1000;
-                           
-
+                            var shared = memInfo.shared / 1000;
+                            var total = memInfo.total / 1000;
+                            var cached = memInfo.cached / 1000;
+                            var buffers = memInfo.buffers / 1000;
                             var ts = $scope.deviceInfo.info.ts
 
+                            //process RAM Charts
                             $scope.memChart.data.rows = [self.createRow(['Free', free]), self.createRow(['Used', used])];
-
-                            $scope.gpuMemLineChart = self.createAreaChart('GPU Memory, Gb', ["Time", "Free", "Used"])
-                            $scope.utilChart = self.createAreaChart('GPU Utilization, %', ["Time", "GPU Utilization", "Memory Utilization"])
-                            
-                            //TODO refactor
-                            if (!$scope.gpuCharts) {
-                                $scope.gpuCharts = []
-                                for (var i = 0; i < gpus.length; i++) {
-                                    $scope.gpuCharts.push(self.createPieChart("GPU Memory, Gb - " + i))
-                                }
-                                $scope.gpuChartsAll = $scope.gpuChartsAll.concat($scope.gpuCharts)
-
-                            } else {
-                                for(var i = 0; i < $scope.gpuCharts.length; i++){
-                                    var chart = $scope.gpuCharts[i]
-                                    var gpuMemUsed = gpus[i].mem_used.match(/\d+/)[0] / 1000;
-                                    var gpuMemFree = gpus[i].mem_free.match(/\d+/)[0] / 1000;
+                            $scope.memLineChart.data.rows.push(self.createRow([ts, free, used, total, cached, shared, buffers]));
+                            self.truncateTimeSeries($scope.memLineChart, 20)
+                                                        
+                            //Process GPU Charts
+                            self.processChart(self, $scope, 'gpuCharts', gpus,
+                                function(i){
+                                    return self.createPieChart("GPU Memory, Gb - " + i)}, 
+                                function(chart, gpu){
+                                    var gpuMemUsed = gpu.mem_used.match(/\d+/)[0] / 1000;
+                                    var gpuMemFree = gpu.mem_free.match(/\d+/)[0] / 1000;
                                     chart.data.rows = [self.createRow(['Free', gpuMemFree]), self.createRow(['Used', gpuMemUsed])];
-                                }
-                            }
-                            
-                            
-                            if (!$scope.gpuMemLineCharts) {
-                                $scope.gpuMemLineCharts = []
-                                for (var i = 0; i < gpus.length; i++) {
-                                    $scope.gpuMemLineCharts.push(self.createAreaChart('GPU Memory, Gb - ' + i, ["Time", "Free", "Used"]))
-                                   
-                                }
-                                 $scope.gpuChartsAll = $scope.gpuChartsAll.concat($scope.gpuMemLineCharts)
-
-                            } else {
-                                for(var i = 0; i < $scope.gpuMemLineCharts.length; i++){
-                                    var chart = $scope.gpuMemLineCharts[i]
-                                    var gpuMemUsed = gpus[i].mem_used.match(/\d+/)[0] / 1000;
-                                    var gpuMemFree = gpus[i].mem_free.match(/\d+/)[0] / 1000;
+                            });
+                            self.processChart(self, $scope, 'gpuMemLineCharts', gpus,
+                                function(i){
+                                    return self.createAreaChart('GPU Memory, Gb - ' + i, ["Time", "Free", "Used"])}, 
+                                function(chart, gpu){
+                                    var gpuMemUsed = gpu.mem_used.match(/\d+/)[0] / 1000;
+                                    var gpuMemFree = gpu.mem_free.match(/\d+/)[0] / 1000;
                                     chart.data.rows.push(self.createRow([ts, gpuMemFree, gpuMemUsed]));
-                                    self.truncateTimeSeries(chart, 20)
-                                }
-                            }
-                            
-                            
-                            if (!$scope.utilCharts) {
-                                $scope.utilCharts = []
-                                for (var i = 0; i < gpus.length; i++) {
-                                    $scope.utilCharts.push(self.createAreaChart('GPU Utilization, % - ' + i, ["Time", "GPU Utilization", "Memory Utilization"]))
-                                    
-                                }
-                                $scope.gpuChartsAll = $scope.gpuChartsAll.concat($scope.utilCharts)
-
-                            } else {
-                                for(var i = 0; i < $scope.utilCharts.length; i++){
-                                    var chart = $scope.utilCharts[i]
-                                    var gpuMemUtil = gpus[i].util_mem.match(/\d+/)[0];
-                                    var gpuUtil = gpus[i].util_gpu.match(/\d+/)[0];
+                            });
+                            self.processChart(self, $scope, 'utilCharts', gpus,
+                                function(i){
+                                    return self.createAreaChart('GPU Utilization, % - ' + i, ["Time", "GPU Utilization", "Memory Utilization"])}, 
+                                function(chart, gpu){
+                                    var gpuMemUtil = gpu.util_mem.match(/\d+/)[0];
+                                    var gpuUtil = gpu.util_gpu.match(/\d+/)[0];
                                     chart.data.rows.push(self.createRow([ts, gpuUtil, gpuMemUtil]));
-                                    self.truncateTimeSeries(chart, 20)
-                                }
-                            }
+                            });
 
-                      
+
 
 
                         }
@@ -115,37 +86,27 @@
                     return chart;
                 };
                 this.createAreaChart = function (name, cols) {
-                    var chart = {};
-                    chart.data = {
-                        "cols": [
-                            {
+                    var chart = {};    
+                    chart.data = {cols: [], rows: []}
+                    chart.data.cols.push({
                                 id: "t",
                                 label: cols[0],
                                 type: "string"
-                        },
-                            {
-                                id: "f",
-                                label: cols[1],
+                        })
+                        for(var i =1; i< cols.length; i++){
+                            chart.data.cols.push({
+                                id: "c" + i,
+                                label: cols[i],
                                 type: "number"
-                        },
-                            {
-                                id: "u",
-                                label: cols[2],
-                                type: "number"
-                        }
-    ],
-                        "rows": [
-
-    ]
-                    };
-                    // $routeParams.chartType == BarChart or PieChart or ColumnChart...
+                        })
+                    }
                     chart.type = 'AreaChart';
                     chart.options = {
                         'title': name
                     };
                     return chart;
                 }
-
+                //row for line charts
                 this.createRow = function (vals) {
                     var row = {
                         c: []
@@ -157,13 +118,33 @@
                     }
                     return row;
                 }
+                //restrict line charts to some number of points
                 this.truncateTimeSeries = function (chart, num) {
                     if (chart.data.rows.length > num) {
                         chart.data.rows.shift();
                     }
                 }
+                //performs initialization and update of GPU related charts
+                this.processChart = function (context, $scope, name, gpus, factoryMethod, pushRowMethod) {
+                    if (!$scope[name]) {
+                        $scope[name] = []
+                        for (var i = 0; i < gpus.length; i++) {
+                            $scope[name].push(factoryMethod(i))
+                        }
+                        $scope.gpuChartsAll = $scope.gpuChartsAll.concat($scope[name])
 
+                    } else {
+                        for (var i = 0; i < $scope[name].length; i++) {
+                            var chart = $scope[name][i]
+                            pushRowMethod(chart, gpus[i])
+                            context.truncateTimeSeries(chart, 20)
+                        }
+                    }
+
+                }
+               
                 $scope.memChart = this.createPieChart("RAM Memory, Gb");
+                $scope.memLineChart = this.createAreaChart('RAM Memory, Gb', ["Time", "Free", "Used", "Total", "Shared", "Cached", "Buffers"])
 
 
             }

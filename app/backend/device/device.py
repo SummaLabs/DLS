@@ -8,7 +8,7 @@ import datetime
 def generate_system_info():
     info = {}
     gpu_info = generate_gpu_info()
-    gpu_info.append(gpu_info[0])
+    # gpu_info.append(gpu_info[0])
     info['mem'] = generate_mem_info()
     info['gpu'] = gpu_info
     info['cpu'] = generate_cpu_info()
@@ -55,7 +55,8 @@ def generate_gpu_info():
                                  'util_gpu': tokens[7], 'util_mem': tokens[8]})
     except OSError:
         # Some mock value for testing on machines without NVidia GPU
-        gpu_info.append({'id': 'not NVidia', 'name': 'not NVidia', 'mem': ''})
+        gpu_info.append({'id': 'not NVidia', 'name': 'not NVidia', 'mem': '0', 'mem_free': '10', 'mem_used': '20',
+                                 'util_gpu': '10', 'util_mem': '0'})
     return gpu_info
 
 

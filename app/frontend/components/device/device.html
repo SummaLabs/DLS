@@ -17,6 +17,7 @@
     </md-list-item>
     <md-list-item class="md-2-line">
         <div google-chart chart="memChart" style="height:300px; width:25%;"></div>
+        <div google-chart chart="memLineChart" style="height:300px; width:25%;"></div>
     </md-list-item>
     <md-divider></md-divider>
     <md-subheader class="md-primary">GPU's</md-subheader>
@@ -28,15 +29,8 @@
         </md-radio-group>
      
     </md-list-item>
-    <md-list-item class="md-2-line">
-        
-        
-           <!--div google-chart chart="gpuChart" style="height:300px; width:25%;"></div-->
-<!--div google-chart chart="gpuMemLineChart" style="height:300px; width:25%;"></div>
-        <div google-chart chart="utilChart" style="height:300px; width:25%;"></div-->
-        
+    <md-list-item class="md-2-line">    
          <div ng-repeat="ch in gpuChartsAll" google-chart chart="ch" style="height:300px; width:25%; float: left"></div>
-       
     </md-list-item>
     <!--md-list-item class="md-2-line">
             <div ng-repeat="ch in gpuMemLineCharts" google-chart chart="ch" style="height:300px; width:25%;"></div>
