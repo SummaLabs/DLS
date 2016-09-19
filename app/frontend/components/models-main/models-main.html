@@ -1,4 +1,4 @@
-<section style="height:100%" layout="column" flex>
+<md-content style="height:100%">
     <div layout="row" flex="grow">
         <md-content flex="30">
             <md-subheader class="md-no-sticky">Model Names</md-subheader>
@@ -18,14 +18,13 @@
                 <md-button ng-click="$ctrl.$toggleSidenav()" class="md-raised">ROC Analysis</md-button>
             </div>
 
-            <md-sidenav class="md-sidenav-right" md-component-id="right" md-disable-backdrop md-whiteframe="4">
-
-                <md-toolbar class="md-theme-indigo" layout="row" layout-align="start center">
-                    <md-button ng-click="$ctrl.$toggleSidenav()">Close</md-button>
-                </md-toolbar>
-                <classify-data-set></classify-data-set>
-            </md-sidenav>
-
         </md-content>
+        <md-sidenav class="md-sidenav-right" md-component-id="right" md-whiteframe="4" style="min-width: 604px;">
+
+            <md-toolbar class="md-theme-indigo" layout="row" layout-align="start center">
+                <md-button ng-click="$ctrl.$toggleSidenav()">Close</md-button>
+            </md-toolbar>
+            <classify-data-set></classify-data-set>
+        </md-sidenav>
     </div>
-</section>
+</md-content>
