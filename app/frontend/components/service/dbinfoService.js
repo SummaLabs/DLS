@@ -31,6 +31,12 @@ function DBInfoService($http) {
                 url: '/dbpreview/dbimgpreview/' + dbID
             });
     };
+    self.getImageMeanForDB = function (dbID) {
+        return $http({
+                method: 'POST',
+                url: '/dbpreview/dbimgmean/' + dbID
+            });
+    };
     //
     self.getServerPathFromUrlPath = function(urlPath) {
         return $http({

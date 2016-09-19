@@ -143,6 +143,9 @@ class DatasetImage2dInfo:
     def getPreviewImageDataRaw(self):
         with open(self.pathPreview, 'r') as f:
             return f.read()
+    def getMeanImageDataRaw(self):
+        with open(self.pathMeanImage, 'r') as f:
+            return f.read()
 
 class DatasetsWatcher:
     dirDatasets=None
@@ -193,6 +196,9 @@ class DatasetsWatcher:
     def getImageDataRawForDB(self, dbId):
         if self.dictDbInfo.has_key(dbId):
             return self.dictDbInfo[dbId].getPreviewImageDataRaw()
+    def getMeanImageRawForDB(self, dbId):
+        if self.dictDbInfo.has_key(dbId):
+            return self.dictDbInfo[dbId].getMeanImageDataRaw()
 
 ###############################
 datasetWatcher              = DatasetsWatcher()
@@ -225,6 +231,15 @@ def dbpreview_db_infohist(dbid):
 def dbpreview_db_imgpreview(dbid):
     try:
         tdata = datasetWatcher.getImageDataRawForDB(dbid)
+    except Exception as err:
+        tdata = None
+        print (err)
+    return tdata
+
+@dbpreview.route('/dbimgmean/<string:dbid>', methods=['GET', 'POST'])
+def dbpreview_db_imgmean(dbid):
+    try:
+        tdata = datasetWatcher.getMeanImageRawForDB(dbid)
     except Exception as err:
         tdata = None
         print (err)
