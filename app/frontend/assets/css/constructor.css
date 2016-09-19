@@ -134,13 +134,13 @@
     width:50px;
 }
 
-md-tab-content {
-	overflow: hidden;
-}
+/*md-tab-content {
+	height:0px;
+}*/
 
-md-tab-content > div:first-child {
+/*md-tab-content > div:first-child {
 	height:100%;
-}
+}*/
 
 #workspace:focus {
   background: Silver;

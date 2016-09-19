@@ -29,7 +29,7 @@
     <h3>Deep Learning Studio</h3>
 </md-toolbar>
 
-<md-tabs md-selected="tabSelectedIndex" md-border-bottom flex>
+<md-tabs md-border-bottom md-dynamic-height>
 <!--md-tabs md-selected="4" md-dynamic-height md-border-bottom md-autoselect-->
     <md-tab ui-sref="networks" class="unselectable">
         <md-tab-label>
@@ -80,7 +80,7 @@
     </md-tab>
 </md-tabs>
 
-<div id="content" ui-view flex> </div>
+<div id="content" ui-view  style="height:100%;"> </div>
 
 <script src="/frontend/lib/angular.js"></script>
 <script src="/frontend/lib/angular-animate.js"></script>

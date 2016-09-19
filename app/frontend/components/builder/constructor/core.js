@@ -176,14 +176,15 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 		    console.log('graph:removeItems');
 		    networkDataService.setChangesSaved(false);
 			event.stopPropagation();
-		}
+		});
 
 		$scope.$on('viewport::changed', function (event, data) {
             self.svgControl.viewportPos(data.x, data.y);
             event.stopPropagation();
 		});
 
-		function isUpdateNetwork() {
+		function setUpNetwork() {
+		    console.log('update');
             self.svgControl.setLayers(networkDataService.getLayers());
 		};
     }
