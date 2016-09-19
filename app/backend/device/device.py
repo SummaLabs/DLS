@@ -31,7 +31,7 @@ def generate_mem_info():
     output = process.communicate()[0]
     mem_values = retrieve_tokens(output, 1)
     names_values = retrieve_tokens(output, 0)
-    mem_values.remove("Mem:")
+    mem_values.pop(0)
     zipped = zip(names_values, mem_values)
     mem_info = dict(zipped)
     return mem_info

@@ -15,11 +15,9 @@ def start_send_system_info():
 
 
 def background_thread():
-    count = 0
     while tl.active:
+        # refresh interval
         socketio.sleep(1)
-        count += 1
-        print(count)
         socketio.emit('system_monitor', device.generate_system_info())
 
 
