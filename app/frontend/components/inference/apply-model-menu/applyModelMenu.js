@@ -4,23 +4,66 @@
     angular.module('applyModelMenu', ['ngMaterial'])
         .component('applyModelMenu', {
             templateUrl: '/frontend/components/inference/apply-model-menu/apply-model-menu.html',
-            controller: function ($mdDialog) {
+            controller: function ($mdDialog, appConfig) {
+                var self = this;
 
                 var originatorEv;
                 this.openMenu = function ($mdOpenMenu, ev) {
                     originatorEv = ev;
                     $mdOpenMenu(ev);
                 };
+                
+                this.createChoseImagesDialog = function(event) {
+                    appConfig.fileManager.pickFile = true;
+                    appConfig.fileManager.pickFolder = false;
+                    appConfig.fileManager.singleSelection = false;
+                	$mdDialog.show({
+						templateUrl: 'frontend/components/dialog/file-manager.html',
+						parent: angular.element(document.body),
+						targetEvent: event,
+						clickOutsideToClose:false,
+                        controller: function ($scope, $mdDialog, $rootScope) {
 
-                var parentEl = angular.element(document.body);
-                this.createImagesDialog = function ($event) {
+                            $scope.select = function (answer) {
+                                $mdDialog.hide(answer);
+
+                                var imagesPath = [];
+                                $rootScope.selectedFiles.forEach(function (item) {
+                                    var path = "";
+                                    item.model.path.forEach(function (folder) {
+                                        path += folder + "/";
+                                    });
+                                    path += item.model.name;
+                                    imagesPath.push(path);
+                                });
+
+                                self.createImagesDialog(imagesPath, event);
+                            };
+
+                            $scope.cancel = function () {
+                                $mdDialog.cancel();
+                            };
+                        }
+					});
+                };
+
+                this.createImagesDialog = function (imagePath, $event) {
                     $mdDialog.show({
                         clickOutsideToClose: true,
-                        parent: parentEl,
+                        parent: angular.element(document.body),
                         targetEvent: $event,
                         templateUrl: "/frontend/components/inference/apply-model-menu/apply-model-dialog-images.html",
                         locals: {},
                         controller: function ($scope, $mdDialog, $window, imageService) {
+                            var concatImagesPath = "";
+                            for ( var i = 0; i < imagePath.length; i++) {
+                                concatImagesPath = concatImagesPath.concat(imagePath[i]);
+                                if (i < imagePath.length - 1) {
+                                    concatImagesPath = concatImagesPath.concat(";");
+                                }
+                            }
+                            $scope.imagesPathList = concatImagesPath;
+
                             $scope.closeDialog = function () {
                                 $mdDialog.hide();
                             };

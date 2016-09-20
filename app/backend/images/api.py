@@ -13,8 +13,8 @@ classified_images_file = "classified-images-123123123123.json"
 classified_images_dir = os.path.join(dirname(dirname(dirname(dirname(__file__)))), 'data/app/tmp')
 
 
-@images.route('/classified/load/<path:class_number>')
-def load_classified_images(class_number):
+@images.route('/classify/<path:images_path>')
+def load_classified_images(images_path):
     layers_path = os.path.join(classified_images_dir, classified_images_file)
 
     if request.method == 'GET':
@@ -24,7 +24,7 @@ def load_classified_images(class_number):
             for image in classified_images_loaded['images']:
                 with open(image['path'], "rb") as image_file:
                     imageEncode = base64.b64encode(image_file.read())
-                    classified_images_return.append(create_image_n_classes(image, int(class_number), imageEncode))
+                    classified_images_return.append(create_image_n_classes(image, int(3), imageEncode))
             return Response(json.dumps(classified_images_return), mimetype='application/json')
 
 

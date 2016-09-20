@@ -3,11 +3,11 @@ angular.module('imageService', [])
 
 function ImageService($http) {
 
-    this.loadClassifiedImages = function(classNumber) {
+    this.classifyImages = function(imagesPath) {
         var classifiedImages = [];
         $http({
             method: "GET",
-            url: "/images/classified/load/" + classNumber
+            url: "/images/classify/" + imagesPath
         }).then(function mySucces(response) {
             response.data.forEach(function(layer) {
                 classifiedImages.push(layer)
