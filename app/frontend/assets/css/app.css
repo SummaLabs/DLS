@@ -18,6 +18,10 @@ md-toolbar div md-icon {
   width: 48px;
 }
 
+#content {
+    height: calc(100% - 48px - 65px);
+}
+
 md-list div.selected {
   color: #03a9f4;
 }
@@ -81,6 +85,29 @@ md-tab-item {
     height: 100%;
     border-radius: 4px;
 }
+
+.dbpreview-chip-samples-main {
+    background: lightcoral;
+}
+.dbpreview-chip-samples-other {
+    background: lightgoldenrodyellow;
+}
+
+.dbpreview-chip-size-main {
+    background: lightblue;
+}
+.dbpreview-chip-size-other {
+    background: lightcyan;
+}
+
+
+/*.db-preview-grid {*/
+    /*.md-whiteframe-16dp;*/
+/*}*/
+
+/*.db-preview-grid:hover {*/
+    /*.md-whiteframe-16dp;*/
+/*}*/
 
 /*md-toolbar h3 {*/
   /*margin: auto;*/

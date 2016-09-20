@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
     <title>Deap Learning Studio</title>
     <meta charset="utf-8">
@@ -23,12 +23,13 @@
 </head>
 
 <body ng-app="dlsApp" ng-controller="mainCtrl" layout="column">
+
 <md-toolbar layout="row">
     <main-menu></main-menu>
     <h3>Deep Learning Studio</h3>
 </md-toolbar>
 
-<md-tabs md-dynamic-height md-border-bottom >
+<md-tabs md-border-bottom md-dynamic-height>
     <md-tab ui-sref="networks" class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="networks">apps</md-icon>
@@ -78,7 +79,7 @@
     </md-tab>
 </md-tabs>
 
-<div id="content" ui-view flex> </div>
+<div id="content" ui-view> </div>
 
 <script src="/frontend/lib/angular.js"></script>
 <script src="/frontend/lib/angular-animate.js"></script>
@@ -87,17 +88,23 @@
 <script type="text/javascript" src="/frontend/lib/angular-material.js"></script>
 <script src="/frontend/lib/angular-ui-router.min.js"></script>
 <script src="/frontend/lib/ng-google-chart.js"></script>
+<script src="/frontend/lib/socket.io.js"></script>
 
 <script src="/frontend/lib/d3.min.js"></script>
 
 <script src="/frontend/app.js"></script>
 <script src="/frontend/components/main-menu/MainMenu.js"></script>
+
 <script src="/frontend/components/builder/constructor/core.js"></script>
+<script src="/frontend/components/builder/constructor/viewport.js"></script>
 <script src="/frontend/components/builder/constructor/palette/palette.js"></script>
 <script src="/frontend/components/builder/constructor/palette/layersPanel.js"></script>
-<script src="/frontend/components/builder/constructor/graph/graph.js"></script>
+<script src="/frontend/components/builder/constructor/graph/type.js"></script>
+<script src="/frontend/components/builder/constructor/graph/schema.controller.js"></script>
+<script src="/frontend/components/builder/constructor/graph/schema.module.js"></script>
 <script src="/frontend/components/builder/constructor/graph/node.js"></script>
 <script src="/frontend/components/builder/constructor/graph/link.js"></script>
+
 <script src="/frontend/components/networks-main/networksMain.js"></script>
 <script src="/frontend/components/models-main/modelsMain.js"></script>
 <script src="/frontend/components/data-set-main/mainDataSet.js"></script>
@@ -117,6 +124,7 @@
 <script src="/frontend/lib/material-angular-paging.js"></script>
 <script src="/frontend/components/preview/dataset-image2d-preview/dataset-image2d-paging.js"></script>
 <script src="/frontend/components/preview/dataset-image2d-preview/dataset-image2d-preview.js"></script>
+<script src="/frontend/components/preview/dataset-image2d-preview/dataset-image2d-preview2.js"></script>
 <script src="frontend/components/settings/settings.js"></script>
 
 <!-- Services: BEGIN-->

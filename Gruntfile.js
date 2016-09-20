@@ -122,6 +122,12 @@ module.exports = function (grunt) {
                             inpPathExt + '/material-angular-paging.js'
                         ],
                         dest: outPathExt
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src: '<%= globalConfig.node_modules_path %>/socket.io-client/socket.io.js',
+                        dest: outPathExt
                     }
                 ]
             }

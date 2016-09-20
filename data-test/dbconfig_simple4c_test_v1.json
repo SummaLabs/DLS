@@ -1,0 +1,34 @@
+{
+  "formImage": {
+    "imgTypeSelectedId": "color",
+    "imgSizes": {
+      "x": 128,
+      "y": 128
+    },
+    "resizeTransformSelectedId": "squash"
+  },
+  "formFileImport": {
+    "selectedType": "dir",
+    "fromDir": {
+      "isUseSeparateValDir": false,
+      "percentForValidation": 25,
+      "percentForTesting": 0,
+      "pathToImageFolder": "/dataset-image2d/simple4c_test",
+      "pathToImageFolderVal": ""
+    },
+    "fromTxt": {
+      "isUseSeparateVal": false,
+      "isUseRelativeDir": false,
+      "percentForValidation": 25,
+      "pathToImagesTxt": "",
+      "pathToImagesTxtVal": "",
+      "pathTorRelativeDir": ""
+    }
+  },
+  "formDbBackend": {
+    "dbBackendSelectedId": "lmdb",
+    "imageEncodingsSelectedId": "jpeg",
+    "isUseThreading": false
+  },
+  "datasetname": "simple4c"
+}

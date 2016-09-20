@@ -30,53 +30,15 @@
     user-select: none;
 }
 
-/*.node_label {
-    pointer-events: none;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}*/
-
 .function_label {
     font-size: 12px;
 }
-/*
-.node {
-    fill: none;
-    stroke: #999;
-    cursor: move;
-    stroke-width: 2;
-}
 
-.node_selected {
-    stroke-width: 3;
-    stroke: grey !important;
-}
 
 .node_active {
     stroke-width: 3;
-    stroke: grey !important;
+    stroke-dasharray: 10 10;
 }
-
-.port {
-    fill:grey;
-    stroke: grey;
-    stroke-opacity: 0;
-    stroke-width: 10;
-    cursor: crosshair;
-}
-
-.port_hovered {
-    fill: grey;
-    stroke: grey;
-    stroke-opacity: .5;
-    stroke-width: 10;
-    cursor: crosshair;
-}
-*/
 
 .link_line {
     stroke: green;
@@ -92,6 +54,60 @@
     stroke-opacity: 1;
 }
 
-#workspace:focus {
+#sel_rect {
+    stroke: #000099;
+    stroke-width: 1;
+    stroke-dasharray: 10 5;
+    fill: #3333ff;
+    fill-opacity: 0.1;
+}
+
+.constructor {
+	height:100%;
+	max-width: 100%;
+}
+.constructor div:first-child {
+	max-width: 100%;
+}
+
+.constructor div:last-child {
+	max-width: 100%;
+    height: calc(100% - 48px);
+}
+
+#workspace {
+	overflow: auto;
+	height:100%;
+}
+
+#viewport {
+	background: #6699ff;
+	position: absolute;
+    right: 0;
+    bottom: 0;
+    height:200px;
+    width:200px;
+    opacity: 0.7;
+}
+#viewport div{
+    position: relative;
+	background: #ccddff;
+    height:50px;
+    width:50px;
+}
+
+/*md-tab-content {
+	height:0px;
+}*/
+
+/*md-tab-content > div:first-child {
+	height:100%;
+}*/
+
+/*#workspace:focus {
   background: Silver;
+}*/
+
+#svg {
+	overflow: visible;
 }

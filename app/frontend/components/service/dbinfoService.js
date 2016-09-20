@@ -3,24 +3,72 @@
  */
 
 angular.module('dbinfoService', [])
-    .service('dbinfoService', [DBInfoService]);
+    .service('dbinfoService', ['$http', DBInfoService]);
 
 function DBInfoService($http) {
-    this.myData = [1,2,3,4,5,6];
-    this.updateDataFromServer = function () {
-        var tmp = [1,2,3,5];
-        for(var ii=0; ii<10; ii++) {
-            tmp.push({
-                idx:    ii,
-                data:   'data: ' + ii
+    var self = this;
+    self.getDatasetsInfoStatList = function () {
+        return $http({
+                method: 'POST',
+                url: '/dbpreview/dbinfolist/'
             });
-        }
-        this.myData = tmp;
     };
-    this.getData = function () {
-        return [1,2,3,4,5];
+    self.getInfoStatAboutDB = function (dbID) {
+        return $http({
+                method: 'POST',
+                url: '/dbpreview/dbinfo/' + dbID
+            });
     };
-    return {
-        data: this.myData
+    self.getInfoStatWithHistsAboutDB = function (dbID) {
+        return $http({
+                method: 'POST',
+                url: '/dbpreview/dbinfohist/' + dbID
+            });
+    };
+    self.getImagePreviewForDB = function (dbID) {
+        return $http({
+                method: 'POST',
+                url: '/dbpreview/dbimgpreview/' + dbID
+            });
+    };
+    self.getImageMeanForDB = function (dbID) {
+        return $http({
+                method: 'POST',
+                url: '/dbpreview/dbimgmean/' + dbID
+            });
+    };
+    //
+    self.getServerPathFromUrlPath = function(urlPath) {
+        return $http({
+            method: "GET",
+            url: "/dbpreview/getserverpath/" + urlPath
+        });
+    };
+    self.chekServerPathFromUrlPath = function (urlPath) {
+        return $http({
+            method: "GET",
+            url: "/dbpreview/checkpath/" + urlPath
+        });
+    };
+    //
+    self.getDatasetInfo = function (dbId) {
+        return $http({
+                method: 'POST',
+                url: '/dbpreview/datasetinfo/',
+                data: {
+                    dbid:   dbId
+                }
+            });
+    };
+    self.getDatasetRange = function (dbId, pfrom, pto) {
+        return $http({
+            method: 'POST',
+            url:    '/dbpreview/datasetrange/',
+            params: {
+                from:   pfrom,
+                to:     pto,
+                dbid:   dbId
+            }
+        });
     }
 }

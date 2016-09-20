@@ -27,9 +27,7 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'dbinfoService',
     'settings',
     'device',
-    'deviceService',
-    "angularUtils.directives.uiBreadcrumbs"
-                  
+    'deviceService'
 ]);
 
 
@@ -41,7 +39,7 @@ angular.module('dlsApp')
             markerPortIn: 'in',
             markerPortOut: 'out',
             areaWidth: 2000,
-            areaHeight: 2000,
+            areaHeight: 1000,
             scaleMin: 0.2,
             scaleMax: 4.0,
             scaleFactor: 1.2,
@@ -62,7 +60,7 @@ angular.module('dlsApp')
             template: "<network-main></network-main>"
         }).state('designer', {
             url: "/designer",
-            template: "<constructor></constructor>"
+            template: "<constructor  style='height:100%;'></constructor>"
         }).state('models', {
             url: "/models",
             template: "<model-main></model-main>",

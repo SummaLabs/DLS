@@ -12,7 +12,7 @@ angular.module('datasetImage2dPaging', ['ngMaterial', 'cl.paging'])
          paramDatabase: '@',
          paramClass:    '@'
      },
-    controller: function ($scope, $http) {
+    controller: function ($scope, $http, dbinfoService) {
         var self        = this;
         self.$onInit = function () {
             $scope.currentPage = 0;
@@ -23,24 +23,9 @@ angular.module('datasetImage2dPaging', ['ngMaterial', 'cl.paging'])
                 align: 'center start',
                 onPageChanged: loadPages
             };
-            self.getImageRaw = function (imgIdx) {
-                var urlReq = '/dbpreview/getimgdata/' + imgIdx;
-                $http({
-                    method: 'POST',
-                    url:    urlReq
-                }).then(function successCallback(response) {
-                    console.log(response.data);
-                },function errorCallback(response) {
-                    console.log(response);
-                });
-            };
             //
             self.numPerPage = 24;
-            var urlInfo = '/dbpreview/datasetinfo/';
-            $http({
-                method: 'GET',
-                url: urlInfo
-            }).then(function successCallback(response) {
+            dbinfoService.getDatasetInfo('123').then(function successCallback(response) {
                 var tdata = response.data;
                 var tnum  = tdata[self.paramDatabase];
                 self.listIndexes=[];
@@ -72,16 +57,8 @@ angular.module('datasetImage2dPaging', ['ngMaterial', 'cl.paging'])
                 $scope.currentPage  = $scope.paging.current;
                 self.currentIdx     = self.listIndexes[$scope.currentPage-1];
                 //
-                var urlRange = '/dbpreview/datasetrange/';
-                $http({
-                    method: 'POST',
-                    url:    urlRange,
-                    params: {
-                        from:   self.currentIdx.from,
-                        to:     self.currentIdx.to,
-                        dbid:   self.paramDatabase
-                    }
-                }).then(
+                dbinfoService.getDatasetRange(
+                    self.paramDatabase,self.currentIdx.from,self.currentIdx.to).then(
                     function successCallback(response) {
                         self.currentListIdx = response.data;
                     },

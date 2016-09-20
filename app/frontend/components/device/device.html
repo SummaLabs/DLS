@@ -2,25 +2,40 @@
     <md-subheader class="md-primary">CPU</md-subheader>
     <md-list-item class="md-2-line">
         <md-list>
-            <md-list-item>{{$ctrl.deviceInfo.info.cpu.name}}</md-list-item>
-            <md-list-item>{{$ctrl.deviceInfo.info.cpu.cores}} cores</md-list-item>
-            <md-list-item>cache size: {{$ctrl.deviceInfo.info.cpu.cache}}</md-list-item>
+            <md-list-item>{{deviceInfo.info.cpu.name}}</md-list-item>
+            <md-list-item>{{deviceInfo.info.cpu.cores}} cores</md-list-item>
+            <md-list-item>cache size: {{deviceInfo.info.cpu.cache}}</md-list-item>
         </md-list>
     </md-list-item>
     <md-divider></md-divider>
     <md-subheader class="md-primary">MEMORY</md-subheader>
     <md-list-item class="md-2-line">
         <md-chips>
-            <md-chip ng-repeat="(key,val) in $ctrl.deviceInfo.info.mem"> {{ key }} : {{ val }} MiB </md-chip>
+            <md-chip ng-repeat="(key,val) in deviceInfo.info.mem"> {{ key }} : {{ val }} MiB </md-chip>
         </md-chips>
+        
+    </md-list-item>
+    <md-list-item class="md-2-line">
+        <div google-chart chart="memChart" style="height:300px; width:25%;"></div>
+        <div google-chart chart="memLineChart" style="height:300px; width:25%;"></div>
     </md-list-item>
     <md-divider></md-divider>
     <md-subheader class="md-primary">GPU's</md-subheader>
     <md-list-item class="md-2-line">
         <md-radio-group ng-model="$ctrl.deviceInfo.info.gpuSelected">
-            <md-radio-button ng-repeat="gpu in $ctrl.deviceInfo.info.gpu" ng-value="gpu.id">
+            <md-radio-button ng-repeat="gpu in deviceInfo.info.gpu" ng-value="gpu.id">
                 <p> {{gpu.name}}, {{gpu.mem}}, {{gpu.cores}} cores</p>
             </md-radio-button>
         </md-radio-group>
+     
     </md-list-item>
+    <md-list-item class="md-2-line">    
+         <div ng-repeat="ch in gpuChartsAll" google-chart chart="ch" style="height:300px; width:25%; float: left"></div>
+    </md-list-item>
+    <!--md-list-item class="md-2-line">
+            <div ng-repeat="ch in gpuMemLineCharts" google-chart chart="ch" style="height:300px; width:25%;"></div>
+    </md-list-item>
+    <md-list-item class="md-2-line">
+            <div ng-repeat="ch in utilCharts" google-chart chart="ch" style="height:300px; width:25%;"></div>
+    </md-list-item-->
 </md-list>

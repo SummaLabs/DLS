@@ -1,20 +1,29 @@
-<md-content>
-    <md-subheader class="md-no-sticky"><ui-breadcrumbs displayname-property="data.displayName" abstract-proxy-property="data.proxy" template-url="/frontend/components/breadcrumbs/uiBreadcrumbs.tpl.html"></ui-breadcrumbs></md-subheader>
-    <md-list>
-        <md-list-item ng-repeat="image in $ctrl.images" ng-click="null">
-            <div layout="row" layout-fill>
-                <img ng-src="data:image/JPEG;base64,{{image.content}}" flex="30" layout-margin alt=""/>
-                <div  class="md-item-text md-whiteframe-z1" layout="column" layout-margin flex>
-                    <md-list>
-                        <md-list-item ng-repeat="classProbability in image.classProbabilities">
-                            <div layout="column" layout-fill>
-                                <p>{{classProbability.value}}% - {{classProbability.name}}</p>
-                                <md-progress-linear md-mode="determinate" ng-class="{'md-warn' : $index == 0}" value="{{classProbability.value}}"></md-progress-linear>
-                            </div>
-                        </md-list-item>
-                    </md-list>
-                </div>
-            </div>
-        </md-list-item>
-    </md-list>
-</md-content>
+<div ng-switch="$ctrl.images.length">
+    <div ng-switch-when="0">
+        <div layout="row" layout-align="center center" style="height: 300px">
+            <md-progress-circular md-diameter="200"></md-progress-circular>
+        </div>
+    </div>
+    <div ng-switch-default>
+        <md-content>
+            <md-list>
+                <md-list-item ng-repeat="image in $ctrl.images" ng-click="null">
+                    <div layout="row" layout-fill>
+                        <img ng-src="data:image/JPEG;base64,{{image.content}}" flex="30" layout-margin alt=""/>
+                        <div class="md-item-text md-whiteframe-z1" layout="column" layout-margin flex>
+                            <md-list>
+                                <md-list-item ng-repeat="classProbability in image.classProbabilities">
+                                    <div layout="column" layout-fill>
+                                        <p>{{classProbability.value}}% - {{classProbability.name}}</p>
+                                        <md-progress-linear md-mode="determinate" ng-class="{'md-warn' : $index == 0}"
+                                                            value="{{classProbability.value}}"></md-progress-linear>
+                                    </div>
+                                </md-list-item>
+                            </md-list>
+                        </div>
+                    </div>
+                </md-list-item>
+            </md-list>
+        </md-content>
+    </div>
+</div>

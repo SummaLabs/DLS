@@ -10,12 +10,32 @@ from datetime import datetime
 from app.backend.api import app_flask
 
 file_manager = flask.Blueprint('file_manager', __name__)
-
 # REPOSITORY_BASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),'../../../data-test')
 REPOSITORY_BASE_PATH = app_flask.config['DLS_FILEMANAGER_BASE_PATH']
 ONLY_FOLDERS = False
 
-print ('--> %s' % REPOSITORY_BASE_PATH)
+print ('::DLS_FILEMANAGER_BASE_PATH --> %s' % REPOSITORY_BASE_PATH)
+
+
+def getRealPathFromFMUrlPath(urlPath):
+    """
+    getRealPathFromFMUrlPath()
+    :param urlPath: path returned FM on Frontend
+    :return: local absolute path on server FileSystem
+    """
+    tret = os.path.join(REPOSITORY_BASE_PATH, urlPath)
+    return tret
+
+def validateSeverPathFromUrlPath(urlPath):
+    """
+    validateSeverPathFromUrlPath()
+    :param urlPath:
+    :return: (isDirectory, isFile)
+    """
+    tpath  = getRealPathFromFMUrlPath(urlPath)
+    isDir  = os.path.isdir(tpath)
+    isfile = os.path.isfile(tpath)
+    return (isDir, isfile)
 
 @file_manager.route('/listUrl', methods=["POST"])
 def list():

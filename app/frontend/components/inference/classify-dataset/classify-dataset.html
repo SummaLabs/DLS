@@ -1,23 +1,20 @@
-<md-content>
-    <md-card>
-        <md-card-title>
-            <md-card-title-text>
-                <span class="md-headline">ROC Analysis</span>
-            </md-card-title-text>
-        </md-card-title>
-        <md-card-content>
-            <div ng-show="classNames.length > 1" layout="row" layout-align="space-between center">
-                <md-select placeholder="Classes" ng-model="classNameSelected" class="md-no-underline">
-                    <md-option ng-value="className" ng-repeat="className in classNames">{{className}}</md-option>
-                </md-select>
-            </div>
-            <div layout-padding layout="row" layout-fill>
-                <div flex ng-cloak google-chart chart="rocData" class="md-item-text md-whiteframe-z1"
-                     style="height: 800px; width: 800px"></div>
-            </div>
-        </md-card-content>
-    </md-card>
-</md-content>
-
+<md-card>
+    <md-card-title>
+        <md-card-title-text>
+            <span class="md-headline">ROC Analysis</span>
+        </md-card-title-text>
+    </md-card-title>
+    <md-card-content>
+        <div ng-show="classNames.length > 1" layout="row" layout-align="space-between center">
+            <md-select placeholder="Classes" ng-model="classNameSelected" class="md-no-underline">
+                <md-option ng-value="className" ng-repeat="className in classNames">{{className}}</md-option>
+            </md-select>
+        </div>
+        <div layout-padding layout="row" layout-fill>
+            <div flex ng-cloak google-chart chart="rocData" class="md-item-text md-whiteframe-z1"
+                 style="height: 430px; width: 430px"></div>
+        </div>
+    </md-card-content>
+</md-card>
 
 

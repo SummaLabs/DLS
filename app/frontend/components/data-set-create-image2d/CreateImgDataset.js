@@ -112,8 +112,10 @@
                             dbBackendSelectedId:        self.formDbBackend.dbBackendSelectedId,
                             imageEncodingsSelectedId:   self.formDbBackend.imageEncodingsSelectedId,
                             isUseThreading:             self.formDbBackend.isUseThreading
-                        }
+                        },
+                        datasetname:                    self.formDbBackend.datasetname
                     };
+                    console.log(ret);
                     $mdDialog.show(
                         $mdDialog.confirm().
                         title('Training Log').
