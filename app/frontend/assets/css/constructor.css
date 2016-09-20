@@ -87,6 +87,7 @@
     bottom: 0;
     height:200px;
     width:200px;
+    opacity: 0.7;
 }
 #viewport div{
     position: relative;
