@@ -33,9 +33,10 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService'])
                             parent: angular.element(document.body),
                             targetEvent: event,
                             locals: {
-                                dbId: dbId,
+                                dbId:   dbId,
                                 dbInfo: response.data
                             },
+                            bindToController:true,
                             clickOutsideToClose:true
                         });
                     },
@@ -124,11 +125,15 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService'])
 function DialogControllerPreviewDB($scope, $mdDialog, dbId, dbInfo, dbinfoService) {
     console.log('::DialogControllerPreviewDB() : ' + dbId);
     console.log(dbInfo);
-    console.log(dbInfo.hist.labels);
+    console.log('Labels: ' + dbInfo.hist.labels);
     var self = this;
-    $scope.dbid = dbId;
-    $scope.dbInfo = dbInfo;
-    
+    $scope.dbid     = dbId;
+    $scope.dbInfo   = dbInfo;
+
+    $scope.getInfo = function () {
+        return $scope.dbInfo;
+    };
+
     $scope.getMeanImage = function () {
         dbinfoService.getImageMeanForDB().then(
             function successCallback(response) {

@@ -40,17 +40,25 @@
                                         </h4>
                                     </div>
                                 </md-list-item>
-                                <md-list-item class="md-2-line layout-row" layout-padding>
-                                    <h4>Labels</h4>
-                                    <md-chips>
-                                        <md-chip ng-repeat="cc in dbInfo.hist.labels">
-                                            {{ cc }}
-                                        </md-chip>
-                                    </md-chips>
+                                <md-list-item class="layout-column">
+                                    <div layout-padding layout="row" layout-align="center center">
+                                        <h4>Labels:&nbsp;</h4>
+                                        <div class="md-whiteframe-z1" ng-repeat="ll in dbInfo.hist.labels">
+                                            {{ ll }}
+                                        </div>
+                                    </div>
+                                    <div layout="row">
+                                        <md-chips>
+                                            <md-chip>Size (Total): <strong>{{dbInfo.size.totalstr}}</strong></md-chip>
+                                            <md-chip>Size (Train): <strong>{{dbInfo.size.trainstr}}</strong></md-chip>
+                                            <md-chip>Size (Val): <strong>{{dbInfo.size.valstr}}</strong></md-chip>
+                                        </md-chips>
+                                    </div>
                                 </md-list-item>
-
-
                             </md-list>
+                        </div>
+                        <div layout="row" flex style="background: lightgoldenrodyellow">
+                            <div flex ng-cloak google-chart chart="{{dbInfo.hist.histTrain}}" style="height: 300px"></div>
                         </div>
                     </div>
                 </md-tab-body>
