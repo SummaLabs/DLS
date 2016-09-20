@@ -179,12 +179,13 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 		});
 
 		$scope.$on('viewport::changed', function (event, data) {
-            self.svgControl.viewportPos(data.x, data.y);
+			if (self.svgControl.viewportPos)
+			    self.svgControl.viewportPos(data.x, data.y);
             event.stopPropagation();
 		});
 
 		function setUpNetwork() {
-		    console.log('update');
+			coreService.param('scale', 1.0);
             self.svgControl.setLayers(networkDataService.getLayers());
 		};
     }

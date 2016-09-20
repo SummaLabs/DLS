@@ -25,7 +25,6 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         self.counterNodesInit = 0;
         self.viewWidth = 0;
         self.viewHeight = 0;
-
         resize();
         viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
 
@@ -68,7 +67,6 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
     $scope.controlItem.setLayers = function(layers) {
 
         schema.clear();
-
         for (let a = 0; a < layers.length; a ++) {
             if(!$scope.controlItem.addLayer(layers[a]))
                 return false;
@@ -120,6 +118,9 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
                 self.scale = newValue;
                 self.width = self.scale * $scope.svgWidth;
                 self.height = self.scale * $scope.svgHeight;
+                viewX = viewX * self.scale;
+				viewY = viewY * self.scale;
+				viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
             }
         );
     }
@@ -367,7 +368,6 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
     function resize() {
         var divSvg = document.getElementById('workspace');
-
         self.viewWidth = divSvg.offsetWidth - 10;
         self.viewHeight = divSvg.offsetHeight - 10;
     }
