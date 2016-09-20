@@ -11,9 +11,20 @@ from app.backend.core import utils
 
 from app.backend.file_manager.api import getRealPathFromFMUrlPath, validateSeverPathFromUrlPath
 from dbbuilder import DBImage2DBuilder, DBImage2DConfig
+from imgproc2d import ImageTransformer2D
 
 import json
 import time
+import lmdb
+
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+
+import dlscaffe.caffedls_pb2 as dlscaffe_pb2
+from PIL import Image
+import skimage.io as skio
 
 dbpreview = Blueprint(__name__, __name__)
 
@@ -146,6 +157,37 @@ class DatasetImage2dInfo:
     def getMeanImageDataRaw(self):
         with open(self.pathMeanImage, 'r') as f:
             return f.read()
+    def getRawImageFromDB(self, ptype, imdIdx, classType=None):
+        pathLMDB = self.pathDbTrain
+        if ptype == 'val':
+            pathLMDB = self.pathDbVal
+        with lmdb.open(pathLMDB) as env:
+            with env.begin(write=False) as  txn:
+                lstKeys = [key for key, _ in txn.cursor()]
+                timg = ImageTransformer2D.decodeLmdbItem2Image(txn.get(lstKeys[int(imdIdx)]))
+                strBuff = StringIO()
+                buffImg=Image.fromarray(timg)
+                buffImg.save(strBuff, format='JPEG')
+                return strBuff.getvalue()
+    def getDbRangeInfo(self, ptype, idxFrom, idxTo):
+        pathLMDB = self.pathDbTrain
+        if ptype == 'val':
+            pathLMDB = self.pathDbVal
+        retInfo=[]
+        for ii in range(idxFrom, idxTo):
+            with lmdb.open(pathLMDB) as env:
+                with env.begin(write=False) as  txn:
+                    lstKeys = [key for key, _ in txn.cursor()]
+                    tdat = dlscaffe_pb2.Datum()
+                    tdat.ParseFromString(txn.get(lstKeys[ii]))
+                    tmp = {
+                        'pos': ii,
+                        'info' : self.cfg.cfg["dbhist"]["labels"][tdat.label],
+                        'idx': ii
+                    }
+                    retInfo.append(tmp)
+        return retInfo
+
 
 class DatasetsWatcher:
     dirDatasets=None
@@ -193,12 +235,18 @@ class DatasetsWatcher:
     def getInfoStatWithHistsAboutDB(self, dbId):
         if self.dictDbInfo.has_key(dbId):
             return self.dictDbInfo[dbId].getInfoStatWithHists()
-    def getImageDataRawForDB(self, dbId):
+    def getPreviewImageDataRawForDB(self, dbId):
         if self.dictDbInfo.has_key(dbId):
             return self.dictDbInfo[dbId].getPreviewImageDataRaw()
     def getMeanImageRawForDB(self, dbId):
         if self.dictDbInfo.has_key(dbId):
             return self.dictDbInfo[dbId].getMeanImageDataRaw()
+    def getRawImageFromDB(self, dbId, ptype, imdIdx, classType=None):
+        if self.dictDbInfo.has_key(dbId):
+            return self.dictDbInfo[dbId].getRawImageFromDB(ptype, imdIdx, classType)
+    def getDbRangeInfo(self, dbId, ptype, idxFrom, idxTo):
+        if self.dictDbInfo.has_key(dbId):
+            return self.dictDbInfo[dbId].getDbRangeInfo(ptype, idxFrom, idxTo)
 
 ###############################
 datasetWatcher              = DatasetsWatcher()
@@ -230,7 +278,7 @@ def dbpreview_db_infohist(dbid):
 @dbpreview.route('/dbimgpreview/<string:dbid>', methods=['GET', 'POST'])
 def dbpreview_db_imgpreview(dbid):
     try:
-        tdata = datasetWatcher.getImageDataRawForDB(dbid)
+        tdata = datasetWatcher.getPreviewImageDataRawForDB(dbid)
     except Exception as err:
         tdata = None
         print (err)
@@ -244,6 +292,27 @@ def dbpreview_db_imgmean(dbid):
         tdata = None
         print (err)
     return tdata
+
+@dbpreview.route('/getdbimgdata/<string:dbid>/<string:ptype>/<string:imgidx>', methods=['GET', 'POST'])
+def dbpreview_db_imgfromdb(dbid, ptype, imgidx):
+    try:
+        tdata = datasetWatcher.getRawImageFromDB(dbid, ptype, imgidx)
+    except Exception as err:
+        tdata = None
+        print (err)
+    return tdata
+
+@dbpreview.route('/dbrangeinfo/', methods=['GET', 'POST'])
+def dataset_dbrangeinfo():
+    dbid   = request.args['dbid']
+    dbtype = request.args['dbtype']
+    tfrom = int(request.args['from'])
+    tto   = int(request.args['to'])
+    tret  = datasetWatcher.getDbRangeInfo(dbid,dbtype, tfrom, tto)
+    # tret  = []
+    # for xx in range(tfrom,tto):
+    #     tret.append(tmp[xx])
+    return Response(json.dumps(tret), mimetype='application/json')
 
 ###############################
 class DatasetForTests:

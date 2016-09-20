@@ -10,6 +10,7 @@ angular.module('datasetImage2dPaging', ['ngMaterial', 'cl.paging'])
     templateUrl: '/frontend/components/preview/dataset-image2d-preview/dataset-image2d-paging.html',
      bindings: {
          paramDatabase: '@',
+         paramType:     '@',
          paramClass:    '@'
      },
     controller: function ($scope, $http, dbinfoService) {
@@ -24,7 +25,7 @@ angular.module('datasetImage2dPaging', ['ngMaterial', 'cl.paging'])
                 onPageChanged: loadPages
             };
             //
-            self.numPerPage = 24;
+            self.numPerPage = 16;
             dbinfoService.getDatasetInfo('123').then(function successCallback(response) {
                 var tdata = response.data;
                 var tnum  = tdata[self.paramDatabase];

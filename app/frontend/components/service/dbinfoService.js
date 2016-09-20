@@ -37,6 +37,18 @@ function DBInfoService($http) {
                 url: '/dbpreview/dbimgmean/' + dbID
             });
     };
+    self.getDatasetRangeInfo = function (dbId, dbType, pfrom, pto) {
+        return $http({
+            method: 'POST',
+            url:    '/dbpreview/dbrangeinfo/',
+            params: {
+                from:       pfrom,
+                to:         pto,
+                dbid:       dbId,
+                dbtype:     dbType
+            }
+        });
+    };
     //
     self.getServerPathFromUrlPath = function(urlPath) {
         return $http({

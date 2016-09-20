@@ -57,8 +57,10 @@
                                 </md-list-item>
                             </md-list>
                         </div>
-                        <div layout="row" flex style="background: lightgoldenrodyellow">
-                            <div flex ng-cloak google-chart chart="{{dbInfo.hist.histTrain}}" style="height: 300px"></div>
+                        <hr>
+                        <div layout="row" flex>
+                            <div flex ng-cloak google-chart chart="{{getPlotData('train')}}" style="height: 320px"></div>
+                            <div flex ng-cloak google-chart chart="{{getPlotData('val')}}" style="height: 320px"></div>
                         </div>
                     </div>
                 </md-tab-body>
@@ -69,7 +71,7 @@
                     Preview-Train
                 </md-tab-label>
                 <md-tab-body>
-                    Fuck#2
+                    <dataset-image2d-preview2 database-id="{{dbInfo.id}}" dataset-type="train"></dataset-image2d-preview2>
                 </md-tab-body>
             </md-tab>
             <md-tab class="unselectable">
@@ -78,7 +80,7 @@
                     Preview-Validation
                 </md-tab-label>
                 <md-tab-body>
-                    Fuck#3
+                    <dataset-image2d-preview2 database-id="{{dbInfo.id}}" dataset-type="val"></dataset-image2d-preview2>
                 </md-tab-body>
             </md-tab>
             <md-tab class="unselectable">
