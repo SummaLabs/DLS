@@ -27,17 +27,17 @@
                             $scope.select = function (answer) {
                                 $mdDialog.hide(answer);
 
-                                var imagePath = [];
+                                var imagesPath = [];
                                 $rootScope.selectedFiles.forEach(function (item) {
                                     var path = "";
                                     item.model.path.forEach(function (folder) {
                                         path += folder + "/";
                                     });
                                     path += item.model.name;
-                                    imagePath.push(path);
+                                    imagesPath.push(path);
                                 });
 
-                                self.createImagesDialog(event);
+                                self.createImagesDialog(imagesPath, event);
                             };
 
                             $scope.cancel = function () {
@@ -47,7 +47,7 @@
 					});
                 };
 
-                this.createImagesDialog = function ($event) {
+                this.createImagesDialog = function (imagePath, $event) {
                     $mdDialog.show({
                         clickOutsideToClose: true,
                         parent: angular.element(document.body),
@@ -55,6 +55,15 @@
                         templateUrl: "/frontend/components/inference/apply-model-menu/apply-model-dialog-images.html",
                         locals: {},
                         controller: function ($scope, $mdDialog, $window, imageService) {
+                            var concatImagesPath = "";
+                            for ( var i = 0; i < imagePath.length; i++) {
+                                concatImagesPath = concatImagesPath.concat(imagePath[i]);
+                                if (i < imagePath.length - 1) {
+                                    concatImagesPath = concatImagesPath.concat(";");
+                                }
+                            }
+                            $scope.imagesPathList = concatImagesPath;
+
                             $scope.closeDialog = function () {
                                 $mdDialog.hide();
                             };

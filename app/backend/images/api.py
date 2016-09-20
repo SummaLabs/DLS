@@ -18,6 +18,9 @@ def load_classified_images(images_path):
     layers_path = os.path.join(classified_images_dir, classified_images_file)
 
     if request.method == 'GET':
+
+        import time
+        time.sleep(3)
         classified_images_return = []
         with open(layers_path, 'r') as f:
             classified_images_loaded = json.load(f)

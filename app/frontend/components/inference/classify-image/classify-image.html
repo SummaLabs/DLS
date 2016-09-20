@@ -1,4 +1,4 @@
-<div ng-switch="$ctrl.images.length">
+<div ng-switch="images.length">
     <div ng-switch-when="0">
         <div layout="row" layout-align="center center" style="height: 300px">
             <md-progress-circular md-diameter="200"></md-progress-circular>
@@ -7,7 +7,7 @@
     <div ng-switch-default>
         <md-content>
             <md-list>
-                <md-list-item ng-repeat="image in $ctrl.images" ng-click="null">
+                <md-list-item ng-repeat="image in images" ng-click="null">
                     <div layout="row" layout-fill>
                         <img ng-src="data:image/JPEG;base64,{{image.content}}" flex="30" layout-margin alt=""/>
                         <div class="md-item-text md-whiteframe-z1" layout="column" layout-margin flex>
