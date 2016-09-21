@@ -21,3 +21,4 @@ enum==0.4.6
 flask-socketio==2.7.1
 scikit-image=0.12.3
 Cython=0.24.1
+apscheduler=3.2.0

@@ -28,7 +28,8 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'dbinfoService',
     'settings',
     'device',
-    'deviceService'
+    'deviceService',
+    'task'
 ]);
 
 
@@ -86,6 +87,9 @@ angular.module('dlsApp')
         }).state('file-manager', {
             url: "/file-manager",
             template: "<angular-filemanager></angular-filemanager>"
+        }).state('task', {
+            url: "/task",
+            template: "<task></task>"
         }).state('settings', {
             url: "/settings",
             template: "<settings></settings>"
