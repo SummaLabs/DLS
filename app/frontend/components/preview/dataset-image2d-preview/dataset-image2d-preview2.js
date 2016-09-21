@@ -31,15 +31,16 @@ angular.module('datasetImage2dPreview2', ['ngMaterial', 'datasetImage2dPaging2',
                         var tnum = tdataHist[ii][1];
                         tret.push({
                             type:   'class',
-                            idx:    tkey,
-                            num:    tnum,
-                            info:   tkey
+                            label:  tkey,
+                            idx:    ii,
+                            num:    tnum
                         });
                     }
                     // all data:
                     tret.push({
                         type:   'all',
-                        idx:    '---',
+                        label:  '*all',
+                        idx:    tdataHist.length,
                         num:    numAll
                     });
                     self.listClasses = tret;

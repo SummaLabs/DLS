@@ -108,7 +108,7 @@ class DBImageImportReaderFromDir(DBImageImportReader):
         tpathImages = self.dbConfig.getTrainingDir()
         if not os.path.isdir(tpathImages):
             raise Exception("Cant find directory with images [%s]" % tpathImages)
-        self.listLabels = getListDirNamesInDir(tpathImages)
+        self.listLabels = sorted(getListDirNamesInDir(tpathImages))
         if len(self.listLabels)<2:
             strErr = "Incorrect number of classes in directory [%s], more than one needed" % (tpathImages)
             raise Exception(strErr)
@@ -143,7 +143,7 @@ class DBImageImportReaderFromDir(DBImageImportReader):
         if len(set(lstLblTrain).difference(set(lstLblVal)))>0:
             strErr = "Train set [%s] does not coincide with Validation set [%s]" % (lstLblTrain, lstLblVal)
             raise Exception(strErr)
-        self.listLabels = list(set(lstLblTrain + lstLblVal))
+        self.listLabels = sorted(list(set(lstLblTrain + lstLblVal)))
         self.listTrainPath={}
         self.listValPath={}
         for ll in self.listLabels:
