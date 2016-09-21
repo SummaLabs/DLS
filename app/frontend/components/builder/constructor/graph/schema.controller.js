@@ -6,6 +6,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         MOVING: 2,
         JOINING: 3,
         DRAGGING: 4,
+        SHIFT: 5
     }
 
     const events = {
@@ -23,10 +24,11 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
     self.$onInit = function() {
         self.counterNodesInit = 0;
+        self.scale = 2.0;
         self.viewWidth = 0;
         self.viewHeight = 0;
-        resize();
-        viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
+		var divSvg = document.getElementById('workspace');
+        viewBox(viewX, viewY, divSvg.offsetWidth, divSvg.offsetHeight);
 
         self.mouseMode = state.DEFAULT;
         self.links = schema.getLinks();
@@ -115,12 +117,10 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         $scope.$watch(function () {
                 return coreService.param('scale');
             }, function(newValue, oldValue) {
-                self.scale = newValue;
-                self.width = self.scale * $scope.svgWidth;
-                self.height = self.scale * $scope.svgHeight;
-                viewX = viewX * self.scale;
-				viewY = viewY * self.scale;
-				viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
+//                self.scale = newValue;
+//                self.width = self.scale * $scope.svgWidth;
+//                self.height = self.scale * $scope.svgHeight;
+//				viewBox(viewX * self.scale, viewY * self.scale, self.viewWidth, self.viewHeight);
             }
         );
     }
@@ -157,7 +157,6 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		$scope.$on('nodeMouseDown', function (event, data) {
 		    self.mouseMode = state.MOVING;
 			editedNode = schema.getNodeById(data.id);
-//			editedNode.isActive = true;
 			prevMousePos = getOffsetPos($element, data.event);
 		});
 
@@ -235,8 +234,8 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
 		angular.element(window).on('resize', function (event) {
             $scope.$apply( function() {
-                resize();
-                viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
+                var divSvg = document.getElementById('workspace');
+                viewBox(viewX, viewY, divSvg.offsetWidth, divSvg.offsetHeight);
             });
 
 		});
@@ -254,14 +253,19 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
                 }
                 self.isItemClicked = false;
 
-			    var curMousePos = getOffsetPos($element, event);
+                if (event.buttons === 1) {
 
-			    $scope.$apply( function() {
-			        prevMousePos = curMousePos;
-                    self.selRect = Rect(curMousePos.x, curMousePos.y, curMousePos.x, curMousePos.y);
-                    self.selRect.isShown = true;
-                });
-                self.mouseMode = state.SELECTION;
+					prevMousePos = getOffsetPos($element, event);
+
+					$scope.$apply( function() {
+						self.selRect = Rect(prevMousePos.x, prevMousePos.y, prevMousePos.x, prevMousePos.y);
+						self.selRect.isShown = true;
+					});
+					self.mouseMode = state.SELECTION;
+				} else {
+					prevMousePos = getOffsetPos($element, event);
+					self.mouseMode = state.SHIFT;
+				}
 		    }
 		});
 
@@ -273,9 +277,14 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
                     self.selRect.isShown = true;
                 });
 
+		    } else if (self.mouseMode === state.SHIFT) {
+		    	var curMousePos = getOffsetPos($element, event);
+		    	var shiftX = (curMousePos.x - prevMousePos.x) / self.scale;
+		    	var shiftY = (curMousePos.y - prevMousePos.y) / self.scale;
+		    	viewBox(viewX - shiftX,	viewY - shiftY, self.viewWidth, self.viewHeight);
+		    	prevMousePos = curMousePos;
+
 		    } else if (self.mouseMode === state.MOVING && event.buttons === 1) {
-
-
 				var curMousePos = getOffsetPos($element, event);
 				$scope.$apply( function() {
                     editedNode.move((curMousePos.x - prevMousePos.x) / self.scale, (curMousePos.y - prevMousePos.y) / self.scale);
@@ -351,6 +360,31 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 			}
 		});
 
+
+		$element.on('wheel', function (event) {
+			var delta = event.deltaY / 8;
+			var scale = self.scale;
+			if (delta > 0) {
+				scale /= appConfig.svgDefinitions.scaleFactor;
+				if (scale > appConfig.svgDefinitions.scaleMax) {
+					scale = appConfig.svgDefinitions.scaleMax;
+				}
+			}
+      		else {
+      			scale *= appConfig.svgDefinitions.scaleFactor;
+				if (scale < appConfig.svgDefinitions.scaleMin) {
+					scale = appConfig.svgDefinitions.scaleMin;
+				}
+      		}
+      		$scope.$apply( function() {
+				var mousePos = getOffsetPos($element, event);
+      			scaleToPoint(scale, mousePos);
+      			self.scale = scale;
+      		});
+
+
+		});
+
         // system events:
 		$element.on('focus', function (event) {
 
@@ -362,14 +396,28 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         });
     }
 
-    function viewBox(x, y, width, height) {
-        $element.attr('viewBox', x + ' ' + y + ' ' + width + ' ' + height);
+    function scaleToPoint(scale, point) {
+    	var divSvg = document.getElementById('workspace');
+
+		self.width = scale * $scope.svgWidth;
+		self.height = scale * $scope.svgHeight;
+		var scalePrev = self.scale;
+
+		var XPrev = (viewX + point.x) / scalePrev;
+		var YPrev = (viewY + point.y) / scalePrev;
+
+		var left = (XPrev - point.x / scale) * scale;
+		var top =  (YPrev - point.y / scale) * scale;
+
+		viewBox(left, top, divSvg.offsetWidth, divSvg.offsetHeight);
     }
 
-    function resize() {
-        var divSvg = document.getElementById('workspace');
-        self.viewWidth = divSvg.offsetWidth - 10;
-        self.viewHeight = divSvg.offsetHeight - 10;
+    function viewBox(x, y, width, height) {
+    	viewX = x < 0 ? 0 : x;
+    	viewY = y < 0 ? 0 : y;
+    	self.viewWidth = width;
+    	self.viewHeight = height;
+        $element.attr('viewBox', x + ' ' + y + ' ' + width + ' ' + height);
     }
 }
 
