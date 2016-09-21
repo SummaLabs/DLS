@@ -11,18 +11,35 @@ import os
 from apscheduler.schedulers.background import BackgroundScheduler
 
 
-def my_listener(event):
-    print event
+class TaskManager:
+
+    def __init__(self):
+        print "init Task Manager"
+        self.scheduler = BackgroundScheduler()
+        self.scheduler.start()
+        self.tasks = []
+
+    def start_task(self, task):
+        self.scheduler.add_job(func=task.execute)
+        self.tasks.append(task)
+
+    def term_task(self, index):
+        task = self.tasks[index]
+        task.kill()
+        self.tasks.pop(index)
+
+    def shutdown(self):
+        self.scheduler.shutdown()
+
+    def report_progress(self):
+        print("sending tasks progress")
 
 
 if __name__ == '__main__':
-    scheduler = BackgroundScheduler()
-    dt = CmdTask()
-    scheduler.add_listener(my_listener)
-    job = scheduler.add_job(dt.execute, id="default")
-    # scheduler.add_job(default_task.execute, 'interval', seconds=3)
-    scheduler.start()
-    print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
+
+    tm = TaskManager()
+    t = CmdTask()
+    tm.start_task(t)
 
     try:
         # This is here to simulate application activity (which keeps the main thread alive).
@@ -30,4 +47,5 @@ if __name__ == '__main__':
             time.sleep(2)
     except (KeyboardInterrupt, SystemExit):
         # Not strictly necessary if daemonic mode is enabled but should be done if possible
-        scheduler.shutdown()
+        tm.term_task(0)
+        tm.shutdown()

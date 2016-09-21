@@ -1,8 +1,8 @@
 from datetime import datetime
 import time
 import os
-import threading
 import subprocess
+
 
 class BaseTask:
     """A simple example class"""
@@ -26,10 +26,6 @@ class BaseTask:
     def kill(self):
         self.alive = False
 
-    def handler(signum, frame):
-        print 'Signal handler called with signal', signum
-        raise IOError("Couldn't open device!")
-
 
 class DefaultTask(BaseTask):
     def perform(self):
@@ -40,7 +36,7 @@ class DefaultTask(BaseTask):
 
 class CmdTask(BaseTask):
     def perform(self):
-        bash_command = "/home/yegor/trash/DLS/test.sh"
+        bash_command = "/home/yegor/trash/DLS/app/backend/task/test.sh"
         tenv = os.environ.copy()
         tenv['LC_ALL'] = "C"
         process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE, env=tenv)
