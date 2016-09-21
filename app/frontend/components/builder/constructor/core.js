@@ -129,18 +129,18 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 	}
 
 	this.zoomOut = function(event) {
-        var scale = coreService.param('scale');
+        var scale = self.svgControl.getScale();
         scale /= appConfig.svgDefinitions.scaleFactor;
         if (scale > appConfig.svgDefinitions.scaleMin) {
-            coreService.param('scale', scale);
+            self.svgControl.scale(scale);
         }
     };
 
     this.zoomIn = function(event) {
-        var scale = coreService.param('scale');
+        var scale = self.svgControl.getScale();
         scale *= appConfig.svgDefinitions.scaleFactor;
         if (scale < appConfig.svgDefinitions.scaleMax) {
-            coreService.param('scale', scale);
+            self.svgControl.scale(scale);
         }
     };
 
@@ -185,7 +185,7 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 		});
 
 		function setUpNetwork() {
-			coreService.param('scale', 1.0);
+			self.svgControl.scale(1.0);
             self.svgControl.setLayers(networkDataService.getLayers());
 		};
     }

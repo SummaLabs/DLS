@@ -44,9 +44,8 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
             width: 0,
             height: 0
         };
-        schemaWatcher();
         schemaEvents();
-        initBackground(self, $scope, appConfig.svgDefinitions.gridStep);
+        initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element);
 	};
 
 	$scope.controlItem.viewportPos = function(x, y) {
@@ -55,7 +54,15 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
             viewY = y;
             viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
         });
-	}
+	};
+
+	$scope.controlItem.getScale = function() {
+	    return getScale();
+	};
+
+	$scope.controlItem.scale = function(scale) {
+        setScale(scale);
+	};
 
     $scope.controlItem.addLayer = function(layer) {
         var node = schema.addNode(layer.name, layer.category, layer.template, layer.id);
@@ -111,18 +118,6 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
     self.emitEvent = function(eventType, data) {
         $scope.$emit(eventType, data);
-    }
-
-    function schemaWatcher() {
-        $scope.$watch(function () {
-                return coreService.param('scale');
-            }, function(newValue, oldValue) {
-//                self.scale = newValue;
-//                self.width = self.scale * $scope.svgWidth;
-//                self.height = self.scale * $scope.svgHeight;
-//				viewBox(viewX * self.scale, viewY * self.scale, self.viewWidth, self.viewHeight);
-            }
-        );
     }
 
     function schemaEvents() {
@@ -253,16 +248,18 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
                 }
                 self.isItemClicked = false;
 
-                if (event.buttons === 1) {
+                if (event.buttons === 1 && event.ctrlKey) {
 
 					prevMousePos = getOffsetPos($element, event);
+                    prevMousePos.x += viewX;
+                    prevMousePos.y += viewY;
 
 					$scope.$apply( function() {
 						self.selRect = Rect(prevMousePos.x, prevMousePos.y, prevMousePos.x, prevMousePos.y);
 						self.selRect.isShown = true;
 					});
 					self.mouseMode = state.SELECTION;
-				} else {
+				} else if (event.buttons === 1) {
 					prevMousePos = getOffsetPos($element, event);
 					self.mouseMode = state.SHIFT;
 				}
@@ -273,6 +270,8 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
             if (self.mouseMode === state.SELECTION) {
 			    var curMousePos = getOffsetPos($element, event);
 			    $scope.$apply( function() {
+                    curMousePos.x += viewX;
+                    curMousePos.y += viewY;
                     self.selRect = Rect(prevMousePos.x, prevMousePos.y, curMousePos.x, curMousePos.y);
                     self.selRect.isShown = true;
                 });
@@ -362,7 +361,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
 
 		$element.on('wheel', function (event) {
-			var delta = event.deltaY / 8;
+			var delta = (event.deltaY || event.detail || event.wheelDelta) / 8;
 			var scale = self.scale;
 			if (delta > 0) {
 				scale /= appConfig.svgDefinitions.scaleFactor;
@@ -381,8 +380,6 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
       			scaleToPoint(scale, mousePos);
       			self.scale = scale;
       		});
-
-
 		});
 
         // system events:
@@ -390,6 +387,17 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
 		});
     }
+
+    function setScale(scale) {
+        coreService.param('scale', scale);
+        self.scale = scale;
+	}
+
+	function getScale() {
+		return self.scale;
+	}
+
+
     function removeActiveLink() {
         $scope.$apply( function() {
             self.activelink.nodes.length = 0;
@@ -421,10 +429,13 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
     }
 }
 
-function initBackground(self, scope, step) {
-    self.grid = {}
-    self.grid.vertical = []
-    for (let a = 0; a < scope.svgWidth; a += step)
+function initBackground(self, scope, step, element) {
+    self.grid = {};
+    self.grid.vertical = [];
+    self.grid.horizontal = [];
+    // var viewGroup = angular.element(element[0].querySelector('#view'));
+    // var line = angular.element('<line>');
+    for (let a = 0; a < scope.svgWidth; a += step) {
         self.grid.vertical.push({
             x: a,
             y: 0,
@@ -432,7 +443,16 @@ function initBackground(self, scope, step) {
             y2: scope.svgHeight,
         });
 
-    self.grid.horizontal = []
+
+       /* var curLine = line.clone();
+        curLine.attr('style', 'stroke:rgb(111,111,111);stroke-width:0.5');
+        curLine.attr('x1', '' + a);
+        curLine.attr('y1', '0');
+        curLine.attr('x2', '' + a);
+        curLine.attr('y2', '' + scope.svgHeight);
+        viewGroup.append(curLine);*/
+    }
+
     for (let a = 0; a < scope.svgHeight; a += step)
         self.grid.horizontal.push({
             x: 0,
