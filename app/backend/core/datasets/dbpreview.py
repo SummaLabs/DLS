@@ -196,8 +196,6 @@ class DatasetImage2dInfo:
                     tidx = int(imdIdx)
                     tkey = tdbIndex['keys'][tidx]
                     timg = ImageTransformer2D.decodeLmdbItem2Image(txn.get(tkey))
-                    # lstKeys = [key for key, _ in txn.cursor()]
-                    # timg = ImageTransformer2D.decodeLmdbItem2Image(txn.get(lstKeys[int(imdIdx)]))
                     strBuff = StringIO()
                     buffImg=Image.fromarray(timg)
                     buffImg.save(strBuff, format='JPEG')
@@ -219,23 +217,6 @@ class DatasetImage2dInfo:
                     }
                     retInfo.append(tmp)
                 return retInfo
-        # pathLMDB = self.pathDbTrain
-        # if ptype == 'val':
-        #     pathLMDB = self.pathDbVal
-        # retInfo=[]
-        # for ii in range(idxFrom, idxTo):
-        #     with lmdb.open(pathLMDB) as env:
-        #         with env.begin(write=False) as  txn:
-        #             lstKeys = [key for key, _ in txn.cursor()]
-        #             tdat = dlscaffe_pb2.Datum()
-        #             tdat.ParseFromString(txn.get(lstKeys[ii]))
-        #             tmp = {
-        #                 'pos': ii,
-        #                 'info' : self.cfg.cfg["dbhist"]["labels"][tdat.label],
-        #                 'idx': ii
-        #             }
-        #             retInfo.append(tmp)
-        # return retInfo
 
 class DatasetsWatcher:
     dirDatasets=None
@@ -400,7 +381,8 @@ class DatasetForTests:
 
 ###############################
 # Only for tests API: must be deleted in feature
-dataSetProviderOnlyForTests = DatasetForTests(os.path.abspath('data-test/dataset-image2d/simple4c_test'))
+#FIXME: remove code below in feature
+dataSetProviderOnlyForTests = None #DatasetForTests(os.path.abspath('data-test/dataset-image2d/simple4c_test'))
 
 @dbpreview.route('/datasetinfo/', methods=['GET', 'POST'])
 def dataset_info():
