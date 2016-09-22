@@ -7,37 +7,46 @@ from app.backend.task.default_task import DefaultTask, CmdTask
 import time
 import logging
 import json
+import gevent.monkey
 from app.backend import socketio
 logging.basicConfig()
+gevent.monkey.patch_thread()
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
 
 class TaskManager:
+    """Simple wrapper for Advanced Python Scheduler"""
 
     def __init__(self):
         print "init Task Manager"
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
+
+        # Map of tasks for tracking them on UI
         self.tasks = {}
         self.scheduler.add_job(self.report_progress, 'interval', seconds=1)
         self.identity = 0
 
+    # Starts new task
     def start_task(self, task):
+
         self.scheduler.add_job(func=task.execute)
         task.id = self.identity
         self.tasks[self.identity] = task
         self.identity += 1
 
+    # Kills task by it's ID
     def term_task(self, index):
         task = self.tasks[index]
         task.kill()
-        #self.tasks.pop(index)
 
     def shutdown(self):
         self.scheduler.shutdown()
 
     def report_progress(self):
+        """Gathers information from task and sends to clients"""
+
         print("sending tasks progress")
         task_data = []
         for t in self.tasks.values():
@@ -45,12 +54,12 @@ class TaskManager:
         socketio.emit('task_monitor', json.dumps(task_data))
 
 
-
-
+# Some simple testing
 if __name__ == '__main__':
 
     tm = TaskManager()
-    t = DefaultTask()
+    t = CmdTask("/home/yegor/trash/DLS/app/backend/task/test.sh")
+    tm.start_task(t)
     tm.start_task(t)
 
     try:

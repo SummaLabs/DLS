@@ -51,9 +51,9 @@
                         },
                         "formatters": {}
                     };
-                    for (var ii = 0; ii < numpts; ii++) {
+                    /*for (var ii = 0; ii < numpts; ii++) {
                         self.addRandomPoint2Plot(tmp);
-                    }
+                    }*/
                     return tmp;
                 };
                 self.addRandomPoint = function () {
@@ -94,104 +94,7 @@
                 self.isChecked = false;
                 self.isShowInfo = true;
                 self.selectedIndex = -1;
-                self.listDats = [
-                    {
-                        id: 100,
-                        progress: 10,
-                        isFinished: false,
-                        text: 'Dataset MNIST',
-                        type: 'dataset',
-                        plot: self.getInitPlotData(5)
-        },
-                    {
-                        id: 101,
-                        progress: 90,
-                        isFinished: true,
-                        text: 'Model Inception-v3',
-                        type: 'model',
-                        plot: self.getInitPlotData(5)
-        },
-                    {
-                        id: 102,
-                        progress: 10,
-                        isFinished: false,
-                        text: 'Dataset Imagenet 100k',
-                        type: 'dataset',
-                        plot: self.getInitPlotData(5)
-        },
-                    {
-                        id: 101,
-                        progress: 10,
-                        isFinished: false,
-                        text: 'Model Inception-v3',
-                        type: 'model',
-                        plot: self.getInitPlotData(5)
-        },
-                    {
-                        id: 102,
-                        progress: 10,
-                        isFinished: false,
-                        text: 'Dataset Imagenet 100k',
-                        type: 'dataset',
-                        plot: self.getInitPlotData(5)
-        },
-                    {
-                        id: 101,
-                        progress: 90,
-                        isFinished: true,
-                        text: 'Model Inception-v3',
-                        type: 'model',
-                        plot: self.getInitPlotData(5)
-        },
-                    {
-                        id: 102,
-                        progress: 10,
-                        isFinished: false,
-                        text: 'Dataset Imagenet 100k',
-                        type: 'dataset',
-                        plot: self.getInitPlotData(5)
-        },
-                    {
-                        id: 101,
-                        progress: 10,
-                        isFinished: false,
-                        text: 'Model Inception-v3',
-                        type: 'model',
-                        plot: self.getInitPlotData(5)
-        },
-                    {
-                        id: 102,
-                        progress: 10,
-                        isFinished: false,
-                        text: 'Dataset Imagenet 100k',
-                        type: 'dataset',
-                        plot: self.getInitPlotData(5)
-        },
-                    {
-                        id: 103,
-                        progress: 10,
-                        isFinished: false,
-                        text: 'Dataset Imagenet 1000k',
-                        type: 'dataset',
-                        plot: self.getInitPlotData(5)
-        },
-                    {
-                        id: 102,
-                        progress: 90,
-                        isFinished: true,
-                        text: 'Dataset Imagenet 100k',
-                        type: 'dataset',
-                        plot: self.getInitPlotData(5)
-        },
-                    {
-                        id: 103,
-                        progress: 10,
-                        isFinished: false,
-                        text: 'Dataset Imagenet 1000k',
-                        type: 'dataset',
-                        plot: self.getInitPlotData(5)
-        }
-    ];
+                self.listDats = [];
                 self.chartData = function () {
                     if (self.selectedIndex >= 0) {
                         return self.listDats[self.selectedIndex].plot;
@@ -229,6 +132,10 @@
                     console.log(msg);
                     var tasks = JSON.parse(msg);
                     //task.plot = self.getInitPlotData();
+                    for(var i = 0; i < tasks.length; i++){
+                        tasks[i].plot = self.getInitPlotData();
+                        tasks[i].plot.data.rows = tasks[i].rows;
+                    }
                     
                     self.listDats = tasks;
                     $scope.$apply()
