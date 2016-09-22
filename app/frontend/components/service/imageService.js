@@ -4,19 +4,10 @@ angular.module('imageService', [])
 function ImageService($http) {
 
     this.classifyImages = function(imagesPath) {
-        var classifiedImages = [];
-        $http({
+        return $http({
             method: "GET",
             url: "/images/classify/" + imagesPath
-        }).then(function mySucces(response) {
-            response.data.forEach(function(layer) {
-                classifiedImages.push(layer)
-            });
-        }, function myError(response) {
-            console.log(response);
         });
-
-        return classifiedImages;
     };
     
     this.loadClassifiedImagesAsJsonFile = function() {
