@@ -3,10 +3,12 @@ Demonstrates how to use the background scheduler to schedule a job that executes
 intervals.
 """
 
-from datetime import datetime
 from app.backend.task.default_task import DefaultTask, CmdTask
 import time
-import os
+import logging
+import json
+from app.backend import socketio
+logging.basicConfig()
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -17,28 +19,38 @@ class TaskManager:
         print "init Task Manager"
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
-        self.tasks = []
+        self.tasks = {}
+        self.scheduler.add_job(self.report_progress, 'interval', seconds=1)
+        self.identity = 0
 
     def start_task(self, task):
         self.scheduler.add_job(func=task.execute)
-        self.tasks.append(task)
+        task.id = self.identity
+        self.tasks[self.identity] = task
+        self.identity += 1
 
     def term_task(self, index):
         task = self.tasks[index]
         task.kill()
-        self.tasks.pop(index)
+        #self.tasks.pop(index)
 
     def shutdown(self):
         self.scheduler.shutdown()
 
     def report_progress(self):
         print("sending tasks progress")
+        task_data = []
+        for t in self.tasks.values():
+            task_data.append(t.status())
+        socketio.emit('task_monitor', json.dumps(task_data))
+
+
 
 
 if __name__ == '__main__':
 
     tm = TaskManager()
-    t = CmdTask()
+    t = DefaultTask()
     tm.start_task(t)
 
     try:

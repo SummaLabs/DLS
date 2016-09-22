@@ -14,7 +14,7 @@ tm = TaskManager()
 @task.route('/start', methods=["POST"])
 def start_task():
     params = json.loads(request.data)
-    t = DefaultTask
+    t = DefaultTask()
     tm.start_task(t)
     return Response(json.dumps("{status: 'ok'}"), mimetype='application/json')
 
@@ -22,7 +22,7 @@ def start_task():
 @task.route('/term', methods=["POST"])
 def term_task():
     params = json.loads(request.data)
-    index = params.index
+    index = params['index']
     tm.term_task(index)
     return Response(json.dumps("{status: 'ok'}"), mimetype='application/json')
 
