@@ -7,25 +7,26 @@
             bindings: {
                 models: '<'
             },
-            controller: function ($mdSidenav) {
+            controller: function (modelService) {
+                var self = this;
                 this.$onInit = function () {
-                    this.models = [
-                        { name: 'Model1111111111111111111111111111111111111111111111111111111'},
-                        { name: 'Model2222222222222222222222222222222222222222222222222222222'},
-                        { name: 'Model3222222222222222222222222222222222222222222222222222222'},
-                        { name: 'Model4222222222222222222222222222222222222222222222222222222'}
-                    ];
-                    this.selected = this.models[0];
+                    self.models = [];
+                    var future = modelService.loadAllModels();
+                    future.then(function mySucces(response) {
+                        response.data.forEach(function (model) {
+                            self.models.push(model)
+                            self.selected = self.models[0];
+                        });
+                    }, function myError(response) {
+                        console.log(response);
+                    });
+                    
                 };
 
                 this.$selectModel = function( model ) {
                     this.selected = angular.isNumber(model) ? $scope.models[model] : model;
                 };
-;
 
-                this.$toggleSidenav = function () {
-                    $mdSidenav('right').toggle();
-                }
             }
         });
 })();
