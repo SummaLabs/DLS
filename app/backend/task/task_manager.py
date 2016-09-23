@@ -1,18 +1,16 @@
-"""
-Demonstrates how to use the background scheduler to schedule a job that executes on 3 second
-intervals.
-"""
-
 from app.backend.task.default_task import DefaultTask, CmdTask
 from apscheduler.executors.pool import ThreadPoolExecutor
 from apscheduler.schedulers.gevent import GeventScheduler
 from app.backend import socketio
 from config import DevelopmentConfig
+from gevent import monkey
 import time
 import logging
 import json
 
 logging.basicConfig()
+# Needed this to avoid deadlock
+monkey.patch_all()
 
 
 class TaskManager:
@@ -53,7 +51,6 @@ class TaskManager:
 
     def report_progress(self):
         """Gathers information from task and sends to clients"""
-
         print("sending tasks progress")
         task_data = []
         for t in self.tasks.values():
