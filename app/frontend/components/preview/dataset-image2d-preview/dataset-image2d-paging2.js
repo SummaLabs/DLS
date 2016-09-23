@@ -11,7 +11,7 @@ angular.module('datasetImage2dPaging2', ['ngMaterial', 'cl.paging'])
      bindings: {
          paramDatabase:     '@',
          paramType:         '@',
-         paramClass:        '@',
+         paramClassIdx:     '@',
          paramClassType:    '@'
      },
     controller: function ($scope, $http, dbinfoService) {
@@ -32,22 +32,22 @@ angular.module('datasetImage2dPaging2', ['ngMaterial', 'cl.paging'])
 
                 var tdataHist   = null;
                 var numAll      = 0;
-                if(self.datasetType=='val') {
+                if(self.paramType=='val') {
                     tdataHist = response.data.hist.histVal;
-                    numAll    =response.data.info.numTrain;
+                    numAll    = response.data.info.numVal;
                 } else {
                     tdataHist = response.data.hist.histTrain;
-                    numAll    = response.data.info.numVal;
+                    numAll    = response.data.info.numTrain;
                 }
-                var mapCls={};
+                var mapCls=[];
                 for(var kk=0; kk<tdataHist.length; kk++) {
-                    mapCls[tdataHist[kk][0]]=tdataHist[kk][1];
+                    mapCls.push(tdataHist[kk][1]);
                 }
                 var tnum = 0;
                 if(self.paramClassType=='all') {
                     tnum = numAll;
                 } else {
-                    tnum = mapCls[self.paramClass];
+                    tnum = mapCls[self.paramClassIdx];
                 }
                 self.listIndexes=[];
                 $scope.paging.totalImages = tnum;
@@ -88,6 +88,7 @@ angular.module('datasetImage2dPaging2', ['ngMaterial', 'cl.paging'])
                 dbinfoService.getDatasetRangeInfo(
                     self.paramDatabase,
                     self.paramType,
+                    self.paramClassIdx,
                     self.currentIdx.from,
                     self.currentIdx.to
                 ).then(

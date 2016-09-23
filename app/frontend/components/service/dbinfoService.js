@@ -37,7 +37,7 @@ function DBInfoService($http) {
                 url: '/dbpreview/dbimgmean/' + dbID
             });
     };
-    self.getDatasetRangeInfo = function (dbId, dbType, pfrom, pto) {
+    self.getDatasetRangeInfo = function (dbId, dbType, labelId, pfrom, pto) {
         return $http({
             method: 'POST',
             url:    '/dbpreview/dbrangeinfo/',
@@ -45,7 +45,8 @@ function DBInfoService($http) {
                 from:       pfrom,
                 to:         pto,
                 dbid:       dbId,
-                dbtype:     dbType
+                dbtype:     dbType,
+                labelid:    labelId
             }
         });
     };

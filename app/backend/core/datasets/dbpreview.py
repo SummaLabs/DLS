@@ -16,6 +16,7 @@ from imgproc2d import ImageTransformer2D
 import json
 import time
 import lmdb
+import numpy as np
 
 try:
     from cStringIO import StringIO
@@ -24,7 +25,6 @@ except ImportError:
 
 import dlscaffe.caffedls_pb2 as dlscaffe_pb2
 from PIL import Image
-import skimage.io as skio
 
 dbpreview = Blueprint(__name__, __name__)
 
@@ -48,6 +48,9 @@ class DatasetImage2dInfo:
     sizeInBytesVal=0
     sizeInBytesTotal=0
     #
+    labels=None
+    dictLabelsIdx=None
+    dbIndex=None
     cfg=None
     def __init__(self, pathDB):
         self.pathDB = pathDB
@@ -79,7 +82,7 @@ class DatasetImage2dInfo:
         return isValidDir
     def isInitialized(self):
         return (self.cfg is not None)
-    def loadDBInfo(self):
+    def loadDBInfo(self, isBuildSearchIndex=True):
         if self.checkIsAValidImage2dDir():
             self.cfg = DBImage2DConfig(self.pathConfig)
             if not self.cfg.isInitialized():
@@ -89,6 +92,14 @@ class DatasetImage2dInfo:
                 self.sizeInBytesTrain   = utils.getDirectorySizeInBytes(self.pathDbTrain)
                 self.sizeInBytesVal     = utils.getDirectorySizeInBytes(self.pathDbVal)
                 self.sizeInBytesTotal   = self.sizeInBytesTrain+self.sizeInBytesVal
+                #
+                self.labels = self.cfg.getLabels()
+                if isBuildSearchIndex:
+                    self.dictLabelsIdx = self.cfg.getDictLabelsIdx()
+                    self.dbIndex = {
+                        'train': self.buildKeyIndexForLabels('train'),
+                        'val':   self.buildKeyIndexForLabels('val')
+                    }
             except Exception as terr:
                 strErr = 'Cant calculate size for dir, Error: %s' % (terr)
                 print (strErr)
@@ -99,6 +110,27 @@ class DatasetImage2dInfo:
         else:
             strErr = 'Path [%s] is not a valid Image2D DB directory' % self.pathDB
             raise Exception(strErr)
+    def buildKeyIndexForLabels(self, ptype):
+        if ptype=='train':
+            tpathLMDB=self.pathDbTrain
+        else:
+            tpathLMDB = self.pathDbVal
+        with lmdb.open(tpathLMDB) as env:
+            with env.begin(write=False) as  txn:
+                arrKeysDB       = np.array([key for key, _ in txn.cursor()])
+                arrLblIdx       = np.array([int(xx[:6]) for xx in arrKeysDB])
+                tmapIdx={}
+                # (1) for every label we build array of indexes
+                for ii in range(len(self.labels)):
+                    tmapIdx[ii] = np.where(arrLblIdx==ii)[0]
+                # (2) for 'all' data we build fake array of indexes: all range
+                tmapIdx[len(self.labels)] = np.arange(len(arrLblIdx))
+                return {
+                    'map':      tmapIdx,
+                    'keys':     arrKeysDB,
+                    'lblid':    arrLblIdx,
+                    'pathdb':   tpathLMDB
+                }
     def getId(self):
         return self.dbId
     def toString(self):
@@ -125,7 +157,6 @@ class DatasetImage2dInfo:
             tsizeTotalStr = utils.humanReadableSize(self.sizeInBytesTotal)
         else:
             tsizeTotalStr = '???'
-
         tret = {
             'id'  : self.getId(),
             'type': self.cfg.getDBType(),
@@ -157,37 +188,36 @@ class DatasetImage2dInfo:
     def getMeanImageDataRaw(self):
         with open(self.pathMeanImage, 'r') as f:
             return f.read()
-    def getRawImageFromDB(self, ptype, imdIdx, classType=None):
-        pathLMDB = self.pathDbTrain
-        if ptype == 'val':
-            pathLMDB = self.pathDbVal
-        with lmdb.open(pathLMDB) as env:
-            with env.begin(write=False) as  txn:
-                lstKeys = [key for key, _ in txn.cursor()]
-                timg = ImageTransformer2D.decodeLmdbItem2Image(txn.get(lstKeys[int(imdIdx)]))
-                strBuff = StringIO()
-                buffImg=Image.fromarray(timg)
-                buffImg.save(strBuff, format='JPEG')
-                return strBuff.getvalue()
-    def getDbRangeInfo(self, ptype, idxFrom, idxTo):
-        pathLMDB = self.pathDbTrain
-        if ptype == 'val':
-            pathLMDB = self.pathDbVal
-        retInfo=[]
-        for ii in range(idxFrom, idxTo):
+    def getRawImageFromDB(self, ptype, imdIdx):
+        if ptype in self.dbIndex.keys():
+            tdbIndex = self.dbIndex[ptype]
+            pathLMDB = tdbIndex['pathdb']
             with lmdb.open(pathLMDB) as env:
                 with env.begin(write=False) as  txn:
-                    lstKeys = [key for key, _ in txn.cursor()]
-                    tdat = dlscaffe_pb2.Datum()
-                    tdat.ParseFromString(txn.get(lstKeys[ii]))
+                    tidx = int(imdIdx)
+                    tkey = tdbIndex['keys'][tidx]
+                    timg = ImageTransformer2D.decodeLmdbItem2Image(txn.get(tkey))
+                    strBuff = StringIO()
+                    buffImg=Image.fromarray(timg)
+                    buffImg.save(strBuff, format='JPEG')
+                    return strBuff.getvalue()
+    def getDbRangeInfo(self, ptype, labelIdx, idxFrom, idxTo):
+        if ptype in self.dbIndex.keys():
+            tdbIndex    = self.dbIndex[ptype]
+            tmapIndex   = tdbIndex['map']
+            tlabelIdx   = tdbIndex['lblid']
+            tlblid      = int(labelIdx)
+            if tlblid in tmapIndex.keys():
+                retInfo = []
+                for ii in range(idxFrom, idxTo):
+                    tidx = tmapIndex[tlblid][ii]
                     tmp = {
-                        'pos': ii,
-                        'info' : self.cfg.cfg["dbhist"]["labels"][tdat.label],
-                        'idx': ii
+                        'pos':  ii,
+                        'info': self.labels[tlabelIdx[tidx]],
+                        'idx':  tidx
                     }
                     retInfo.append(tmp)
-        return retInfo
-
+                return retInfo
 
 class DatasetsWatcher:
     dirDatasets=None
@@ -241,12 +271,12 @@ class DatasetsWatcher:
     def getMeanImageRawForDB(self, dbId):
         if self.dictDbInfo.has_key(dbId):
             return self.dictDbInfo[dbId].getMeanImageDataRaw()
-    def getRawImageFromDB(self, dbId, ptype, imdIdx, classType=None):
+    def getRawImageFromDB(self, dbId, ptype, imdIdx):
         if self.dictDbInfo.has_key(dbId):
-            return self.dictDbInfo[dbId].getRawImageFromDB(ptype, imdIdx, classType)
-    def getDbRangeInfo(self, dbId, ptype, idxFrom, idxTo):
+            return self.dictDbInfo[dbId].getRawImageFromDB(ptype, imdIdx)
+    def getDbRangeInfo(self, dbId, ptype, labelIdx, idxFrom, idxTo):
         if self.dictDbInfo.has_key(dbId):
-            return self.dictDbInfo[dbId].getDbRangeInfo(ptype, idxFrom, idxTo)
+            return self.dictDbInfo[dbId].getDbRangeInfo(ptype, labelIdx, idxFrom, idxTo)
 
 ###############################
 datasetWatcher              = DatasetsWatcher()
@@ -304,11 +334,12 @@ def dbpreview_db_imgfromdb(dbid, ptype, imgidx):
 
 @dbpreview.route('/dbrangeinfo/', methods=['GET', 'POST'])
 def dataset_dbrangeinfo():
-    dbid   = request.args['dbid']
-    dbtype = request.args['dbtype']
-    tfrom = int(request.args['from'])
-    tto   = int(request.args['to'])
-    tret  = datasetWatcher.getDbRangeInfo(dbid,dbtype, tfrom, tto)
+    dbid    = request.args['dbid']
+    dbtype  = request.args['dbtype']
+    labelid = request.args['labelid']
+    tfrom   = int(request.args['from'])
+    tto     = int(request.args['to'])
+    tret    = datasetWatcher.getDbRangeInfo(dbid,dbtype, labelid, tfrom, tto)
     # tret  = []
     # for xx in range(tfrom,tto):
     #     tret.append(tmp[xx])
@@ -351,7 +382,8 @@ class DatasetForTests:
 
 ###############################
 # Only for tests API: must be deleted in feature
-dataSetProviderOnlyForTests = DatasetForTests(os.path.abspath('data-test/dataset-image2d/simple4c_test'))
+#FIXME: remove code below in feature
+dataSetProviderOnlyForTests = None #DatasetForTests(os.path.abspath('data-test/dataset-image2d/simple4c_test'))
 
 @dbpreview.route('/datasetinfo/', methods=['GET', 'POST'])
 def dataset_info():

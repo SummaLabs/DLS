@@ -62,6 +62,10 @@
     fill-opacity: 0.1;
 }
 
+.palette {
+    width: 200px;
+}
+
 .constructor {
 	height:100%;
 	max-width: 100%;
@@ -76,7 +80,7 @@
 }
 
 #workspace {
-	overflow: auto;
+	overflow: hidden;
 	height:100%;
 }
 

@@ -117,7 +117,7 @@ class DBImage2DBuilder:
                     for pp in tlstPathImg:
                         timg = imageTransformer2D.processImageFromFile(pp, isReshapeFinal=True, isAccumulateMean=True)
                         datum = ImageTransformer2D.cvtImage2Datum(timg, imageEncoding, lidx)
-                        str_id = '%12d' % progressor.counter
+                        str_id = '%6d%12d' % (lidx, progressor.counter)
                         txn.put(str_id.encode('ascii'), datum.SerializeToString())
                         progressor.update()
                     print (progressor)
@@ -171,7 +171,7 @@ class DBImage2DBuilder:
             tpathLabels = self.getParhLabels()
             # (5) save labels to file
             with open(tpathLabels, 'w') as f:
-                tmp = sorted(self.imgReader2D.listLabels)
+                tmp = self.imgReader2D.listLabels
                 for ll in tmp:
                     f.write('%s\n' % ll)
             # (6) save DB-config
@@ -182,7 +182,7 @@ class DBImage2DBuilder:
             strDate=tdateTime.strftime('%Y.%m.%d')
             strTime=tdateTime.strftime('%H:%M:%S')
             # prepare histograms
-            tretLabels=sorted(self.imgReader2D.listLabels)
+            tretLabels=self.imgReader2D.listLabels
             tretLabelHistTrain  = [(ll, len(self.imgReader2D.listTrainPath[ll])) for ll in tretLabels]
             tretLabelHistVal    = [(ll, len(self.imgReader2D.listValPath[ll]  )) for ll in tretLabels]
             # prepare date & time

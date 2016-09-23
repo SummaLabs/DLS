@@ -113,6 +113,17 @@ class DBImage2DConfig:
         pass
     # api
     @checkInit
+    def getLabels(self):
+        tret = self.cfg['dbhist']['labels']
+        return tret
+    @checkInit
+    def getDictLabelsIdx(self):
+        lstLabels = self.getLabels()
+        tret={}
+        for ii,ll in enumerate(lstLabels):
+            tret[ll] = ii
+        return tret
+    @checkInit
     def getDBName(self):
         tret = self.cfg['datasetname']
         return tret

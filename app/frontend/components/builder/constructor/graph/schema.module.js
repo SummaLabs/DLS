@@ -13,6 +13,7 @@ angular.module('graph', [])
                 svgHeight: '@',
                 svgColor: '@'
             },
+            // templateNamespace: 'svg',
             templateUrl: 'frontend/components/builder/constructor/graph/graph.html'
         }
     });
