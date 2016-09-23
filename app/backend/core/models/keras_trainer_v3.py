@@ -43,7 +43,7 @@ class KerasTrainer:
     extJsonTrainConfig = '_trainconfig.json'
     extJsonSolverState = '_solverstate.json'
     modelPrefix=''
-    lmdbReader = None
+    batcherLMDB = None
     pathModelConfig=None
     model=None
     outputDir=None
@@ -96,7 +96,7 @@ class KerasTrainer:
                  outputDir=None, modelPrefixName='keras_model', isResizeInputLayerToImageShape=True):
         if self.isOk():
             self.cleanModel()
-        self.loadLMDBReader(pathLMDBJob, sizeBatch)
+        self.loadBatcherLMDB(pathLMDBJob, sizeBatch)
         with open(pathModelConfig, 'r') as f:
             modelJSON = f.read()
             modelFromCfg = model_from_json(modelJSON)
@@ -104,7 +104,7 @@ class KerasTrainer:
                 self.pathModelConfig = pathModelConfig
                 self.sizeBatch = sizeBatch
                 self.numEpoch = numEpoch
-                self.numIterPerEpoch = self.lmdbReader.numTrain / self.sizeBatch
+                self.numIterPerEpoch = self.batcherLMDB.numTrain / self.sizeBatch
                 self.intervalSaveModel = intervalSaveModel
                 self.intervalValidation = intervalValidation
                 self.modelPrefix = modelPrefixName
@@ -136,7 +136,7 @@ class KerasTrainer:
                 # FIXME: check this point (automatic output layer size). SoftMax to config in feature
                 # self.model.add(Dense(self.lmdbReader.numLbl))
                 # self.model.add(Activation('softmax'))
-                self.model = KerasTrainer.adjustModelInputOutput2DBData(modelFromCfg, self.lmdbReader)
+                self.model = KerasTrainer.adjustModelInputOutput2DBData(modelFromCfg, self.batcherLMDB)
                 # TODO: make the setting for code below. For optimizer, loss-function, metrics
                 sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
                 self.model.compile(loss='categorical_crossentropy',
@@ -148,13 +148,13 @@ class KerasTrainer:
                               intervalSaveModel=1, intervalValidation=1,
                               outputDir=None, modelPrefixName='keras_model',
                               isAppendOutputLayer = True):
-        self.lmdbReader = lmdbReader
+        self.batcherLMDB = lmdbReader
         modelFromCfg = modelConfig
         if modelFromCfg is not None:
             self.pathModelConfig = None
             self.sizeBatch = sizeBatch
             self.numEpoch = numEpoch
-            self.numIterPerEpoch = self.lmdbReader.numTrain / self.sizeBatch
+            self.numIterPerEpoch = self.batcherLMDB.numTrain / self.sizeBatch
             self.intervalSaveModel = intervalSaveModel
             self.intervalValidation = intervalValidation
             self.modelPrefix = modelPrefixName
@@ -168,7 +168,7 @@ class KerasTrainer:
                     strErr = "Directory not found [%s]" % outputDir
                     self.printError(strErr)
                     raise Exception(strErr)
-            self.model = KerasTrainer.adjustModelInputOutput2DBData(modelFromCfg, self.lmdbReader, isAppendOutputLayer=isAppendOutputLayer)
+            self.model = KerasTrainer.adjustModelInputOutput2DBData(modelFromCfg, self.batcherLMDB, isAppendOutputLayer=isAppendOutputLayer)
             # TODO: make the setting for code below. For optimizer, loss-function, metrics
             if modelOptimizer is None:
                 opt = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
@@ -178,11 +178,11 @@ class KerasTrainer:
                                optimizer=opt,
                                metrics=['accuracy'])
     def isOk(self):
-        return ((self.lmdbReader is not None) and (self.model is not None))
-    def loadLMDBReader(self, pathLMDBJob, sizeBatch):
-        self.lmdbReader = BatcherImage2DLMDB(pathLMDBJob, sizeBatch)
+        return ((self.batcherLMDB is not None) and (self.model is not None))
+    def loadBatcherLMDB(self, pathLMDBJob, sizeBatch):
+        self.batcherLMDB = BatcherImage2DLMDB(pathLMDBJob, sizeBatch)
         self.sizeBatch = sizeBatch
-        if not self.lmdbReader.isOk():
+        if not self.batcherLMDB.isOk():
             strErr = "[KERAS-TRAINER] Incorrect LMDB-data in [%s]" % pathLMDBJob
             self.printError(strErr)
             raise Exception(strErr)
@@ -194,8 +194,8 @@ class KerasTrainer:
         if self.isOk():
             self.cleanResults()
             self.model = None
-            self.lmdbReader.close()
-            self.lmdbReader = None
+            self.batcherLMDB.close()
+            self.batcherLMDB = None
             self.pathModelConfig = None
     def printError(self, strError):
         print("keras-error#%s" % strError)
@@ -206,10 +206,10 @@ class KerasTrainer:
             raise Exception(strErr)
         modelInputShape = list(self.model.input_shape)
         for ii in xrange(self.numIterPerEpoch):
-            dataX, dataY = self.lmdbReader.getBatchTrain(reshape2Shape=modelInputShape)
+            dataX, dataY = self.batcherLMDB.getBatchTrain(reshape2Shape=modelInputShape)
             tlossTrain = self.model.train_on_batch(dataX, dataY)
             if (self.currentIter%self.printInterval==0):
-                dataXval, dataYval = self.lmdbReader.getBatchVal(reshape2Shape=modelInputShape)
+                dataXval, dataYval = self.batcherLMDB.getBatchVal(reshape2Shape=modelInputShape)
                 tlossVal = self.model.test_on_batch(dataXval, dataYval)
                 self.trainLog['epoch'].append(self.currentEpoch)
                 self.trainLog['iter'].append(self.currentIter)
@@ -231,11 +231,11 @@ class KerasTrainer:
             self.currentIter +=1
         self.currentEpoch += 1
     def convertImgUint8ToDBImage(self, pimg):
-        if len(self.lmdbReader.shapeImg) < 3:
+        if len(self.batcherLMDB.shapeImg) < 3:
             numCh = 1
         else:
             # FIXME: check this point, number of channels can be on last element on array...
-            numCh = self.lmdbReader.shapeImg[0]
+            numCh = self.batcherLMDB.shapeImg[0]
         # check #channels of input image
         if len(pimg.shape) < 3:
             numChImg = 1
@@ -247,10 +247,10 @@ class KerasTrainer:
                 pimg = skcolor.rgb2gray(pimg)
             else:
                 pimg = skcolor.gray2rgb(pimg)
-        timg = sktransform.resize(pimg.astype(np.float32) * self.lmdbReader.scaleFactor, self.lmdbReader.shapeImg[1:])
+        timg = sktransform.resize(pimg.astype(np.float32) * self.batcherLMDB.scaleFactor, self.batcherLMDB.shapeImg[1:])
         timg = timg.transpose((2, 0, 1))
-        if self.lmdbReader.isRemoveMean:
-            timg -= self.lmdbReader.meanImg
+        if self.batcherLMDB.isRemoveMean:
+            timg -= self.batcherLMDB.meanImg
         return timg
     def inferListImagePath(self, listPathToImages, batchSizeInfer=None):
         if not self.isOk():
@@ -288,7 +288,7 @@ class KerasTrainer:
             else:
                 retProb = np.concatenate(retProb, tprob)
         idxMax = np.argmax(retProb, axis=1)
-        retLbl = np.array(self.lmdbReader.lbl)[idxMax]
+        retLbl = np.array(self.batcherLMDB.lbl)[idxMax]
         retVal = np.max(retProb, axis=1)
         ret = {
             'prob'  : retProb,
@@ -324,7 +324,7 @@ class KerasTrainer:
         tdataX = tdataX.reshape([tmpBatchSize] + modelInputShape[1:])
         tprob = self.model.predict(tdataX, batch_size=1)
         posMax = np.argmax(tprob[0])
-        tlbl = self.lmdbReader.lbl[posMax]
+        tlbl = self.batcherLMDB.lbl[posMax]
         tval = tprob[0][posMax]
         tret = {
             'prob': tprob,
@@ -362,7 +362,7 @@ class KerasTrainer:
             'optimizer'         : self.model.optimizer.get_config(),
             'loss'              : self.model.loss,
             'metrics'           : self.model.metrics_names,
-            'pathLMDB'          : self.lmdbReader.pathDataDir,
+            'pathLMDB'          : self.batcherLMDB.pathDataDir,
             'pathModelConfig'   : "%s" % self.pathModelConfig,
             'sizeBatch'         : self.sizeBatch,
             'numEpoch'          : self.numEpoch,
@@ -479,8 +479,8 @@ class KerasTrainer:
         self.sizeBatch          = configSolverState['sizeBatch']
         self.modelPrefix        = configSolverState['modelPrefix']
         if isLoadLMDBReader:
-            self.loadLMDBReader(configSolverState['pathLMDB'], self.sizeBatch)
-            self.numIterPerEpoch    = self.lmdbReader.numTrain / self.sizeBatch
+            self.loadBatcherLMDB(configSolverState['pathLMDB'], self.sizeBatch)
+            self.numIterPerEpoch    = self.batcherLMDB.numTrain / self.sizeBatch
             self.currentEpoch       = np.floor(self.currentIter / self.numIterPerEpoch)
         else:
             self.numIterPerEpoch    = 1
