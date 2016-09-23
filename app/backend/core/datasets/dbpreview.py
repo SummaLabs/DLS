@@ -82,7 +82,7 @@ class DatasetImage2dInfo:
         return isValidDir
     def isInitialized(self):
         return (self.cfg is not None)
-    def loadDBInfo(self):
+    def loadDBInfo(self, isBuildSearchIndex=True):
         if self.checkIsAValidImage2dDir():
             self.cfg = DBImage2DConfig(self.pathConfig)
             if not self.cfg.isInitialized():
@@ -94,11 +94,12 @@ class DatasetImage2dInfo:
                 self.sizeInBytesTotal   = self.sizeInBytesTrain+self.sizeInBytesVal
                 #
                 self.labels = self.cfg.getLabels()
-                self.dictLabelsIdx = self.cfg.getDictLabelsIdx()
-                self.dbIndex = {
-                    'train': self.buildKeyIndexForLabels('train'),
-                    'val':   self.buildKeyIndexForLabels('val')
-                }
+                if isBuildSearchIndex:
+                    self.dictLabelsIdx = self.cfg.getDictLabelsIdx()
+                    self.dbIndex = {
+                        'train': self.buildKeyIndexForLabels('train'),
+                        'val':   self.buildKeyIndexForLabels('val')
+                    }
             except Exception as terr:
                 strErr = 'Cant calculate size for dir, Error: %s' % (terr)
                 print (strErr)
