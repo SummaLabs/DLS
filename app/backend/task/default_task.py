@@ -3,7 +3,7 @@ import time
 import os
 import subprocess
 import random
-
+import logging
 
 class BaseTask:
     """Base task class.
@@ -22,9 +22,11 @@ class BaseTask:
         self.text = 'base task'
         self.type = 'base'
         self.rows = []
+        self.logger = self.init_logger()
 
     def execute(self):
         self.state = 'running'
+        self.logger.info('starting task ' + str(self.id))
         try:
             self.perform()
         except IOError:
@@ -40,6 +42,7 @@ class BaseTask:
     def kill(self):
         self.alive = False
         self.state = 'killed'
+        self.logger.info('task ' + str(self.id) + 'killed')
 
     def status(self):
         stt = {}
@@ -50,6 +53,25 @@ class BaseTask:
         stt['rows'] = self.rows
         stt['state'] = self.state
         return stt
+
+    def init_logger(self):
+        logger = logging.getLogger('task_' + str(self.id))
+        logger.setLevel(logging.DEBUG)
+        fh = logging.FileHandler('task_' + str(self.id) + '.log')
+        fh.setLevel(logging.DEBUG)
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        fh.setFormatter(formatter)
+        ch.setFormatter(formatter)
+        logger.addHandler(fh)
+        logger.addHandler(ch)
+        return logger
+
+
+
+
+
 
 
 class DefaultTask(BaseTask):
