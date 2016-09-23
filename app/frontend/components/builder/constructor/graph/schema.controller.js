@@ -7,7 +7,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         JOINING: 3,
         DRAGGING: 4,
         SHIFT: 5
-    }
+    };
 
     const events = {
         ADD_NODE: 'graph:addNode',
@@ -15,7 +15,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         ADD_LINK: 'graph:addLink',
         REMOVE_LINK: 'graph:removeLink',
         REMOVE_ITEMS: 'graph:removeItems'
-    }
+    };
 
     var self = this;
     var viewX = 0;
@@ -37,13 +37,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         self.activelink = {
             nodes: []
         };
-        self.selRect = {
-            isShown: false,
-            x: 0,
-            y: 0,
-            width: 0,
-            height: 0
-        };
+        self.selRect = null;
         schemaEvents();
         initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element);
 	};
@@ -71,7 +65,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		node.position(layer.pos.x, layer.pos.y, appConfig.svgDefinitions.gridStep);
 
         return true;
-    }
+    };
 
     $scope.controlItem.setLayers = function(layers) {
 
@@ -91,11 +85,11 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         }, 400);
 
         return true;
-    }
+    };
 
     $scope.controlItem.getNodes = function() {
         return schema.getSchema();
-    }
+    };
 
     function addNode(name, category, template, pos) {
         var node = schema.addNode(name, category, template);
@@ -118,7 +112,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
     self.emitEvent = function(eventType, data) {
         $scope.$emit(eventType, data);
-    }
+    };
 
     function schemaEvents() {
         self.isItemClicked = false;
@@ -227,7 +221,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
 		});
 
-		angular.element(window).on('resize', function (event) {
+		angular.element(window).on('resize', function () {
             $scope.$apply( function() {
                 var divSvg = document.getElementById('workspace');
                 viewBox(viewX, viewY, divSvg.offsetWidth, divSvg.offsetHeight);
@@ -268,7 +262,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
 		$element.on('mousemove', function (event) {
             if (self.mouseMode === state.SELECTION) {
-			    var curMousePos = getOffsetPos($element, event);
+			    let curMousePos = getOffsetPos($element, event);
 			    $scope.$apply( function() {
                     curMousePos.x += viewX;
                     curMousePos.y += viewY;
@@ -277,22 +271,25 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
                 });
 
 		    } else if (self.mouseMode === state.SHIFT) {
-		    	var curMousePos = getOffsetPos($element, event);
-		    	var shiftX = (curMousePos.x - prevMousePos.x) / self.scale;
-		    	var shiftY = (curMousePos.y - prevMousePos.y) / self.scale;
-		    	viewBox(viewX - shiftX,	viewY - shiftY, self.viewWidth, self.viewHeight);
+		    	let curMousePos = getOffsetPos($element, event);
+		    	var left = viewX -(curMousePos.x - prevMousePos.x);
+		    	var top = viewY - (curMousePos.y - prevMousePos.y);
+                if (left < 0 || top < 0 || left + self.viewWidth > self.width || top + self.viewHeight > self.height )
+                    return;
+
+		    	viewBox(left, top, self.viewWidth, self.viewHeight);
 		    	prevMousePos = curMousePos;
 
 		    } else if (self.mouseMode === state.MOVING && event.buttons === 1) {
-				var curMousePos = getOffsetPos($element, event);
+				let curMousePos = getOffsetPos($element, event);
 				$scope.$apply( function() {
                     editedNode.move((curMousePos.x - prevMousePos.x) / self.scale, (curMousePos.y - prevMousePos.y) / self.scale);
                 });
 				prevMousePos = curMousePos;
 			} else if (self.mouseMode === state.JOINING  && event.buttons === 1) {
-				var curMousePos = getOffsetPos($element, event);
-				curMousePos.x =  curMousePos.x / self.scale;
-				curMousePos.y =  curMousePos.y / self.scale;
+				let curMousePos = getOffsetPos($element, event);
+				curMousePos.x =  (viewX + curMousePos.x) / self.scale;
+				curMousePos.y =  (viewY + curMousePos.y) / self.scale;
 				$scope.$apply( function() {
 					if (self.activelink.nodes.length === 1) {
 						self.activelink.nodes.push({
@@ -306,10 +303,8 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 			}
 		});
 
-		$element.on('mouseup', function (event) {
-
+		$element.on('mouseup', function () {
 		    if (self.mouseMode === state.SELECTION) {
-			    var curMousePos = getOffsetPos($element, event);
 			    $scope.$apply( function() {
                     schema.selectNodesInsideRect(self.selRect.scale(1 / self.scale));
                     self.selRect = Rect(0,0,0,0);
@@ -322,7 +317,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
             self.mouseMode = state.DEFAULT;
 		});
 
-		$element.on('mouseleave', function (event) {
+		$element.on('mouseleave', function () {
 
 		    if (self.mouseMode === state.DEFAULT) {
 
@@ -341,7 +336,6 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		});
 
         // keyboard events:
-        var parentNode = angular.element($element[0].parentNode);
 
 		parentNode.on('keydown', function (event) {
 			if (event.keyCode === 46) {
@@ -377,8 +371,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
       		}
       		$scope.$apply( function() {
 				var mousePos = getOffsetPos($element, event);
-      			scaleToPoint(scale, mousePos);
-      			self.scale = scale;
+      			self.scale = scaleToPoint(scale, mousePos);
       		});
 		});
 
@@ -406,9 +399,16 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
     function scaleToPoint(scale, point) {
     	var divSvg = document.getElementById('workspace');
+		var sceneWidth = scale * $scope.svgWidth;
+		var sceneHeight = scale * $scope.svgHeight;
+        var view = Rect(0, 0, sceneWidth, sceneHeight);
+        fitRectToRect(view, Rect(0, 0, divSvg.offsetWidth, divSvg.offsetHeight));
 
-		self.width = scale * $scope.svgWidth;
-		self.height = scale * $scope.svgHeight;
+		self.width = view.width();
+		self.height = view.height();
+
+        scale = view.width() / $scope.svgWidth;
+
 		var scalePrev = self.scale;
 
 		var XPrev = (viewX + point.x) / scalePrev;
@@ -418,15 +418,39 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		var top =  (YPrev - point.y / scale) * scale;
 
 		viewBox(left, top, divSvg.offsetWidth, divSvg.offsetHeight);
+        return scale;
     }
 
     function viewBox(x, y, width, height) {
-    	viewX = x < 0 ? 0 : x;
-    	viewY = y < 0 ? 0 : y;
-    	self.viewWidth = width;
-    	self.viewHeight = height;
-        $element.attr('viewBox', x + ' ' + y + ' ' + width + ' ' + height);
+        var viewRect = Rect(x, y, width+x, height+y);
+        fitRectToRect(viewRect, Rect(0, 0, self.width, self.height));
+    	viewX = viewRect.x();
+    	viewY = viewRect.y();
+    	self.viewWidth = viewRect.width();
+    	self.viewHeight = viewRect.height();
+
+        $element.attr('viewBox', viewX + ' ' + viewY + ' ' + self.viewWidth + ' ' + self.viewHeight);
     }
+
+    function fitRectToRect(inner, outer) {
+		if (inner.x() < outer.x())
+			inner.x(outer.x());
+		if (inner.y() < outer.y())
+			inner.y(outer.y());
+
+		if (inner.right() < outer.width() && inner.bottom() < outer.height()) {
+            var ratioInner = inner.width() / inner.height();
+            var ratioOuter = outer.width() / outer.height();
+            if (ratioInner > ratioOuter) {
+                inner.right(outer.width());
+                inner.bottom(outer.width() / ratioInner);
+            } else {
+                inner.bottom(outer.height());
+                inner.right(outer.height() * ratioInner);
+            }
+        }
+
+	}
 }
 
 function initBackground(self, scope, step, element) {
@@ -482,19 +506,19 @@ function convertCoordinateFromClienToSvg($element, parentNode, clientCoord) {
 }
 
 function isPointInRect(point, rect) {
-    if (point.x >= rect.x && point.x <= rect.x + rect.width
-        && point.y >= rect.y && point.y <= rect.y + rect.height)
-        return true;
-    return false;
+    return (point.x >= rect.x() &&
+			point.x <= rect.right() &&
+			point.y >= rect.y() &&
+			point.y <= rect.bottom());
 }
 
 function selectItems (array, options) {
     if (typeof options == 'undefined') {
-        for(var i = 0; i < array.length; ++i) {
+        for(let i = 0; i < array.length; ++i) {
             array[i].isActive = true;
         }
     } else {
-        for(var i = 0; i < array.length; ++i) {
+        for(let i = 0; i < array.length; ++i) {
             array[i].isActive = options;
         }
     }

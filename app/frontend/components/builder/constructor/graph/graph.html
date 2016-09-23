@@ -26,6 +26,6 @@
         <node ng-repeat="node in svg.nodes" node-data="node" ng-init="svg.idNodesInit = true" ></node>
     </g>
 
-    <rect id = "sel_rect" ng-if="svg.selRect.isShown" ng-attr-x="{{svg.selRect.x}}" ng-attr-y="{{svg.selRect.y}}"
-          ng-attr-width="{{svg.selRect.width}}" ng-attr-height="{{svg.selRect.height}}" />
+    <rect id = "sel_rect" ng-if="svg.selRect.isShown" ng-attr-x="{{svg.selRect.x()}}" ng-attr-y="{{svg.selRect.y()}}"
+          ng-attr-width="{{svg.selRect.width()}}" ng-attr-height="{{svg.selRect.height()}}" />
 </svg>
