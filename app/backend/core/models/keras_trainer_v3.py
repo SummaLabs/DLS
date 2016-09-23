@@ -9,13 +9,10 @@ import glob
 import time
 import json
 import numpy as np
-import lmdb
-import caffe
 import skimage.io as io
 import skimage.color as skcolor
 import skimage.transform as sktransform
 import matplotlib.pyplot as plt
-from StringIO import StringIO
 
 from keras import backend as K
 
@@ -24,13 +21,10 @@ from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers import Convolution2D
 from keras.optimizers import SGD
-from keras.utils import np_utils
 from keras.models import model_from_json
 from keras.optimizers import Optimizer
 
-from app.backend.core.datasets.dbconfig import DBImage2DConfig
-from app.backend.core.datasets.dbpreview import DatasetImage2dInfo
-from app.backend.core.datasets.imgproc2d import ImageTransformer2D
+from batcher_image2d import BatcherImage2DLMDB
 
 #########################
 def split_list_by_blocks(lst, psiz):
@@ -42,148 +36,6 @@ def split_list_by_blocks(lst, psiz):
     """
     tret = [lst[x:x + psiz] for x in xrange(0, len(lst), psiz)]
     return tret
-
-#########################
-class BatcherImage2DLMDB:
-    cfg         = None
-    sizeBatch   = 64
-    numTrain    = -1
-    numVal      = -1
-    numLbl      = -1
-    lbl         = None
-    keysTrain   = None
-    keysVal     = None
-    shapeImg    = None
-    meanImg     = None
-    meanChannel = None
-    meanChImage = None
-    dbTrain     = None
-    dbVal       = None
-    isRemoveMean= True
-    scaleFactor = 1./255.
-    def __init__(self, parPathDB=None, parSizeBatch=-1, scaleFactor=-1.):
-        if parPathDB is None:
-            #FIXME: check this point, LMDBBatcher is not initialized correctly
-            return
-        try:
-            self.cfg     = DatasetImage2dInfo(parPathDB)
-            self.cfg.loadDBInfo(isBuildSearchIndex=False)
-            tpathTrainDB = self.cfg.pathDbTrain
-            tpathValDB   = self.cfg.pathDbVal
-            self.dbTrain = lmdb.open(tpathTrainDB, readonly=True)
-            self.dbVal   = lmdb.open(tpathValDB,   readonly=True)
-            with self.dbTrain.begin() as txnTrain, self.dbVal.begin() as txnVal:
-                self.lbl    = self.cfg.labels
-                self.numLbl = len(self.lbl)
-                self.numTrain = self.dbTrain.stat()['entries']
-                self.numVal   = self.dbVal.stat()['entries']
-                with txnTrain.cursor() as cursTrain, txnVal.cursor() as cursVal:
-                    self.keysTrain = np.array([key for key, _ in cursTrain])
-                    self.keysVal   = np.array([key for key, _ in cursVal])
-                    timg = ImageTransformer2D.decodeLmdbItem2NNSampple(txnTrain.get(self.keysTrain[0]))
-                    self.shapeImg = timg.shape
-                if parSizeBatch > 1:
-                    self.sizeBatch = parSizeBatch
-                if scaleFactor > 0:
-                    self.scaleFactor = scaleFactor
-                self.loadMeanProto()
-        except lmdb.Error as err:
-            self.pathDataDir = None
-            print 'LMDBReader.Error() : [%s]' % err
-    def loadFromTrainDir(self, pathTrainDir, parImgShape=None):
-        if parImgShape is not None:
-            self.shapeImg = parImgShape
-        self.pathDataDir = pathTrainDir
-        tpathLabels = self.getPathLabels()
-        #FIXME: potential bug
-        if os.path.isfile(tpathLabels):
-            with open(tpathLabels,'r') as f:
-                self.lbl = f.read().splitlines()
-        self.loadMeanProto()
-    def close(self):
-        if self.isOk():
-            self.numTrain   = -1
-            self.numVal     = -1
-            self.numLbl     = -1
-            self.dbTrain.close()
-            self.dbVal.close()
-    def getPath(self,localPath):
-        if self.pathDataDir is not None:
-            return os.path.join(self.pathDataDir, localPath)
-        else:
-            return localPath
-    def getPathLabels(self):
-        return self.getPath(self.fnLabels)
-    def getPathTrainDB(self):
-        return self.getPath(self.dirTrain)
-    def getPathValDB(self):
-        return self.getPath(self.dirVal)
-    def getPathMeanProto(self):
-        return self.getPath(self.fnMeanImg)
-    def loadMeanProto(self):
-        self.meanImg = ImageTransformer2D.loadImageFromBinaryBlog(self.cfg.pathMeanData)*self.scaleFactor
-        self.meanChannel = np.mean(self.meanImg, axis=(1, 2))
-        self.meanChImage = np.zeros(self.meanImg.shape, dtype=self.meanImg.dtype)
-        for ii in range(self.meanImg.shape[0]):
-            self.meanChImage[ii,:,:] = self.meanChannel[ii]
-    def isOk(self):
-        return ((self.numTrain > 0) and (self.numVal > 0) and (self.numLbl>0))
-    def getBatch(self, isTrainData=True, isShuffle=True, batchSize=-1, reshape2Shape=None):
-        if batchSize<1:
-            batchSize = self.sizeBatch
-        if self.isOk():
-            if isTrainData:
-                tptrkDB  = self.dbTrain
-                tptrKeys = self.keysTrain
-            else:
-                tptrkDB  = self.dbVal
-                tptrKeys = self.keysVal
-            with tptrkDB.begin() as txn:
-                if isShuffle:
-                    np.random.shuffle(tptrKeys)
-                tbatchKeys = tptrKeys[:batchSize]
-                tsizeX = [batchSize, self.shapeImg[0], self.shapeImg[1], self.shapeImg[2]]
-                dataX = np.zeros(tsizeX, np.float32)  # FIXME: [1] check data type! [float32/float64]
-                dataY = []
-                tdatum = caffe.proto.caffe_pb2.Datum()
-                for ii in xrange(batchSize):
-                    tdatum.ParseFromString(txn.get(b'%s' % tbatchKeys[ii]))
-                    if tdatum.encoded:
-                        timg = io.imread(StringIO(tdatum.data))
-                    else:
-                        timg = np.fromstring(tdatum.data, np.uint8)
-                    # FIXME: check this point: if gray-image - use reshape(), if RGB - transpose()
-                    if len(timg.shape) < 3:
-                        timg = np.reshape(timg, self.shapeImg).astype(np.float32) * self.scaleFactor
-                    else:
-                        timg = timg.transpose((2, 0, 1)).astype(np.float32) * self.scaleFactor
-                    if self.isRemoveMean:
-                        timg-=self.meanImg
-                    dataY.append(tdatum.label)
-                    dataX[ii] = timg  # FIXME: [1] check data type! [float32/float64]
-                dataY = np_utils.to_categorical(np.array(dataY), self.numLbl)
-                if ((reshape2Shape is None) or (reshape2Shape[1:] == self.shapeImg)):
-                    return (dataX, dataY)
-                else:
-                    #FIXME: reshaping can raise Exception "shape mismatch"
-                    dataX=dataX.reshape([self.sizeBatch] + reshape2Shape[1:])
-                    return (dataX, dataY)
-        else:
-            return None
-    def loadAllDataTrain(self):
-        if self.isOk():
-            return self.getBatch(isTrainData=True, isShuffle=False, batchSize=self.numTrain)
-        else:
-            return None
-    def loadAllDataVal(self):
-        if self.isOk():
-            return self.getBatch(isTrainData=True, isShuffle=False, batchSize=self.numVal)
-        else:
-            return None
-    def getBatchTrain(self, reshape2Shape=None):
-        return self.getBatch(isTrainData=True, reshape2Shape=reshape2Shape)
-    def getBatchVal(self, reshape2Shape=None):
-        return self.getBatch(isTrainData=False, reshape2Shape=reshape2Shape)
 
 #########################
 class KerasTrainer:
@@ -658,13 +510,6 @@ class KerasTrainer:
             if (ei%self.intervalValidation)==0:
                 pass
 
-
 #########################
 if __name__ == '__main__':
-    paramPathCfg= '/home/ar/gitlab.com/DLS.ai/DLS.git/data/datasets/dbset-20160921-193736-502209'
-    cfg = DatasetImage2dInfo(pathDB=paramPathCfg)
-    cfg.loadDBInfo(isBuildSearchIndex=False)
-    tmp = ImageTransformer2D.loadImageFromBinaryBlog(cfg.pathMeanData)
-    # batcherImage2D = BatcherImage2DLMDB(paramPathCfg)
-
-    print (cfg)
+    pass

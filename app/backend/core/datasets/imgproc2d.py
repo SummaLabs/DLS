@@ -141,7 +141,7 @@ class ImageTransformer2D:
         else:
             #FIXME: we believe that... not-encoded data in Theano-format? (#Channels, #Rows, #Cols)
             timg = np.fromstring(tdat.data, dtype=np.uint8).reshape(tshape)
-        return timg
+        return (timg,tdat.label)
 
     @staticmethod
     def cvtImage2Datum(timg, imgEncoding, idxLabel):
@@ -186,14 +186,15 @@ class ImageTransformer2D:
             f.write(tblob.SerializeToString())
 
     @staticmethod
-    def loadImageFromBinaryBlog(finpBlob):
+    def loadImageFromBinaryBlog(finpBlob, isDEBUG=False):
         with open(finpBlob, 'r') as f:
             tblob = dlscaffe_pb2.BlobProto()
             tblob.ParseFromString(f.read())
-            print ("#width:    %d" % tblob.width)
-            print ("#height:   %d" % tblob.height)
-            print ("#channels: %d" % tblob.channels)
-            print ("*.dim = %s" % tblob.shape.dim)
+            if isDEBUG:
+                print ("#width:    %d" % tblob.width)
+                print ("#height:   %d" % tblob.height)
+                print ("#channels: %d" % tblob.channels)
+                print ("*.dim = %s" % tblob.shape.dim)
             #
             tshape = (tblob.channels, tblob.height, tblob.width)
             data = np.array(tblob.data).reshape(tshape)
