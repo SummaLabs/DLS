@@ -4,15 +4,15 @@ intervals.
 """
 
 from app.backend.task.default_task import DefaultTask, CmdTask
+from apscheduler.executors.pool import ThreadPoolExecutor
+from apscheduler.schedulers.gevent import GeventScheduler
+from app.backend import socketio
+from config import DevelopmentConfig
 import time
 import logging
 import json
-import gevent.monkey
-from app.backend import socketio
-logging.basicConfig()
-gevent.monkey.patch_thread()
 
-from apscheduler.schedulers.background import BackgroundScheduler
+logging.basicConfig()
 
 
 class TaskManager:
@@ -20,18 +20,25 @@ class TaskManager:
 
     def __init__(self):
         print "init Task Manager"
-        self.scheduler = BackgroundScheduler()
+
+        self.app_config = DevelopmentConfig()
+        executors = {
+            'default': ThreadPoolExecutor(self.app_config.EXECUTOR_THREADS_NUMBER),
+            'monitor': ThreadPoolExecutor(self.app_config.EXECUTOR_THREADS_NUMBER),
+        }
+
+        self.scheduler = GeventScheduler(executors=executors)
         self.scheduler.start()
 
         # Map of tasks for tracking them on UI
         self.tasks = {}
-        self.scheduler.add_job(self.report_progress, 'interval', seconds=1)
+        self.scheduler.add_job(self.report_progress, 'interval', seconds=self.app_config.JOB_MONITOR_INTERVAL, executor='monitor')
         self.identity = 0
 
     # Starts new task
     def start_task(self, task):
 
-        self.scheduler.add_job(func=task.execute)
+        self.scheduler.add_job(func=task.execute, misfire_grace_time=self.app_config.MISFIRE_GRACE_TIME)
         task.id = self.identity
         self.tasks[self.identity] = task
         self.identity += 1

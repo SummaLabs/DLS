@@ -16,6 +16,7 @@ tm = TaskManager()
 def start_task():
     params = json.loads(request.data)
     t = DefaultTask() #CmdTask("/home/yegor/trash/DLS/app/backend/task/test.sh")
+    # t = CmdTask("/home/yegor/trash/DLS/app/backend/task/test.sh")
     tm.start_task(t)
     return Response(json.dumps("{status: 'ok'}"), mimetype='application/json')
 

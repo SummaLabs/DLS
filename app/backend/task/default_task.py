@@ -58,12 +58,11 @@ class DefaultTask(BaseTask):
     def perform(self):
         while self.alive:
             time.sleep(1)
-            self.progress += 1
+            self.progress += 10
             self.rows.append({'c': [{'v': self.progress}, {'v': random.random()}, {'v': random.random()}]})
             if self.progress == 100:
                 self.state = 'finished'
                 self.alive = False
-                self.state = 'finished'
             print('Task. The time is: %s' % datetime.now())
 
 
@@ -87,7 +86,8 @@ class CmdTask(BaseTask):
             print stdout_line
             self.progress += 1
         process.stdout.close()
-        self.state = 'finished'
+        if self.state == 'running':
+            self.state = 'finished'
         print process.returncode
 
     def kill(self):

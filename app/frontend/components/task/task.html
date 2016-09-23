@@ -48,6 +48,9 @@
                             <div ng-if="dat.state=='killed'">
                                 <md-button ng-disabled="true" class="md-primary">Killed</md-button>
                             </div>
+                            <div ng-if="dat.state=='ready'">
+                                <md-button ng-disabled="true" class="md-primary">Waiting</md-button>
+                            </div>
                         </div>
                         <md-divider></md-divider>
                     </md-list-item>
