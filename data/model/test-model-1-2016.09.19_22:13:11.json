@@ -3,5 +3,6 @@
   "date":"2016.09.19 22:13:11",
   "network":"demo_network",
   "dataSet":"dataset-cat-vs-dogs",
+  "type": "classify-image",
   "size":"112KB"
 }

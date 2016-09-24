@@ -27,7 +27,8 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'settings',
     'device',
     'deviceService',
-    'modelService'
+    'modelService',
+    "inference"
 ]);
 
 

@@ -22,7 +22,7 @@
             </md-list>
         </md-content>
         <md-divider></md-divider>
-        <div layout="column" flex layout-padding>
+        <md-content layout="column" flex layout-padding>
                 <md-chips>
                     <md-chip><strong>Name: </strong>{{ $ctrl.selected.name }}</md-chip>
                     <md-chip><strong>Network: </strong>{{ $ctrl.selected.network }}</md-chip>
@@ -33,11 +33,11 @@
                 <md-tab label="Training">
                 </md-tab>
                 <md-tab label="Inference">
-                    <classify-image></classify-image>
+                    <div inference model="{{$ctrl.selected}}"></div>
                 </md-tab>
                 <md-tab label="Validation">
                 </md-tab>
             </md-tabs>
-        </div>
+        </md-content>
     </md-content>
 </div>

@@ -7,80 +7,63 @@ import os
 import flask
 import base64
 
+from app.backend import app_flask
+
 images = flask.Blueprint(__name__, __name__)
 
-classified_images_file = "classified-images-123123123123.json"
 classified_images_dir = os.path.join(dirname(dirname(dirname(dirname(__file__)))), 'data/app/tmp')
 
 
-@images.route('/classify/<path:images_path>')
-def load_classified_images(images_path):
-    layers_path = os.path.join(classified_images_dir, classified_images_file)
+@images.route('/classify' , methods=['POST'])
+def classified_images():
 
-    if request.method == 'GET':
+    if request.method == 'POST':
+
+        model_id = request.args['modelId']
+        images_path = request.args['imagesPath']
+        images_path_list = images_path.split(';')
+
+        base_path = os.path.join(dirname(dirname(dirname(dirname(__file__)))), app_flask.config['DLS_FILEMANAGER_BASE_PATH'])
+
+
+        classified_images_return = build_model_response(base_path, images_path_list)
 
         import time
         time.sleep(3)
-        classified_images_return = []
-        with open(layers_path, 'r') as f:
-            classified_images_loaded = json.load(f)
-            for image in classified_images_loaded['images']:
-                with open(image['path'], "rb") as image_file:
-                    imageEncode = base64.b64encode(image_file.read())
-                    classified_images_return.append(create_image_n_classes(image, int(3), imageEncode))
-            return Response(json.dumps(classified_images_return), mimetype='application/json')
+
+        dumps = json.dumps(classified_images_return)
+        return Response(dumps, mimetype='application/json')
 
 
-def create_image_n_classes(classified_image, n, imageEncode):
-    n_class_probabilities = []
-    class_probabilities = classified_image['classProbabilities']
-    for index in range(len(class_probabilities)):
-        if index < n:
-            n_class_probabilities.append(class_probabilities[index])
+def build_model_response(base_path, images_path):
+    model_response = {
+        'classes': ["Class 1", "Class 2", "Class 3", "Class 4", "Class 5", "Class 6", "Class 7", "Class 8", "Class 9",
+                    "Class 10"]}
+    images = []
+    for path in images_path:
+        image = {}
+        full_path = os.path.join(base_path, path)
+        image['path'] = full_path
+        with open(full_path, "rb") as image_file:
+            image['content'] = base64.b64encode(image_file.read())
 
-    path_ = classified_image['path']
-    head, tail = os.path.split(path_)
+        image['classProbabilities'] = [
+            {"name": "Class 1", "value": "80"},
+            {"name": "Class 2", "value": "10"},
+            {"name": "Class 3", "value": "5"},
+            {"name": "Class 4", "value": "3"},
+            {"name": "Class 5", "value": "1"},
+            {"name": "Class 6", "value": "1"},
+            {"name": "Class 7", "value": "1"},
+            {"name": "Class 8", "value": "1"},
+            {"name": "Class 9", "value": "1"},
+            {"name": "Class 10", "value": "80"}
+        ]
+        images.append(image)
 
-    return {'name': tail,
-            'content': imageEncode,
-            'classProbabilities': n_class_probabilities}
+    model_response['images'] = images
 
-
-@images.route('/classified/download')
-def download_classified_images_csv():
-    layers_path = os.path.join(classified_images_dir, classified_images_file)
-    with open(layers_path, 'r') as f:
-        classified_images_json = json.load(f)
-        classes = classified_images_json['classes']
-        images = classified_images_json['images']
-        # csv header
-        csv = "path,"
-        classes_len = len(classes)
-        for index in range(classes_len):
-            csv += classes[index]
-            if index < classes_len:
-                csv += ","
-        csv += '\n'
-        # csv content
-        for image in images:
-            csv += image['path'] + ','
-            for classProbability in image['classProbabilities']:
-                classes_len = len(classes)
-                for index in range(classes_len):
-                    classes_index_ = classes[index]
-                    name_ = classProbability['name']
-                    if classes_index_ == name_:
-                        csv += classProbability['value']
-                        if index < classes_len - 1:
-                            csv += ","
-                        else:
-                            csv += '\n'
-
-    return Response(
-        csv,
-        mimetype="text/csv",
-        headers={"Content-disposition":
-                     "attachment; classified_images.csv"})
+    return model_response
 
 
 @images.route('/dataset/roc/load/<path:id>')

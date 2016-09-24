@@ -3,19 +3,15 @@ angular.module('imageService', [])
 
 function ImageService($http) {
 
-    this.classifyImages = function(imagesPath) {
+    this.classifyImages = function(imagesPath, modelId) {
         return $http({
-            method: "GET",
-            url: "/images/classify/" + imagesPath
+            method: 'POST',
+            url:    '/images/classify',
+            params: {
+                imagesPath: imagesPath,
+                modelId: modelId
+            }
         });
-    };
-    
-    this.loadClassifiedImagesAsJsonFile = function() {
-        return $http({
-            method: "GET",
-            url: "/images/classified/download",
-            responseType: 'arraybuffer'
-        })
     };
     
     this.loadDataSetROC = function(id) {

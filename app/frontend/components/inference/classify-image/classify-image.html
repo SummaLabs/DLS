@@ -1,12 +1,12 @@
 <div layout="column">
     <div layout="row">
         <md-button class="md-raised md-primary">Upload</md-button>
-        <md-button class="md-raised md-primary" ng-click="$ctrl.choseImages($event)">From Server</md-button>
-        <md-button ng-show="$ctrl.state == 'LOADED'" ng-href="{{$ctrl.fileUrl}}" download="classifiedImages.json" class="md-primary md-raised">
-            Download
+        <md-button class="md-raised md-primary" ng-click="choseImages($event)">From Server</md-button>
+        <md-button ng-show="state == 'LOADED'" ng-href="{{fileUrl}}" download="classifiedImages.json" class="md-primary md-raised">
+            Download CSV
         </md-button>
     </div>
-    <div ng-switch="$ctrl.state">
+    <div ng-switch="state">
         <div ng-switch-when="LOADING">
             <div layout="row" layout-align="center center">
                 <md-progress-circular md-diameter="200"></md-progress-circular>
@@ -15,7 +15,7 @@
         <div ng-switch-when="LOADED">
             <md-content>
                 <md-list>
-                    <md-list-item ng-repeat="image in $ctrl.images" ng-click="null">
+                    <md-list-item ng-repeat="image in images" ng-click="null">
                         <div layout="row" layout-fill>
                             <img ng-src="data:image/JPEG;base64,{{image.content}}" flex="30" layout-margin alt=""/>
                             <div class="md-item-text md-whiteframe-z1" layout="column" layout-margin flex>

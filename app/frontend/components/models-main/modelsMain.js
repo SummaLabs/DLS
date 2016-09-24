@@ -5,7 +5,8 @@
         .component('modelMain', {
             templateUrl: '/frontend/components/models-main/models-main.html',
             bindings: {
-                models: '<'
+                models: '<',
+                selected:'<'
             },
             controller: function (modelService) {
                 var self = this;
@@ -24,7 +25,7 @@
                 };
 
                 this.$selectModel = function( model ) {
-                    this.selected = angular.isNumber(model) ? $scope.models[model] : model;
+                    self.selected = angular.isNumber(model) ? $scope.models[model] : model;
                 };
 
             }
