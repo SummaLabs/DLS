@@ -14,7 +14,8 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         REMOVE_NODE: 'graph:removeNode',
         ADD_LINK: 'graph:addLink',
         REMOVE_LINK: 'graph:removeLink',
-        REMOVE_ITEMS: 'graph:removeItems'
+        REMOVE_ITEMS: 'graph:removeItems',
+        CHANGED_VIEWS: 'graph:changedViews'
     };
 
     var self = this;
@@ -24,7 +25,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
     self.$onInit = function() {
         self.counterNodesInit = 0;
-        self.scale = 2.0;
+        self.scale = 1.0;
         self.viewWidth = 0;
         self.viewHeight = 0;
 		var divSvg = document.getElementById('workspace');
@@ -56,7 +57,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
 	$scope.controlItem.scale = function(scale) {
         setScale(scale);
-	};
+  	};
 
     $scope.controlItem.addLayer = function(layer) {
         var node = schema.addNode(layer.name, layer.category, layer.template, layer.id);
@@ -89,6 +90,15 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
     $scope.controlItem.getNodes = function() {
         return schema.getSchema();
+    };
+
+    $scope.controlItem.reset = function() {
+        var rect = schema.rect();
+        if (rect) {
+            var sc = Math.min(self.viewWidth / rect.width(), self.viewHeight / rect.height());
+            setScale(sc);
+            viewBox(rect.x() * sc, rect.y() * sc, self.viewWidth, self.viewHeight);
+        }
     };
 
     function addNode(name, category, template, pos) {
@@ -134,7 +144,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 			if (self.mouseMode === state.DRAGGING && positionDrag) {
 				var pos = convertCoordinateFromClienToSvg($element, parentNode, positionDrag);
 				positionDrag = false;
-				var correctPos = { x: (pos.x - data.offset.x) / self.scale, y: (pos.y - data.offset.y) / self.scale};
+				var correctPos = { x: (pos.x + (viewX ) - data.offset.x) / self.scale, y: (pos.y + (viewY) - data.offset.y) / self.scale};
 				if (correctPos.x > 0 && correctPos.y > 0) {
 					$scope.$apply( function() {
 						addNode(data.data.name, data.data.category, data.data.template, correctPos)
@@ -274,8 +284,6 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		    	let curMousePos = getOffsetPos($element, event);
 		    	var left = viewX -(curMousePos.x - prevMousePos.x);
 		    	var top = viewY - (curMousePos.y - prevMousePos.y);
-                if (left < 0 || top < 0 || left + self.viewWidth > self.width || top + self.viewHeight > self.height )
-                    return;
 
 		    	viewBox(left, top, self.viewWidth, self.viewHeight);
 		    	prevMousePos = curMousePos;
@@ -371,7 +379,9 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
       		}
       		$scope.$apply( function() {
 				var mousePos = getOffsetPos($element, event);
-      			self.scale = scaleToPoint(scale, mousePos);
+      			var sc = scaleToPoint(scale, mousePos);
+                coreService.param('scale', sc);
+                self.scale = sc;
       		});
 		});
 
@@ -382,6 +392,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
     }
 
     function setScale(scale) {
+        scale = scaleToPoint(scale);
         coreService.param('scale', scale);
         self.scale = scale;
 	}
@@ -389,7 +400,6 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 	function getScale() {
 		return self.scale;
 	}
-
 
     function removeActiveLink() {
         $scope.$apply( function() {
@@ -402,6 +412,13 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		var sceneWidth = scale * $scope.svgWidth;
 		var sceneHeight = scale * $scope.svgHeight;
         var view = Rect(0, 0, sceneWidth, sceneHeight);
+
+        if (arguments.length < 2) {
+            point = {};
+            point.x = divSvg.offsetWidth / 2;
+            point.y = divSvg.offsetHeight / 2;
+        }
+
         fitRectToRect(view, Rect(0, 0, divSvg.offsetWidth, divSvg.offsetHeight));
 
 		self.width = view.width();
@@ -422,13 +439,25 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
     }
 
     function viewBox(x, y, width, height) {
-        var viewRect = Rect(x, y, width+x, height+y);
-        fitRectToRect(viewRect, Rect(0, 0, self.width, self.height));
-    	viewX = viewRect.x();
-    	viewY = viewRect.y();
-    	self.viewWidth = viewRect.width();
-    	self.viewHeight = viewRect.height();
 
+        if ((x + width) > self.width) {
+            x = self.width - width;
+        }
+        if ((y + height) > self.height) {
+            y = self.height - height;
+        }
+
+		if (x < 0)
+		    x = 0;
+        if (y < 0)
+            y = 0;
+
+    	viewX = x;
+    	viewY = y;
+    	self.viewWidth = width;
+    	self.viewHeight = height;
+
+        self.emitEvent(events.CHANGED_VIEWS, {x: viewX, y: viewY});
         $element.attr('viewBox', viewX + ' ' + viewY + ' ' + self.viewWidth + ' ' + self.viewHeight);
     }
 

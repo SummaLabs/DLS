@@ -100,6 +100,7 @@ function Node() {
     this.category = null;
     this.pos = new Position(0, 0);
 }
+
 Node.prototype = Object.create(Item.prototype);
 Node.prototype.constructor = Node;
 
@@ -308,6 +309,31 @@ function Schema() {
         nodes.length = 0;
         links.length = 0;
         idList.length = 0;
+    };
+
+    this.rect = function () {
+        if (nodes.length < 1)
+            return null;
+        var x_min = Number.MAX_VALUE;
+        var x_max = Number.MIN_VALUE;
+        var y_min = Number.MAX_VALUE;
+        var y_max = Number.MIN_VALUE;
+
+        nodes.forEach(function (node) {
+            var width = 0;
+            var height = 0;
+            if (node.displayData) {
+                width = node.displayData.node.width;
+                height = node.displayData.node.height;
+            }
+
+            x_min = Math.min(x_min, node.pos.x);
+            y_min = Math.min(y_min, node.pos.y);
+            x_max = Math.max(x_max, node.pos.x + width);
+            y_max = Math.max(y_max, node.pos.y + height);
+        });
+
+        return Rect(x_min, y_min, x_max, y_max);
     };
 
     function generateId() {
