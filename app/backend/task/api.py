@@ -8,7 +8,7 @@ import json
 task = flask.Blueprint(__name__, __name__)
 
 
-tm = TaskManager()
+tm = None #TaskManager()
 
 
 # Start new Task. This is for testing only so no params
