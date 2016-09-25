@@ -4,6 +4,7 @@ from apscheduler.schedulers.gevent import GeventScheduler
 from app.backend import socketio
 from config import DevelopmentConfig
 from gevent import monkey
+from app.backend import config
 import time
 import logging
 import json
@@ -19,10 +20,9 @@ class TaskManager:
     def __init__(self):
         print "init Task Manager"
         self.logger = logging.getLogger('dls')
-        self.app_config = DevelopmentConfig()
         executors = {
-            'default': ThreadPoolExecutor(self.app_config.EXECUTOR_THREADS_NUMBER),
-            'monitor': ThreadPoolExecutor(self.app_config.EXECUTOR_THREADS_NUMBER),
+            'default': ThreadPoolExecutor(config.EXECUTOR_THREADS_NUMBER),
+            'monitor': ThreadPoolExecutor(config.EXECUTOR_THREADS_NUMBER),
         }
 
         self.scheduler = GeventScheduler(executors=executors)
@@ -30,12 +30,12 @@ class TaskManager:
 
         # Map of tasks for tracking them on UI
         self.tasks = {}
-        self.scheduler.add_job(self.report_progress, 'interval', seconds=self.app_config.JOB_MONITOR_INTERVAL, executor='monitor')
+        self.scheduler.add_job(self.report_progress, 'interval', seconds=config.JOB_MONITOR_INTERVAL, executor='monitor')
 
     # Starts new task
     def start_task(self, task):
 
-        self.scheduler.add_job(func=task.execute, misfire_grace_time=self.app_config.MISFIRE_GRACE_TIME)
+        self.scheduler.add_job(func=task.execute, misfire_grace_time=config.MISFIRE_GRACE_TIME)
         self.tasks[task.id] = task
 
     # Kills task by it's ID

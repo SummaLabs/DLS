@@ -5,6 +5,7 @@ import subprocess
 import random
 import logging
 import time
+from app.backend import config
 
 
 class BaseTask:
@@ -13,10 +14,9 @@ class BaseTask:
 
     alive = True
 
-    def __init__(self, cfg):
+    def __init__(self):
         self.alive = True
         self.process = None
-        self.config = cfg
 
         # Information parameters for tracking task on UI
         self.id = int(round(time.time() * 1000))
@@ -61,7 +61,7 @@ class BaseTask:
     def init_logger(self):
         logger = logging.getLogger('task_' + str(self.id))
         logger.setLevel(logging.DEBUG)
-        fh = logging.FileHandler(self.config.LOG_DIR_TASK + '/task_' + str(self.id) + '.log')
+        fh = logging.FileHandler(config.LOG_DIR_TASK + '/task_' + str(self.id) + '.log')
         fh.setLevel(logging.DEBUG)
         ch = logging.StreamHandler()
         ch.setLevel(logging.DEBUG)
@@ -91,8 +91,8 @@ class DefaultTask(BaseTask):
 class CmdTask(BaseTask):
     """This is example of subprocess based task"""
 
-    def __init__(self, cmd, config):
-        BaseTask.__init__(self, config)
+    def __init__(self, cmd):
+        BaseTask.__init__(self)
         self.command = cmd
 
     def perform(self):
