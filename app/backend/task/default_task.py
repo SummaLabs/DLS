@@ -4,6 +4,8 @@ import os
 import subprocess
 import random
 import logging
+import time
+
 
 class BaseTask:
     """Base task class.
@@ -11,18 +13,20 @@ class BaseTask:
 
     alive = True
 
-    def __init__(self):
+    def __init__(self, cfg):
         self.alive = True
         self.process = None
+        self.config = cfg
 
         # Information parameters for tracking task on UI
-        self.id = random.random()
+        self.id = int(round(time.time() * 1000))
         self.progress = 0
         self.state = 'ready'
         self.text = 'base task'
         self.type = 'base'
         self.rows = []
         self.logger = self.init_logger()
+        self.logger.info('task ' + str(self.id) + ' created')
 
     def execute(self):
         self.state = 'running'
@@ -37,7 +41,7 @@ class BaseTask:
         Override it in your custom task class"""
         while self.alive:
             time.sleep(1)
-            print('Tick! The time is: %s' % datetime.now())
+            self.logger.info('Tick! The time is: %s' % datetime.now())
 
     def kill(self):
         self.alive = False
@@ -57,7 +61,7 @@ class BaseTask:
     def init_logger(self):
         logger = logging.getLogger('task_' + str(self.id))
         logger.setLevel(logging.DEBUG)
-        fh = logging.FileHandler('task_' + str(self.id) + '.log')
+        fh = logging.FileHandler(self.config.LOG_DIR_TASK + '/task_' + str(self.id) + '.log')
         fh.setLevel(logging.DEBUG)
         ch = logging.StreamHandler()
         ch.setLevel(logging.DEBUG)
@@ -65,13 +69,8 @@ class BaseTask:
         fh.setFormatter(formatter)
         ch.setFormatter(formatter)
         logger.addHandler(fh)
-        logger.addHandler(ch)
+        #logger.addHandler(ch)
         return logger
-
-
-
-
-
 
 
 class DefaultTask(BaseTask):
@@ -82,17 +81,18 @@ class DefaultTask(BaseTask):
             time.sleep(1)
             self.progress += 10
             self.rows.append({'c': [{'v': self.progress}, {'v': random.random()}, {'v': random.random()}]})
+            self.logger.info('Task. The time is: %s' % datetime.now())
             if self.progress == 100:
                 self.state = 'finished'
                 self.alive = False
-            print('Task. The time is: %s' % datetime.now())
+                self.logger.info('task ' + str(self.id) + ' finished')
 
 
 class CmdTask(BaseTask):
     """This is example of subprocess based task"""
 
-    def __init__(self, cmd):
-        BaseTask.__init__(self)
+    def __init__(self, cmd, config):
+        BaseTask.__init__(self, config)
         self.command = cmd
 
     def perform(self):
@@ -115,3 +115,4 @@ class CmdTask(BaseTask):
     def kill(self):
         self.process.kill()
         self.state = 'killed'
+        self.logger.info('task ' + str(self.id) + 'killed')

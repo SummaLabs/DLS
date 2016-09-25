@@ -64,9 +64,9 @@
                             <div flex="100" layout="column" layout-align="center center">
                                 <h3>Current Item: {{$ctrl.curr().text}}</h3>
                             </div>
-                            <md-button ng-disabled="!$ctrl.curr().isFinished"
+                            <md-button 
                                        class="md-raised md-primary"
-                                       ng-click="$ctrl.showLogDialog($event)">Show Log</md-button>
+                                       ng-click="$ctrl.showLogDialog($ctrl.curr().id)">Show Log</md-button>
                             <md-button class="md-raised md-primary"
                                        ng-click="$ctrl.isChecked=!ctrl.isChecked">Hide</md-button>
                         </md-list-item>

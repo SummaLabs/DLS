@@ -1,6 +1,7 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+
 class Config(object):
     DEBUG = True
     TESTING = False
@@ -16,6 +17,10 @@ class Config(object):
     EXECUTOR_THREADS_NUMBER = 5
     # seconds
     SYSTEM_MONITOR_INTERVAL = 2
+    # directory for application logs
+    LOG_DIR = "logs"
+    # directory for task logs
+    LOG_DIR_TASK = "logs/tasks"
 
 
 class ProductionConfig(Config):

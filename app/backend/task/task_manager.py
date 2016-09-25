@@ -18,7 +18,7 @@ class TaskManager:
 
     def __init__(self):
         print "init Task Manager"
-
+        self.logger = logging.getLogger('dls')
         self.app_config = DevelopmentConfig()
         executors = {
             'default': ThreadPoolExecutor(self.app_config.EXECUTOR_THREADS_NUMBER),
@@ -31,15 +31,12 @@ class TaskManager:
         # Map of tasks for tracking them on UI
         self.tasks = {}
         self.scheduler.add_job(self.report_progress, 'interval', seconds=self.app_config.JOB_MONITOR_INTERVAL, executor='monitor')
-        self.identity = 0
 
     # Starts new task
     def start_task(self, task):
 
         self.scheduler.add_job(func=task.execute, misfire_grace_time=self.app_config.MISFIRE_GRACE_TIME)
-        task.id = self.identity
-        self.tasks[self.identity] = task
-        self.identity += 1
+        self.tasks[task.id] = task
 
     # Kills task by it's ID
     def term_task(self, index):
@@ -51,7 +48,7 @@ class TaskManager:
 
     def report_progress(self):
         """Gathers information from task and sends to clients"""
-        print("sending tasks progress")
+        self.logger.info("sending tasks progress")
         task_data = []
         for t in self.tasks.values():
             task_data.append(t.status())

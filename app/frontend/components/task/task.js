@@ -84,11 +84,24 @@
             ]
                     });
                 };
-                self.showLogDialog = function (ev) {
+                self.showLogDialog = function (id) {
                     var tmp = self.curr();
-                    $mdDialog.show(
-                        $mdDialog.confirm().title('Training Log').textContent(tmp).ariaLabel('Log').targetEvent(ev).ok('Ok')
+                    var log = {text: ""}
+                    $http({
+                        method: "GET",
+                        url: "/task/log/" + id,
+                    }).then(function mySucces(response) {
+                       console.log(response.data);
+                        log.text = response.data;
+                         $mdDialog.show(
+                        $mdDialog.confirm().title('Training Log').textContent(response.data).ariaLabel('Log').ok('Ok')
                     );
+                    }, function myError(response) {
+                        console.log(response);
+                    });
+                    
+                    
+                   
                 };
                 //
                 self.isChecked = false;

@@ -2,10 +2,11 @@ import threading
 
 from app.backend import socketio
 from app.backend.device import device
+import logging
 
 thread = None
 tl = threading.local()
-
+logger = logging.getLogger('dls')
 
 def start_send_system_info():
     global thread
@@ -23,10 +24,10 @@ def background_thread():
 
 @socketio.on('connect')
 def test_connect():
-    print('client connected')
+    logger.debug('client connected')
     start_send_system_info()
 
 
 @socketio.on('disconnect')
 def test_disconnect():
-    print('client disconnected')
+    logger.debug('client disconnected')

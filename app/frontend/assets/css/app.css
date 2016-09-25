@@ -118,3 +118,7 @@ md-tab-item {
   /*height: 48px;*/
   /*width: 48px;*/
 /*}*/
+
+md-dialog-content{
+    white-space: pre-wrap;
+}
