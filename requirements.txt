@@ -19,8 +19,8 @@ Flask-Sockets==0.2.1
 lmdb==0.89
 enum==0.4.6
 flask-socketio==2.7.1
-scikit-image=0.12.3
-Cython=0.24.1
-apscheduler=3.2.0
-theano=0.8.2
-keras=1.0.8
+scikit-image==0.12.3
+Cython==0.24.1
+apscheduler==3.2.0
+theano==0.8.2
+keras==1.0.8

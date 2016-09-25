@@ -18,13 +18,18 @@ from keras import backend as K
 
 import keras
 from keras.models import Sequential
-from keras.layers.core import Dense, Dropout, Activation, Flatten
-from keras.layers import Convolution2D
+from keras.layers import Dense, Dropout, Activation, Flatten, Convolution2D, InputLayer, \
+                         AveragePooling2D, MaxPooling2D
+# from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.optimizers import SGD
 from keras.models import model_from_json
 from keras.optimizers import Optimizer
 
+
+from app.backend.core import utils as dlsutils
 from batcher_image2d import BatcherImage2DLMDB
+
+from . import CFG_MODEL, CFG_SOLVER
 
 #########################
 def split_list_by_blocks(lst, psiz):
@@ -43,7 +48,7 @@ class KerasTrainer:
     extJsonTrainConfig = '_trainconfig.json'
     extJsonSolverState = '_solverstate.json'
     modelPrefix=''
-    lmdbReader = None
+    batcherLMDB = None
     pathModelConfig=None
     model=None
     outputDir=None
@@ -58,45 +63,76 @@ class KerasTrainer:
     def __init__(self):
         self.cleanResults()
     @staticmethod
-    def adjustModelInputOutput2DBData(parModel, parLMDB, isAppendOutputLayer = True):
+    def adjustModelInputOutput2DBData(parModel, parLMDB, isFixOutputLayer = True):
         if isinstance(parLMDB, BatcherImage2DLMDB):
             ptrLMDB = parLMDB
-        elif isinstance(parLMDB, str):
+        elif (isinstance(parLMDB, str) or isinstance(parLMDB, unicode)):
             ptrLMDB = BatcherImage2DLMDB(parLMDB, 1)
         else:
             raise Exception("Unknown parLMDB instance")
+        #
+        retModel = Sequential()
         tmpL0 = parModel.layers[0]
-        tmpL0cfg = tmpL0.get_config()
-        if re.match(r'dense_input*', tmpL0.input.name) is not None:
-            tmpShapeImageSize = np.prod(ptrLMDB.shapeImg)
-            retModel = Sequential()
-            retModel.add(
-                Dense(tmpL0cfg['output_dim'], input_dim=tmpShapeImageSize, init=tmpL0cfg['init']))
-            for ll in parModel.layers[1:]:
-                retModel.add(ll)
-        elif re.match(r'convolution2d_input*', tmpL0.input.name) is not None:
-            retModel = Sequential()
-            retModel.add(
-                Convolution2D(tmpL0cfg['nb_filter'], tmpL0cfg['nb_col'], tmpL0cfg['nb_row'],
-                              border_mode=tmpL0cfg['border_mode'],
-                              subsample=tmpL0cfg['subsample'],
-                              input_shape=ptrLMDB.shapeImg,
-                              init=tmpL0cfg['init']))
-            for ll in parModel.layers[1:]:
-                retModel.add(ll)
+        if isinstance(tmpL0, InputLayer):
+            idxStart=1
         else:
-            retModel = parModel
+            idxStart=0
+        retModel.add(InputLayer(input_shape=ptrLMDB.shapeImg))
+        if isFixOutputLayer:
+            listLayers = parModel.layers[idxStart:-1]
+        else:
+            listLayers = parModel.layers[idxStart:]
+        for ll in listLayers:
+            ll.inbound_nodes = []
+            # print ('\tadd [%s]' % (ll.__str__()))
+            if isinstance(ll, Convolution2D):
+                retModel.add(Convolution2D.from_config(ll.get_config()))
+            elif isinstance(ll, Dense):
+                retModel.add(Dense.from_config(ll.get_config()))
+            elif isinstance(ll, Flatten):
+                retModel.add(Flatten.from_config(ll.get_config()))
+            elif isinstance(ll, Activation):
+                retModel.add(Activation.from_config(ll.get_config()))
+            elif isinstance(ll, Dropout):
+                retModel.add(Dropout.from_config(ll.get_config()))
+            elif isinstance(ll, MaxPooling2D):
+                retModel.add(MaxPooling2D.from_config(ll.get_config()))
+            elif isinstance(ll, AveragePooling2D):
+                retModel.add(AveragePooling2D.from_config(ll.get_config()))
+        #
+        # tmpL0 = parModel.layers[0]
+        # tmpL0cfg = tmpL0.get_config()
+        # if re.match(r'dense_input*', tmpL0.input.name) is not None:
+        #     tmpShapeImageSize = np.prod(ptrLMDB.shapeImg)
+        #     retModel = Sequential()
+        #     retModel.add(
+        #         Dense(tmpL0cfg['output_dim'], input_dim=tmpShapeImageSize, init=tmpL0cfg['init']))
+        #     for ll in parModel.layers[1:]:
+        #         retModel.add(ll)
+        # elif re.match(r'convolution2d_input*', tmpL0.input.name) is not None:
+        #     retModel = Sequential()
+        #     retModel.add(
+        #         Convolution2D(tmpL0cfg['nb_filter'], tmpL0cfg['nb_col'], tmpL0cfg['nb_row'],
+        #                       border_mode=tmpL0cfg['border_mode'],
+        #                       subsample=tmpL0cfg['subsample'],
+        #                       input_shape=ptrLMDB.shapeImg,
+        #                       init=tmpL0cfg['init']))
+        #     for ll in parModel.layers[1:]:
+        #         ll.inbound_nodes=[]
+        #         print (ll)
+        #         retModel.add(ll)
+        # else:
+        #     retModel = parModel
         # FIXME: check this point (automatic output layer size). SoftMax to config in feature
-        if isAppendOutputLayer:
-            retModel.add(Dense(ptrLMDB.numLbl))
-            retModel.add(Activation('softmax'))
+        if isFixOutputLayer:
+            retModel.add(Dense(ptrLMDB.numLbl, activation='softmax'))
         return retModel
     def buildModel(self, pathLMDBJob, pathModelConfig,
                  sizeBatch, numEpoch, intervalSaveModel=1, intervalValidation=1,
                  outputDir=None, modelPrefixName='keras_model', isResizeInputLayerToImageShape=True):
         if self.isOk():
             self.cleanModel()
-        self.loadLMDBReader(pathLMDBJob, sizeBatch)
+        self.loadBatcherLMDB(pathLMDBJob, sizeBatch)
         with open(pathModelConfig, 'r') as f:
             modelJSON = f.read()
             modelFromCfg = model_from_json(modelJSON)
@@ -104,7 +140,7 @@ class KerasTrainer:
                 self.pathModelConfig = pathModelConfig
                 self.sizeBatch = sizeBatch
                 self.numEpoch = numEpoch
-                self.numIterPerEpoch = self.lmdbReader.numTrain / self.sizeBatch
+                self.numIterPerEpoch = self.batcherLMDB.numTrain / self.sizeBatch
                 self.intervalSaveModel = intervalSaveModel
                 self.intervalValidation = intervalValidation
                 self.modelPrefix = modelPrefixName
@@ -136,25 +172,25 @@ class KerasTrainer:
                 # FIXME: check this point (automatic output layer size). SoftMax to config in feature
                 # self.model.add(Dense(self.lmdbReader.numLbl))
                 # self.model.add(Activation('softmax'))
-                self.model = KerasTrainer.adjustModelInputOutput2DBData(modelFromCfg, self.lmdbReader)
+                self.model = KerasTrainer.adjustModelInputOutput2DBData(modelFromCfg, self.batcherLMDB)
                 # TODO: make the setting for code below. For optimizer, loss-function, metrics
                 sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
                 self.model.compile(loss='categorical_crossentropy',
                                    optimizer=sgd,
                                    metrics=['accuracy'])
-    def buildModelFromConfigs(self, lmdbReader, modelConfig,
+    def buildModelFromConfigs(self, paramBatcherLMDB, modelConfig,
                               sizeBatch, numEpoch,
                               modelOptimizer=None,
                               intervalSaveModel=1, intervalValidation=1,
                               outputDir=None, modelPrefixName='keras_model',
                               isAppendOutputLayer = True):
-        self.lmdbReader = lmdbReader
+        self.batcherLMDB = paramBatcherLMDB
         modelFromCfg = modelConfig
         if modelFromCfg is not None:
             self.pathModelConfig = None
             self.sizeBatch = sizeBatch
             self.numEpoch = numEpoch
-            self.numIterPerEpoch = self.lmdbReader.numTrain / self.sizeBatch
+            self.numIterPerEpoch = self.batcherLMDB.numTrain / self.sizeBatch
             self.intervalSaveModel = intervalSaveModel
             self.intervalValidation = intervalValidation
             self.modelPrefix = modelPrefixName
@@ -168,7 +204,7 @@ class KerasTrainer:
                     strErr = "Directory not found [%s]" % outputDir
                     self.printError(strErr)
                     raise Exception(strErr)
-            self.model = KerasTrainer.adjustModelInputOutput2DBData(modelFromCfg, self.lmdbReader, isAppendOutputLayer=isAppendOutputLayer)
+            self.model = KerasTrainer.adjustModelInputOutput2DBData(modelFromCfg, self.batcherLMDB, isFixOutputLayer=isAppendOutputLayer)
             # TODO: make the setting for code below. For optimizer, loss-function, metrics
             if modelOptimizer is None:
                 opt = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
@@ -178,12 +214,14 @@ class KerasTrainer:
                                optimizer=opt,
                                metrics=['accuracy'])
     def isOk(self):
-        return ((self.lmdbReader is not None) and (self.model is not None))
-    def loadLMDBReader(self, pathLMDBJob, sizeBatch):
-        self.lmdbReader = BatcherImage2DLMDB(pathLMDBJob, sizeBatch)
+        return ((self.batcherLMDB is not None) and (self.model is not None))
+    def loadBatcherLMDB(self, dbJobID, sizeBatch):
+        dirDataset=dlsutils.getPathForDatasetDir()
+        pathLMDBJob = os.path.join(dirDataset, dbJobID)
+        self.batcherLMDB = BatcherImage2DLMDB(pathLMDBJob, sizeBatch)
         self.sizeBatch = sizeBatch
-        if not self.lmdbReader.isOk():
-            strErr = "[KERAS-TRAINER] Incorrect LMDB-data in [%s]" % pathLMDBJob
+        if not self.batcherLMDB.isOk():
+            strErr = "[KERAS-TRAINER] Incorrect LMDB-data in [%s]" % dbJobID
             self.printError(strErr)
             raise Exception(strErr)
     def cleanResults(self):
@@ -194,8 +232,8 @@ class KerasTrainer:
         if self.isOk():
             self.cleanResults()
             self.model = None
-            self.lmdbReader.close()
-            self.lmdbReader = None
+            self.batcherLMDB.close()
+            self.batcherLMDB = None
             self.pathModelConfig = None
     def printError(self, strError):
         print("keras-error#%s" % strError)
@@ -206,10 +244,10 @@ class KerasTrainer:
             raise Exception(strErr)
         modelInputShape = list(self.model.input_shape)
         for ii in xrange(self.numIterPerEpoch):
-            dataX, dataY = self.lmdbReader.getBatchTrain(reshape2Shape=modelInputShape)
+            dataX, dataY = self.batcherLMDB.getBatchTrain(reshape2Shape=modelInputShape)
             tlossTrain = self.model.train_on_batch(dataX, dataY)
             if (self.currentIter%self.printInterval==0):
-                dataXval, dataYval = self.lmdbReader.getBatchVal(reshape2Shape=modelInputShape)
+                dataXval, dataYval = self.batcherLMDB.getBatchVal(reshape2Shape=modelInputShape)
                 tlossVal = self.model.test_on_batch(dataXval, dataYval)
                 self.trainLog['epoch'].append(self.currentEpoch)
                 self.trainLog['iter'].append(self.currentIter)
@@ -231,11 +269,11 @@ class KerasTrainer:
             self.currentIter +=1
         self.currentEpoch += 1
     def convertImgUint8ToDBImage(self, pimg):
-        if len(self.lmdbReader.shapeImg) < 3:
+        if len(self.batcherLMDB.shapeImg) < 3:
             numCh = 1
         else:
             # FIXME: check this point, number of channels can be on last element on array...
-            numCh = self.lmdbReader.shapeImg[0]
+            numCh = self.batcherLMDB.shapeImg[0]
         # check #channels of input image
         if len(pimg.shape) < 3:
             numChImg = 1
@@ -247,10 +285,10 @@ class KerasTrainer:
                 pimg = skcolor.rgb2gray(pimg)
             else:
                 pimg = skcolor.gray2rgb(pimg)
-        timg = sktransform.resize(pimg.astype(np.float32) * self.lmdbReader.scaleFactor, self.lmdbReader.shapeImg[1:])
+        timg = sktransform.resize(pimg.astype(np.float32) * self.batcherLMDB.scaleFactor, self.batcherLMDB.shapeImg[1:])
         timg = timg.transpose((2, 0, 1))
-        if self.lmdbReader.isRemoveMean:
-            timg -= self.lmdbReader.meanImg
+        if self.batcherLMDB.isRemoveMean:
+            timg -= self.batcherLMDB.meanImg
         return timg
     def inferListImagePath(self, listPathToImages, batchSizeInfer=None):
         if not self.isOk():
@@ -288,7 +326,7 @@ class KerasTrainer:
             else:
                 retProb = np.concatenate(retProb, tprob)
         idxMax = np.argmax(retProb, axis=1)
-        retLbl = np.array(self.lmdbReader.lbl)[idxMax]
+        retLbl = np.array(self.batcherLMDB.lbl)[idxMax]
         retVal = np.max(retProb, axis=1)
         ret = {
             'prob'  : retProb,
@@ -324,7 +362,7 @@ class KerasTrainer:
         tdataX = tdataX.reshape([tmpBatchSize] + modelInputShape[1:])
         tprob = self.model.predict(tdataX, batch_size=1)
         posMax = np.argmax(tprob[0])
-        tlbl = self.lmdbReader.lbl[posMax]
+        tlbl = self.batcherLMDB.lbl[posMax]
         tval = tprob[0][posMax]
         tret = {
             'prob': tprob,
@@ -362,8 +400,8 @@ class KerasTrainer:
             'optimizer'         : self.model.optimizer.get_config(),
             'loss'              : self.model.loss,
             'metrics'           : self.model.metrics_names,
-            'pathLMDB'          : self.lmdbReader.pathDataDir,
-            'pathModelConfig'   : "%s" % self.pathModelConfig,
+            'dataset-id'        : self.batcherLMDB.cfg.dbId,
+            'pathModelConfig'   : "%s" % os.path.basename(self.pathModelConfig),
             'sizeBatch'         : self.sizeBatch,
             'numEpoch'          : self.numEpoch,
             'currentIter'       : self.currentIter,
@@ -373,7 +411,7 @@ class KerasTrainer:
             'modelPrefix'       : "%s" % self.modelPrefix
         }
         # FIXME: check the necesserity of the item [pathModelConfig]
-        txtJsonSolverState = json.dumps(jsonSolverState)
+        txtJsonSolverState = json.dumps(jsonSolverState, indent=4)
         with open(foutSolverCfg, 'w') as fslv:
             fslv.write(txtJsonSolverState)
         #
@@ -437,6 +475,12 @@ class KerasTrainer:
                                         pathSolverState=pathSolverState,
                                         pathModelWeight=pathModelWeight,
                                         isLoadLMDBReader=isLoadLMDBReader)
+    def loadModelFromTaskModelDir(self, pathTaskDir):
+        pathConfigModel  = os.path.join(pathTaskDir, CFG_MODEL)
+        pathConfigSolver = os.path.join(pathTaskDir, CFG_SOLVER)
+        self.loadModelFromTrainingState(pathModelConfig=pathConfigModel,
+                                        pathSolverState=pathConfigSolver)
+        self.outputDir = pathTaskDir
     def loadModelFromTrainingState(self, pathModelConfig, pathSolverState,
                                    pathModelWeight=None, pathLMDBDataset=None, isLoadLMDBReader=True):
         """
@@ -467,7 +511,7 @@ class KerasTrainer:
             self.printError(strError)
             raise Exception(strError)
         if pathLMDBDataset is not None:
-            configSolverState['pathLMDB'] = pathLMDBDataset
+            configSolverState['dataset-id'] = pathLMDBDataset
         # (3) Load Model Weights:
         if pathModelWeight is not None:
             self.model.load_weights(pathModelWeight)
@@ -479,8 +523,8 @@ class KerasTrainer:
         self.sizeBatch          = configSolverState['sizeBatch']
         self.modelPrefix        = configSolverState['modelPrefix']
         if isLoadLMDBReader:
-            self.loadLMDBReader(configSolverState['pathLMDB'], self.sizeBatch)
-            self.numIterPerEpoch    = self.lmdbReader.numTrain / self.sizeBatch
+            self.loadBatcherLMDB(configSolverState['dataset-id'], self.sizeBatch)
+            self.numIterPerEpoch    = self.batcherLMDB.numTrain / self.sizeBatch
             self.currentEpoch       = np.floor(self.currentIter / self.numIterPerEpoch)
         else:
             self.numIterPerEpoch    = 1

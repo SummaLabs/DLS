@@ -144,6 +144,10 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
         }
     };
 
+    this.resetView = function(event) {
+        self.svgControl.reset();
+    };
+
     function constructorListeners() {
 
         networkDataService.subNetworkUpdateEvent(setUpNetwork);
@@ -175,6 +179,12 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 		$scope.$on('graph:removeItems', function (event, data) {
 		    console.log('graph:removeItems');
 		    networkDataService.setChangesSaved(false);
+			event.stopPropagation();
+		});
+
+		$scope.$on('graph:changedViews', function (event, data) {
+		    // console.log('graph:changedViews');
+			$scope.$broadcast('constructor:viewport', data);
 			event.stopPropagation();
 		});
 

@@ -7,6 +7,7 @@ import shutil
 import os
 import sys
 import glob
+from app.backend.api import app_flask
 
 
 #################################################
@@ -67,8 +68,20 @@ def makeDirIfNotExists(pathToDir, isCleanIfExists=True):
     if os.path.isdir(pathToDir) and isCleanIfExists:
         shutil.rmtree(pathToDir)
     if not os.path.isdir(pathToDir):
-        os.mkdir(pathToDir)
+        os.makedirs(pathToDir)
 
+def getPathForProjectDir():
+    return app_flask.config['DLS_FILEMANAGER_BASE_PATH']
+
+def getPathForDatasetDir():
+    tdir = getPathForProjectDir()
+    tret = os.path.abspath(os.path.join(tdir, '../data/datasets'))
+    return tret
+
+def getPathForModelsDir():
+    tdir = getPathForProjectDir()
+    tret = os.path.abspath(os.path.join(tdir, '../data/models'))
+    return tret
 
 if __name__ == '__main__':
     pass

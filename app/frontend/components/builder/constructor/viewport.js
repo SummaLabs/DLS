@@ -7,7 +7,7 @@ angular.module('constructorCore')
             template: '<div id="viewport"><div></div></div>',
             scope: {
                 svgWidth: '@',
-                svgHeight: '@',
+                svgHeight: '@'
             },
             link: function(scope, element, attr){
             	var divSvg = document.getElementById('workspace');
@@ -37,7 +37,6 @@ angular.module('constructorCore')
 						y: pos.y / ratio
 					});
 				});
-
 
 				function update() {
 					var coeffViewport = 0.2;
@@ -75,21 +74,16 @@ angular.module('constructorCore')
 					}
 				}
 
+                scope.$on('constructor:viewport', function (event, data) {
+                    visibleEl.style.left = data.x * ratio + 'px';
+					visibleEl.style.top = data.y * ratio + 'px';
+                });
+
 				scope.$watch(function () {
 						return coreService.param('scale');
 					}, function(newValue, oldValue) {
 						scale = newValue;
 						update();
-						var x = parseInt(visibleEl.style.left, 10) ;
-						var y = parseInt(visibleEl.style.top, 10);
-//						var pos = calcVisiblePos(x + visibleWidth / 2, y + visibleHeight / 2);
-//						visibleEl.style.left = pos.x + 'px';
-//						visibleEl.style.top = pos.y + 'px';
-
-//						scope.$emit('viewport::changed', {
-//							x: x / ratio,
-//							y: y / ratio
-//						});
 					}
 				);
 

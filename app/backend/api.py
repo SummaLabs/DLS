@@ -9,7 +9,7 @@ from flask_sockets import Sockets
 from app.backend.network.api import network
 from app.backend.file_manager.api import file_manager
 from app.backend.images.api import images
-from app.backend.core.datasets.dbpreview import dbpreview
+from app.backend.core.datasets.api import dbpreview
 from app.backend.device.api import device
 from app.backend.task.api import task
 

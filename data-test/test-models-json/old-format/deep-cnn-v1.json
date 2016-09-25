@@ -1,0 +1,88 @@
+[
+  {
+    "type": "tab",
+    "id": "d9cff5e.9d93708",
+    "label": "Flow 2"
+  },
+  {
+    "istrainable": "true",
+    "activationfunc": "ReLU",
+    "wires": [
+      [
+        "191382c4.cb69ed"
+      ]
+    ],
+    "subsamplingsize": "2",
+    "numfilters": "32",
+    "y": 420,
+    "subsamplingtype": "MaxPooling",
+    "x": 300,
+    "filtersizex": "5",
+    "filtersizey": "5",
+    "z": "d9cff5e.9d93708",
+    "type": "convol",
+    "id": "cb951407.e19468"
+  },
+  {
+    "z": "d9cff5e.9d93708",
+    "wires": [
+      [
+        "cb951407.e19468"
+      ]
+    ],
+    "y": 540,
+    "x": 100,
+    "dataSetType": "image",
+    "type": "data-input",
+    "id": "c1c84e03.1e911",
+    "dataSetId": ""
+  },
+  {
+    "istrainable": "true",
+    "activationfunc": "ReLU",
+    "wires": [
+      [
+        "a8ca309f.595b1"
+      ]
+    ],
+    "subsamplingsize": "2",
+    "numfilters": "32",
+    "y": 420,
+    "subsamplingtype": "MaxPooling",
+    "x": 470,
+    "filtersizex": "5",
+    "filtersizey": "5",
+    "z": "d9cff5e.9d93708",
+    "type": "convol",
+    "id": "191382c4.cb69ed"
+  },
+  {
+    "istrainable": "true",
+    "wires": [
+      [
+        "27170b6b.bdd4e4"
+      ]
+    ],
+    "type": "dense",
+    "numneurons": "64",
+    "y": 420,
+    "x": 630,
+    "z": "d9cff5e.9d93708",
+    "activationfunc": "ReLU",
+    "id": "a8ca309f.595b1"
+  },
+  {
+    "intsnapshot": "1",
+    "solvertype": "SGD",
+    "batchsize": "32",
+    "numepochs": "30",
+    "wires": [],
+    "learningrate": 0.01,
+    "y": 460,
+    "x": 800,
+    "z": "d9cff5e.9d93708",
+    "type": "output-solver",
+    "id": "27170b6b.bdd4e4",
+    "intvalidation": "1"
+  }
+]
