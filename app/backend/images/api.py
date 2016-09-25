@@ -66,11 +66,16 @@ def build_model_response(base_path, images_path):
     return model_response
 
 
-@images.route('/dataset/roc/load/<path:id>')
-def load_images_data_set_roc(id):
-    images_path = os.path.join(classified_images_dir, id)
+models_dir = app_flask.config['DLS_MODELS_BASE_PATH']
+validation_dir = 'validation'
+
+@images.route('/roc/load/<path:modelId>')
+def load_images_data_set_roc(modelId):
 
     if request.method == 'GET':
-        with open(images_path, 'r') as f:
-            image_data_set_roc = json.load(f)
-            return Response(json.dumps(image_data_set_roc), mimetype='application/json')
+        roc_analysis = []
+        for roc in os.listdir(os.path.join(models_dir, os.path.join(modelId, validation_dir)):
+            with open(model_file_path, 'r') as f:
+                roc_analysis.append(json.load(f))
+
+        return Response(json.dumps(roc_analysis), mimetype='application/json')

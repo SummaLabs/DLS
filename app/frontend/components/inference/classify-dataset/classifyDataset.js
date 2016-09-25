@@ -4,6 +4,9 @@
     angular.module('classifyDataSet', ['ngMaterial'])
         .directive('classifyDataSet', function () {
             return {
+                scope: {
+                    modelId: '@'
+                },
                 templateUrl: '/frontend/components/inference/classify-dataset/classify-dataset.html',
                 controller: function ($scope, imageService) {
                     var self = this;

@@ -14,10 +14,10 @@ function ImageService($http) {
         });
     };
     
-    this.loadDataSetROC = function(id) {
+    this.loadDataSetROC = function(modelId) {
         return $http({
             method: "GET",
-            url: "/images/dataset/roc/load/" + id
+            url: "/images/roc/load/" + modelId
         })
     }
 }
