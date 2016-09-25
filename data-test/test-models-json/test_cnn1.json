@@ -90,7 +90,7 @@
       "params": {
         "optimizer": "SGD", 
         "snapshotInterval": 1, 
-        "epochsCount": 30, 
+        "epochsCount": 2, 
         "batchSize": 8, 
         "learningRate": 0.01, 
         "lossFunction": "categorical_crossentropy", 
