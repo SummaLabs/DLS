@@ -24,6 +24,7 @@ from compiler.ast import flatten
 
 from keras_trainer_v3 import KerasTrainer
 from batcher_image2d import BatcherImage2DLMDB
+from . import CFG_MODEL, CFG_SOLVER, PREFIX_SNAPSHOT
 
 ####################################
 class NodeF:
@@ -69,34 +70,6 @@ dictNonlinFunJson2Keras = {
     'SoftMax': 'softmax'
 }
 
-
-# dictAvailableConnectionsFromTo = {
-#     'data-input' : {
-#         'data-input'    : (False, None),
-#         'convol'        : (True,  None),
-#         'dense'         : (True,  None),
-#         'output-solver' : (False, None)
-#     },
-#     'convol' : {
-#         'data-input'    : (False, None),
-#         'convol'        : (True,  None),
-#         'dense'         : (True,  None),
-#         'output-solver' : (False, None)
-#     },
-#     'dense' : {
-#         'data-input'    : (False, None),
-#         'convol'        : (False, None),
-#         'dense'         : (True,  None),
-#         'output-solver' : (True,  None)
-#     },
-#     'output-solver' : {
-#         'data-input'    : (False, None),
-#         'convol'        : (False, None),
-#         'dense'         : (False, None),
-#         'output-solver' : (False, None)
-#     }
-# }
-
 # values: (is Available, is Correct but currently not available)
 dictAvailableConnectionsFromTo = {
     'data' : {
@@ -124,14 +97,6 @@ dictAvailableConnectionsFromTo = {
         'solver'        : (False, None)
     }
 }
-
-#FIXME: old-names, remove in feature
-# dictRequiredFields = {
-#     'data-input'    : ['dataSetType', 'dataSetId'],
-#     'convol'        : ['numfilters', 'filtersizex', 'filtersizey', 'subsamplingsize', 'activationfunc', 'subsamplingtype', 'istrainable'],
-#     'dense'         : ['numneurons', 'activationfunc', 'istrainable'],
-#     'output-solver' : ['numepochs', 'intsnapshot', 'intvalidation', 'batchsize', 'learningrate', 'solvertype']
-# }
 
 dictRequiredFields = {
     'data'          : ['datasetType', 'datasetId'],
@@ -209,10 +174,10 @@ class DLSDesignerFlowsParser:
         if isinstance(jsonFlow, basestring):
             with open(jsonFlow, 'r') as f:
                 self.configFlowRaw = json.load(f)
-        elif isinstance(jsonFlow, list):
+        elif isinstance(jsonFlow, dict):
             self.configFlowRaw = jsonFlow
         else:
-            raise Exception('Unknown type for flow [%s]' % type(jsonFlow))
+            raise Exception('Unknown type for Model flow [%s]' % type(jsonFlow))
     def clear(self):
         self.configFlow     = None
         self.configFlowRaw  = None
@@ -319,6 +284,16 @@ class DLSDesignerFlowsParser:
         model=Sequential()
         isFirstComputationLayer = True
         # Step 1: Search data-layers:
+        datasetType         = 'image2d'
+        datasetId           = 'unknown-id'
+        paramNumEpochs      = -1
+        paramIntSnapshot    = -1
+        paramIntValidation  = -1
+        batchSize           = -1
+        paramLearningRate   = -1
+        paramOptimizerStr   = 'unknowm-optimizer'
+        paramLossFunction   = 'unknown-loss'
+        paramOptimizer      = None
         for idx, node in enumerate(sortedFlow):
             tcfg = node.jsonParams
             ttype = node.jsonCfg['content']
@@ -333,6 +308,30 @@ class DLSDesignerFlowsParser:
                 paramLearningRate = float(tcfg['learningRate'])
                 paramOptimizerStr = tcfg['optimizer']
                 paramOptimizer = getOptimizerJson2Keras(paramOptimizerStr, parLR=paramLearningRate)
+                paramLossFunction = tcfg['lossFunction']
+        #
+        cfgJsonOptimizer = {
+            'name':         paramOptimizerStr,
+            'lr':           paramLearningRate,
+            'nesterov':     True,
+            'momentum':     0.9,
+            'decay':        1.0e-6
+        }
+        cfgJsonSolver = {
+            'optimizer':            cfgJsonOptimizer,
+            'loss':                 paramLossFunction,
+            'metrics':              ['loss', 'acc'],
+            'dataset-id':           datasetId,
+            'pathModelConfig':      CFG_MODEL,
+            'sizeBatch':            batchSize,
+            'numEpoch':             paramNumEpochs,
+            'currentIter':          0, #FIXME: check this point, initialize variable from previous Solver-state
+            'intervalSaveModel':    paramIntSnapshot,
+            'intervalValidation':   paramIntValidation,
+            'printInterval':        paramIntValidation,
+            'modelPrefix':          PREFIX_SNAPSHOT
+        }
+        #
         if pathJobDir is not None:
             pathLMDB = os.path.join(pathJobDir, datasetId)
             batcherLMDB = BatcherImage2DLMDB(pathLMDB)
@@ -341,7 +340,7 @@ class DLSDesignerFlowsParser:
         # Step 2: search Neural Layers:
         for idx, node in enumerate(sortedFlow):
             #TODO: append code after night talk
-            print ('[%d/%d] node-type: [%s]' % (idx, len(sortedFlow), node.jsonCfg['content']))
+            # print ('[%d/%d] node-type: [%s]' % (idx, len(sortedFlow), node.jsonCfg['content']))
             tcfg=node.jsonParams
             ttype=node.jsonCfg['content']
             if ttype == 'convolution':
@@ -371,17 +370,18 @@ class DLSDesignerFlowsParser:
                     tmpLayer = Convolution2D(numberFilters, filterSizeX, filterSizeY,
                                              border_mode=strBorderMode,
                                              subsample=paramStride,
-                                             input_shape=paramInputShape)
+                                             input_shape=paramInputShape,
+                                             activation=nonlinFunJson2Keras(strNonLinFunc))
                     isFirstComputationLayer = False
                 else:
                     tmpLayer = Convolution2D(numberFilters, filterSizeX, filterSizeY,
                                              subsample=paramStride,
-                                             border_mode=strBorderMode)
+                                             border_mode=strBorderMode,
+                                             activation=nonlinFunJson2Keras(strNonLinFunc))
                 tmpLayer.trainable=isTrainable
                 model.add(tmpLayer)
-                model.add(Activation(nonlinFunJson2Keras(strNonLinFunc)))
+                # model.add(Activation())
                 model.add(getSubsamplingJs2Keras(strSubsampType, sizeSubsampling))
-                print (tcfg)
             elif ttype == 'dense':
                 #FIXME: this parameter value only for valid Kearas model building, on step, when model prepared for calc this parameter resolved from data input
                 if pathJobDir is None:
@@ -392,16 +392,19 @@ class DLSDesignerFlowsParser:
                 numberNeurons = int(tcfg['neuronsCount']) if tcfg['neuronsCount'] else 1
                 isTrainable   = tcfg['isTrainable'] if tcfg['isTrainable'] else True
                 if isFirstComputationLayer:
-                    tmpLayer = Dense(numberNeurons, input_dim=paramInputDim)
+                    tmpLayer = Dense(numberNeurons,
+                                     input_dim=paramInputDim,
+                                     activation=nonlinFunJson2Keras(strNonLinFunc))
                     isFirstComputationLayer = False
                 else:
-                    tmpLayer = Dense(numberNeurons)
+                    tmpLayer = Dense(numberNeurons,
+                                     activation=nonlinFunJson2Keras(strNonLinFunc))
                 if node.inpNode is not None:
                     if node.inpNode[0].jsonCfg['content'] == 'convolution':
                         model.add(Flatten())
                 tmpLayer.trainable=isTrainable
                 model.add(tmpLayer)
-                model.add(Activation(nonlinFunJson2Keras(strNonLinFunc)))
+                # model.add(Activation(nonlinFunJson2Keras(strNonLinFunc)))
         # (1) Prepare dataset:
         if pathJobDir is None:
             pathLMDB = datasetId
@@ -417,9 +420,9 @@ class DLSDesignerFlowsParser:
                                                intervalSaveModel=paramIntSnapshot,
                                                intervalValidation=paramIntValidation,
                                                isAppendOutputLayer=isAppendOutputLayer)
-        return kerasTrainer
+        return (kerasTrainer, cfgJsonSolver)
     def buildKerasModelInJson(self, pathJobDir = None):
-        kerasTrainer = self.buildKerasTrainer()
+        kerasTrainer,_ = self.buildKerasTrainer()
         return json.loads(kerasTrainer.model.to_json(sort_keys=True, indent=4, separators=(',', ': ')))
     def cleanAndValidate(self):
         self.checkIsOk()
@@ -465,7 +468,7 @@ class DLSDesignerFlowsParser:
     @staticmethod
     def renderModel2ImageFromJson(paramFlowJson):
         tmpParser = DLSDesignerFlowsParser(paramFlowJson)
-        tmpModel  = tmpParser.buildKerasTrainer()
+        tmpModel,_  = tmpParser.buildKerasTrainer()
         tmpDot = kervis.model_to_dot(tmpModel, show_shapes=True)
         tmpStr = tmpDot.create_png(prog='dot')
         sio = StringIO()
@@ -479,7 +482,7 @@ class DLSDesignerFlowsParser:
         if jobDir is not None:
             if not os.path.isdir(jobDir):
                 jobDir = None
-        tmpModel = tmpParser.buildKerasTrainer(pathJobDir=jobDir)
+        tmpModel,_ = tmpParser.buildKerasTrainer(pathJobDir=jobDir)
         kplot(tmpModel.model, to_file=fout, show_shapes=True)
         return fout
         # return os.path.basename(fout)
@@ -494,22 +497,15 @@ class DLSDesignerFlowsParser:
 
 ####################################
 if __name__=='__main__':
-    # fnFlowJson      = '../flows/node-red-examples/flows_arnb.json'
-    # fnFlowJsonOut   = '../flows/node-red-examples/flows_arnb_out.json'
-    # fnFlowJson      = '../flows/node-red-examples2/ui_flow_state_config.json'
-    # fnFlowJsonOut   = '../flows/node-red-examples2/ui_flow_state_config_out.json'
-    fnFlowJson    = '../flows/userflows/test-cnn1.json'
-    fnFlowJsonOut = '../flows/userflows/test-cnn1-out.json'
-    dirJobs = '../../DIGITS/digits/jobs'
+    fnFlowJson    = '../../../data-test/test-models-json/test_cnn1.json'
+    fnFlowJsonOut = '../../../data-test/test-models-json/test_cnn1_out.json'
+    dirJobs = '../../../data-test/test-models-json/'
     flowParser = DLSDesignerFlowsParser(fnFlowJson)
     flowParser.cleanAndValidate()
     # flowParser.exportConfigFlow(fnFlowJsonOut)
-    kerasTrainer = flowParser.buildKerasTrainer(pathJobDir=dirJobs)
-    kerasTrainer.saveModelState('/home/ar/tmp/4', isSaveWeights=False)
+    modelTrainer, modelConfig = flowParser.buildKerasTrainer(pathJobDir=dirJobs)
+    modelTrainer.saveModelState('/tmp/', isSaveWeights=False)
     modelJson = flowParser.buildKerasModelInJson()
-    kplot(kerasTrainer.model, to_file='/home/ar/tmp/keras_draw.png', show_shapes=True)
+    kplot(modelTrainer.model, to_file='/tmp/keras_draw.png', show_shapes=True)
     print ('---------------')
     print (json.dumps(modelJson, indent=4))
-    # import pprint
-    # pprint.pprint (json.loads(json.dumps(modelJson, indent=4)))
-    # pprint.pprint(modelJson)

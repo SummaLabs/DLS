@@ -15,7 +15,6 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-import dlscaffe.caffedls_pb2 as dlscaffe_pb2
 from PIL import Image
 
 from app.backend.api import app_flask
