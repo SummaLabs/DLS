@@ -2,13 +2,13 @@
     'use strict';
 
     angular
-        .module('inference', ['ngMaterial'])
-        .directive('inference', ['$compile', function ($compile) {
+        .module('validation', ['ngMaterial'])
+        .directive('validation', ['$compile', function ($compile) {
 
             function buildTemplate(modelType, modelId) {
                 var inferenceType =
                 {
-                    'image-classification': '<classify-image model-id="' + modelId + '"></classify-image>'
+                    'image-classification': '<classify-data-set model-id="' + modelId + '"></classify-data-set>'
                 };
                 return inferenceType[modelType];
             }
