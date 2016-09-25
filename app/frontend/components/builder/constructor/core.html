@@ -11,6 +11,7 @@
             <div>
                 <md-button ng-click="$ctrl.zoomOut($event)" class="md-warn md-raised md-hue-2">-</md-button>
                 <md-button ng-click="$ctrl.zoomIn($event)" class="md-warn md-raised md-hue-2">+</md-button>
+                <md-button ng-click="$ctrl.resetView($event)" class="md-warn md-raised md-hue-2">Reset view</md-button>
             </div>-
             <div id="workspace" tabindex="1">
                 <svg-graph flex layout="column" control-item="$ctrl.svgControl" svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}" svg-color="#fff" pointer-events="all" focusable="false"></svg-graph>
