@@ -52,8 +52,8 @@
                                     return self.createSimpleChart("GPU Memory, Gb - " + i, "PieChart")
                                 },
                                 function (chart, gpu) {
-                                    var gpuMemUsed = gpu.mem_used.match(/\d+/)[0] / 1000;
-                                    var gpuMemFree = gpu.mem_free.match(/\d+/)[0] / 1000;
+                                    var gpuMemUsed = self.matchNumFromString(gpu.mem_used) / 1000;
+                                    var gpuMemFree = self.matchNumFromString(gpu.mem_free) / 1000;
                                     chart.data.rows = [self.createRow(['Free', gpuMemFree]), self.createRow(['Used', gpuMemUsed])];
                                 });
                             self.processChart(self, $scope, 'gpuMemLineCharts', gpus,
@@ -61,8 +61,8 @@
                                     return self.createAreaChart('GPU Memory, Gb - ' + i, ["Time", "Free", "Used"])
                                 },
                                 function (chart, gpu) {
-                                    var gpuMemUsed = gpu.mem_used.match(/\d+/)[0] / 1000;
-                                    var gpuMemFree = gpu.mem_free.match(/\d+/)[0] / 1000;
+                                    var gpuMemUsed = self.matchNumFromString(gpu.mem_used) / 1000;
+                                    var gpuMemFree = self.matchNumFromString(gpu.mem_free) / 1000;
                                     chart.data.rows.push(self.createRow([ts, gpuMemFree, gpuMemUsed]));
                                 });
                             self.processChart(self, $scope, 'utilCharts', gpus,
@@ -70,8 +70,11 @@
                                     return self.createAreaChart('GPU Utilization, % - ' + i, ["Time", "GPU Utilization", "Memory Utilization"], 100)
                                 },
                                 function (chart, gpu) {
-                                    var gpuMemUtil = gpu.util_mem.match(/\d+/)[0];
-                                    var gpuUtil = gpu.util_gpu.match(/\d+/)[0];
+                                    if(gpu.util_mem.indexOf("Not Supported") != -1 && chart.options.title.indexOf(self.notSupportedMessage) == -1){
+                                        chart.options.title += "\n This Chart Is Not Supported!"
+                                    }
+                                    var gpuMemUtil = self.matchNumFromString(gpu.util_mem);
+                                    var gpuUtil = self.matchNumFromString(gpu.util_gpu);
                                     chart.data.rows.push(self.createRow([ts, gpuUtil, gpuMemUtil]));
                                 });
                             
@@ -172,6 +175,11 @@
                     }
 
                 }
+                this.matchNumFromString = function(str){
+                    var match = str.match(/\d+/)
+                    return match && match.length > 0 ?  match[0] : 0;
+                }
+                this.notSupportedMessage = "\n This Chart Is Not Supported!";
 
                 $scope.memChart = this.createSimpleChart("RAM Memory, Gb", "PieChart");
                 $scope.memLineChart = this.createAreaChart('RAM Memory, Gb', ["Time", "Free", "Used", "Total", "Shared", "Cached", "Buffers"])
