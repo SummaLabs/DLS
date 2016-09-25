@@ -144,7 +144,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 			if (self.mouseMode === state.DRAGGING && positionDrag) {
 				var pos = convertCoordinateFromClienToSvg($element, parentNode, positionDrag);
 				positionDrag = false;
-				var correctPos = { x: (pos.x - data.offset.x) / self.scale, y: (pos.y - data.offset.y) / self.scale};
+				var correctPos = { x: (pos.x + (viewX ) - data.offset.x) / self.scale, y: (pos.y + (viewY) - data.offset.y) / self.scale};
 				if (correctPos.x > 0 && correctPos.y > 0) {
 					$scope.$apply( function() {
 						addNode(data.data.name, data.data.category, data.data.template, correctPos)
