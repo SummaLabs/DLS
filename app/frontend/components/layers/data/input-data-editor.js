@@ -57,7 +57,8 @@ angular
 
                 function editLayer(layer) {
                     layer.params.datasetType = $scope.datasetType;
-                    layer.params.datasetId = $scope.selectedDB.id;
+                    if ($scope.selectedDB)
+                        layer.params.datasetId = $scope.selectedDB.id;
                 }
 
                 function setUpLayerParams($scope, networkDataService, networkLayerService) {
