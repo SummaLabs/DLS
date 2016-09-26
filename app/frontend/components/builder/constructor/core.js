@@ -41,7 +41,6 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
     function doUpdateNetwork() {
 		var nodes = self.svgControl.getNodes();
 		var layers = networkDataService.getLayers();
-
 		nodes.forEach(function(node, i, ar){
 			var layer = networkDataService.getLayerById(node.id);
 			if (!layer) {
@@ -55,7 +54,7 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 			layer.pos = node.pos;
 			layer.wires = node.wires;
 		});
-		networkDataService.setLayers(layers);
+		// networkDataService.setLayers(layers);
     }
 
 	this.$onInit = function() {

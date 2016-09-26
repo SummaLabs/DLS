@@ -68,7 +68,8 @@ function NetworkLayerService($rootScope, $http) {
         for (var i = 0, len = layers.length; i < len; i++) {
             var layer = layers[i];
             if(layer.name == type) {
-                return layer;
+                var copy = copyObject(layer);
+                return copy;
             }
         }
     };
@@ -76,4 +77,17 @@ function NetworkLayerService($rootScope, $http) {
     this.setLayers = function(new_layers) {
         layers = new_layers;
     };
+
+    function copyObject(obj) {
+        var copy = obj.constructor();
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr))
+                if (obj[attr] !== null && typeof obj[attr] === 'object') {
+                    copy[attr] = copyObject(obj[attr]);
+                } else {
+                    copy[attr] = obj[attr];
+                }
+        }
+        return copy;
+    }
 }

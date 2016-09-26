@@ -10,7 +10,6 @@ angular
         templateUrl: "frontend/components/layers/data/input-data-editor.html",
         controller: function ($scope, networkDataService, networkLayerService, dbinfoService) {
             this.$onInit = function () {
-                console.log('inputDataEditor::onInit()');
                 setUpLayerParams($scope, networkDataService, networkLayerService);
                 $scope.datasetTypeList = [
                     {value: "Image", text: "Image"},
