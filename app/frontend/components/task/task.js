@@ -86,22 +86,24 @@
                 };
                 self.showLogDialog = function (id) {
                     var tmp = self.curr();
-                    var log = {text: ""}
+                    var log = {
+                        text: ""
+                    }
                     $http({
                         method: "GET",
                         url: "/task/log/" + id,
                     }).then(function mySucces(response) {
-                       console.log(response.data);
+                        console.log(response.data);
                         log.text = response.data;
-                         $mdDialog.show(
-                        $mdDialog.confirm().title('Training Log').textContent(response.data).ariaLabel('Log').ok('Ok')
-                    );
+                        $mdDialog.show(
+                            $mdDialog.confirm().title('Training Log').textContent(response.data).ariaLabel('Log').ok('Ok')
+                        );
                     }, function myError(response) {
                         console.log(response);
                     });
-                    
-                    
-                   
+
+
+
                 };
                 //
                 self.isChecked = false;
@@ -132,24 +134,43 @@
                         method: "POST",
                         url: "/task/term",
                         data: {
-                            index: id                       
+                            index: id
                         }
                     }).then(function mySucces(response) {
-                       console.log(response.data);
+                        console.log(response.data);
                     }, function myError(response) {
                         console.log(response);
                     });
                 }
+                self.stateIncludes = [];
+                self.includeState = function (state) {
+                    var i = $.inArray(state, self.stateIncludes);
+                    if (i > -1) {
+                        self.stateIncludes.splice(i, 1);
+                    } else {
+                        self.stateIncludes.push(state);
+                    }
+                }
+
+                self.stateFilter = function (task) {
+                    if (self.stateIncludes.length > 0) {
+                        if ($.inArray(task.state, self.stateIncludes) < 0)
+                            return;
+                    }
+
+                    return task;
+                }
+
                 var socket = io.connect('http://' + document.domain + ':' + location.port);
                 socket.on('task_monitor', function (msg) {
                     console.log(msg);
                     var tasks = JSON.parse(msg);
                     //task.plot = self.getInitPlotData();
-                    for(var i = 0; i < tasks.length; i++){
+                    for (var i = 0; i < tasks.length; i++) {
                         tasks[i].plot = self.getInitPlotData();
                         tasks[i].plot.data.rows = tasks[i].rows;
                     }
-                    
+
                     self.listDats = tasks;
                     $scope.$apply()
                 });

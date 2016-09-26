@@ -1,9 +1,20 @@
 <md-list>
       <div layout="row" layout-align="center center">
             <div flex layout="center" layout-align="center">
-                <h1>Running Tasks: </h1>
+                <h2>Running Tasks: </h2>
             </div>
             <md-checkbox aria-label="CheckBox" ng-model="$ctrl.isChecked" class="md-secondary">Check Layout</md-checkbox>
+        </div>
+       <div layout="row" layout-align="left left">
+            <div flex layout="left" layout-align="left">
+                <p>Show Tasks: </p>
+            </div>
+        </div>
+    <div layout="row" layout-align="left left">
+           <md-checkbox aria-label="CheckBox" ng-click="$ctrl.includeState('running')" class="md-secondary">Running</md-checkbox>
+           <md-checkbox aria-label="CheckBox" ng-click="$ctrl.includeState('ready')" class="md-secondary">Waiting</md-checkbox>
+           <md-checkbox aria-label="CheckBox" ng-click="$ctrl.includeState('killed')" class="md-secondary">Killed</md-checkbox>
+           <md-checkbox aria-label="CheckBox" ng-click="$ctrl.includeState('finished')" class="md-secondary">Finished</md-checkbox>
         </div>
         <md-divider></md-divider>
         <div layout="row">
@@ -12,7 +23,7 @@
                     <md-list-item flex layout="row"
                                   class="secondary-button-padding"
                                   ng-click="$ctrl.doPrimaryAction($event,$index)"
-                                  ng-repeat="dat in $ctrl.listDats">
+                                  ng-repeat="dat in $ctrl.listDats | filter:$ctrl.stateFilter | orderBy : 'id'">
                         <div ng-switch="dat.type">
                             <div ng-switch-when="model">
                                 <img width="64px" height="64px" src="/frontend/assets/icon/img/img-model1.png" />
