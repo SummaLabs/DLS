@@ -103,7 +103,7 @@ function NetworkDataService($rootScope, $http, $timeout) {
         var result = saveNetwork(network, name);
         result.then(function (response) {
                 isChangesSaved = true;
-                self.pubNetworkUpdateEvent();
+                // self.pubNetworkUpdateEvent();
             }, function (response) {
             }
         );

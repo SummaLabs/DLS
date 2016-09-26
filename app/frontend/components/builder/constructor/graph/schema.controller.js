@@ -242,15 +242,15 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		$element.on('mousedown', function (event) {
 			if (self.mouseMode === state.DEFAULT) {
 
-			    if (!self.isItemClicked) {
+			    // if (!self.isItemClicked) {
                     $scope.$apply( function() {
                         selectItems (self.nodes, false);
                         selectItems (self.links, false);
                     });
                     activeItem.isActive = false;
                     activeItem = -1;
-                }
-                self.isItemClicked = false;
+                // }
+                // self.isItemClicked = false;
 
                 if (event.buttons === 1 && event.ctrlKey) {
 

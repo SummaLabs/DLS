@@ -61,6 +61,8 @@ angular.module('constructorCore')
 
 					element[0].style.width = viewportWidth + 'px';
 					element[0].style.height = viewportHeight + 'px';
+                    // element[0].style.right = -viewportWidth + 'px';
+					 element[0].style.bottom = viewportHeight + 'px';
 
 					visibleEl.style.width = visibleWidth + 'px';
 					visibleEl.style.height = visibleHeight + 'px';
