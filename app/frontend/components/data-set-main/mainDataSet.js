@@ -33,9 +33,10 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService'])
                             parent: angular.element(document.body),
                             targetEvent: event,
                             locals: {
-                                dbId: dbId,
+                                dbId:   dbId,
                                 dbInfo: response.data
                             },
+                            bindToController:true,
                             clickOutsideToClose:true
                         });
                     },
@@ -123,12 +124,60 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService'])
 
 function DialogControllerPreviewDB($scope, $mdDialog, dbId, dbInfo, dbinfoService) {
     console.log('::DialogControllerPreviewDB() : ' + dbId);
-    console.log(dbInfo);
-    console.log(dbInfo.hist.labels);
+    // console.log(dbInfo);
+    // console.log('Labels: ' + dbInfo.hist.labels);
     var self = this;
-    $scope.dbid = dbId;
-    $scope.dbInfo = dbInfo;
-    
+    $scope.dbid     = dbId;
+    $scope.dbInfo   = dbInfo;
+
+    $scope.getInfo = function () {
+        return $scope.dbInfo;
+    };
+    $scope.getPlotData = function (pType) {
+        var strTitle = 'Train data distribution';
+        var tmpHistData = dbInfo.hist.histTrain;
+        if(pType=='val') {
+            strTitle = 'Validation data distribution';
+            tmpHistData = dbInfo.hist.histVal;
+        }
+        var tdata=[];
+        for(var ii=0; ii<tmpHistData.length; ii++) {
+            tdata.push(
+                {c: [
+                    {v: tmpHistData[ii][0]},
+                    {v: tmpHistData[ii][1]}
+                ]}
+            );
+        }
+        return {
+            type: 'ColumnChart',
+            displayed: false,
+            data: {
+                "cols": [
+                {id: "t", label: "Name", type: "string"},
+                {id: "s", label: "#Samples", type: "number"}
+            ],
+                "rows": tdata
+            },
+            options: {
+                title: strTitle,
+                isStacked: "true",
+                fill: 20,
+                displayExactValues: true,
+                vAxis: {
+                    title: "#Samples",
+                    gridlines: {
+                        count: 5
+                    }
+                },
+                hAxis: {
+                    title: "Labels"
+                }
+            },
+            "formatters": {}
+        }
+    };
+
     $scope.getMeanImage = function () {
         dbinfoService.getImageMeanForDB().then(
             function successCallback(response) {

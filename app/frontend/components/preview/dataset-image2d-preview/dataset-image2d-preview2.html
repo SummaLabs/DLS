@@ -1,14 +1,16 @@
 <div layout-padding="">
-    <h3>Material Angular Paging</h3>
+    <h3>Paging database [<strong>{{$ctrl.databaseId}}</strong>]</h3>
     <md-tabs md-dynamic-height md-border-bottom>
         <md-tab ng-repeat="cc in $ctrl.listClasses">
             <md-tab-label>
-                {{cc.info}}
+                {{cc.label}}
             </md-tab-label>
             <md-tab-body>
-                <dataset-image2d-paging
-                    param-database="{{cc.info}}"
-                    param-class="{{cc.idx}}"></dataset-image2d-paging>
+                <dataset-image2d-paging2
+                    param-database="{{$ctrl.databaseId}}"
+                    param-type="{{$ctrl.datasetType}}"
+                    param-class-idx="{{cc.idx}}"
+                    param-class-type="{{cc.type}}"></dataset-image2d-paging2>
             </md-tab-body>
         </md-tab>
     </md-tabs>

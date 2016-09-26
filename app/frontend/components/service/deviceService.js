@@ -18,6 +18,12 @@ function DeviceService($rootScope, $http) {
         });
         return deviceInfo;
     };
-    
+
+    this.getAvailableDevices = function() {
+        return $http({
+            method: "GET",
+            url: "/device/available"
+        });
+    };
     
 }

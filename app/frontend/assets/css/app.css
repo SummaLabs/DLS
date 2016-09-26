@@ -100,6 +100,13 @@ md-tab-item {
     background: lightcyan;
 }
 
+.device-list-available {
+    background: lightgreen;
+}
+
+.device-list-busy {
+    background: lightcoral;
+}
 
 /*.db-preview-grid {*/
     /*.md-whiteframe-16dp;*/
@@ -118,3 +125,7 @@ md-tab-item {
   /*height: 48px;*/
   /*width: 48px;*/
 /*}*/
+
+md-dialog-content{
+    white-space: pre-wrap;
+}

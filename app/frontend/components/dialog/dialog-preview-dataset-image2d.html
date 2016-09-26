@@ -40,17 +40,27 @@
                                         </h4>
                                     </div>
                                 </md-list-item>
-                                <md-list-item class="md-2-line layout-row" layout-padding>
-                                    <h4>Labels</h4>
-                                    <md-chips>
-                                        <md-chip ng-repeat="cc in dbInfo.hist.labels">
-                                            {{ cc }}
-                                        </md-chip>
-                                    </md-chips>
+                                <md-list-item class="layout-column">
+                                    <div layout-padding layout="row" layout-align="center center">
+                                        <h4>Labels:&nbsp;</h4>
+                                        <div class="md-whiteframe-z1" ng-repeat="ll in dbInfo.hist.labels">
+                                            {{ ll }}
+                                        </div>
+                                    </div>
+                                    <div layout="row">
+                                        <md-chips>
+                                            <md-chip>Size (Total): <strong>{{dbInfo.size.totalstr}}</strong></md-chip>
+                                            <md-chip>Size (Train): <strong>{{dbInfo.size.trainstr}}</strong></md-chip>
+                                            <md-chip>Size (Val): <strong>{{dbInfo.size.valstr}}</strong></md-chip>
+                                        </md-chips>
+                                    </div>
                                 </md-list-item>
-
-
                             </md-list>
+                        </div>
+                        <hr>
+                        <div layout="row" flex>
+                            <div flex ng-cloak google-chart chart="{{getPlotData('train')}}" style="height: 320px"></div>
+                            <div flex ng-cloak google-chart chart="{{getPlotData('val')}}" style="height: 320px"></div>
                         </div>
                     </div>
                 </md-tab-body>
@@ -61,7 +71,7 @@
                     Preview-Train
                 </md-tab-label>
                 <md-tab-body>
-                    Fuck#2
+                    <dataset-image2d-preview2 database-id="{{dbInfo.id}}" dataset-type="train"></dataset-image2d-preview2>
                 </md-tab-body>
             </md-tab>
             <md-tab class="unselectable">
@@ -70,7 +80,7 @@
                     Preview-Validation
                 </md-tab-label>
                 <md-tab-body>
-                    Fuck#3
+                    <dataset-image2d-preview2 database-id="{{dbInfo.id}}" dataset-type="val"></dataset-image2d-preview2>
                 </md-tab-body>
             </md-tab>
             <md-tab class="unselectable">

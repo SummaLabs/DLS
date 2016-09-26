@@ -119,13 +119,29 @@ class ImageTransformer2D:
     @staticmethod
     def decodeLmdbItem2Image(pval):
         tdat = dlscaffe_pb2.Datum()
-        tshape = (tdat.height, tdat.width, tdat.channels)
         tdat.ParseFromString(pval)
+        tshape = (tdat.height, tdat.width, tdat.channels)
         if tdat.encoded:
             timg = skio.imread(StringIO(tdat.data))
         else:
             timg = np.fromstring(tdat.data, dtype=np.uint8).reshape(tshape)
         return timg
+
+    @staticmethod
+    def decodeLmdbItem2NNSampple(pval):
+        tdat = dlscaffe_pb2.Datum()
+        tdat.ParseFromString(pval)
+        tshape = (tdat.channels, tdat.height, tdat.width, )
+        if tdat.encoded:
+            timg = skio.imread(StringIO(tdat.data))
+            if len(timg.shape)==2:
+                timg=np.reshape(timg, tshape)
+            else:
+                timg=timg.transpose((2,0,1))
+        else:
+            #FIXME: we believe that... not-encoded data in Theano-format? (#Channels, #Rows, #Cols)
+            timg = np.fromstring(tdat.data, dtype=np.uint8).reshape(tshape)
+        return (timg,tdat.label)
 
     @staticmethod
     def cvtImage2Datum(timg, imgEncoding, idxLabel):
@@ -170,14 +186,15 @@ class ImageTransformer2D:
             f.write(tblob.SerializeToString())
 
     @staticmethod
-    def loadImageFromBinaryBlog(finpBlob):
+    def loadImageFromBinaryBlog(finpBlob, isDEBUG=False):
         with open(finpBlob, 'r') as f:
             tblob = dlscaffe_pb2.BlobProto()
             tblob.ParseFromString(f.read())
-            print ("#width:    %d" % tblob.width)
-            print ("#height:   %d" % tblob.height)
-            print ("#channels: %d" % tblob.channels)
-            print ("*.dim = %s" % tblob.shape.dim)
+            if isDEBUG:
+                print ("#width:    %d" % tblob.width)
+                print ("#height:   %d" % tblob.height)
+                print ("#channels: %d" % tblob.channels)
+                print ("*.dim = %s" % tblob.shape.dim)
             #
             tshape = (tblob.channels, tblob.height, tblob.width)
             data = np.array(tblob.data).reshape(tshape)

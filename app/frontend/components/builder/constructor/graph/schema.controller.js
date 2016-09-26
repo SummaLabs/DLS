@@ -6,15 +6,17 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         MOVING: 2,
         JOINING: 3,
         DRAGGING: 4,
-    }
+        SHIFT: 5
+    };
 
     const events = {
         ADD_NODE: 'graph:addNode',
         REMOVE_NODE: 'graph:removeNode',
         ADD_LINK: 'graph:addLink',
         REMOVE_LINK: 'graph:removeLink',
-        REMOVE_ITEMS: 'graph:removeItems'
-    }
+        REMOVE_ITEMS: 'graph:removeItems',
+        CHANGED_VIEWS: 'graph:changedViews'
+    };
 
     var self = this;
     var viewX = 0;
@@ -23,10 +25,11 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
     self.$onInit = function() {
         self.counterNodesInit = 0;
+        self.scale = 1.0;
         self.viewWidth = 0;
         self.viewHeight = 0;
-        resize();
-        viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
+		var divSvg = document.getElementById('workspace');
+        viewBox(viewX, viewY, divSvg.offsetWidth, divSvg.offsetHeight);
 
         self.mouseMode = state.DEFAULT;
         self.links = schema.getLinks();
@@ -35,16 +38,9 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         self.activelink = {
             nodes: []
         };
-        self.selRect = {
-            isShown: false,
-            x: 0,
-            y: 0,
-            width: 0,
-            height: 0
-        };
-        schemaWatcher();
+        self.selRect = null;
         schemaEvents();
-        initBackground(self, $scope, appConfig.svgDefinitions.gridStep);
+        initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element);
 	};
 
 	$scope.controlItem.viewportPos = function(x, y) {
@@ -53,7 +49,15 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
             viewY = y;
             viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
         });
-	}
+	};
+
+	$scope.controlItem.getScale = function() {
+	    return getScale();
+	};
+
+	$scope.controlItem.scale = function(scale) {
+        setScale(scale);
+  	};
 
     $scope.controlItem.addLayer = function(layer) {
         var node = schema.addNode(layer.name, layer.category, layer.template, layer.id);
@@ -62,7 +66,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		node.position(layer.pos.x, layer.pos.y, appConfig.svgDefinitions.gridStep);
 
         return true;
-    }
+    };
 
     $scope.controlItem.setLayers = function(layers) {
 
@@ -82,11 +86,20 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         }, 400);
 
         return true;
-    }
+    };
 
     $scope.controlItem.getNodes = function() {
         return schema.getSchema();
-    }
+    };
+
+    $scope.controlItem.reset = function() {
+        var rect = schema.rect();
+        if (rect) {
+            var sc = Math.min(self.viewWidth / rect.width(), self.viewHeight / rect.height());
+            setScale(sc);
+            viewBox(rect.x() * sc, rect.y() * sc, self.viewWidth, self.viewHeight);
+        }
+    };
 
     function addNode(name, category, template, pos) {
         var node = schema.addNode(name, category, template);
@@ -109,21 +122,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
     self.emitEvent = function(eventType, data) {
         $scope.$emit(eventType, data);
-    }
-
-    function schemaWatcher() {
-        $scope.$watch(function () {
-                return coreService.param('scale');
-            }, function(newValue, oldValue) {
-                self.scale = newValue;
-                self.width = self.scale * $scope.svgWidth;
-                self.height = self.scale * $scope.svgHeight;
-                viewX = viewX * self.scale;
-				viewY = viewY * self.scale;
-				viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
-            }
-        );
-    }
+    };
 
     function schemaEvents() {
         self.isItemClicked = false;
@@ -145,7 +144,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 			if (self.mouseMode === state.DRAGGING && positionDrag) {
 				var pos = convertCoordinateFromClienToSvg($element, parentNode, positionDrag);
 				positionDrag = false;
-				var correctPos = { x: (pos.x - data.offset.x) / self.scale, y: (pos.y - data.offset.y) / self.scale};
+				var correctPos = { x: (pos.x + (viewX ) - data.offset.x) / self.scale, y: (pos.y + (viewY) - data.offset.y) / self.scale};
 				if (correctPos.x > 0 && correctPos.y > 0) {
 					$scope.$apply( function() {
 						addNode(data.data.name, data.data.category, data.data.template, correctPos)
@@ -157,7 +156,6 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		$scope.$on('nodeMouseDown', function (event, data) {
 		    self.mouseMode = state.MOVING;
 			editedNode = schema.getNodeById(data.id);
-//			editedNode.isActive = true;
 			prevMousePos = getOffsetPos($element, data.event);
 		});
 
@@ -233,10 +231,10 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
 		});
 
-		angular.element(window).on('resize', function (event) {
+		angular.element(window).on('resize', function () {
             $scope.$apply( function() {
-                resize();
-                viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
+                var divSvg = document.getElementById('workspace');
+                viewBox(viewX, viewY, divSvg.offsetWidth, divSvg.offsetHeight);
             });
 
 		});
@@ -244,47 +242,62 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		$element.on('mousedown', function (event) {
 			if (self.mouseMode === state.DEFAULT) {
 
-			    if (!self.isItemClicked) {
+			    // if (!self.isItemClicked) {
                     $scope.$apply( function() {
                         selectItems (self.nodes, false);
                         selectItems (self.links, false);
                     });
                     activeItem.isActive = false;
                     activeItem = -1;
-                }
-                self.isItemClicked = false;
+                // }
+                // self.isItemClicked = false;
 
-			    var curMousePos = getOffsetPos($element, event);
+                if (event.buttons === 1 && event.ctrlKey) {
 
-			    $scope.$apply( function() {
-			        prevMousePos = curMousePos;
-                    self.selRect = Rect(curMousePos.x, curMousePos.y, curMousePos.x, curMousePos.y);
-                    self.selRect.isShown = true;
-                });
-                self.mouseMode = state.SELECTION;
+					prevMousePos = getOffsetPos($element, event);
+                    prevMousePos.x += viewX;
+                    prevMousePos.y += viewY;
+
+					$scope.$apply( function() {
+						self.selRect = Rect(prevMousePos.x, prevMousePos.y, prevMousePos.x, prevMousePos.y);
+						self.selRect.isShown = true;
+					});
+					self.mouseMode = state.SELECTION;
+				} else if (event.buttons === 1) {
+					prevMousePos = getOffsetPos($element, event);
+					self.mouseMode = state.SHIFT;
+				}
 		    }
 		});
 
 		$element.on('mousemove', function (event) {
             if (self.mouseMode === state.SELECTION) {
-			    var curMousePos = getOffsetPos($element, event);
+			    let curMousePos = getOffsetPos($element, event);
 			    $scope.$apply( function() {
+                    curMousePos.x += viewX;
+                    curMousePos.y += viewY;
                     self.selRect = Rect(prevMousePos.x, prevMousePos.y, curMousePos.x, curMousePos.y);
                     self.selRect.isShown = true;
                 });
 
+		    } else if (self.mouseMode === state.SHIFT) {
+		    	let curMousePos = getOffsetPos($element, event);
+		    	var left = viewX -(curMousePos.x - prevMousePos.x);
+		    	var top = viewY - (curMousePos.y - prevMousePos.y);
+
+		    	viewBox(left, top, self.viewWidth, self.viewHeight);
+		    	prevMousePos = curMousePos;
+
 		    } else if (self.mouseMode === state.MOVING && event.buttons === 1) {
-
-
-				var curMousePos = getOffsetPos($element, event);
+				let curMousePos = getOffsetPos($element, event);
 				$scope.$apply( function() {
                     editedNode.move((curMousePos.x - prevMousePos.x) / self.scale, (curMousePos.y - prevMousePos.y) / self.scale);
                 });
 				prevMousePos = curMousePos;
 			} else if (self.mouseMode === state.JOINING  && event.buttons === 1) {
-				var curMousePos = getOffsetPos($element, event);
-				curMousePos.x =  curMousePos.x / self.scale;
-				curMousePos.y =  curMousePos.y / self.scale;
+				let curMousePos = getOffsetPos($element, event);
+				curMousePos.x =  (viewX + curMousePos.x) / self.scale;
+				curMousePos.y =  (viewY + curMousePos.y) / self.scale;
 				$scope.$apply( function() {
 					if (self.activelink.nodes.length === 1) {
 						self.activelink.nodes.push({
@@ -298,10 +311,8 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 			}
 		});
 
-		$element.on('mouseup', function (event) {
-
+		$element.on('mouseup', function () {
 		    if (self.mouseMode === state.SELECTION) {
-			    var curMousePos = getOffsetPos($element, event);
 			    $scope.$apply( function() {
                     schema.selectNodesInsideRect(self.selRect.scale(1 / self.scale));
                     self.selRect = Rect(0,0,0,0);
@@ -314,7 +325,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
             self.mouseMode = state.DEFAULT;
 		});
 
-		$element.on('mouseleave', function (event) {
+		$element.on('mouseleave', function () {
 
 		    if (self.mouseMode === state.DEFAULT) {
 
@@ -333,7 +344,6 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		});
 
         // keyboard events:
-        var parentNode = angular.element($element[0].parentNode);
 
 		parentNode.on('keydown', function (event) {
 			if (event.keyCode === 46) {
@@ -351,32 +361,134 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 			}
 		});
 
+
+		$element.on('wheel', function (event) {
+			var delta = (event.deltaY || event.detail || event.wheelDelta) / 8;
+			var scale = self.scale;
+			if (delta > 0) {
+				scale /= appConfig.svgDefinitions.scaleFactor;
+				if (scale > appConfig.svgDefinitions.scaleMax) {
+					scale = appConfig.svgDefinitions.scaleMax;
+				}
+			}
+      		else {
+      			scale *= appConfig.svgDefinitions.scaleFactor;
+				if (scale < appConfig.svgDefinitions.scaleMin) {
+					scale = appConfig.svgDefinitions.scaleMin;
+				}
+      		}
+      		$scope.$apply( function() {
+				var mousePos = getOffsetPos($element, event);
+      			var sc = scaleToPoint(scale, mousePos);
+                coreService.param('scale', sc);
+                self.scale = sc;
+      		});
+		});
+
         // system events:
 		$element.on('focus', function (event) {
 
 		});
     }
+
+    function setScale(scale) {
+        scale = scaleToPoint(scale);
+        coreService.param('scale', scale);
+        self.scale = scale;
+	}
+
+	function getScale() {
+		return self.scale;
+	}
+
     function removeActiveLink() {
         $scope.$apply( function() {
             self.activelink.nodes.length = 0;
         });
     }
 
-    function viewBox(x, y, width, height) {
-        $element.attr('viewBox', x + ' ' + y + ' ' + width + ' ' + height);
+    function scaleToPoint(scale, point) {
+    	var divSvg = document.getElementById('workspace');
+		var sceneWidth = scale * $scope.svgWidth;
+		var sceneHeight = scale * $scope.svgHeight;
+        var view = Rect(0, 0, sceneWidth, sceneHeight);
+
+        if (arguments.length < 2) {
+            point = {};
+            point.x = divSvg.offsetWidth / 2;
+            point.y = divSvg.offsetHeight / 2;
+        }
+
+        fitRectToRect(view, Rect(0, 0, divSvg.offsetWidth, divSvg.offsetHeight));
+
+		self.width = view.width();
+		self.height = view.height();
+
+        scale = view.width() / $scope.svgWidth;
+
+		var scalePrev = self.scale;
+
+		var XPrev = (viewX + point.x) / scalePrev;
+		var YPrev = (viewY + point.y) / scalePrev;
+
+		var left = (XPrev - point.x / scale) * scale;
+		var top =  (YPrev - point.y / scale) * scale;
+
+		viewBox(left, top, divSvg.offsetWidth, divSvg.offsetHeight);
+        return scale;
     }
 
-    function resize() {
-        var divSvg = document.getElementById('workspace');
-        self.viewWidth = divSvg.offsetWidth - 10;
-        self.viewHeight = divSvg.offsetHeight - 10;
+    function viewBox(x, y, width, height) {
+
+        if ((x + width) > self.width) {
+            x = self.width - width;
+        }
+        if ((y + height) > self.height) {
+            y = self.height - height;
+        }
+
+		if (x < 0)
+		    x = 0;
+        if (y < 0)
+            y = 0;
+
+    	viewX = x;
+    	viewY = y;
+    	self.viewWidth = width;
+    	self.viewHeight = height;
+
+        self.emitEvent(events.CHANGED_VIEWS, {x: viewX, y: viewY});
+        $element.attr('viewBox', viewX + ' ' + viewY + ' ' + self.viewWidth + ' ' + self.viewHeight);
     }
+
+    function fitRectToRect(inner, outer) {
+		if (inner.x() < outer.x())
+			inner.x(outer.x());
+		if (inner.y() < outer.y())
+			inner.y(outer.y());
+
+		if (inner.right() < outer.width() && inner.bottom() < outer.height()) {
+            var ratioInner = inner.width() / inner.height();
+            var ratioOuter = outer.width() / outer.height();
+            if (ratioInner > ratioOuter) {
+                inner.right(outer.width());
+                inner.bottom(outer.width() / ratioInner);
+            } else {
+                inner.bottom(outer.height());
+                inner.right(outer.height() * ratioInner);
+            }
+        }
+
+	}
 }
 
-function initBackground(self, scope, step) {
-    self.grid = {}
-    self.grid.vertical = []
-    for (let a = 0; a < scope.svgWidth; a += step)
+function initBackground(self, scope, step, element) {
+    self.grid = {};
+    self.grid.vertical = [];
+    self.grid.horizontal = [];
+    // var viewGroup = angular.element(element[0].querySelector('#view'));
+    // var line = angular.element('<line>');
+    for (let a = 0; a < scope.svgWidth; a += step) {
         self.grid.vertical.push({
             x: a,
             y: 0,
@@ -384,7 +496,16 @@ function initBackground(self, scope, step) {
             y2: scope.svgHeight,
         });
 
-    self.grid.horizontal = []
+
+       /* var curLine = line.clone();
+        curLine.attr('style', 'stroke:rgb(111,111,111);stroke-width:0.5');
+        curLine.attr('x1', '' + a);
+        curLine.attr('y1', '0');
+        curLine.attr('x2', '' + a);
+        curLine.attr('y2', '' + scope.svgHeight);
+        viewGroup.append(curLine);*/
+    }
+
     for (let a = 0; a < scope.svgHeight; a += step)
         self.grid.horizontal.push({
             x: 0,
@@ -414,19 +535,19 @@ function convertCoordinateFromClienToSvg($element, parentNode, clientCoord) {
 }
 
 function isPointInRect(point, rect) {
-    if (point.x >= rect.x && point.x <= rect.x + rect.width
-        && point.y >= rect.y && point.y <= rect.y + rect.height)
-        return true;
-    return false;
+    return (point.x >= rect.x() &&
+			point.x <= rect.right() &&
+			point.y >= rect.y() &&
+			point.y <= rect.bottom());
 }
 
 function selectItems (array, options) {
     if (typeof options == 'undefined') {
-        for(var i = 0; i < array.length; ++i) {
+        for(let i = 0; i < array.length; ++i) {
             array[i].isActive = true;
         }
     } else {
-        for(var i = 0; i < array.length; ++i) {
+        for(let i = 0; i < array.length; ++i) {
             array[i].isActive = options;
         }
     }

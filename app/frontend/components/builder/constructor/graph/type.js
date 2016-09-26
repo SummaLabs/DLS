@@ -7,7 +7,7 @@ function Position(x, y, step) {
 
 Position.prototype.getScaledPos = function(scale) {
     return new Position(this.x * scale, this.y * scale);
-}
+};
 
 Position.prototype.getAddedPos = function(offset, offsetY) {
     if (arguments.length === 1)
@@ -15,52 +15,92 @@ Position.prototype.getAddedPos = function(offset, offsetY) {
     else if (arguments.length === 2)
         return new Position(this.x + offset, this.y + offsetY);
     else return new Position(this.x, this.y);
-}
+};
 
 function Rect(x1, y1, x2, y2) {
+    var x;
+    var y;
+    var width;
+    var height;
+
+
     function _rect(){
-        this.x;
-        this.y;
-        this.width;
-        this.height;
 
         this.scale = function(scale) {
             var scaled_rect = Rect(0,0,0,0);
-            scaled_rect.x = this.x * scale;
-            scaled_rect.y = this.y * scale;
-            scaled_rect.width = this.width * scale;
-            scaled_rect.height = this.height * scale;
+            scaled_rect.x(x * scale);
+            scaled_rect.y(y * scale);
+            scaled_rect.width(width * scale);
+            scaled_rect.height(height * scale);
             return scaled_rect;
+        };
+
+        this.x = function(left) {
+            if (!arguments.length)
+                return x;
+            x = left;
+        };
+
+        this.y = function(top) {
+            if (!arguments.length)
+                return y;
+            y = top;
+        };
+
+        this.width = function(w) {
+            if (!arguments.length)
+                return width;
+            width = w;
+        };
+
+        this.height = function(h) {
+            if (!arguments.length)
+                return height;
+            height = h;
+        };
+
+        this.right = function(r) {
+            if (!arguments.length)
+                return x + width;
+            width = r - x;
+        };
+
+        this.bottom = function(b) {
+            if (!arguments.length)
+                return y + height;
+            height = b - y;
+        };
+
+        this.toString = function() {
+            return "\nx: " + x + "\ny: " + y + "\nwidth: " + width + "\nheight: " + height;
         }
-    };
+
+    }
 
     var rc = new _rect();
-    rc.x = Math.min(x1, x2);
-    rc.y = Math.min(y1, y2);
-    rc.width = Math.abs(x1 - x2);
-    rc.height = Math.abs(y1 - y2);
-
-
+    rc.x(Math.min(x1, x2));
+    rc.y(Math.min(y1, y2));
+    rc.width(Math.abs(x1 - x2));
+    rc.height(Math.abs(y1 - y2));
 
     return rc;
 }
 
 function Item(type) {
-    this.id;
+    this.id = null;
     this.type = type;
     this.isActive = false;
-
-    var self = this;
 }
 
 function Node() {
     Item.call(this, 'node');
 
-    this.name;
-    this.template;
-    this.category;
+    this.name = null;
+    this.template = null;
+    this.category = null;
     this.pos = new Position(0, 0);
 }
+
 Node.prototype = Object.create(Item.prototype);
 Node.prototype.constructor = Node;
 
@@ -69,7 +109,7 @@ Node.prototype.position = function(x, y, step) {
         return this.pos;
 
     this.pos = new Position(x, y, step);
-}
+};
 
 Node.prototype.move = function(offsetX, offsetY, step) {
     if (!step)
@@ -81,7 +121,7 @@ Node.prototype.move = function(offsetX, offsetY, step) {
         newPos.y = 0;
     this.pos.x = newPos.x - (newPos.x % step) + 0.5;
     this.pos.y = newPos.y - (newPos.y % step) + 0.5;
-}
+};
 
 function Link() {
     Item.call(this, 'link');
@@ -92,13 +132,13 @@ Link.prototype.constructor = Link;
 
 function Schema() {
     var nodes = [];
-    var links = []
+    var links = [];
     var idList = [];
 
     this.getSchema = function() {
     	var schema = [];
 
-    	nodes.forEach(function(node, i, ar){
+    	nodes.forEach(function(node){
     		var layer = Object.create(null);
     		layer.id = node.id;
 			layer.name = node.name;
@@ -106,7 +146,7 @@ function Schema() {
 			layer.template = node.template;
 			layer.pos = node.pos;
 			layer.wires = [];
-			links.forEach(function(link, i, ar){
+			links.forEach(function(link){
 				if (link.nodes[0].id === layer.id) {
 					layer.wires.push(link.nodes[1].id);
 				}
@@ -114,7 +154,7 @@ function Schema() {
     		schema.push(layer);
     	});
     	return schema;
-    }
+    };
 
     this.addNode = function(name, category, template, id) {
         var node = new Node();
@@ -129,18 +169,18 @@ function Schema() {
         node.template = template;
         nodes.push(node);
         return node;
-    }
+    };
 
     this.getNodeById = function(id) {
         return getItemById(nodes, id);
-    }
+    };
 
     this.getNodes = function() {
         return nodes;
-    }
+    };
 
     this.removeNode = function(id) {
-        nodes.forEach(function(node, index, array){
+        nodes.forEach(function(node, index){
             if (node.id === id) {
                 nodes.splice(index, 1);
                 var ind = 0;
@@ -156,7 +196,7 @@ function Schema() {
                 }
             }
         });
-    }
+    };
 
     this.addLink = function(from, to) {
         if (this.getLinkById(from.id + '_' + to.id))
@@ -168,23 +208,23 @@ function Schema() {
         link.nodes = [from, to];
         links.push(link);
         return link;
-    }
+    };
 
     this.getLinkById = function(id) {
         return getItemById(links, id);
-    }
+    };
 
     this.getLinks = function() {
         return links;
-    }
+    };
 
     this.removeLink = function(id) {
-        links.forEach(function(link, index, array){
+        links.forEach(function(link, index){
             if (link.id === id) {
                 links.splice(index, 1);
             }
         });
-    }
+    };
 
     this.getItemById = function(id, type) {
         if (!type) {
@@ -197,7 +237,7 @@ function Schema() {
             return this.getNodeById(id);
         else if (type == 'link')
             return this.getLinkById(id);
-    }
+    };
 
     this.removeItem = function(id, type) {
         if (type) {
@@ -211,19 +251,19 @@ function Schema() {
             this.removeItem(item.id, item.type);
         }
         return true;
-    }
+    };
 
     this.removeSelectedItems = function() {
         var delNodes = [];
         var delLinks = [];
 
-        for (var i = 0; i < nodes.length; ++i) {
+        for (let i = 0; i < nodes.length; ++i) {
             if (nodes[i].isActive) {
                 delNodes.push(i);
             }
         }
 
-        for (var i = 0; i < links.length; ++i) {
+        for (let i = 0; i < links.length; ++i) {
             if (links[i].isActive) {
                 delLinks.push(i);
             }
@@ -239,24 +279,21 @@ function Schema() {
         }
 
         var counterDel = 0;
-        for (var i = 0; i < delNodes.length; ++i) {
+        for (let i = 0; i < delNodes.length; ++i) {
             nodes.splice(delNodes[i] - counterDel, 1);
             counterDel ++;
         }
         counterDel = 0;
-        for (var i = 0; i < delLinks.length; ++i) {
+        for (let i = 0; i < delLinks.length; ++i) {
             links.splice(delLinks[i] - counterDel, 1);
             counterDel ++;
         }
-        if (delNodes.length > 0 || delLinks.length > 0) {
-        	return true;
-        }
-        return false;
-    }
+        return delNodes.length > 0 || delLinks.length > 0;
+    };
 
     this.selectNodesInsideRect = function(rect) {
-        var listSelected = []
-        for (var i = 0; i < nodes.length ; i ++) {
+        var listSelected = [];
+        for (let i = 0; i < nodes.length ; i ++) {
             if (isPointInRect({x: nodes[i].pos.x, y: nodes[i].pos.y}, rect)
                 && isPointInRect({  x: nodes[i].pos.x + nodes[i].displayData.node.width,
                                     y: nodes[i].pos.y + nodes[i].displayData.node.height }, rect)) {
@@ -265,14 +302,39 @@ function Schema() {
             }
         }
         return listSelected;
-    }
+    };
 
 
     this.clear = function() {
         nodes.length = 0;
         links.length = 0;
         idList.length = 0;
-    }
+    };
+
+    this.rect = function () {
+        if (nodes.length < 1)
+            return null;
+        var x_min = Number.MAX_VALUE;
+        var x_max = Number.MIN_VALUE;
+        var y_min = Number.MAX_VALUE;
+        var y_max = Number.MIN_VALUE;
+
+        nodes.forEach(function (node) {
+            var width = 0;
+            var height = 0;
+            if (node.displayData) {
+                width = node.displayData.node.width;
+                height = node.displayData.node.height;
+            }
+
+            x_min = Math.min(x_min, node.pos.x);
+            y_min = Math.min(y_min, node.pos.y);
+            x_max = Math.max(x_max, node.pos.x + width);
+            y_max = Math.max(y_max, node.pos.y + height);
+        });
+
+        return Rect(x_min, y_min, x_max, y_max);
+    };
 
     function generateId() {
         var id;
@@ -286,9 +348,7 @@ function Schema() {
     }
 
     function checkIdForUnique(id) {
-        if (idList.indexOf(id) === -1)
-            return true;
-        return false;
+        return idList.indexOf(id) === -1;
     }
 
     function getItemById(array, id) {

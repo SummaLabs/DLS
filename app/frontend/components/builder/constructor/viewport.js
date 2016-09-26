@@ -7,7 +7,7 @@ angular.module('constructorCore')
             template: '<div id="viewport"><div></div></div>',
             scope: {
                 svgWidth: '@',
-                svgHeight: '@',
+                svgHeight: '@'
             },
             link: function(scope, element, attr){
             	var divSvg = document.getElementById('workspace');
@@ -38,7 +38,6 @@ angular.module('constructorCore')
 					});
 				});
 
-
 				function update() {
 					var coeffViewport = 0.2;
 					var canvasWidth = scope.svgWidth * scale;
@@ -62,6 +61,8 @@ angular.module('constructorCore')
 
 					element[0].style.width = viewportWidth + 'px';
 					element[0].style.height = viewportHeight + 'px';
+                    // element[0].style.right = -viewportWidth + 'px';
+					 element[0].style.bottom = viewportHeight + 'px';
 
 					visibleEl.style.width = visibleWidth + 'px';
 					visibleEl.style.height = visibleHeight + 'px';
@@ -75,21 +76,16 @@ angular.module('constructorCore')
 					}
 				}
 
+                scope.$on('constructor:viewport', function (event, data) {
+                    visibleEl.style.left = data.x * ratio + 'px';
+					visibleEl.style.top = data.y * ratio + 'px';
+                });
+
 				scope.$watch(function () {
 						return coreService.param('scale');
 					}, function(newValue, oldValue) {
 						scale = newValue;
 						update();
-						var x = parseInt(visibleEl.style.left, 10) ;
-						var y = parseInt(visibleEl.style.top, 10);
-//						var pos = calcVisiblePos(x + visibleWidth / 2, y + visibleHeight / 2);
-//						visibleEl.style.left = pos.x + 'px';
-//						visibleEl.style.top = pos.y + 'px';
-
-//						scope.$emit('viewport::changed', {
-//							x: x / ratio,
-//							y: y / ratio
-//						});
 					}
 				);
 

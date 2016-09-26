@@ -62,6 +62,10 @@
     fill-opacity: 0.1;
 }
 
+.palette {
+    width: 200px;
+}
+
 .constructor {
 	height:100%;
 	max-width: 100%;
@@ -76,24 +80,34 @@
 }
 
 #workspace {
-	overflow: auto;
+	overflow: hidden;
 	height:100%;
+    border: 2px solid darkgray;
 }
 
 #viewport {
-	background: #6699ff;
-	position: absolute;
-    right: 0;
-    bottom: 0;
+    float: right;
+	position: relative;
+    background: #6699ff;
     height:200px;
     width:200px;
     opacity: 0.7;
+    border: 2px solid darkgray;
 }
 #viewport div{
     position: relative;
 	background: #ccddff;
     height:50px;
     width:50px;
+}
+
+#constructor-tools {
+    float: left;
+    position: relative;
+    bottom: 40px;
+    height:40px;
+    width:165px;
+    opacity: 0.7;
 }
 
 /*md-tab-content {

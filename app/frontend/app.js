@@ -21,12 +21,15 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'imageService',
     'googlechart', 
     'classifyDataSet',
-    'datasetImage2dPreview',
+    // 'datasetImage2dPreview',
+    'datasetImage2dPreview2',
     'cl.paging',
     'dbinfoService',
     'settings',
     'device',
+    'deviceSelector',
     'deviceService',
+    'task',
     'modelService',
     "inference",
     "validation"
@@ -78,15 +81,18 @@ angular.module('dlsApp')
         }).state('data-set', {
             url: "/data-set",
             template: "<main-data-set></main-data-set>"
-        }).state('preview', {
+        })/*.state('preview', {
             url: "/preview",
             template: "<dataset-image2d-preview></dataset-image2d-preview>"
-        }).state('data-set-builder', {
+        })*/.state('data-set-builder', {
             url: "/data-set-builder",
             template: "<dataset-builder></dataset-builder>"
         }).state('file-manager', {
             url: "/file-manager",
             template: "<angular-filemanager></angular-filemanager>"
+        }).state('task', {
+            url: "/task",
+            template: "<task></task>"
         }).state('settings', {
             url: "/settings",
             template: "<settings></settings>"

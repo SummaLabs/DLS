@@ -3,6 +3,7 @@ import os
 import json
 import subprocess
 import datetime
+import re
 
 
 def generate_system_info():
@@ -64,6 +65,51 @@ def generate_gpu_info():
                                  'util_gpu': '10', 'util_mem': '0'})
     return gpu_info
 
+def get_available_devices_list():
+    tret = []
+    cpuInfo=generate_cpu_info()
+    memInfo=generate_mem_info()
+    tmemTotal    = int(memInfo['total'])
+    tmemFreeReal = int(memInfo['free'])+int(memInfo['buffers'])+int(memInfo['cached'])
+    tmemUsage    = tmemTotal - tmemFreeReal
+    tret.append({
+        'id':           'cpu',
+        'type':         'cpu',
+        'name':         cpuInfo['name'].strip(),
+        'memtotal':     tmemTotal,
+        'memusage':     tmemUsage,
+        'pmemusage':    int(100*float(tmemUsage)/float(tmemTotal)),
+        'isbusy':       False
+    })
+    gpuInfo = generate_gpu_info()
+    for ii in gpuInfo:
+        tid = 'gpu%s' % ii['id']
+        tgmemTotal  = re.sub('[A-Za-z:,. ]', '', ii['mem'])
+        tgmemUsage  = re.sub('[A-Za-z:,. ]', '', ii['mem_used'])
+        pgmemUsage  = int(100*float(tgmemUsage)/float(tgmemTotal))
+        tret.append({
+            'id':           tid,
+            'type':         'gpu',
+            'name':         ii['name'].strip(),
+            'memtotal':     tgmemTotal,
+            'memusage':     tgmemUsage,
+            'pmemusage':    pgmemUsage,
+            'isbusy':       pgmemUsage>1
+        })
+    return tret
+
+def get_available_devices_dict():
+    tret = {}
+    tmp = get_available_devices_list()
+    for kk in tmp:
+        tret[kk] = tmp
+    return tret
+
+def get_available_devices_list_json():
+    return json.dumps(get_available_devices_list())
+
+def get_available_devices_dict_json():
+    return json.dumps(get_available_devices_dict())
 
 # Query GPU Processes info
 def generate_gpu_pids():

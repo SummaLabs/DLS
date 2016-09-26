@@ -41,7 +41,6 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
     function doUpdateNetwork() {
 		var nodes = self.svgControl.getNodes();
 		var layers = networkDataService.getLayers();
-
 		nodes.forEach(function(node, i, ar){
 			var layer = networkDataService.getLayerById(node.id);
 			if (!layer) {
@@ -55,7 +54,7 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 			layer.pos = node.pos;
 			layer.wires = node.wires;
 		});
-		networkDataService.setLayers(layers);
+		// networkDataService.setLayers(layers);
     }
 
 	this.$onInit = function() {
@@ -129,19 +128,23 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 	}
 
 	this.zoomOut = function(event) {
-        var scale = coreService.param('scale');
+        var scale = self.svgControl.getScale();
         scale /= appConfig.svgDefinitions.scaleFactor;
         if (scale > appConfig.svgDefinitions.scaleMin) {
-            coreService.param('scale', scale);
+            self.svgControl.scale(scale);
         }
     };
 
     this.zoomIn = function(event) {
-        var scale = coreService.param('scale');
+        var scale = self.svgControl.getScale();
         scale *= appConfig.svgDefinitions.scaleFactor;
         if (scale < appConfig.svgDefinitions.scaleMax) {
-            coreService.param('scale', scale);
+            self.svgControl.scale(scale);
         }
+    };
+
+    this.resetView = function(event) {
+        self.svgControl.reset();
     };
 
     function constructorListeners() {
@@ -178,6 +181,12 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 			event.stopPropagation();
 		});
 
+		$scope.$on('graph:changedViews', function (event, data) {
+		    // console.log('graph:changedViews');
+			$scope.$broadcast('constructor:viewport', data);
+			event.stopPropagation();
+		});
+
 		$scope.$on('viewport::changed', function (event, data) {
 			if (self.svgControl.viewportPos)
 			    self.svgControl.viewportPos(data.x, data.y);
@@ -185,7 +194,7 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 		});
 
 		function setUpNetwork() {
-			coreService.param('scale', 1.0);
+			self.svgControl.scale(1.0);
             self.svgControl.setLayers(networkDataService.getLayers());
 		};
     }
