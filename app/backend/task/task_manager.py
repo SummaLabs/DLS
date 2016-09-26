@@ -2,8 +2,6 @@ from app.backend.task.default_task import DefaultTask, CmdTask
 from apscheduler.executors.pool import ThreadPoolExecutor
 from apscheduler.schedulers.gevent import GeventScheduler
 from app.backend import socketio
-from config import DevelopmentConfig
-from gevent import monkey
 from app.backend import config
 import time
 import logging
@@ -11,7 +9,6 @@ import json
 
 logging.basicConfig()
 # Needed this to avoid deadlock
-monkey.patch_all()
 
 
 class TaskManager:
