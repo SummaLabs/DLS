@@ -1,20 +1,15 @@
 <md-card>
-    <!--<md-card-title>-->
-        <!--<md-card-title-text>-->
-            <!--<span class="md-headline">ROC Analysis</span>-->
-        <!--</md-card-title-text>-->
-    <!--</md-card-title>-->
     <md-card-content>
-        <div ng-show="classNames.length > 1" layout="row" layout-align="space-between center">
+        <div layout="row" layout-align="space-between center">
             <md-button class="md-raised md-primary" ng-click="choseImages($event)">Apply ROC Analysis</md-button>
-            <div layout="column" layout-align="center start">
-                <span>Analysis History:</span>
-                <md-select placeholder="Classes" ng-model="classNameSelected" class="md-no-underline">
-                    <md-option ng-value="className" ng-repeat="className in classNames">{{className}}</md-option>
+            <div ng-show="rocsIds.length > 0"  layout="column" layout-align="center start">
+                <strong>Analysis History:</strong>
+                <md-select placeholder="ROCsHistory" ng-model="rocSelected" class="md-no-underline">
+                    <md-option ng-value="rocId" ng-repeat="rocId in rocsIds">{{rocId}}</md-option>
                 </md-select>
             </div>
-            <div layout="column" layout-align="center start">
-                <span>Class VS All:</span>
+            <div ng-show="classNames.length > 0"  layout="column" layout-align="center start">
+                <strong>Class VS All:</strong>
                 <md-select placeholder="Classes" ng-model="classNameSelected" class="md-no-underline">
                     <md-option ng-value="className" ng-repeat="className in classNames">{{className}}</md-option>
                 </md-select>

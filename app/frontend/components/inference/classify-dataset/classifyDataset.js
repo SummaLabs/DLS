@@ -9,14 +9,19 @@
                 },
                 templateUrl: '/frontend/components/inference/classify-dataset/classify-dataset.html',
                 controller: function ($scope, imageService) {
-                    var self = this;
+                    var rocsData = [];
                     var classesROC = [];
 
                     this.$onInit = function () {
-                        var roc = imageService.loadDataSetROC("classified-data-set-roc.json");
-                        roc.then(function mySucces(response) {
-                            setLoadedClassesROC(response.data);
+                        var future = imageService.loadModelROCsData($scope.modelId);
+                        future.then(function mySucces(response) {
+                            setModelROCsHistoryData(response.data);
                         }, function myError(response) {
+                        });
+                        
+                        $scope.$watch('rocSelected', function () {
+                            var index = $scope.rocsIds.indexOf($scope.rocSelected);
+                            setROCData(rocsData[index]);
                         });
 
                         $scope.$watch('classNameSelected', function () {
@@ -25,17 +30,29 @@
                             $scope.rocData = classesROC[index];
                         });
                     };
+                    
+                    function setModelROCsHistoryData(ROCsHistoryData) {
+                        $scope.rocsIds = [];
+                        ROCsHistoryData.forEach(function (rocData) {
+                            rocsData.push(rocData);
+                            $scope.rocsIds.push(rocData.dataSet + "-" + rocData.date);
+                        });
+                        $scope.rocSelected = $scope.rocsIds[0];
+                        
+                        setROCData(rocsData[0]);
+                    }
 
-                    function setLoadedClassesROC(classesROCData) {
+                    function setROCData(ROCData) {
                         $scope.classNames = [];
-                        $scope.classNameSelected = classesROCData.classes[0].name;
-                        classesROCData.classes.forEach(function (classROC) {
+                        $scope.classNameSelected = ROCData.classes[0].name;
+                        ROCData.classes.forEach(function (classROC) {
                             $scope.classNames.push(classROC.name);
                             var chartPoints = createRocChartPoints(classROC.rocPoints);
-                            var chartSettings = getDefaultChartSettings(classesROCData.network);
+                            var chartSettings = getDefaultChartSettings(ROCData.network);
                             chartSettings['data']['rows'] = chartPoints;
                             classesROC.push(chartSettings)
-                        })
+                        });
+                        $scope.rocData = classesROC[0];
                     }
 
                     function createRocChartPoints(classRocPointsJson) {

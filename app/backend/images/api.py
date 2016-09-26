@@ -11,7 +11,8 @@ from app.backend import app_flask
 
 images = flask.Blueprint(__name__, __name__)
 
-classified_images_dir = os.path.join(dirname(dirname(dirname(dirname(__file__)))), 'data/app/tmp')
+
+models_dir = app_flask.config['DLS_MODELS_BASE_PATH']
 
 
 @images.route('/classify' , methods=['POST'])
@@ -66,16 +67,15 @@ def build_model_response(base_path, images_path):
     return model_response
 
 
-models_dir = app_flask.config['DLS_MODELS_BASE_PATH']
-validation_dir = 'validation'
-
-@images.route('/roc/load/<path:modelId>')
-def load_images_data_set_roc(modelId):
+@images.route('/rocs/load/<path:model_id>')
+def load_model_rocs(model_id):
 
     if request.method == 'GET':
+
         roc_analysis = []
-        for roc in os.listdir(os.path.join(models_dir, os.path.join(modelId, validation_dir)):
-            with open(model_file_path, 'r') as f:
+        validation_dir = os.path.join(models_dir, os.path.join(model_id, 'validation'))
+        for roc_file_path in os.listdir(validation_dir):
+            with open(os.path.join(validation_dir, roc_file_path), 'r') as f:
                 roc_analysis.append(json.load(f))
 
         return Response(json.dumps(roc_analysis), mimetype='application/json')
