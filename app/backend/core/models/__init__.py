@@ -9,5 +9,7 @@ CFG_SOLVER='solver_keras.json'
 PREFIX_SNAPSHOT='snapshot'
 PREFIX_TASKS_DIR='mdltask'
 
+EXT_MODEL_WEIGHTS='h5kerasmodel'
+
 if __name__ == '__main__':
     pass

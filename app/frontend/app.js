@@ -28,6 +28,7 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'dbinfoService',
     'settings',
     'device',
+    'deviceSelector',
     'deviceService',
     'task'
 ]);
