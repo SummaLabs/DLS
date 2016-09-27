@@ -41,20 +41,10 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
     function doUpdateNetwork() {
 		var nodes = self.svgControl.getNodes();
 		var layers = networkDataService.getLayers();
-		nodes.forEach(function(node, i, ar){
+		nodes.forEach(function(node){
 			var layer = networkDataService.getLayerById(node.id);
-			if (!layer) {
-				layer = networkLayerService.getLayerByType(node.name);
-				layers.push(layer);
-			}
-
-			layer.id = node.id;
-			layer.name = node.name;
-			layer.category = node.category;
 			layer.pos = node.pos;
-			layer.wires = node.wires;
 		});
-		// networkDataService.setLayers(layers);
     }
 
 	this.$onInit = function() {
@@ -64,7 +54,7 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 			$scope.networkName = networkDataService.getNetwork().name;
 		});
 
-		$rootScope.$on('EditLayer', function ($event, data) {
+		/*$rootScope.$on('EditLayer', function ($event, data) {
 			doUpdateNetwork();
 			var parentEl = angular.element(document.body);
 			var dialogTemplate = buildTemplate(data.id, data.layerType);
@@ -92,13 +82,12 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 					'</md-dialog>';
 				return template;
 			}
-		});
+		});*/
 	};
 
 	this.checkModelJson = function ($event) {
 		doUpdateNetwork();
 		var dataNetwork = networkDataService.getNetwork();
-		console.log(dataNetwork);
 		modelsService.checkNetworkFast(dataNetwork).then(
 			function successCallback(response) {
 				var ret 	 = response.data;
@@ -163,7 +152,7 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 				$mdDialog.hide();
 			}
 		}
-	}
+	};
 
 	this.zoomOut = function(event) {
         var scale = self.svgControl.getScale();
@@ -189,32 +178,65 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 
         networkDataService.subNetworkUpdateEvent(setUpNetwork);
 
-        $scope.$on('graph:addNode', function (event, data) {
+        $scope.$on('graph:addNode', function (event, node) {
             console.log('graph:addNode');
+
+			var layers = networkDataService.getLayers();
+			var layer = networkLayerService.getLayerByType(node.name);
+			layers.push(layer);
+
+			layer.id = node.id;
+			layer.name = node.name;
+			layer.category = node.category;
+			layer.pos = node.pos;
+			layer.wires = node.wires;
+
             networkDataService.setChangesSaved(false);
 			event.stopPropagation();
 		});
 
-		$scope.$on('graph:removeNode', function (event, data) {
+		$scope.$on('graph:removeNode', function (event, node) {
 		    console.log('graph:removeNode');
+
+			networkDataService.removeLayerById(node.id);
+
             networkDataService.setChangesSaved(false);
 			event.stopPropagation();
 		});
 
-		$scope.$on('graph:addLink', function (event, data) {
+		$scope.$on('graph:addLink', function (event, link) {
 		    console.log('graph:addLink');
+
+			let layer = networkDataService.getLayerById(link.nodes[0].id);
+			layer.wires.push(link.nodes[1].id);
+
 		    networkDataService.setChangesSaved(false);
 			event.stopPropagation();
 		});
 
-		$scope.$on('graph:removeLink', function (event, data) {
+		$scope.$on('graph:removeLink', function (event, link) {
 		    console.log('graph:removeLink');
+
+			let layer = networkDataService.getLayerById(link.nodes[0].id);
+			layer.wires.splice(layer.wires.indexOf(link.nodes[1].id), 1);
+
 		    networkDataService.setChangesSaved(false);
 			event.stopPropagation();
 		});
 
-		$scope.$on('graph:removeItems', function (event, data) {
+		$scope.$on('graph:removeItems', function (event, items) {
 		    console.log('graph:removeItems');
+
+			for (let a = 0; a < items.links.length; a++) {
+				let link = items.links[a];
+				let layer = networkDataService.getLayerById(link.nodes[0].id);
+				layer.wires.splice(layer.wires.indexOf(link.nodes[1].id), 1);
+			}
+
+			for (let a = 0; a < items.nodes.length; a++) {
+				networkDataService.removeLayerById(items.nodes[a]);
+			}
+
 		    networkDataService.setChangesSaved(false);
 			event.stopPropagation();
 		});
@@ -225,15 +247,21 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 			event.stopPropagation();
 		});
 
-		$scope.$on('viewport::changed', function (event, data) {
+		$scope.$on('viewport:changed', function (event, data) {
 			if (self.svgControl.viewportPos)
 			    self.svgControl.viewportPos(data.x, data.y);
+            event.stopPropagation();
+		});
+
+		$scope.$on('graph:activateItem', function (event, item) {
+			self.layerId = item.id;
+			self.layerType = item.name;
             event.stopPropagation();
 		});
 
 		function setUpNetwork() {
 			self.svgControl.scale(1.0);
             self.svgControl.setLayers(networkDataService.getLayers());
-		};
+		}
     }
 }

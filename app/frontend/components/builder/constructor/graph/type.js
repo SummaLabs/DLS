@@ -257,21 +257,29 @@ function Schema() {
         var delNodes = [];
         var delLinks = [];
 
+        var remItems = {
+            nodes: [],
+            links: []
+        };
+
         for (let i = 0; i < nodes.length; ++i) {
             if (nodes[i].isActive) {
                 delNodes.push(i);
+                remItems.nodes.push(nodes[i].id);
             }
         }
 
         for (let i = 0; i < links.length; ++i) {
             if (links[i].isActive) {
                 delLinks.push(i);
+                remItems.links.push(links[i]);
             }
             else {
                 for (var a = 0; a < delNodes.length; ++a) {
                     var nodeId = nodes[delNodes[a]].id;
                     if (links[i].nodes[0].id === nodeId || links[i].nodes[1].id === nodeId) {
                         delLinks.push(i);
+                        remItems.links.push(links[i]);
                         break;
                     }
                 }
@@ -288,7 +296,9 @@ function Schema() {
             links.splice(delLinks[i] - counterDel, 1);
             counterDel ++;
         }
-        return delNodes.length > 0 || delLinks.length > 0;
+        if (remItems.links.length > 0 || remItems.nodes.length > 0)
+            return remItems;
+        return null;
     };
 
     this.selectNodesInsideRect = function(rect) {
