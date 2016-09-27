@@ -29,7 +29,7 @@ from keras.optimizers import Optimizer
 from app.backend.core import utils as dlsutils
 from batcher_image2d import BatcherImage2DLMDB
 
-from . import CFG_MODEL, CFG_SOLVER
+from cfg import CFG_MODEL_TRAIN, CFG_SOLVER
 
 #########################
 def split_list_by_blocks(lst, psiz):
@@ -476,7 +476,7 @@ class KerasTrainer:
                                         pathModelWeight=pathModelWeight,
                                         isLoadLMDBReader=isLoadLMDBReader)
     def loadModelFromTaskModelDir(self, pathTaskDir):
-        pathConfigModel  = os.path.join(pathTaskDir, CFG_MODEL)
+        pathConfigModel  = os.path.join(pathTaskDir, CFG_MODEL_TRAIN)
         pathConfigSolver = os.path.join(pathTaskDir, CFG_SOLVER)
         self.loadModelFromTrainingState(pathModelConfig=pathConfigModel,
                                         pathSolverState=pathConfigSolver)
