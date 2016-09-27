@@ -51,6 +51,7 @@ class TaskManager:
         for t in self.tasks.values():
             task_data.append(t.status())
         socketio.emit('task_monitor', json.dumps(task_data))
+        return task_data
 
 
 # Some simple testing

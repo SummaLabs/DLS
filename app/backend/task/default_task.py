@@ -39,11 +39,12 @@ class BaseTask:
     def perform(self):
         """This method does task's work.
         Override it in your custom task class"""
-        while self.alive:
-            time.sleep(1)
-            self.logger.info('Tick! The time is: %s' % datetime.now())
+        self.logger.info('Base Perform Method: %s' % datetime.now())
+        self.state = 'finished'
 
     def kill(self):
+        if self.state == 'killed':
+            self.logger.warning("Attempt to kill dead task. Task " + str(self.id) + " is already killed")
         self.alive = False
         self.state = 'killed'
         self.logger.info('task ' + str(self.id) + 'killed')
@@ -88,6 +89,7 @@ class DefaultTask(BaseTask):
                 self.logger.info('task ' + str(self.id) + ' finished')
 
 
+
 class CmdTask(BaseTask):
     """This is example of subprocess based task"""
 
@@ -105,12 +107,12 @@ class CmdTask(BaseTask):
         """This loop blocks execution.
         i. e. thread will wait next stdout lines from subprocess"""
         for stdout_line in stdout_lines:
-            print stdout_line
+            self.logger.info(stdout_line)
             self.progress += 1
         process.stdout.close()
         if self.state == 'running':
             self.state = 'finished'
-        print process.returncode
+        self.logger.info(process.returncode)
 
     def kill(self):
         self.process.kill()
