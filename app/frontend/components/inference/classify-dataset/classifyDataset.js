@@ -8,7 +8,7 @@
                     modelId: '@'
                 },
                 templateUrl: '/frontend/components/inference/classify-dataset/classify-dataset.html',
-                controller: function ($scope, imageService) {
+                controller: function ($scope, $mdDialog, imageService) {
                     var rocsData = [];
                     var classesROC = [];
 
@@ -20,8 +20,14 @@
                         });
                         
                         $scope.$watch('rocSelected', function () {
-                            var index = $scope.rocsIds.indexOf($scope.rocSelected);
-                            setROCData(rocsData[index]);
+                            // var index = $scope.rocsIds.indexOf($scope.rocSelected);
+                            var index = 0;
+                            $scope.rocsIds.forEach(function (rocId) {
+                                if (rocId.name == $scope.rocSelected) {
+                                    setROCData(rocsData[index]);
+                                }
+                                index++;
+                            });
                         });
 
                         $scope.$watch('classNameSelected', function () {
@@ -30,14 +36,51 @@
                             $scope.rocData = classesROC[index];
                         });
                     };
+
+                    $scope.applyROCAnalysis = function ($event) {
+                        $mdDialog.show({
+                            clickOutsideToClose: true,
+                            parent: angular.element(document.body),
+                            targetEvent: $event,
+                            templateUrl: '/frontend/components/inference/classify-dataset/apply-ROC-analysis.html',
+                            locals: {},
+                            scope:$scope,
+                            controller: function ($scope, dbinfoService, imageService) {
+                                $scope.dataSetNames = [];
+
+                                var future = dbinfoService.getDatasetsInfoStatList();
+                                future.then(function mySucces(response) {
+                                    response.data.forEach(function (dataSet) {
+                                        $scope.dataSetNames.push(dataSet.name);
+                                    });
+                                    $scope.dataSetSelected = $scope.dataSetNames[0];
+                                }, function myError(response) {
+                                });
+
+                                $scope.submitROCAnalysisTask = function () {
+                                    imageService.applyROCAnalysis(modelId, $scope.dataSetSelected);
+                                    $mdDialog.hide();
+                                };
+
+                                $scope.closeDialog = function () {
+                                    $mdDialog.hide();
+                                }
+                            }
+                        });
+
+
+                    };
                     
                     function setModelROCsHistoryData(ROCsHistoryData) {
                         $scope.rocsIds = [];
                         ROCsHistoryData.forEach(function (rocData) {
                             rocsData.push(rocData);
-                            $scope.rocsIds.push(rocData.dataSet + "-" + rocData.date);
+                            $scope.rocsIds.push({
+                                name: rocData.dataSet + "-" + rocData.date,
+                                inProgress: false
+                            });
                         });
-                        $scope.rocSelected = $scope.rocsIds[0];
+                        $scope.rocSelected = $scope.rocsIds[0].name;
                         
                         setROCData(rocsData[0]);
                     }

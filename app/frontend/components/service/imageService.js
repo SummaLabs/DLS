@@ -19,5 +19,16 @@ function ImageService($http) {
             method: "GET",
             url: "/images/rocs/load/" + modelId
         })
-    }
+    };
+
+    this.applyROCAnalysis = function(modelId, dataSetName) {
+        return $http({
+            method: 'POST',
+            url:    '/images/roc/apply',
+            params: {
+                modelId: modelId,
+                dataSetName: dataSetName
+            }
+        });
+    };
 }
