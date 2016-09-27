@@ -8,7 +8,12 @@
                     modelId: '@'
                 },
                 templateUrl: '/frontend/components/inference/classify-dataset/classify-dataset.html',
-                controller: function ($scope, $mdDialog, imageService) {
+                controller: function ($rootScope, $scope, $mdDialog, $mdToast, imageService) {
+                    var self = this;
+
+                    const ROCAnalysis = {
+                        RUN: 'ROCAnalysis:run'
+                    };
                     var rocsData = [];
                     var classesROC = [];
 
@@ -20,7 +25,6 @@
                         });
                         
                         $scope.$watch('rocSelected', function () {
-                            // var index = $scope.rocsIds.indexOf($scope.rocSelected);
                             var index = 0;
                             $scope.rocsIds.forEach(function (rocId) {
                                 if (rocId.name == $scope.rocSelected) {
@@ -35,6 +39,19 @@
                             var index = classNames.indexOf($scope.classNameSelected);
                             $scope.rocData = classesROC[index];
                         });
+
+                        $rootScope.$on(ROCAnalysis.RUN, function ($event, data) {
+                            $scope.rocsIds.push(data);
+                        });
+                    };
+
+                    this.showToast = function (message) {
+                        $mdToast.show(
+                            $mdToast.simple()
+                                .textContent(message)
+                                .position('top right')
+                                .hideDelay(3000)
+                        );
                     };
 
                     $scope.applyROCAnalysis = function ($event) {
@@ -43,8 +60,6 @@
                             parent: angular.element(document.body),
                             targetEvent: $event,
                             templateUrl: '/frontend/components/inference/classify-dataset/apply-ROC-analysis.html',
-                            locals: {},
-                            scope:$scope,
                             controller: function ($scope, dbinfoService, imageService) {
                                 $scope.dataSetNames = [];
 
@@ -58,7 +73,12 @@
                                 });
 
                                 $scope.submitROCAnalysisTask = function () {
-                                    imageService.applyROCAnalysis(modelId, $scope.dataSetSelected);
+                                    // imageService.applyROCAnalysis(modelId, $scope.dataSetSelected);
+                                    self.showToast('ROC Analysis is running');
+                                    $rootScope.$emit(ROCAnalysis.RUN, {
+                                        name: $scope.dataSetSelected + "-" + getCurrentTime(),
+                                        inProgress: true
+                                    });
                                     $mdDialog.hide();
                                 };
 
@@ -70,6 +90,13 @@
 
 
                     };
+
+                    function getCurrentTime() {
+                        var today = new Date();
+                        var date = today.getFullYear() + '.' + (today.getMonth() + 1) + '.' + today.getDate();
+                        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                        return date + '-' + time;
+                    }
                     
                     function setModelROCsHistoryData(ROCsHistoryData) {
                         $scope.rocsIds = [];
