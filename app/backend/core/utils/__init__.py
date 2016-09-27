@@ -83,5 +83,35 @@ def getPathForModelsDir():
     tret = os.path.abspath(os.path.join(tdir, '../data/models'))
     return tret
 
+def getDateTimeForConfig():
+    tdateTime = datetime.now()
+    strDate = tdateTime.strftime('%Y.%m.%d')
+    strTime = tdateTime.strftime('%H:%M:%S')
+    tretDate = {
+        'str': strDate,
+        'year': tdateTime.strftime('%Y'),
+        'month': tdateTime.strftime('%m'),
+        'day': tdateTime.strftime('%m')
+    }
+    tretTime = {
+        'str': strTime,
+        'hour': tdateTime.strftime('%H'),
+        'min': tdateTime.strftime('%M'),
+        'sec': tdateTime.strftime('%S'),
+    }
+    tret = {
+        'date': tretDate,
+        'time': tretTime
+    }
+    return tret
+
+def checkFilePathNotFoundError(pathFile, isDir=False):
+    if isDir:
+        if not os.path.isdir(pathFile):
+            raise Exception('Cant find directory [%s]' % pathFile)
+    if not os.path.isfile(pathFile):
+        if not os.path.isdir(pathFile):
+            raise Exception('Cant find directory [%s]' % pathFile)
+
 if __name__ == '__main__':
     pass

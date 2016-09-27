@@ -24,7 +24,7 @@ from compiler.ast import flatten
 
 from keras_trainer_v3 import KerasTrainer
 from batcher_image2d import BatcherImage2DLMDB
-from . import CFG_MODEL, CFG_SOLVER, PREFIX_SNAPSHOT
+from cfg import CFG_MODEL_TRAIN, CFG_SOLVER, PREFIX_SNAPSHOT
 
 ####################################
 class NodeF:
@@ -322,7 +322,7 @@ class DLSDesignerFlowsParser:
             'loss':                 paramLossFunction,
             'metrics':              ['loss', 'acc'],
             'dataset-id':           datasetId,
-            'pathModelConfig':      CFG_MODEL,
+            'pathModelConfig':      CFG_MODEL_TRAIN,
             'sizeBatch':            batchSize,
             'numEpoch':             paramNumEpochs,
             'currentIter':          0, #FIXME: check this point, initialize variable from previous Solver-state
