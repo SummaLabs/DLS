@@ -12,7 +12,9 @@ from app.backend.images.api import images
 from app.backend.core.datasets.api import dbpreview
 from app.backend.device.api import device
 from app.backend.task.api import task
+
 from app.backend.model.api import model
+from app.backend.core.models.api import models
 
 sockets = Sockets(app=app_flask)
 
@@ -23,6 +25,7 @@ app_flask.register_blueprint(dbpreview, url_prefix='/dbpreview')
 app_flask.register_blueprint(device, url_prefix='/device')
 app_flask.register_blueprint(task, url_prefix='/task')
 app_flask.register_blueprint(model, url_prefix='/model')
+app_flask.register_blueprint(models, url_prefix='/models')
 
 @app_flask.route('/')
 @app_flask.route('/index')

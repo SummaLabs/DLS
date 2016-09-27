@@ -1,0 +1,109 @@
+{
+  "layers": [
+    {
+      "wires": [
+        "node_ca1"
+      ], 
+      "name": "data", 
+      "pos": {
+        "y": 50, 
+        "x": 25
+      }, 
+      "content": "convolution", 
+      "params": {
+        "isTrainable": true, 
+        "subsamplingSize": 3, 
+        "filterWidth": 3, 
+        "subsamplingType": "max_pooling", 
+        "filterHeight": 3, 
+        "filtersCount": 64, 
+        "activationFunction": "relu"
+      },
+      "template": "frontend/components/layers/data/node-test-2.svg", 
+      "id": "node_7baa"
+    }, 
+    {
+      "wires": [
+        "node_ca2"
+      ], 
+      "name": "convol", 
+      "pos": {
+        "y": 100, 
+        "x": 425
+      }, 
+      "content": "convolution", 
+      "params": {
+        "isTrainable": true, 
+        "subsamplingSize": 3, 
+        "filterWidth": 3, 
+        "subsamplingType": "max_pooling", 
+        "filterHeight": 3, 
+        "filtersCount": 64, 
+        "activationFunction": "relu"
+      }, 
+      "template": "frontend/components/layers/convol/node-test-2.svg", 
+      "id": "node_ca1"
+    }, 
+    {
+      "wires": [
+      ], 
+      "name": "convol", 
+      "pos": {
+        "y": 100, 
+        "x": 425
+      }, 
+      "content": "convolution", 
+      "params": {
+        "isTrainable": true, 
+        "subsamplingSize": 3, 
+        "filterWidth": 3, 
+        "subsamplingType": "max_pooling", 
+        "filterHeight": 3, 
+        "filtersCount": 64, 
+        "activationFunction": "relu"
+      }, 
+      "template": "frontend/components/layers/convol/node-test-2.svg", 
+      "id": "node_ca2"
+    }, 
+    {
+      "wires": [
+        "node_3c94"
+      ], 
+      "name": "dense", 
+      "pos": {
+        "y": 250, 
+        "x": 150
+      }, 
+      "content": "dense", 
+      "params": {
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "neuronsCount": 16
+      }, 
+      "template": "frontend/components/layers/dense/node-test-4.svg", 
+      "id": "node_4633"
+    }, 
+    {
+      "wires": [], 
+      "name": "solver", 
+      "pos": {
+        "y": 350, 
+        "x": 475
+      }, 
+      "content": "solver", 
+      "params": {
+        "optimizer": "SGD", 
+        "snapshotInterval": 1, 
+        "epochsCount": 2, 
+        "batchSize": 8, 
+        "learningRate": 0.01, 
+        "lossFunction": "categorical_crossentropy", 
+        "validationInterval": 1
+      }, 
+      "template": "frontend/components/layers/solver/node-test-4.svg", 
+      "id": "node_3c94"
+    }
+  ], 
+  "name": "test_cnn1", 
+  "description": ""
+}

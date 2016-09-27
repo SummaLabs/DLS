@@ -436,6 +436,8 @@ class DLSDesignerFlowsParser:
         # (0) raise exception when in flow non-supported node types is presents
         extSupportedNodes = ['tab'] + self.supportedNodes
         for ii in tmpCfg:
+            if 'content' not in ii.keys():
+                raise Exception('Incorrect node config: <content> is absent! [%s]' % ii)
             if ii['content'] not in extSupportedNodes:
                 raise Exception('Non-supported node type [%s], id=[%s]' % (ii['type'], ii['id']))
         # (1) find nodes for remove from graph
