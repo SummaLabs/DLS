@@ -32,7 +32,7 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'task',
     'modelService',
     "inference",
-    "validation"
+    "validation",
     'modelsService'
 ]);
 
