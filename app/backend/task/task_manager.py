@@ -1,5 +1,6 @@
 from app.backend.task.default_task import DefaultTask, CmdTask
 from apscheduler.executors.pool import ThreadPoolExecutor
+from apscheduler.executors.gevent import GeventExecutor
 from apscheduler.schedulers.gevent import GeventScheduler
 from app.backend import socketio
 from app.backend import config
@@ -19,7 +20,7 @@ class TaskManager:
         self.logger = logging.getLogger('dls')
         executors = {
             'default': ThreadPoolExecutor(config.EXECUTOR_THREADS_NUMBER),
-            'monitor': ThreadPoolExecutor(config.EXECUTOR_THREADS_NUMBER),
+            'monitor': GeventExecutor(),
         }
 
         self.scheduler = GeventScheduler(executors=executors)
