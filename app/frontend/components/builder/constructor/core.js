@@ -31,7 +31,7 @@ function CoreService() {
     };
 }
 
-function ConstructorController($mdDialog, $scope, $rootScope, networkDataService, networkLayerService, coreService, appConfig) {
+function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkDataService, networkLayerService, modelsService, coreService, appConfig) {
     var self = this;
     self.svgWidth = appConfig.svgDefinitions.areaWidth;
     self.svgHeight = appConfig.svgDefinitions.areaHeight;
@@ -93,6 +93,44 @@ function ConstructorController($mdDialog, $scope, $rootScope, networkDataService
 				return template;
 			}
 		});
+	};
+
+	this.checkModelJson = function ($event) {
+		doUpdateNetwork();
+		var dataNetwork = networkDataService.getNetwork();
+		console.log(dataNetwork);
+		modelsService.checkNetworkFast(dataNetwork).then(
+			function successCallback(response) {
+				var ret 	 = response.data;
+				var isError  = true;
+				var strError = 'Unknown Error...';
+				if(ret.length>1) {
+					if(ret[0]=='ok') {
+						isError = false;
+					} else {
+						strError = ret[1];
+					}
+				}
+				var retMessage = "OK: network is correct!";
+				if (isError) {
+					retMessage = "ERROR: " + strError;
+				}
+				var toast = $mdToast.simple()
+					.textContent(retMessage)
+					.action('UNDO')
+					.highlightAction(true)
+					.highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
+					.position('top right');
+				$mdToast.show(toast).then(function(response) {
+					if ( response == 'ok' ) {
+						//todo
+				  	}
+				});
+			},
+			function errorCallback(response) {
+				console.log(response.data);
+			}
+		);
 	};
 
 	this.saveNetworkDialog = function ($event) {

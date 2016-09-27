@@ -30,6 +30,7 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'device',
     'deviceSelector',
     'deviceService',
+    'modelsService',
     'task'
 ]);
 
