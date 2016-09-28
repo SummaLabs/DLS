@@ -46,7 +46,7 @@ class TaskManager:
 
     def report_progress(self):
         """Gathers information from task and sends to clients"""
-        self.logger.info("sending tasks progress")
+        # self.logger.info("sending tasks progress")
         task_data = []
         for t in self.tasks.values():
             task_data.append(t.status())
