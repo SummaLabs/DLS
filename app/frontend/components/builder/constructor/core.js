@@ -121,6 +121,44 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 			}
 		);
 	};
+	this.calcModelShape = function ($event) {
+		doUpdateNetwork();
+		var dataNetwork = networkDataService.getNetwork();
+		modelsService.calcModelShape(dataNetwork).then(
+			function successCallback(response) {
+				var ret 	 = response.data;
+				var isError  = true;
+				var strError = 'Unknown Error...';
+				if(ret['status']=='ok') {
+					isError = false;
+				} else {
+					strError = ret['data'];
+				}
+				var retMessage = "OK: network is correct (please see dev-tools log)!";
+				if (isError) {
+					retMessage = "ERROR: " + strError;
+				} else {
+					console.log('*** Model with shapes ***');
+					console.log(ret['data']);
+				}
+				var toast = $mdToast.simple()
+					.textContent(retMessage)
+					.action('UNDO')
+					.highlightAction(true)
+					.highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
+					.position('top right');
+				$mdToast.show(toast).then(function(response) {
+					if ( response == 'ok' ) {
+						//todo
+				  	}
+				});
+			},
+			function errorCallback(response) {
+				console.log(response.data);
+			}
+		);
+	};
+
 
 	this.saveNetworkDialog = function ($event) {
 		doUpdateNetwork();

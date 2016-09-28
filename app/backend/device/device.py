@@ -90,7 +90,7 @@ def get_available_devices_list():
             'memtotal':     tgmemTotal,
             'memusage':     tgmemUsage,
             'pmemusage':    pgmemUsage,
-            'isbusy':       pgmemUsage>1
+            'isbusy':       pgmemUsage>40
         })
     return tret
 
