@@ -246,6 +246,8 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 		    console.log('graph:addLink');
 
 			let layer = networkDataService.getLayerById(link.nodes[0].id);
+			if (!layer.wires)
+				layer.wires = [];
 			layer.wires.push(link.nodes[1].id);
 
 		    networkDataService.setChangesSaved(false);
