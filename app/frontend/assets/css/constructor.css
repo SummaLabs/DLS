@@ -108,10 +108,13 @@
 #constructor-tools {
     float: left;
     position: relative;
-    bottom: 40px;
-    height:40px;
-    width:165px;
+    bottom: 60px;
+    height:60px;
+    width:170px;
     opacity: 0.7;
+}
+#constructor-tools md-icon {
+    font-size: 38px;
 }
 
 /*md-tab-content {
