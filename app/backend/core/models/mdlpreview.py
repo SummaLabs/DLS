@@ -116,6 +116,12 @@ class ModelInfo:
             tmpModelCfg = json.load(f)
         with open(self.pathSolverCfg, 'r') as f:
             tmpSolverCfg = json.load(f)
+        sizeModelDir = dlsutils.getDirectorySizeInBytes(self.dirModel)
+        sizeModelStr = dlsutils.humanReadableSize(sizeModelDir)
+        tmpCfg['size'] = {
+            'bytes':    sizeModelDir,
+            'str':      sizeModelStr
+        }
         listSnaphosts=glob.glob('%s/%s*.%s' % (self.dirModel, PREFIX_SNAPSHOT, EXT_MODEL_WEIGHTS))
         lstSnapshotsId=[os.path.splitext(os.path.basename(xx))[0] for xx in listSnaphosts]
         self.cfgDict = {
