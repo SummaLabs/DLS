@@ -4,11 +4,11 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService'])
     .component('mainDataSet', {
         templateUrl: '/frontend/components/data-set-main/main-data-set.html',
         bindings: {
-            models: '<',
-            items:  '<',
-            datasets:   '<',
-            selectedDbId: '@',
-            currentDbInfo: '<'
+            models:         '<',
+            items:          '<',
+            datasets:       '<',
+            selectedDbId:   '@',
+            currentDbInfo:  '<'
         },
         controller: function ($scope, $rootScope, $mdDialog, $timeout, appConfig, dbinfoService) {
             var self = this;
