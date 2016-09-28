@@ -113,8 +113,8 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
     }
 
 	function addLink(nodeFrom, nodeTo) {
-		schema.addLink(nodeFrom, nodeTo);
-		self.emitEvent(events.ADD_LINK, {});
+		var link = schema.addLink(nodeFrom, nodeTo);
+		self.emitEvent(events.ADD_LINK, link);
 	}
 
 	function clearScene() {
