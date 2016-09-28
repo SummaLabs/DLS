@@ -90,6 +90,24 @@ def check_model_json():
         return Response(json.dumps(ret), mimetype='application/json')
     return Response(json.dumps(('error', 'invalid request')), mimetype='application/json')
 
+@models.route('/calcshape/', methods=['POST'])
+def calcshape_model_json():
+    if request.method == "POST":
+        jsonData = json.loads(request.data)
+        try:
+            modelWithSahpes = DLSDesignerFlowsParser.calculateShapesForModel(jsonData)
+            ret = {
+                'status':   'ok',
+                'data':     modelWithSahpes
+            }
+        except Exception as err:
+            ret={
+                'status':   'error',
+                'data':     'Error: %s' % err
+            }
+        return Response(json.dumps(ret), mimetype='application/json')
+    return Response(json.dumps({'status': 'error', 'data': 'invalid request'}), mimetype='application/json')
+
 @models.route('/listinfo/', methods=['POST', 'GET'])
 def check_model_list():
     ret = modelsWatcher.getModelsInfoAsList()
