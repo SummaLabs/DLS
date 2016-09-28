@@ -138,6 +138,26 @@ function NetworkDataService($rootScope, $http, $timeout) {
         }
     };
 
+    this.removeLayerById = function(id) {
+        var index = -1;
+        for (var i = 0, len = network.layers.length; i < len; i++) {
+            var layer = network.layers[i];
+            if (layer.wires) {
+                for (let a = 0; a < layer.wires.length; a++) {
+                    if (layer.wires[a] === id) {
+                        layer.wires.splice(a, 1);
+                        break;
+                    }
+                }
+            }
+            if(layer.id === id)
+                index = i;
+        }
+        if (index > -1)
+            network.layers.splice(index, 1);
+
+    };
+
     function loadNetworkByName(name) {
         return $http({
             method: "GET",

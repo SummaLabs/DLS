@@ -32,7 +32,7 @@ angular.module('constructorCore')
 					visibleEl.style.left = pos.x + 'px';
 					visibleEl.style.top = pos.y + 'px';
 
-					scope.$emit('viewport::changed', {
+					scope.$emit('viewport:changed', {
 						x: pos.x / ratio,
 						y: pos.y / ratio
 					});
@@ -104,7 +104,7 @@ angular.module('constructorCore')
 					var pos = calcVisiblePos(viewPos.x, viewPos.y);
 					visibleEl.style.left = pos.x + 'px';
 					visibleEl.style.top = pos.y + 'px';
-					scope.$emit('viewport::changed', {
+					scope.$emit('viewport:changed', {
 						x: pos.x / ratio,
 						y: pos.y / ratio
 					});

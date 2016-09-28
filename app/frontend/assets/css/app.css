@@ -126,6 +126,6 @@ md-tab-item {
   /*width: 48px;*/
 /*}*/
 
-md-dialog-content{
-    white-space: pre-wrap;
+md-dialog.md-log_dialog-theme {
+   white-space: pre-wrap;
 }

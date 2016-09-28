@@ -86,24 +86,17 @@
                 };
                 self.showLogDialog = function (id) {
                     var tmp = self.curr();
-                    var log = {
-                        text: ""
-                    }
                     $http({
                         method: "GET",
                         url: "/task/log/" + id,
                     }).then(function mySucces(response) {
                         console.log(response.data);
-                        log.text = response.data;
                         $mdDialog.show(
-                            $mdDialog.confirm().title('Training Log').textContent(response.data).ariaLabel('Log').ok('Ok')
+                            $mdDialog.confirm().title('Training Log').textContent(response.data).ariaLabel('Log').ok('Ok').theme('log_dialog')
                         );
                     }, function myError(response) {
                         console.log(response);
                     });
-
-
-
                 };
                 //
                 self.isChecked = false;

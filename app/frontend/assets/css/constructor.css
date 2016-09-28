@@ -9,7 +9,7 @@
     background-repeat: no-repeat;
     width: 50px;
     background-size: contain;
-    
+
 }
 
 [draggable] {
@@ -63,7 +63,11 @@
 }
 
 .palette {
-    width: 200px;
+    width: 250px;
+}
+
+#layer-info {
+    width: 300px;
 }
 
 .constructor {

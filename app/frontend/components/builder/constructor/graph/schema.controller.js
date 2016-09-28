@@ -15,7 +15,8 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         ADD_LINK: 'graph:addLink',
         REMOVE_LINK: 'graph:removeLink',
         REMOVE_ITEMS: 'graph:removeItems',
-        CHANGED_VIEWS: 'graph:changedViews'
+        CHANGED_VIEWS: 'graph:changedViews',
+        ACTIVATE_ITEM: 'graph:activateItem'
     };
 
     var self = this;
@@ -107,7 +108,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
             return false;
 
         node.position(pos.x, pos.y, appConfig.svgDefinitions.gridStep);
-        self.emitEvent(events.ADD_NODE, {});
+        self.emitEvent(events.ADD_NODE, node);
         return true;
     }
 
@@ -211,10 +212,13 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 			$scope.$apply( function() {
                 if (activeItem && activeItem.id === data.id) {
                     activeItem.isActive = !activeItem.isActive;
+                    if (activeItem.isActive)
+                        self.emitEvent(events.ACTIVATE_ITEM, activeItem);
                 } else {
                     activeItem.isActive = false;
                     activeItem = schema.getItemById(data.id, data.type);
                     activeItem.isActive = true;
+                    self.emitEvent(events.ACTIVATE_ITEM, activeItem);
                 }
             });
 		});
@@ -350,12 +354,17 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 				$scope.$apply( function() {
 					if (activeItem && activeItem.isActive) {
 					    if (schema.removeItem(activeItem.id, activeItem.type)) {
-					        self.emitEvent(activeItem.type === 'node' ? events.REMOVE_NODE : events.REMOVE_LINK, {});
+                            if (activeItem.type === 'node') {
+                                self.emitEvent(events.REMOVE_NODE, activeItem);
+                            } else if (activeItem.type === 'link') {
+                                self.emitEvent(events.REMOVE_LINK, activeItem);
+                            }
 					    }
 						activeItem = -1;
 					} else {
-						if (schema.removeSelectedItems())
-                			self.emitEvent(events.REMOVE_ITEMS, {});
+                        var rem = schema.removeSelectedItems();
+						if (rem)
+                			self.emitEvent(events.REMOVE_ITEMS, rem);
                 	}
            		});
 			}

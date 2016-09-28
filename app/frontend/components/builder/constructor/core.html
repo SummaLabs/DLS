@@ -6,19 +6,18 @@
         <md-button class="md-warn md-raised" ng-click="$ctrl.checkModelJson($event)">
             Check Model
         </md-button>
+        <md-button class="md-warn md-raised" ng-click="$ctrl.calcModelShape($event)">
+            Calc Shapes
+        </md-button>
         <span class="md-headline">Network name: {{networkName}}</span>
     </div>
     <div layout="row" class="unselectable">
         <palette style="overflow: auto;"></palette>
         <div flex layout="column" style="height:100%;">
-            <!--<div>-->
-                <!--<md-button ng-click="$ctrl.zoomOut($event)" class="md-warn md-raised md-hue-2">-</md-button>-->
-                <!--<md-button ng-click="$ctrl.zoomIn($event)" class="md-warn md-raised md-hue-2">+</md-button>-->
-                <!--<md-button ng-click="$ctrl.resetView($event)" class="md-warn md-raised md-hue-2">Reset view</md-button>-->
-
-            <!--</div>- -->
             <div id="workspace" tabindex="1">
-                <svg-graph flex layout="column" control-item="$ctrl.svgControl" svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}" svg-color="#fff" pointer-events="all" focusable="false"></svg-graph>
+                <svg-graph flex layout="column" control-item="$ctrl.svgControl" svg-width="{{$ctrl.svgWidth}}"
+                           svg-height="{{$ctrl.svgHeight}}" svg-color="#fff" pointer-events="all"
+                           focusable="false"></svg-graph>
                 <viewport svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}"></viewport>
                 <div id="constructor-tools">
                     <md-button ng-click="$ctrl.zoomOut($event)" class="md-icon-button" aria-label="More">
@@ -32,6 +31,23 @@
                     </md-button>
                 </div>
             </div>
+        </div>
+        <div id="layer-info">
+            <md-content>
+                <md-tabs md-dynamic-height md-border-bottom>
+                    <md-tab label="Settings">
+                        <md-content class="md-padding">
+                            <layer-editor layer-id="{{$ctrl.layerId}}" layer-type="{{$ctrl.layerType}}"></layer-editor>
+                        </md-content>
+                    </md-tab>
+                    <md-tab label="Info">
+                        <md-content class="md-padding">
+
+                        </md-content>
+                    </md-tab>
+                </md-tabs>
+            </md-content>
+
         </div>
     </div>
 </div>

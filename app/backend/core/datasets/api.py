@@ -25,7 +25,7 @@ if len(datasetWatcher.dictDbInfo.keys())<1:
 else:
     print ('\nAvailable datasets: ')
     for ii,db in enumerate(datasetWatcher.dictDbInfo.values()):
-        print ('%d : %s' % (ii, db))
+        print ('\t%d : %s' % (ii, db))
 
 ###############################
 @dbpreview.route('/dbinfolist/', methods=['GET', 'POST'])

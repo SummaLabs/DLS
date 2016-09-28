@@ -208,22 +208,22 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
             })
         }
 
-        var timer = 0;
-        var delay = 200;
-        var prevent = false;
+        // var timer = 0;
+        // var delay = 200;
+        // var prevent = false;
 
 		element.on('click', function (event) {
-            timer = setTimeout(function() {
-                if (!prevent) {
+            // timer = setTimeout(function() {
+            //     if (!prevent) {
                     doClickAction(event, scope);
-                }
-                prevent = false;
-            }, delay);
+            //     }
+            //     prevent = false;
+            // }, delay);
 			
 		}).on("dblclick", function() {
-            clearTimeout(timer);
-            prevent = true;
-            doDoubleClickAction($rootScope);
+            // clearTimeout(timer);
+            // prevent = true;
+            // doDoubleClickAction($rootScope);
         });
 
 		element.on('mouseup', function (event) {

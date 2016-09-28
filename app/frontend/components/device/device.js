@@ -10,7 +10,7 @@
                     var self = this;
                     $scope.gpuChartsAll = []
                     socket.on('system_monitor', function (msg) {
-                        console.log(msg)
+                        // console.log(msg)
                         $scope.deviceInfo = {
                             info: JSON.parse(msg)
                         }

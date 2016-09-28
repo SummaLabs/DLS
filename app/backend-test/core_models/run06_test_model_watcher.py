@@ -2,14 +2,17 @@
 # -*- coding: utf-8 -*-
 __author__ = 'ar'
 
-from app.backend.core import utils as dlsutils
-from app.backend.core.models import CFG_SOLVER, CFG_MODEL, PREFIX_SNAPSHOT, EXT_MODEL_WEIGHTS
+import os
+import json
 
-class ModelTaskInfo:
-    pathModelTask=None
-    def __init__(self, pathModelTask):
-        self.pathModelTask = pathModelTask
+from app.backend.core.models.mdlpreview import ModelsWatcher
 
 if __name__ == '__main__':
-    dirModels=dlsutils.getPathForModelsDir()
-    print (dirModels)
+    modelsWatcher = ModelsWatcher()
+    modelsWatcher.refreshModelsInfo()
+    print (modelsWatcher)
+    print ('-----')
+    for ii,mm in enumerate(modelsWatcher.dictModelsInfo.values()):
+        print ('[%d] : %s' % (ii, mm))
+        for jj,ss in enumerate(mm.getTraindedSnapshots()):
+            print ('\tsnapshot#%d : %s' % (jj, ss))
