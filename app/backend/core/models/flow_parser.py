@@ -278,7 +278,7 @@ class DLSDesignerFlowsParser:
         return lstFlowNodes
     def getConnectedFlow(self, isCheckConnections=True):
         return self.getConnectedList(self.configFlow, isCheckConnections)
-    def buildKerasTrainer(self, pathJobDir = None, isAppendOutputLayer = True):
+    def buildKerasTrainer(self, pathJobDir = None, isAppendOutputLayer = True, isPrecalculateLayersDict=False):
         self.cleanAndValidate()
         sortedFlow = self.getConnectedFlow()
         model=Sequential()
@@ -338,6 +338,7 @@ class DLSDesignerFlowsParser:
             if not batcherLMDB.isOk():
                 raise Exception('Cant load LMDB Dataset from path [%s]' % pathLMDB)
         # Step 2: search Neural Layers:
+        dictLayers={}
         for idx, node in enumerate(sortedFlow):
             #TODO: append code after night talk
             # print ('[%d/%d] node-type: [%s]' % (idx, len(sortedFlow), node.jsonCfg['content']))
@@ -382,6 +383,8 @@ class DLSDesignerFlowsParser:
                 model.add(tmpLayer)
                 # model.add(Activation())
                 model.add(getSubsamplingJs2Keras(strSubsampType, sizeSubsampling))
+                if isPrecalculateLayersDict:
+                    dictLayers[node.jsonCfg['id']] = model.layers[-1]
             elif ttype == 'dense':
                 #FIXME: this parameter value only for valid Kearas model building, on step, when model prepared for calc this parameter resolved from data input
                 if pathJobDir is None:
@@ -405,6 +408,8 @@ class DLSDesignerFlowsParser:
                 tmpLayer.trainable=isTrainable
                 model.add(tmpLayer)
                 # model.add(Activation(nonlinFunJson2Keras(strNonLinFunc)))
+                if isPrecalculateLayersDict:
+                    dictLayers[node.jsonCfg['id']] = model.layers[-1]
         # (1) Prepare dataset:
         if pathJobDir is None:
             pathLMDB = datasetId
@@ -420,7 +425,10 @@ class DLSDesignerFlowsParser:
                                                intervalSaveModel=paramIntSnapshot,
                                                intervalValidation=paramIntValidation,
                                                isAppendOutputLayer=isAppendOutputLayer)
-        return (kerasTrainer, cfgJsonSolver)
+        if not isPrecalculateLayersDict:
+            return (kerasTrainer, cfgJsonSolver)
+        else:
+            return (kerasTrainer, cfgJsonSolver, dictLayers)
     def buildKerasModelInJson(self, pathJobDir = None):
         kerasTrainer,_ = self.buildKerasTrainer()
         return json.loads(kerasTrainer.model.to_json(sort_keys=True, indent=4, separators=(',', ': ')))
@@ -467,6 +475,26 @@ class DLSDesignerFlowsParser:
             return ('ok', None)
         except Exception as err:
             return ('error', 'Error: %s' % err)
+    @staticmethod
+    def calculateShapesForModel(paramFlowJson):
+        flowParser = DLSDesignerFlowsParser(paramFlowJson)
+        _, _, layersDict = flowParser.buildKerasTrainer(isPrecalculateLayersDict=True)
+        modelJsonWithShapes = flowParser.configFlowRaw
+        tmp = modelJsonWithShapes['layers']
+        for ii in tmp:
+            tid = ii['id']
+            tshapeInp = 'Unknown'
+            tshapeOut = 'Unknown'
+            if tid in layersDict.keys():
+                tlayer = layersDict[tid]
+                tshapeInp = tlayer.input_shape
+                tshapeOut = tlayer.output_shape
+            ii['shape'] = {
+                'inp': tshapeInp,
+                'out': tshapeOut
+            }
+        modelJsonWithShapes['layers'] = tmp
+        return modelJsonWithShapes
     @staticmethod
     def renderModel2ImageFromJson(paramFlowJson):
         tmpParser = DLSDesignerFlowsParser(paramFlowJson)
