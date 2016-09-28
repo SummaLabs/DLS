@@ -1,10 +1,10 @@
 import pytest
-from app.backend.task.default_task import BaseTask
+from app.backend.task.default_task import Task
 
 
 @pytest.fixture
 def default_task():
-    return BaseTask()
+    return Task()
 
 
 def test_default_task_run(default_task):

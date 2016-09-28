@@ -8,6 +8,8 @@ import time
 import logging
 import json
 
+from app.backend.task.task_factory import TaskFactory
+
 logging.basicConfig()
 # Needed this to avoid deadlock
 
@@ -31,8 +33,9 @@ class TaskManager:
         self.scheduler.add_job(self.report_progress, 'interval', seconds=config.JOB_MONITOR_INTERVAL, executor='monitor')
 
     # Starts new task
-    def start_task(self, task):
+    def start_task(self, type, params):
 
+        task = TaskFactory.create(type, params)
         self.scheduler.add_job(func=task.execute, misfire_grace_time=config.MISFIRE_GRACE_TIME)
         self.tasks[task.id] = task
 

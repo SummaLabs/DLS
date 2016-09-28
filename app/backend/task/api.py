@@ -1,6 +1,5 @@
 from flask import Response, request
 from task_manager import TaskManager
-from default_task import DefaultTask, CmdTask
 from app.backend import config
 import flask
 import json
@@ -13,13 +12,12 @@ task = flask.Blueprint(__name__, __name__)
 tm = TaskManager()
 
 
-# Start new Task. This is for testing only so no params
+# Start new Task.
 @task.route('/start', methods=["POST"])
 def start_task():
-    params = json.loads(request.data)
-    t = DefaultTask() #CmdTask("/home/yegor/trash/DLS/app/backend/task/test.sh")
-    # t = CmdTask("/home/yegor/trash/DLS/app/backend/task/test.sh")
-    tm.start_task(t)
+    type = request.args['type']
+    params = json.loads(request.args['params'])
+    tm.start_task(type, json.loads(params))
     return Response(json.dumps("{status: 'ok'}"), mimetype='application/json')
 
 
