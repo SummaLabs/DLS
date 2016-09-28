@@ -28,6 +28,7 @@ from keras.optimizers import Optimizer
 
 from app.backend.core import utils as dlsutils
 from batcher_image2d import BatcherImage2DLMDB
+import flow_parser
 
 from cfg import CFG_MODEL_TRAIN, CFG_SOLVER
 
@@ -269,6 +270,7 @@ class KerasTrainer:
             self.currentIter +=1
         self.currentEpoch += 1
     def convertImgUint8ToDBImage(self, pimg):
+        #FIXME: shape we can get from Batcher and from model.layers...
         if len(self.batcherLMDB.shapeImg) < 3:
             numCh = 1
         else:
@@ -282,13 +284,18 @@ class KerasTrainer:
         # if #channels of input image is not equal to #channels in TrainDatabse, then convert shape inp Image to Database-Shape
         if numCh != numChImg:
             if numCh == 1:
-                pimg = skcolor.rgb2gray(pimg)
+                # FIXME: this is fix potential bug: rgb2gray change automaticaly min/max range from (0,255) to (0,1), headbang!
+                pimg = skcolor.rgb2gray(pimg.astype(np.float))
             else:
                 pimg = skcolor.gray2rgb(pimg)
         timg = sktransform.resize(pimg.astype(np.float32) * self.batcherLMDB.scaleFactor, self.batcherLMDB.shapeImg[1:])
-        timg = timg.transpose((2, 0, 1))
+        if numCh==1:
+            timg = timg.reshape([1] + list(timg.shape))
+        else:
+            timg = timg.transpose((2, 0, 1))
         if self.batcherLMDB.isRemoveMean:
-            timg -= self.batcherLMDB.meanImg
+            # FIXME: check this point: type of the mean-removing from one cofig (for train and inference stages)
+            timg -= self.batcherLMDB.meanChImage
         return timg
     def inferListImagePath(self, listPathToImages, batchSizeInfer=None):
         if not self.isOk():
@@ -385,6 +392,21 @@ class KerasTrainer:
             self.printError(strError)
             raise Exception(strError)
         return self.inferOneImageU8(timgu8)
+    def inferOneImagePathSorted(self, pathToImage):
+        tret = self.inferOneImagePath(pathToImage)
+        tarrProb=tret['prob'][0]
+        sortedIdx = np.argsort(-tarrProb)
+        sortedLbl  = np.array(self.batcherLMDB.lbl)[sortedIdx]
+        sortedProb = tarrProb[sortedIdx]
+        tmp = [(ll,pp) for ll,pp in zip(sortedLbl,sortedProb)]
+        ret = {
+            'best': {
+                'label':    tret['label'],
+                'prob':     tret['val']
+            },
+            'distrib': tmp
+        }
+        return ret
     def saveModelState(self, parOutputDir=None, isSaveWeights=True):
         if parOutputDir is not None:
             if not os.path.isdir(parOutputDir):
@@ -396,8 +418,11 @@ class KerasTrainer:
         foutSolverCfg=os.path.join(self.outputDir,"%s%s" % (self.modelPrefix, self.extJsonSolverState))
         foutModelWeights=os.path.join(self.outputDir,'%s_iter_%06d.%s' % (self.modelPrefix,self.currentIter,self.extModelWeights))
         #
+        #FIXME: this is temporary solution, fix this in the future!
+        tmpOptimizerCfg = self.model.optimizer.get_config()
+        tmpOptimizerCfg['name'] = flow_parser.getKerasOptimizerName(self.model.optimizer)
         jsonSolverState={
-            'optimizer'         : self.model.optimizer.get_config(),
+            'optimizer'         : tmpOptimizerCfg,
             'loss'              : self.model.loss,
             'metrics'           : self.model.metrics_names,
             'dataset-id'        : self.batcherLMDB.cfg.dbId,
