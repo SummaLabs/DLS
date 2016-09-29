@@ -60,7 +60,7 @@
                             parent: angular.element(document.body),
                             targetEvent: $event,
                             templateUrl: '/frontend/components/inference/classify-dataset/apply-ROC-analysis.html',
-                            controller: function ($scope, dbinfoService, imageService) {
+                            controller: function ($scope, dbinfoService, taskManagerService) {
                                 $scope.dataSetNames = [];
 
                                 var future = dbinfoService.getDatasetsInfoStatList();
@@ -73,12 +73,22 @@
                                 });
 
                                 $scope.submitROCAnalysisTask = function () {
-                                    // imageService.applyROCAnalysis(modelId, $scope.dataSetSelected);
-                                    self.showToast('ROC Analysis is running');
-                                    $rootScope.$emit(ROCAnalysis.RUN, {
-                                        name: $scope.dataSetSelected + "-" + getCurrentTime(),
-                                        inProgress: true
+                                    var futureTask = taskManagerService.startTask('roc-analysis',
+                                        {model_id: modelId, data_set_id: $scope.dataSetSelected});
+                                    futureTask.then(function mySucces(response) {
+                                        var taskId = response.data;
+                                        $rootScope.$emit(ROCAnalysis.RUN, {
+                                            name: $scope.dataSetSelected + "-" + getCurrentTime(),
+                                            inProgress: true
+                                        });
+                                        taskManagerService.subToTasksStatusUpdate(function(tasks) {
+                                            console.log(tasks);
+                                        });
+                                        self.showToast('ROC Analysis task is running. Task id: ' + taskId);
+                                    }, function myError(response) {
                                     });
+                                    
+
                                     $mdDialog.hide();
                                 };
 

@@ -1,11 +1,14 @@
-from abc import ABCMeta, abstractmethod
+import abc
+from abc import abstractmethod
 from datetime import datetime
 import logging
 import time
 from app.backend import config
 
 
-class Task(metaclass=ABCMeta):
+class Task:
+    __metaclass__ = abc.ABCMeta
+
     """Base task class.
     Extend this class if you need custom task behaviour"""
 

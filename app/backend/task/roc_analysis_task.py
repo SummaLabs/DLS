@@ -1,7 +1,7 @@
 from app.backend.task.task import Task
 
 
-class ROCAnalysis(Task):
+class ROCAnalysisTask(Task):
 
     def __init__(self, model_id, data_set_id):
         Task.__init__(self)

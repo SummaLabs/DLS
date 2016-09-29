@@ -1,4 +1,6 @@
 from flask import Response, request
+
+from app.backend.task.task_factory import TaskFactory
 from task_manager import TaskManager
 from app.backend import config
 import flask
@@ -17,7 +19,8 @@ tm = TaskManager()
 def start_task():
     type = request.args['type']
     params = json.loads(request.args['params'])
-    tm.start_task(type, json.loads(params))
+    task = TaskFactory.create(type, params)
+    tm.start_task(task)
     return Response(json.dumps("{status: 'ok'}"), mimetype='application/json')
 
 

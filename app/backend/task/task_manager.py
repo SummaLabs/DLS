@@ -33,9 +33,8 @@ class TaskManager:
         self.scheduler.add_job(self.report_progress, 'interval', seconds=config.JOB_MONITOR_INTERVAL, executor='monitor')
 
     # Starts new task
-    def start_task(self, type, params):
+    def start_task(self, task):
 
-        task = TaskFactory.create(type, params)
         self.scheduler.add_job(func=task.execute, misfire_grace_time=config.MISFIRE_GRACE_TIME)
         self.tasks[task.id] = task
 
