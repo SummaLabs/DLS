@@ -37,9 +37,18 @@ def caffe_to_keras(prototextPath, caffemodelPath=None, phase='train', debug=Fals
             raise Exception('could not load any layers from prototext')
 
         print("CREATING MODEL")
+        #
+        paramInputDim = config.input_dim[1:]
+        if len(paramInputDim)==0:
+            try:
+                if config.layer[0].type=='Input':
+                    paramInputDim = config.layer[0].input_param.shape._values[0].dim[1:]
+            except Exception as err:
+                print ('Config : %s' % err)
+        #
         model = create_model(layers,
                                   0 if phase == 'train' else 1,
-                                  tuple(config.input_dim[1:]),debug)
+                                  tuple(paramInputDim),debug)
         if caffemodelPath is not None:
             params = caffe.NetParameter()
             params.MergeFromString(open(caffemodelPath, 'rb').read())
@@ -71,7 +80,7 @@ def preprocessPrototxt(prototxt, debug=False):
         # Write all layer types as strings
         if len(l) > 6 and l[:5] == 'type:' and l[5] != "\'" and l[5] != '\"':
             type_ = l[5:]
-            p[i] = '  type: "' + type_ + '"'
+            p[i] = '  type: "' + type_.capitalize() + '"'
         # blobs_lr
         #elif len(l) > 9 and l[:9] == 'blobs_lr:':
         #    print("The prototxt parameter 'blobs_lr' found in line "+str(i+1)+" is outdated and will be removed. Consider using param { lr_mult: X } instead.")
