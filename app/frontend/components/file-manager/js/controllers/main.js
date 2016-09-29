@@ -128,6 +128,23 @@
             $rootScope.selectedFiles = [item];
             return item;
         };
+            
+        $scope.unzip = function(item) {
+            console.log(item);
+            console.log($rootScope.selectedFiles)
+        };
+            
+        $scope.unzipAllowed = function(item) {
+            var files = $rootScope.selectedFiles
+            if(files && files.length == 1){
+                if(files[0].model.name.endsWith(".zip")){
+                    return true;
+                }
+            }
+            return false;
+        };
+            
+            
 
         $scope.smartClick = function(item) {
 

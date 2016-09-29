@@ -94,5 +94,10 @@
                 <i class="glyphicon glyphicon-cloud-upload"></i> {{'upload_files' | translate}}
             </a>
         </li>
+        <li ng-show="config.allowedActions.upload && unzipAllowed()">
+            <a href="" tabindex="-1" ng-click="unzip()">
+                <i class="glyphicon glyphicon-cloud-upload"></i> {{'unzip' | translate}}
+            </a>
+        </li>
     </ul>
 </div>

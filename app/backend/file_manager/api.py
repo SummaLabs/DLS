@@ -1,3 +1,5 @@
+from zipfile import ZipFile
+
 from flask import request
 from flask import Response
 
@@ -6,13 +8,18 @@ import os
 import shutil
 import stat
 import flask
+import werkzeug
+import logging
 from datetime import datetime
 from app.backend.api import app_flask
 
+
 file_manager = flask.Blueprint('file_manager', __name__)
+logger = logging.getLogger("dls")
 # REPOSITORY_BASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),'../../../data-test')
 REPOSITORY_BASE_PATH = app_flask.config['DLS_FILEMANAGER_BASE_PATH']
 ONLY_FOLDERS = False
+ALLOWED_EXTENSIONS = app_flask.config['ALLOWED_EXTENSIONS']
 
 print ('::DLS_FILEMANAGER_BASE_PATH --> %s' % REPOSITORY_BASE_PATH)
 
@@ -183,3 +190,42 @@ def permissions_to_unix_name(st):
     dic = {'7':'rwx', '6' :'rw-', '5' : 'r-x', '4':'r--', '0': '---'}
     perm = str(oct(st.st_mode)[-3:])
     return is_dir + ''.join(dic.get(x,x) for x in perm)
+
+
+@file_manager.route('/downloadFileUrl', methods=["GET"])
+def download_file_url():
+    path = request.args.get('path')
+    return flask.send_file(REPOSITORY_BASE_PATH + path,  mimetype='image/gif')
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+@file_manager.route('/uploadUrl', methods=['POST'])
+def upload_file():
+
+    dest = request.form['destination']
+    print dest
+    for file in request.files.values():
+        print file.filename
+        if file.filename and allowed_file(file.filename):
+            filename = werkzeug.utils.secure_filename(file.filename.replace('u\'', ''))
+            fullname = os.path.join(REPOSITORY_BASE_PATH + dest.replace('u\'', ''), filename)
+            logger.info('uploading file to ' + fullname)
+            file.save(fullname)
+    return Response(json.dumps({}), mimetype='application/json')
+
+
+@file_manager.route('/unzip', methods=['POST'])
+def unzip():
+
+    params = json.loads(request.data)
+    filename = params['filename']
+    zip = ZipFile(filename)
+    zip.extractall()
+
+
+
+
