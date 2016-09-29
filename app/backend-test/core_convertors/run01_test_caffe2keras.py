@@ -3,6 +3,8 @@
 __author__ = 'ar'
 
 import os
+os.environ['THEANO_FLAGS'] = "device=cpu"
+
 import glob
 import json
 
@@ -23,8 +25,10 @@ if __name__ == '__main__':
     lstModelsPaths=[{
         'proto':    os.path.abspath(os.path.join(pathWithDatasets, '%s.prototxt'   % os.path.basename(os.path.splitext(xx)[0]) )),
         'weights':  os.path.abspath(os.path.join(pathWithDatasets, '%s.caffemodel' % os.path.basename(os.path.splitext(xx)[0]) ))
-    } for xx in glob.glob('%s/bvlc_*.prototxt' % pathWithDatasets)]
+    } for xx in glob.glob('%s/*.prototxt' % pathWithDatasets)]
     pprint(lstModelsPaths)
+    numProto = len(lstModelsPaths)
+    plt.figure()
     for ii,pp in enumerate(lstModelsPaths):
         pathProto   = pp['proto']
         pathWeights = pp['weights']
@@ -41,5 +45,7 @@ if __name__ == '__main__':
         pathKerasModelImage = '%s-kerasmodel.jpg' % os.path.splitext(pathProto)[0]
         kplot(kerasModel, to_file=pathKerasModelImage, show_shapes=True)
         img = io.imread(pathKerasModelImage)
+        plt.subplot(1,numProto,ii+1)
         plt.imshow(img)
-        plt.show()
+        plt.title(os.path.splitext(os.path.basename(pathProto))[0])
+    plt.show()
