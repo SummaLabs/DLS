@@ -1,0 +1,6 @@
+*.caffemodel
+/1/
+/2/
+*.prototxt-bk
+/bvlc_googlenet-kerasmodel.jpg
+/bvlc_googlenet-kerasmodel.json
