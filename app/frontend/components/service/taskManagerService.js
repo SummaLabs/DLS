@@ -1,5 +1,5 @@
 angular.module('taskManagerService', [])
-    .service('taskManagerService', ['$http', TaskManagerService]);
+    .service('taskManagerService', ['$rootScope', '$http', TaskManagerService]);
 
 function TaskManagerService($rootScope, $http) {
 
@@ -25,15 +25,14 @@ function TaskManagerService($rootScope, $http) {
      * customParams - variable set of params specific for particular type of task - json string
      */
     
-    this.startTask = function(taskType, customParams) {
+    this.startTask = function(type, customParams) {
         return $http({
-            method: "POST",
-            url: "/task/start",
+            method: 'POST',
+            url: '/task/start',
             params: {
-                taskType: taskType,
+                type: type,
                 customParams: customParams
-            },
-            headers: {'Content-Type': 'application/json;charset=utf-8'}
+            }
         })
     }
 }

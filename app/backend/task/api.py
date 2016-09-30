@@ -18,10 +18,10 @@ tm = TaskManager()
 @task.route('/start', methods=["POST"])
 def start_task():
     type = request.args['type']
-    params = json.loads(request.args['params'])
+    params = json.loads(request.args['customParams'])
     task = TaskFactory.create(type, params)
     tm.start_task(task)
-    return Response(json.dumps("{status: 'ok'}"), mimetype='application/json')
+    return Response(json.dumps({'taskId': task.id}), mimetype='application/json')
 
 
 # Kill task

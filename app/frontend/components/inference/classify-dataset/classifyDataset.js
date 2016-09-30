@@ -8,7 +8,7 @@
                     modelId: '@'
                 },
                 templateUrl: '/frontend/components/inference/classify-dataset/classify-dataset.html',
-                controller: function ($rootScope, $scope, $mdDialog, $mdToast, imageService) {
+                controller: function ($rootScope, $scope, $mdDialog, $mdToast, imageService, taskManagerService) {
                     var self = this;
 
                     const ROCAnalysis = {
@@ -18,6 +18,8 @@
                     var classesROC = [];
 
                     this.$onInit = function () {
+                        $scope.rocsIds = [];
+                        $scope.classNames = [];
                         var future = imageService.loadModelROCsData($scope.modelId);
                         future.then(function mySucces(response) {
                             setModelROCsHistoryData(response.data);
@@ -43,6 +45,28 @@
                         $rootScope.$on(ROCAnalysis.RUN, function ($event, data) {
                             $scope.rocsIds.push(data);
                         });
+
+                        taskManagerService.subToTasksStatusUpdate(function (event, tasks) {
+                            event.stopPropagation();
+                            var reloadRocData = false;
+                            tasks.forEach(function (task) {
+                                console.log(task);
+                                if (task.type = 'roc-analysis') {
+                                    $scope.rocsIds.forEach(function (rocId) {
+                                        if (typeof rocId.taskId != "undefined" && rocId.taskId == task.id) {
+                                            reloadRocData = true;
+                                        }
+                                    })
+                                }
+                            });
+                            if (reloadRocData) {
+                                var future = imageService.loadModelROCsData($scope.modelId);
+                                future.then(function mySucces(response) {
+                                    updateModelROCsHistoryData(response.data);
+                                }, function myError(response) {
+                                });
+                            }
+                        });
                     };
 
                     this.showToast = function (message) {
@@ -55,6 +79,7 @@
                     };
 
                     $scope.applyROCAnalysis = function ($event) {
+                        var model_id = $scope.modelId;
                         $mdDialog.show({
                             clickOutsideToClose: true,
                             parent: angular.element(document.body),
@@ -74,15 +99,13 @@
 
                                 $scope.submitROCAnalysisTask = function () {
                                     var futureTask = taskManagerService.startTask('roc-analysis',
-                                        {model_id: modelId, data_set_id: $scope.dataSetSelected});
+                                        {model_id: model_id, data_set_id: $scope.dataSetSelected});
                                     futureTask.then(function mySucces(response) {
-                                        var taskId = response.data;
+                                        var taskId = response.data.taskId;
                                         $rootScope.$emit(ROCAnalysis.RUN, {
-                                            name: $scope.dataSetSelected + "-" + getCurrentTime(),
-                                            inProgress: true
-                                        });
-                                        taskManagerService.subToTasksStatusUpdate(function(tasks) {
-                                            console.log(tasks);
+                                            name: $scope.dataSetSelected,
+                                            inProgress: true,
+                                            taskId : taskId
                                         });
                                         self.showToast('ROC Analysis task is running. Task id: ' + taskId);
                                     }, function myError(response) {
@@ -101,15 +124,11 @@
 
                     };
 
-                    function getCurrentTime() {
-                        var today = new Date();
-                        var date = today.getFullYear() + '.' + (today.getMonth() + 1) + '.' + today.getDate();
-                        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-                        return date + '-' + time;
+                    function updateModelROCsHistoryData() {
+                        console.log("update");
                     }
-                    
+
                     function setModelROCsHistoryData(ROCsHistoryData) {
-                        $scope.rocsIds = [];
                         ROCsHistoryData.forEach(function (rocData) {
                             rocsData.push(rocData);
                             $scope.rocsIds.push({
