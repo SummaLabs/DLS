@@ -82,7 +82,14 @@ def get_available_devices_list():
         tid = 'gpu%s' % ii['id']
         tgmemTotal  = re.sub('[A-Za-z:,. ]', '', ii['mem'])
         tgmemUsage  = re.sub('[A-Za-z:,. ]', '', ii['mem_used'])
-        pgmemUsage  = int(100*float(tgmemUsage)/float(tgmemTotal))
+        if int(tgmemTotal)>0:
+            pgmemUsage  = int(100*float(tgmemUsage)/float(tgmemTotal))
+            isBusy = pgmemUsage>40
+        else:
+            tgmemTotal = 'unknown'
+            tgmemUsage = 'unknown'
+            pgmemUsage = 0
+            isBusy     = True
         tret.append({
             'id':           tid,
             'type':         'gpu',
@@ -90,7 +97,7 @@ def get_available_devices_list():
             'memtotal':     tgmemTotal,
             'memusage':     tgmemUsage,
             'pmemusage':    pgmemUsage,
-            'isbusy':       pgmemUsage>1
+            'isbusy':       isBusy
         })
     return tret
 

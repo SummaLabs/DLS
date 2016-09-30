@@ -53,36 +53,6 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 		networkDataService.subNetworkUpdateEvent(function ($event, data) {
 			$scope.networkName = networkDataService.getNetwork().name;
 		});
-
-		/*$rootScope.$on('EditLayer', function ($event, data) {
-			doUpdateNetwork();
-			var parentEl = angular.element(document.body);
-			var dialogTemplate = buildTemplate(data.id, data.layerType);
-			$mdDialog.show({
-				clickOutsideToClose: true,
-				parent: parentEl,
-				targetEvent: null,
-				template: dialogTemplate,
-				locals: {},
-				controller: DialogController
-			});
-
-			function DialogController($scope, $mdDialog) {
-				$scope.closeDialog = function() {
-					$mdDialog.hide();
-				}
-			}
-
-			function buildTemplate(layerId, layerType) {
-				var template =
-					'<md-dialog flex="25" aria-label="' + layerType + '">' +
-					'  <md-dialog-content>'+
-					'    <layer-editor layer-id="' + layerId + '" layer-type="' + layerType + '" do-on-submit="closeDialog()"></layer-editor>' +
-					'  </md-dialog-content>' +
-					'</md-dialog>';
-				return template;
-			}
-		});*/
 	};
 
 	this.checkModelJson = function ($event) {
@@ -121,6 +91,44 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 			}
 		);
 	};
+	this.calcModelShape = function ($event) {
+		doUpdateNetwork();
+		var dataNetwork = networkDataService.getNetwork();
+		modelsService.calcModelShape(dataNetwork).then(
+			function successCallback(response) {
+				var ret 	 = response.data;
+				var isError  = true;
+				var strError = 'Unknown Error...';
+				if(ret['status']=='ok') {
+					isError = false;
+				} else {
+					strError = ret['data'];
+				}
+				var retMessage = "OK: network is correct (please see dev-tools log)!";
+				if (isError) {
+					retMessage = "ERROR: " + strError;
+				} else {
+					console.log('*** Model with shapes ***');
+					console.log(ret['data']);
+				}
+				var toast = $mdToast.simple()
+					.textContent(retMessage)
+					.action('UNDO')
+					.highlightAction(true)
+					.highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
+					.position('top right');
+				$mdToast.show(toast).then(function(response) {
+					if ( response == 'ok' ) {
+						//todo
+				  	}
+				});
+			},
+			function errorCallback(response) {
+				console.log(response.data);
+			}
+		);
+	};
+
 
 	this.saveNetworkDialog = function ($event) {
 		doUpdateNetwork();
@@ -178,9 +186,13 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 
         networkDataService.subNetworkUpdateEvent(setUpNetwork);
 
+
+        $scope.$on('graph:init', function (event, node) {
+             setUpNetwork();
+        });
+
         $scope.$on('graph:addNode', function (event, node) {
             console.log('graph:addNode');
-
 			var layers = networkDataService.getLayers();
 			var layer = networkLayerService.getLayerByType(node.name);
 			layers.push(layer);
@@ -208,6 +220,8 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 		    console.log('graph:addLink');
 
 			let layer = networkDataService.getLayerById(link.nodes[0].id);
+			if (!layer.wires)
+				layer.wires = [];
 			layer.wires.push(link.nodes[1].id);
 
 		    networkDataService.setChangesSaved(false);
@@ -259,8 +273,14 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
             event.stopPropagation();
 		});
 
+        $scope.$on('graph:changePosition', function (event, node) {
+			let layer = networkDataService.getLayerById(node.id);
+            layer.pos.x = node.pos.x;
+            layer.pos.y = node.pos.y;
+            event.stopPropagation();
+		});
+
 		function setUpNetwork() {
-			self.svgControl.scale(1.0);
             self.svgControl.setLayers(networkDataService.getLayers());
 		}
     }

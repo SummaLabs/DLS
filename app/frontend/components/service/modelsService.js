@@ -14,5 +14,19 @@ function DLSModelsService($http) {
                 data:   network,
                 headers: {'Content-Type': 'application/json;charset=utf-8'}
             });
+    };
+    self.calcModelShape = function (network) {
+        return $http({
+                method: 'POST',
+                url:    '/models/calcshape/',
+                data:   network,
+                headers: {'Content-Type': 'application/json;charset=utf-8'}
+            });
+    };
+    self.getListModelsInfo = function (network) {
+        return $http({
+            method: 'POST',
+            url:    '/models/listinfo/'
+        });
     }
 }

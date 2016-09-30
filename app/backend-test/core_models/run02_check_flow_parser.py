@@ -14,7 +14,7 @@ if __name__ == '__main__':
     flowParser = DLSDesignerFlowsParser(pathModelJson)
     flowParser.cleanAndValidate()
     print ('Model-flow isOk: [%s]' % flowParser.isOk())
-    kerasTrainer = flowParser.buildKerasTrainer()
+    kerasTrainer,cfgSolver,layersDict = flowParser.buildKerasTrainer(isPrecalculateLayersDict=True)
     print (kerasTrainer.model)
     #
     fimg = '/tmp/keras_draw.png'
