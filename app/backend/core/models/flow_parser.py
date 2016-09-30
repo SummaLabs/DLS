@@ -39,18 +39,18 @@ class NodeF:
     def toString(self):
         strInp = 'NULL'
         if self.inpNode is not None:
-            strInp = '%s(%s)' % (self.inpNode[0].jsonCfg['id'],self.inpNode[0].jsonCfg['content'])
+            strInp = '%s(%s)' % (self.inpNode[0].jsonCfg['id'],self.inpNode[0].jsonCfg['layerType'])
         strOut = 'NULL'
         if self.outNode is not None:
-            strOut = '%s(%s)' % (self.outNode[0].jsonCfg['id'], self.outNode[0].jsonCfg['content'])
+            strOut = '%s(%s)' % (self.outNode[0].jsonCfg['id'], self.outNode[0].jsonCfg['layerType'])
         strCfg = 'NULL'
         if self.jsonCfg is not None:
-            strCfg = '%s(%s)' % (self.jsonCfg['id'], self.jsonCfg['content'])
+            strCfg = '%s(%s)' % (self.jsonCfg['id'], self.jsonCfg['layerType'])
         ret = '{obj->[%s],  in:%s, out:%s}' % (strCfg, strInp, strOut)
         return ret
     def validateFields(self):
         if self.jsonCfg is not None:
-            strType = self.jsonCfg['content']
+            strType = self.jsonCfg['layerType']
             if not strType in dictRequiredFields.keys():
                 raise Exception('Unknown node type [%s]' % strType)
             tmpParamNames=self.jsonParams.keys()
@@ -107,9 +107,9 @@ dictRequiredFields = {
 
 ####################################
 def checkPreviousConnection(pNode):
-    pNodeType = pNode.jsonCfg['content']
+    pNodeType = pNode.jsonCfg['layerType']
     if pNode.inpNode is not None:
-        inpNodeType = pNode.inpNode[0].jsonCfg['content']
+        inpNodeType = pNode.inpNode[0].jsonCfg['layerType']
         if (pNodeType in dictAvailableConnectionsFromTo.keys()) and (inpNodeType in dictAvailableConnectionsFromTo.keys()):
             return dictAvailableConnectionsFromTo[pNodeType][inpNodeType]
         else:
@@ -271,7 +271,7 @@ class DLSDesignerFlowsParser:
                 if not checkPreviousConnection(nn):
                     raise Exception('Inkorrect node connection %d : [%s] -> [%s]' % (idx, nn.inpNode[0], nn))
             # (3) Check required nodes:
-            lstNodeType = [ii.jsonCfg['content'] for ii in lstFlowNodes]
+            lstNodeType = [ii.jsonCfg['layerType'] for ii in lstFlowNodes]
             for ii in self.reqiredNodes:
                 if not ii in lstNodeType:
                     raise Exception('In Neural Flow missing required node [%s]' % ii)
@@ -296,7 +296,7 @@ class DLSDesignerFlowsParser:
         paramOptimizer      = None
         for idx, node in enumerate(sortedFlow):
             tcfg = node.jsonParams
-            ttype = node.jsonCfg['content']
+            ttype = node.jsonCfg['layerType']
             if ttype == 'data':
                 datasetType = tcfg['datasetType']
                 datasetId   = tcfg['datasetId']
@@ -341,9 +341,9 @@ class DLSDesignerFlowsParser:
         dictLayers={}
         for idx, node in enumerate(sortedFlow):
             #TODO: append code after night talk
-            # print ('[%d/%d] node-type: [%s]' % (idx, len(sortedFlow), node.jsonCfg['content']))
+            # print ('[%d/%d] node-type: [%s]' % (idx, len(sortedFlow), node.jsonCfg['layerType']))
             tcfg=node.jsonParams
-            ttype=node.jsonCfg['content']
+            ttype=node.jsonCfg['layerType']
             if ttype == 'convolution':
                 #FIXME: parameter-names may change
                 numberFilters   = int(tcfg['filtersCount']) if tcfg['filtersCount'] else 1
@@ -403,7 +403,7 @@ class DLSDesignerFlowsParser:
                     tmpLayer = Dense(numberNeurons,
                                      activation=nonlinFunJson2Keras(strNonLinFunc))
                 if node.inpNode is not None:
-                    if node.inpNode[0].jsonCfg['content'] == 'convolution':
+                    if node.inpNode[0].jsonCfg['layerType'] == 'convolution':
                         model.add(Flatten())
                 tmpLayer.trainable=isTrainable
                 model.add(tmpLayer)
@@ -444,13 +444,13 @@ class DLSDesignerFlowsParser:
         # (0) raise exception when in flow non-supported node types is presents
         extSupportedNodes = ['tab'] + self.supportedNodes
         for ii in tmpCfg:
-            if 'content' not in ii.keys():
-                raise Exception('Incorrect node config: <content> is absent! [%s]' % ii)
-            if ii['content'] not in extSupportedNodes:
+            if 'layerType' not in ii.keys():
+                raise Exception('Incorrect node config: <layerType> is absent! [%s]' % ii)
+            if ii['layerType'] not in extSupportedNodes:
                 raise Exception('Non-supported node type [%s], id=[%s]' % (ii['type'], ii['id']))
         # (1) find nodes for remove from graph
         for ii in tmpCfg:
-            if ii['content'] not in self.supportedNodes:
+            if ii['layerType'] not in self.supportedNodes:
                 tmpNodesForRemoving.append(ii)
         # (2) remove id from wires
         for ii in tmpNodesForRemoving:

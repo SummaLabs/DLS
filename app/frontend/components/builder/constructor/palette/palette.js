@@ -58,7 +58,7 @@ function DraggableCtrl($scope, $element, $rootScope, $compile, $templateCache, $
     $element.on('dragend', function (event) {
         event.target.style.opacity = '1';
         $rootScope.$emit('palette_drag_end', {
-            data: $scope.draggable,
+            node: $scope.draggable,
             offset: elemOffset
         });
     });
@@ -103,6 +103,7 @@ function createTree(categories, layers) {
 				items.push({
 					type: 'item',
 					name: item.name,
+					layerType: item.layerType,
 					id: ++idCounter,
 					template: item.template,
 					params: item.params

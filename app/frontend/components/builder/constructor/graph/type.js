@@ -96,6 +96,7 @@ function Node() {
     Item.call(this, 'node');
 
     this.name = null;
+    this.layerType = null;
     this.template = null;
     this.category = null;
     this.pos = new Position(0, 0);
@@ -142,6 +143,7 @@ function Schema() {
     		var layer = Object.create(null);
     		layer.id = node.id;
 			layer.name = node.name;
+            layer.layerType = node.layerType;
 			layer.category = node.category;
 			layer.template = node.template;
 			layer.pos = node.pos;
@@ -156,7 +158,7 @@ function Schema() {
     	return schema;
     };
 
-    this.addNode = function(name, category, template, id) {
+    this.addNode = function(name, layerType,  category, template, id) {
         var node = new Node();
         if (id && checkIdForUnique(id)) {
             node.id = id;
@@ -165,6 +167,7 @@ function Schema() {
         }
 
         node.name = name;
+        node.layerType = layerType;
         node.category = category;
         node.template = template;
         nodes.push(node);

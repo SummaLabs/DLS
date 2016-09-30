@@ -2,7 +2,7 @@
   {
     "id": 1,
     "name": "data",
-    "content": "data",
+    "layerType": "data",
     "category": "input",
     "selected": false,
     "params": {
@@ -14,7 +14,7 @@
   {
     "id": 2,
     "name": "convol",
-    "content": "convolution",
+    "layerType": "convolution",
     "category": "layer",
     "selected": false,
     "params": {
@@ -31,7 +31,7 @@
   {
     "id": 3,
     "name": "dense",
-    "content": "dense",
+    "layerType": "dense",
     "category": "layer",
     "selected": false,
     "params": {
@@ -44,7 +44,7 @@
   {
     "id": 4,
     "name": "solver",
-    "content": "solver",
+    "layerType": "solver",
     "category": "output",
     "selected": false,
     "params": {

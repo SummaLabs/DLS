@@ -8,7 +8,7 @@
                 networkTemplates: '<',
                 savedNetworks: '<'
             },
-            controller: function ($mdDialog, $rootScope, $state, networkDataService) {
+            controller: function ($scope, $mdDialog, $rootScope, $state, networkDataService) {
                 var self = this;
                 this.$onInit = function () {
                     this.networkTemplates = [
@@ -38,6 +38,24 @@
                         showSaveNetworkDialog($event, loadNetworkFunc);
                     } else {
                         loadNetworkFunc.call();
+                    }
+                };
+
+                this.removeNetworkByName = function ($event, name) {
+                    var future = networkDataService.deleteNetwork(name);
+                    if (future) {
+                        future.then(function mySucces(response) {
+                            if (response.data[0] && response.data[0] === 'ok') {
+                                for (let a = 0; a < self.savedNetworks.length; a++) {
+
+                                    if (self.savedNetworks[a] === name) {
+                                        self.savedNetworks.splice(a, 1);
+                                    }
+                                }
+                            }
+                        }, function myError(response) {
+
+                        });
                     }
                 };
 

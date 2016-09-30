@@ -67,7 +67,7 @@ function NetworkLayerService($rootScope, $http) {
     this.getLayerByType = function(type) {
         for (var i = 0, len = layers.length; i < len; i++) {
             var layer = layers[i];
-            if(layer.name == type) {
+            if(layer.layerType == type) {
                 var copy = copyObject(layer);
                 return copy;
             }
