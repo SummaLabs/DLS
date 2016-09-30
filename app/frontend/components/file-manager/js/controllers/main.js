@@ -1,8 +1,8 @@
 (function(angular, $) {
     'use strict';
     angular.module('FileManagerApp').controller('FileManagerCtrl', [
-        '$scope', '$rootScope', '$window', '$translate', 'fileManagerConfig', 'item', 'fileNavigator', 'apiMiddleware','appConfig',
-        function($scope, $rootScope, $window, $translate, fileManagerConfig, Item, FileNavigator, ApiMiddleware, appConfig) {
+        '$scope', '$rootScope', '$window', '$translate', 'fileManagerConfig', 'item', 'fileNavigator', 'apiMiddleware','appConfig','$http',
+        function($scope, $rootScope, $window, $translate, fileManagerConfig, Item, FileNavigator, ApiMiddleware, appConfig, $http) {
 
         var $storage = $window.localStorage;
         $scope.config = fileManagerConfig;
@@ -130,8 +130,24 @@
         };
             
         $scope.unzip = function(item) {
-            console.log(item);
-            console.log($rootScope.selectedFiles)
+            var model = $rootScope.selectedFiles[0].model
+            model.name
+            model.path.join('/')
+            
+            var filename =  model.path.join('/') + '/' + model.name;
+            $http({
+                method: "POST",
+                url: "/fm/unzip",
+                data: {
+                    path: model.path.join('/'),
+                    filename: filename
+                    }
+                }).then(function mySucces(response) {
+                    $scope.fileNavigator.refresh();
+                }, function myError(response) {
+                    console.log(response);
+                });
+            
         };
             
         $scope.unzipAllowed = function(item) {

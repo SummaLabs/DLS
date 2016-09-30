@@ -211,8 +211,8 @@ def upload_file():
     for file in request.files.values():
         print file.filename
         if file.filename and allowed_file(file.filename):
-            filename = werkzeug.utils.secure_filename(file.filename.replace('u\'', ''))
-            fullname = os.path.join(REPOSITORY_BASE_PATH + dest.replace('u\'', ''), filename)
+            filename = werkzeug.utils.secure_filename(file.filename)
+            fullname = os.path.join(REPOSITORY_BASE_PATH + dest, filename)
             logger.info('uploading file to ' + fullname)
             file.save(fullname)
     return Response(json.dumps({}), mimetype='application/json')
@@ -223,8 +223,39 @@ def unzip():
 
     params = json.loads(request.data)
     filename = params['filename']
-    zip = ZipFile(filename)
-    zip.extractall()
+    path = REPOSITORY_BASE_PATH + '/' + params['path']
+    logger.info(" unzipping file " + REPOSITORY_BASE_PATH + filename + " to " + path)
+    zip = ZipFile(REPOSITORY_BASE_PATH + "/" + filename)
+    zip.extractall(path=path)
+    return Response(json.dumps({}), mimetype='application/json')
+
+
+@file_manager.route('/getContentUrl', methods=['POST'])
+def get_content_url():
+
+    params = json.loads(request.data)
+    filename = params['item']
+    path = REPOSITORY_BASE_PATH + filename
+    logger.info("reading file " + path)
+    f = open(path, 'r')
+    content = f.read()
+    return Response(json.dumps({'result': content}), mimetype='application/json')
+
+
+@file_manager.route('/editUrl', methods=['POST'])
+def edit_url():
+
+    params = json.loads(request.data)
+    filename = params['item']
+    content = params['content']
+    path = REPOSITORY_BASE_PATH + filename
+    logger.info("updating file " + path)
+    f = open(path, 'w')
+    f.write(content)
+    f.truncate()
+    f.close()
+    return Response(json.dumps({}), mimetype='application/json')
+
 
 
 
