@@ -10,13 +10,15 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
     };
 
     const events = {
+        INIT: 'graph:init',
         ADD_NODE: 'graph:addNode',
         REMOVE_NODE: 'graph:removeNode',
         ADD_LINK: 'graph:addLink',
         REMOVE_LINK: 'graph:removeLink',
         REMOVE_ITEMS: 'graph:removeItems',
         CHANGED_VIEWS: 'graph:changedViews',
-        ACTIVATE_ITEM: 'graph:activateItem'
+        ACTIVATE_ITEM: 'graph:activateItem',
+        CHANGE_POSITION: 'graph:changePosition'
     };
 
     var self = this;
@@ -42,6 +44,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         self.selRect = null;
         schemaEvents();
         initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element);
+        self.emitEvent(events.INIT, {});
 	};
 
 	$scope.controlItem.viewportPos = function(x, y) {
@@ -69,25 +72,37 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         return true;
     };
 
-    $scope.controlItem.setLayers = function(layers) {
+    var addLinks = null;
 
+    $scope.controlItem.setLayers = function(layers) {
+        self.counterNodesInit = 0;
         schema.clear();
         for (let a = 0; a < layers.length; a ++) {
             if(!$scope.controlItem.addLayer(layers[a]))
                 return false;
         }
 
-        $timeout(function(){
+        addLinks = function () {
             for (let a = 0; a < layers.length; a ++) {
                 if (layers[a].wires && layers[a].wires.length > 0)
                     layers[a].wires.forEach(function(layerId, i, array){
                         schema.addLink(schema.getNodeById(layers[a].id), schema.getNodeById(layerId));
                     });
             }
-        }, 400);
+        };
 
         return true;
     };
+
+    $scope.$on('nodeInit', function (event, data) {
+        if(self.counterNodesInit > -1)
+            self.counterNodesInit ++;
+
+        if (self.counterNodesInit === self.nodes.length) {
+            self.counterNodesInit = -1;
+            addLinks();
+        }
+    });
 
     $scope.controlItem.getNodes = function() {
         return schema.getSchema();
@@ -174,6 +189,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
                 });
 
                 prevMousePos = curMousePos;
+                self.emitEvent(events.CHANGE_POSITION, editedNode);
 			} else if (self.mouseMode === state.JOINING) {
 				removeActiveLink();
 			}
