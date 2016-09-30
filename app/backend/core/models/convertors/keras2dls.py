@@ -77,7 +77,7 @@ def convetLayersParamsKeras2DLS(kerasLayer):
     retParams['id'] = retLayerId
     return (retLayerId, retParams)
 
-def convertKeras2DLS(dataJson, isDebug=False):
+def convertKeras2DLS(dataJson, isDebug=False, graphvizLayout='neato'):
     if isinstance(dataJson, str) or isinstance(dataJson, unicode):
         outModelName = os.path.splitext(os.path.basename(dataJson))[0]
         with open(dataJson, 'r') as f:
@@ -101,12 +101,20 @@ def convertKeras2DLS(dataJson, isDebug=False):
     for kk, vv in tmpDictLayers.items():
         for ll in vv['cfg']['wires']:
             theGraph.add_edge(kk, ll)
-    theGraphPos = nx.spectral_layout(theGraph)
+    if graphvizLayout is None:
+        theGraphPos = nx.spectral_layout(theGraph)
+        for kk in theGraphPos.keys():
+            tpos = (1200 * theGraphPos[kk]).astype(np.int)
+            theGraphPos[kk] = (tpos[0], tpos[1])
+    else:
+        theGraphPos = nx.nx_agraph.graphviz_layout(theGraph, prog='neato')
+        for kk in theGraphPos.keys():
+            theGraphPos[kk] = (2*int(theGraphPos[kk][0]), 2*int(theGraphPos[kk][1]))
     #
     theFinalLayers = []
     for kk, vv in tmpDictLayers.items():
         tcfg = vv['cfg']
-        tpos = (1200 * theGraphPos[kk]).astype(np.int)
+        tpos = theGraphPos[kk]
         tcfg['pos'] = {
             'x': tpos[0],
             'y': tpos[1]
