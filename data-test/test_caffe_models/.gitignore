@@ -5,7 +5,6 @@
 /bvlc_googlenet-kerasmodel.jpg
 /bvlc_googlenet-kerasmodel.json
 *.caffemodel-old
-*.json
 /ResNet-101-deploy-kerasmodel.jpg
 /ResNet-152-deploy-kerasmodel.jpg
 /upgrade_net_proto_binary

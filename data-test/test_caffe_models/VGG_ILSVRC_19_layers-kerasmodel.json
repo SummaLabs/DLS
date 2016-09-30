@@ -1,0 +1,1529 @@
+{
+    "class_name": "Model", 
+    "keras_version": "1.0.8", 
+    "config": {
+        "layers": [
+            {
+                "class_name": "InputLayer", 
+                "config": {
+                    "batch_input_shape": [
+                        null, 
+                        3, 
+                        224, 
+                        224
+                    ], 
+                    "name": "input", 
+                    "input_dtype": "float32"
+                }, 
+                "inbound_nodes": [], 
+                "name": "input"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv1_1_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "input", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv1_1_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv1_1", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 64, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv1_1_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv1_1"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu1_1"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv1_1", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu1_1"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv1_2_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu1_1", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv1_2_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv1_2", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 64, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv1_2_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv1_2"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu1_2"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv1_2", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu1_2"
+            }, 
+            {
+                "class_name": "MaxPooling2D", 
+                "config": {
+                    "name": "pool1", 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "pool_size": [
+                        2, 
+                        2
+                    ], 
+                    "strides": [
+                        2, 
+                        2
+                    ], 
+                    "border_mode": "valid"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu1_2", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "pool1"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv2_1_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "pool1", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv2_1_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv2_1", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 128, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv2_1_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv2_1"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu2_1"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv2_1", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu2_1"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv2_2_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu2_1", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv2_2_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv2_2", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 128, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv2_2_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv2_2"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu2_2"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv2_2", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu2_2"
+            }, 
+            {
+                "class_name": "MaxPooling2D", 
+                "config": {
+                    "name": "pool2", 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "pool_size": [
+                        2, 
+                        2
+                    ], 
+                    "strides": [
+                        2, 
+                        2
+                    ], 
+                    "border_mode": "valid"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu2_2", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "pool2"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv3_1_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "pool2", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv3_1_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv3_1", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 256, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv3_1_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv3_1"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu3_1"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv3_1", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu3_1"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv3_2_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu3_1", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv3_2_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv3_2", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 256, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv3_2_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv3_2"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu3_2"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv3_2", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu3_2"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv3_3_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu3_2", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv3_3_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv3_3", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 256, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv3_3_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv3_3"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu3_3"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv3_3", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu3_3"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv3_4_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu3_3", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv3_4_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv3_4", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 256, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv3_4_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv3_4"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu3_4"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv3_4", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu3_4"
+            }, 
+            {
+                "class_name": "MaxPooling2D", 
+                "config": {
+                    "name": "pool3", 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "pool_size": [
+                        2, 
+                        2
+                    ], 
+                    "strides": [
+                        2, 
+                        2
+                    ], 
+                    "border_mode": "valid"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu3_4", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "pool3"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv4_1_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "pool3", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv4_1_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv4_1", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 512, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv4_1_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv4_1"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu4_1"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv4_1", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu4_1"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv4_2_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu4_1", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv4_2_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv4_2", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 512, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv4_2_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv4_2"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu4_2"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv4_2", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu4_2"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv4_3_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu4_2", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv4_3_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv4_3", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 512, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv4_3_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv4_3"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu4_3"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv4_3", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu4_3"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv4_4_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu4_3", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv4_4_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv4_4", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 512, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv4_4_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv4_4"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu4_4"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv4_4", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu4_4"
+            }, 
+            {
+                "class_name": "MaxPooling2D", 
+                "config": {
+                    "name": "pool4", 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "pool_size": [
+                        2, 
+                        2
+                    ], 
+                    "strides": [
+                        2, 
+                        2
+                    ], 
+                    "border_mode": "valid"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu4_4", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "pool4"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv5_1_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "pool4", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv5_1_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv5_1", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 512, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv5_1_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv5_1"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu5_1"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv5_1", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu5_1"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv5_2_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu5_1", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv5_2_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv5_2", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 512, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv5_2_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv5_2"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu5_2"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv5_2", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu5_2"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv5_3_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu5_2", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv5_3_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv5_3", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 512, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv5_3_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv5_3"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu5_3"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv5_3", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu5_3"
+            }, 
+            {
+                "class_name": "ZeroPadding2D", 
+                "config": {
+                    "padding": [
+                        1, 
+                        1
+                    ], 
+                    "trainable": true, 
+                    "name": "conv5_4_zeropadding"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu5_3", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv5_4_zeropadding"
+            }, 
+            {
+                "class_name": "Convolution2D", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "conv5_4", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "nb_col": 3, 
+                    "subsample": [
+                        1, 
+                        1
+                    ], 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "nb_filter": 512, 
+                    "border_mode": "valid", 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "nb_row": 3
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv5_4_zeropadding", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "conv5_4"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu5_4"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "conv5_4", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu5_4"
+            }, 
+            {
+                "class_name": "MaxPooling2D", 
+                "config": {
+                    "name": "pool5", 
+                    "trainable": true, 
+                    "dim_ordering": "th", 
+                    "pool_size": [
+                        2, 
+                        2
+                    ], 
+                    "strides": [
+                        2, 
+                        2
+                    ], 
+                    "border_mode": "valid"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu5_4", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "pool5"
+            }, 
+            {
+                "class_name": "Flatten", 
+                "config": {
+                    "trainable": true, 
+                    "name": "fc6_flatten"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "pool5", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "fc6_flatten"
+            }, 
+            {
+                "class_name": "Dense", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "fc6", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "input_dim": null, 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "output_dim": 4096
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "fc6_flatten", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "fc6"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu6"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "fc6", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu6"
+            }, 
+            {
+                "class_name": "Dropout", 
+                "config": {
+                    "p": 0.5, 
+                    "trainable": true, 
+                    "name": "drop6"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu6", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "drop6"
+            }, 
+            {
+                "class_name": "Dense", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "fc7", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "input_dim": null, 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "output_dim": 4096
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "drop6", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "fc7"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "relu", 
+                    "trainable": true, 
+                    "name": "relu7"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "fc7", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "relu7"
+            }, 
+            {
+                "class_name": "Dropout", 
+                "config": {
+                    "p": 0.5, 
+                    "trainable": true, 
+                    "name": "drop7"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "relu7", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "drop7"
+            }, 
+            {
+                "class_name": "Dense", 
+                "config": {
+                    "W_constraint": null, 
+                    "b_constraint": null, 
+                    "name": "fc8", 
+                    "activity_regularizer": null, 
+                    "trainable": true, 
+                    "init": "glorot_uniform", 
+                    "bias": true, 
+                    "input_dim": null, 
+                    "b_regularizer": null, 
+                    "W_regularizer": null, 
+                    "activation": "linear", 
+                    "output_dim": 1000
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "drop7", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "fc8"
+            }, 
+            {
+                "class_name": "Activation", 
+                "config": {
+                    "activation": "softmax", 
+                    "trainable": true, 
+                    "name": "prob"
+                }, 
+                "inbound_nodes": [
+                    [
+                        [
+                            "fc8", 
+                            0, 
+                            0
+                        ]
+                    ]
+                ], 
+                "name": "prob"
+            }
+        ], 
+        "input_layers": [
+            [
+                "input", 
+                0, 
+                0
+            ]
+        ], 
+        "output_layers": [
+            [
+                "prob", 
+                0, 
+                0
+            ]
+        ], 
+        "name": "model_3"
+    }
+}
