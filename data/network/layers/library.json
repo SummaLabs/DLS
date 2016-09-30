@@ -39,7 +39,7 @@
       "activationFunction": "relu",
       "isTrainable":true
     },
-    "template": "frontend/components/layers/dense/node-test-4.svg"
+    "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
   },
   {
     "id": 4,

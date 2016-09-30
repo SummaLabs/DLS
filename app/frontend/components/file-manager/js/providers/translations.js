@@ -97,6 +97,7 @@
             open: 'Open',
             these_elements: 'these {{total}} elements',
             new_folder: 'New folder',
+            unzip: 'Unzip',
             download_as_zip: 'Download as ZIP'
         });
 
@@ -193,6 +194,7 @@
             preview: 'הצגת פריט',
             open: 'פתח',
             new_folder: 'תיקיה חדשה',
+            unzip: 'Unzip',
             download_as_zip: 'להוריד כמו'
         });
 
@@ -290,6 +292,7 @@
             open: 'Abrir',
             these_elements: 'estes {{total}} elements',
             new_folder: 'Nova pasta',
+            unzip: 'Unzip',
             download_as_zip: 'Download como ZIP'
         });
 
@@ -387,6 +390,7 @@
             open: 'Abrir',
             these_elements: 'estos {{total}} elementos',
             new_folder: 'Nueva carpeta',
+            unzip: 'Unzip',
             download_as_zip: 'Descargar como ZIP'
         });
 
@@ -484,6 +488,7 @@
             open: 'Ouvrir',
             these_elements: 'ces {{total}} éléments',
             new_folder: 'Nouveau dossier',
+            unzip: 'Unzip',
             download_as_zip: 'Télécharger comme ZIP'
         });
 
@@ -581,6 +586,7 @@
             open: 'Öffnen',
             these_elements: 'diese {{total}} elemente',
             new_folder: 'Neuer ordner',
+            unzip: 'Unzip',
             download_as_zip: 'Download als ZIP'
         });
 
@@ -678,6 +684,7 @@
             open: 'Otvoriť',
             these_elements: 'týchto {{total}} prvkov',
             new_folder: 'Nový priečinok',
+            unzip: 'Unzip',
             download_as_zip: 'Stiahnuť ako ZIP'
         });
 
@@ -775,6 +782,7 @@
             open: '打开',
             these_elements: '共 {{total}} 个',
             new_folder: '新文件夹',
+            unzip: 'Unzip',
             download_as_zip: '下载的ZIP'
         });
 
@@ -872,6 +880,7 @@
             open: 'Открыть',
             these_elements: 'всего {{total}} елементов',
             new_folder: 'Новая папка',
+            unzip: 'Unzip',
             download_as_zip: 'Download as ZIP'
         });
 
@@ -969,6 +978,7 @@
             open: 'Відкрити',
             these_elements: 'усього {{total}} елементів',
             new_folder: 'Нова папка',
+            unzip: 'Unzip',
             download_as_zip: 'Download as ZIP'
         });
 
@@ -1066,6 +1076,7 @@
             open: 'Aç',
             these_elements: '{{total}} eleman',
             new_folder: 'Yeni Klasör',
+            unzip: 'Unzip',
             download_as_zip: 'ZIP olarak indir'
         });
 
@@ -1163,6 +1174,7 @@
             open: 'باز کردن',
             these_elements: 'تعداد {{total}} مورد',
             new_folder: 'پوشه جدید',
+            unzip: 'Unzip',
             download_as_zip: 'به عنوان فایل فشرده دانلود شود'
         });
 
@@ -1260,6 +1272,7 @@
             open: 'Otwórz',
             these_elements: 'te {{total}} elementy?',
             new_folder: 'Nowy folder',
+            unzip: 'Unzip',
             download_as_zip: 'Pobierz jako ZIP'
         });
 
