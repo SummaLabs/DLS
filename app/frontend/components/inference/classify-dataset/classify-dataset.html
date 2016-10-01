@@ -1,16 +1,19 @@
 <md-card>
     <md-card-content>
         <div layout="row" layout-align="space-between center">
-            <md-button class="md-raised md-primary" ng-click="choseImages($event)">Apply ROC Analysis</md-button>
+            <md-button class="md-raised md-primary" ng-click="applyROCAnalysis($event)">Apply ROC Analysis</md-button>
             <div ng-show="rocsIds.length > 0"  layout="column" layout-align="center start">
                 <strong>Analysis History:</strong>
-                <md-select placeholder="ROCsHistory" ng-model="rocSelected" class="md-no-underline">
-                    <md-option ng-value="rocId" ng-repeat="rocId in rocsIds">{{rocId}}</md-option>
+                <md-select placeholder="Analysis History" ng-model="rocSelected" class="md-no-underline">
+                    <md-option ng-value="rocId.name" ng-repeat="rocId in rocsIds" ng-disabled="rocId.inProgress">
+                        <span>{{rocId.name}}</span>
+                        <span ng-show="rocId.inProgress"> - In Progress</span>
+                    </md-option>
                 </md-select>
             </div>
             <div ng-show="classNames.length > 0"  layout="column" layout-align="center start">
                 <strong>Class VS All:</strong>
-                <md-select placeholder="Classes" ng-model="classNameSelected" class="md-no-underline">
+                <md-select placeholder="Class VS All" ng-model="classNameSelected" class="md-no-underline">
                     <md-option ng-value="className" ng-repeat="className in classNames">{{className}}</md-option>
                 </md-select>
             </div>

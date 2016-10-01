@@ -64,7 +64,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
   	};
 
     $scope.controlItem.addLayer = function(layer) {
-        var node = schema.addNode(layer.name, layer.category, layer.template, layer.id);
+        var node = schema.addNode(layer.name, layer.layerType, layer.category, layer.template, layer.id);
         if (!node)
             return false;
 		node.position(layer.pos.x, layer.pos.y, appConfig.svgDefinitions.gridStep);
@@ -117,8 +117,8 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
         }
     };
 
-    function addNode(name, category, template, pos) {
-        var node = schema.addNode(name, category, template);
+    function addNode(name, layerType, category, template, pos) {
+        var node = schema.addNode(name, layerType, category, template);
         if (!node)
             return false;
 
@@ -129,7 +129,8 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 
 	function addLink(nodeFrom, nodeTo) {
 		var link = schema.addLink(nodeFrom, nodeTo);
-		self.emitEvent(events.ADD_LINK, link);
+        if (link)
+            self.emitEvent(events.ADD_LINK, link);
 	}
 
 	function clearScene() {
@@ -163,7 +164,7 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 				var correctPos = { x: (pos.x + (viewX ) - data.offset.x) / self.scale, y: (pos.y + (viewY) - data.offset.y) / self.scale};
 				if (correctPos.x > 0 && correctPos.y > 0) {
 					$scope.$apply( function() {
-						addNode(data.data.name, data.data.category, data.data.template, correctPos)
+						addNode(data.node.name, data.node.layerType, data.node.category, data.node.template, correctPos)
 					});
 				}
 			}

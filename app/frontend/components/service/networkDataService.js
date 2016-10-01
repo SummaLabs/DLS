@@ -1,8 +1,8 @@
 angular.module('networkDataService', [])
-    .service('networkDataService', ['$rootScope', '$http', '$timeout', NetworkDataService]);
+    .service('networkDataService', ['$rootScope', '$http', '$timeout', '$mdToast', NetworkDataService]);
 
 
-function NetworkDataService($rootScope, $http, $timeout) {
+function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
     var self = this;
 
     const networkEvent = {
@@ -81,6 +81,23 @@ function NetworkDataService($rootScope, $http, $timeout) {
         }, 400)
     };
 
+    this.deleteNetwork = function(name) {
+        if (network.name === name && network.layers.length > 0) {
+            var toast = $mdToast.simple()
+                .textContent('Could not remove network. "' + name + '"is open in in designer!')
+                .highlightAction(true)
+                .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
+                .position('top right');
+            $mdToast.show(toast).then(function (response) {
+                if (response == 'ok') {
+                    //todo
+                }
+            });
+        } else {
+            return removeNetworkByName(name);
+        }
+    };
+
     this.setLayers = function(layers) {
         network.layers = layers;
     };
@@ -116,7 +133,7 @@ function NetworkDataService($rootScope, $http, $timeout) {
             var filteredLayer = {
                 id: layer.id,
                 name: layer.name,
-                content: layer.content,
+                layerType: layer.layerType,
                 category: layer.category,
                 params: layer.params,
                 wires: layer.wires,
@@ -169,8 +186,15 @@ function NetworkDataService($rootScope, $http, $timeout) {
         return $http({
             url: '/network/save',
             method: 'POST',
-            data:network,
+            data: network,
             headers: {'Content-Type': 'application/json;charset=utf-8'}
+        })
+    }
+
+    function removeNetworkByName(name) {
+        return $http({
+            method: "GET",
+            url: "/network/remove/" + name
         })
     }
 }

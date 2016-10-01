@@ -1,6 +1,6 @@
 import pytest
 from app.backend.task.task_manager import TaskManager
-from app.backend.task.default_task import BaseTask, DefaultTask
+from app.backend.task.default_task import Task, DefaultTask
 
 
 @pytest.fixture
@@ -9,8 +9,8 @@ def task_manager():
 
 
 def test_start_task(task_manager):
-    task_manager.start_task(BaseTask())
-    task_manager.start_task(BaseTask())
+    task_manager.start_task(Task())
+    task_manager.start_task(Task())
     progress = task_manager.report_progress()
     assert 2 == len(progress)
 

@@ -9,7 +9,7 @@
          ry="3.3274441"
          x="60"
          y="152.36218"
-         id="rect"
+         id="border"
          style="fill:#a2faad;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-opacity:1;" />
       <rect
          width="15.178572"
@@ -30,13 +30,13 @@
       <text
          x="109.4668"
          y="173.36218"
-         id="text"
+
          xml:space="preserve"
          style="font-size:18x;text-align:center;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><title
            id="title3858">label1</title><tspan
            x="109.4668"
            y="173.36218"
-           id="tspan3852"
+           id="text"
            style="font-size:13px;font-style:normal;text-align:center;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Comic Sans MS;-inkscape-font-specification:Comic Sans MS Bold">Layer name</tspan></text>
       <text
          x="68"

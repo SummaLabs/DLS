@@ -56,7 +56,7 @@ def convetLayersParamsKeras2DLS(kerasLayer):
     if layerClassName in dictKerasClass2DLSLayers.keys():
         subDict=dictKerasClass2DLSLayers[layerClassName]
         retParams = {
-            'content':  subDict['type'],
+            'layerType':  subDict['type'],
             'name':     '%s_%s' % (subDict['name'], kerasLayer.name),
             'template': subDict['template']
         }
@@ -68,7 +68,7 @@ def convetLayersParamsKeras2DLS(kerasLayer):
         retParams['params'] = tmpParams
     else:
         retParams = {
-            'content':  layerClassName,
+            'layerType':  layerClassName,
             'name':     '*%s_%s' % (layerClassName, kerasLayer.name),
             'params':   {},
             'template': 'frontend/components/layers/dense/layer_with_shapes_exp.svg'

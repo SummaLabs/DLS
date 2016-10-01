@@ -8,6 +8,8 @@ import time
 import logging
 import json
 
+from app.backend.task.task_factory import TaskFactory
+
 logging.basicConfig()
 # Needed this to avoid deadlock
 

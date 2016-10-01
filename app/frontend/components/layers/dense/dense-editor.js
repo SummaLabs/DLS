@@ -11,7 +11,6 @@
                 templateUrl: "frontend/components/layers/dense/dense-editor.html",
                 controller: function ($scope, networkDataService) {
                     this.$onInit = function () {
-                        console.log($scope.layerId);
                         setUpLayerParams($scope, networkDataService);
                         $scope.activationFunctionList = [
                             {value: "softplus", text: "SoftPlus"},

@@ -4,6 +4,8 @@ from os.path import dirname
 
 import json
 import re
+import shutil
+import stat
 import os
 import flask
 
@@ -61,5 +63,18 @@ def save_network():
             ret = ['ok', file_out_name]
         except Exception as err:
             ret = ['error', 'Cant save file [%s], Error: [%s]' % (file_out_name, str(err))]
+
+    return Response(json.dumps(ret), mimetype='application/json')
+
+
+@network.route('/remove/<path:filename>')
+def remove(filename):
+    full_path = os.path.join(saved_dir, str(filename) + ".json")
+    print (full_path)
+    try:
+        os.remove(full_path)
+        ret = ['ok', full_path]
+    except Exception as err:
+        ret = ['error', 'Cant remove file [%s], Error: [%s]' % (full_path, str(err))]
 
     return Response(json.dumps(ret), mimetype='application/json')

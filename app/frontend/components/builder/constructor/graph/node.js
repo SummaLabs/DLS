@@ -203,7 +203,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
         function doDoubleClickAction($rootScope) {
             $rootScope.$emit('EditLayer', {
                 id: scope.nodeData.id,
-                layerType: scope.nodeData.name
+                layerType: scope.nodeData.layerType
             })
         }
 
