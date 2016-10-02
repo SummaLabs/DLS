@@ -50,10 +50,11 @@
                             event.stopPropagation();
                             var reloadRocData = false;
                             tasks.forEach(function (task) {
-                                console.log(task);
                                 if (task.type = 'roc-analysis') {
                                     $scope.rocsIds.forEach(function (rocId) {
-                                        if (typeof rocId.taskId != "undefined" && rocId.taskId == task.id) {
+                                        if (rocId.hasOwnProperty('taskId')
+                                            && rocId.taskId == task.id
+                                            && task.state == 'finished') {
                                             reloadRocData = true;
                                         }
                                     })
@@ -63,6 +64,7 @@
                                 var future = imageService.loadModelROCsData($scope.modelId);
                                 future.then(function mySucces(response) {
                                     updateModelROCsHistoryData(response.data);
+                                    self.showToast('ROC Analysis task is completed!');
                                 }, function myError(response) {
                                 });
                             }
@@ -124,8 +126,13 @@
 
                     };
 
-                    function updateModelROCsHistoryData() {
-                        console.log("update");
+                    function updateModelROCsHistoryData(ROCsHistoryData) {
+                        $scope.rocsIds.length = 0;
+                        $scope.classNames.length = 0;
+                        rocsData.length = 0;
+                        classesROC.length = 0;
+
+                        setModelROCsHistoryData(ROCsHistoryData)
                     }
 
                     function setModelROCsHistoryData(ROCsHistoryData) {
