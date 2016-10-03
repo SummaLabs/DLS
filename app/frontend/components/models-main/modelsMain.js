@@ -8,20 +8,28 @@
                 models: '<',
                 selected:'<'
             },
-            controller: function (modelService) {
+            controller: function (modelService, modelsService) {
                 var self = this;
                 this.$onInit = function () {
                     self.models = [];
-                    var future = modelService.loadAllModels();
-                    future.then(function mySucces(response) {
-                        response.data.forEach(function (model) {
-                            self.models.push(model)
+
+                    modelsService.listInfo().then(
+                        function successCallback(response) {
+                            response.data.forEach(function (model) {
+                                var info = model.info;
+                                self.models.push({
+                                    'name': info.name,
+                                    'network': "Test Network",
+                                    'dataSet': info['dataset-name'],
+                                    'date': info.date.str + " " + info.time.str,
+                                    'size': info.size.str
+                                });
+                            });
                             self.selected = self.models[0];
-                        });
-                    }, function myError(response) {
-                        console.log(response);
-                    });
-                    
+                        },
+                        function errorCallback(response) {
+                            console.log(response.data);
+                        })
                 };
 
                 this.$selectModel = function( model ) {

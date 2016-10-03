@@ -11,7 +11,7 @@ angular.module('settings', ['ngMaterial'])
         var self = this;
         self.$onInit = function () {
             self.dataResponse = '';
-            modelsService.getListModelsInfo().then(
+            modelsService.listInfo().then(
             function successCallback(response) {
                 self.listModels = response.data;
                 if(self.listModels.length>0) {

@@ -23,10 +23,10 @@ function DLSModelsService($http) {
                 headers: {'Content-Type': 'application/json;charset=utf-8'}
             });
     };
-    self.getListModelsInfo = function (network) {
+    self.listInfo = function () {
         return $http({
             method: 'POST',
-            url:    '/models/listinfo/'
+            url:    '/models/list/info/'
         });
     }
 }

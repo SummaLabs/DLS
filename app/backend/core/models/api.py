@@ -108,7 +108,8 @@ def calcshape_model_json():
         return Response(json.dumps(ret), mimetype='application/json')
     return Response(json.dumps({'status': 'error', 'data': 'invalid request'}), mimetype='application/json')
 
-@models.route('/listinfo/', methods=['POST', 'GET'])
+
+@models.route('/list/info/', methods=['POST', 'GET'])
 def check_model_list():
     ret = modelsWatcher.getModelsInfoAsList()
     return Response(json.dumps(ret), mimetype='application/json')
