@@ -7,7 +7,7 @@
         </md-toolbar>
         <div ng-show="section.state" ng-repeat="layer in section.items" draggable="layer">
             <md-list-item>
-                <p>{{ layer.name }}</p>
+                <img class="layer-icon" ng-src="{{ layer.icon }}"></img>
             </md-list-item>
         </div>
         <md-divider ></md-divider>

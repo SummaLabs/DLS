@@ -30,7 +30,7 @@ function CoreService() {
     };
 }
 
-function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkDataService, networkLayerService, modelsService, coreService, appConfig) {
+function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkDataService, networkLayerService, modelsService, coreService, appConfig, $mdSidenav) {
     var self = this;
     self.svgWidth = appConfig.svgDefinitions.areaWidth;
     self.svgHeight = appConfig.svgDefinitions.areaHeight;
@@ -277,6 +277,15 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
             layer.pos.y = node.pos.y;
             event.stopPropagation();
         });
+        
+        $scope.toggleLeft = buildToggler('left');
+        $scope.toggleRight = buildToggler('right');
+
+        function buildToggler(componentId) {
+            return function() {
+                $mdSidenav(componentId).toggle();
+            }
+        }
 
         function setUpNetwork() {
             self.svgControl.setLayers(networkDataService.getLayers());

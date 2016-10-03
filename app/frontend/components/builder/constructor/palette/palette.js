@@ -106,7 +106,8 @@ function createTree(categories, layers) {
 					layerType: item.layerType,
 					id: ++idCounter,
 					template: item.template,
-					params: item.params
+					params: item.params,
+                    icon: item.icon
 				});
 			}
 		});

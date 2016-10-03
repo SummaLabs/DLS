@@ -48,11 +48,13 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 	};
 
 	$scope.controlItem.viewportPos = function(x, y) {
-	    $scope.$apply( function() {
-            viewX = x;
-            viewY = y;
-            viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
-        });
+        $timeout(function() {
+            $scope.$apply( function() {
+                viewX = x;
+                viewY = y;
+                viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
+            });
+        })
 	};
 
 	$scope.controlItem.getScale = function() {
@@ -253,10 +255,14 @@ function SchemaController($scope, $rootScope, $window, $element, $timeout, netwo
 		});
 
 		angular.element(window).on('resize', function () {
-            $scope.$apply( function() {
-                var divSvg = document.getElementById('workspace');
-                viewBox(viewX, viewY, divSvg.offsetWidth, divSvg.offsetHeight);
-            });
+            
+            $timeout(function() {
+                $scope.$apply( function() {
+                    var divSvg = document.getElementById('workspace');
+                    viewBox(viewX, viewY, divSvg.offsetWidth, divSvg.offsetHeight);
+                });
+            })
+            
 
 		});
 
