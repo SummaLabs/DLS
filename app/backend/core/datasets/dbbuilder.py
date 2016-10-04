@@ -27,6 +27,7 @@ class Progressor:
     counterMax=0
     counter=0
     strState=None
+    isForceStop=False
     def __init__(self, parCounterMax=100, parCounter=0, strState=None):
         self.counter    = parCounter
         self.counterMax = parCounterMax
