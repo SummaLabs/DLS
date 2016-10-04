@@ -109,6 +109,12 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
                 } else {
                     console.log('*** Model with shapes ***');
                     console.log(ret['data']);
+                    ret['data'].layers.forEach(function (layer) {
+                        if (layer.shape) {
+                            self.svgControl.setShape(layer.id, layer.shape.inp, 'in');
+                            self.svgControl.setShape(layer.id, layer.shape.out, 'out');
+                        }
+                    });
                 }
                 var toast = $mdToast.simple()
                     .textContent(retMessage)
@@ -151,6 +157,9 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 
             $scope.saveNetwork = function () {
                 networkDataService.saveNetwork($scope.network.name, $scope.network.description);
+              /*  var image = buildPreviewImage(networkDataService.getNetwork().layers, 150, 150);
+                var im = document.getElementById('img1');
+                im.setAttribute('src', image);*/
                 $mdDialog.hide();
             };
 
@@ -281,5 +290,50 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
         function setUpNetwork() {
             self.svgControl.setLayers(networkDataService.getLayers());
         }
+    }
+    
+    function buildPreviewImage(layers, wh, ht) {
+
+        var x_min = Number.MAX_VALUE;
+        var x_max = Number.MIN_VALUE;
+        var y_min = Number.MAX_VALUE;
+        var y_max = Number.MIN_VALUE;
+
+        layers.forEach(function (node) {
+            x_min = Math.min(x_min, node.pos.x);
+            y_min = Math.min(y_min, node.pos.y);
+            x_max = Math.max(x_max, node.pos.x);
+            y_max = Math.max(y_max, node.pos.y);
+        });
+
+        var width = x_max - x_min;
+        var height = y_max - y_min;
+
+        var scaleX = wh / width;
+        var scaleY = ht / height;
+
+        var html = '';
+        layers.forEach(function (node) {
+            html += '<circle r="5" cy="' + node.pos.y * scaleX+ '" cx="' + node.pos.x * scaleY+ '" style="fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"></circle>';
+        });
+
+        var svg = document.createElement('svg');
+
+        svg.setAttribute('width', '' + wh);
+        svg.setAttribute('height', '' + ht);
+        svg.innerHTML = html;
+
+        console.log(svg, html);
+		var xml = new XMLSerializer().serializeToString(svg);
+
+		var svg64 = btoa(xml);
+		var b64Start = 'data:image/svg+xml;base64,';
+
+		// prepend a "header"
+		var image64 = b64Start + svg64;
+
+        console.log(image64);
+		// set it as the source of the img element
+		return image64;
     }
 }

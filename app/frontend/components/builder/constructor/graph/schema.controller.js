@@ -89,6 +89,9 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                         schema.addLink(schema.getNodeById(layers[a].id), schema.getNodeById(layerId));
                     });
             }
+
+            if (layers.length > 1)
+                $scope.controlItem.reset();
         };
 
         return true;
@@ -115,6 +118,10 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
             setScale(sc);
             viewBox(rect.x() * sc, rect.y() * sc, self.viewWidth, self.viewHeight);
         }
+    };
+
+    $scope.controlItem.setShape = function(nodeId, shapes, type) {
+        $scope.$broadcast('node:set_shapes_' + nodeId, {shapes: shapes, type: type});
     };
 
     function addNode(name, layerType, category, template, pos) {
