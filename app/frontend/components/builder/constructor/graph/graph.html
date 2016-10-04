@@ -9,15 +9,7 @@
     <rect ng-attr-width="{{svg.width}}" ng-attr-height="{{svg.height}}" fill="{{svgColor}}"></rect>
 
     <g id = "view" ng-attr-transform="scale({{svg.scale}})">
-        <line ng-repeat="line in svg.grid.vertical"
-          ng-attr-x1="{{line.x}}" ng-attr-y1="{{line.y}}"
-          ng-attr-x2="{{line.x2}}" ng-attr-y2="{{line.y2}}"
-          style="stroke:rgb(111,111,111);stroke-width:0.5" />
 
-        <line ng-repeat="line in svg.grid.horizontal"
-          ng-attr-x1="{{line.x}}" ng-attr-y1="{{line.y}}"
-          ng-attr-x2="{{line.x2}}" ng-attr-y2="{{line.y2}}"
-          style="stroke:rgb(111,111,111);stroke-width:0.5" />
     </g>
 
     <g id = "view2" ng-attr-transform="scale({{svg.scale}})">
