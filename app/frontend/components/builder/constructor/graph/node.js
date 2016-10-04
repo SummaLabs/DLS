@@ -24,7 +24,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 		   nodeData: '=',
 		},
 		template: '<g ng-attr-transform="translate({{nodeData.pos.x}},{{nodeData.pos.y}})" width="100%" height="100%"></g>',
-		templateNamespace: 'svg',
+		// templateNamespace: 'svg',
 
 
 		link: function($scope, element, attrs) {
@@ -65,7 +65,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
                         textNode.addClass('unselectable');
 
                         nodeWatcher($scope, rectNode);
-						nodeEventsHandler($scope, $rootScope, element, rectNode, idNode);
+						nodeEventsHandler($scope, element, rectNode, idNode);
                         portEventsHandler($scope, portIn, portOut, idNode);
                         $scope.$emit('nodeInit', {
 							id: idNode
@@ -74,7 +74,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
                 }
             })
         }
-	}
+	};
 
 	function calculateProportions(nodeHtml, patternDefinitions) {
 	    var displayData = {};
@@ -100,7 +100,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
             },
             width: portInRect.right - portInRect.left,
             height: portInRect.bottom - portInRect.top
-        }
+        };
 
         displayData.portOut = {
             element: null,
@@ -110,7 +110,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
             },
             width: portOutRect.right - portOutRect.left,
             height: portOutRect.bottom - portOutRect.top
-        }
+        };
 
 
 
@@ -121,7 +121,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
             },
             width: elementRect.right - elementRect.left,
             height: elementRect.bottom - elementRect.top
-        }
+        };
         document.body.removeChild(svg);
         return displayData;
 	}
@@ -157,9 +157,10 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 		}, function(newValue, oldValue) {
 			scale = newValue;
 		}, true);
+
 	}
 
-	function nodeEventsHandler(scope, $rootScope, element, rectNode, idNode) {
+	function nodeEventsHandler(scope, element, rectNode, idNode) {
 
 		element.on('mousedown', function (event) {
 			if (scope.isPort || event.ctrlKey || event.button !== 0)
@@ -200,30 +201,9 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
         }
 
-        function doDoubleClickAction($rootScope) {
-            $rootScope.$emit('EditLayer', {
-                id: scope.nodeData.id,
-                layerType: scope.nodeData.layerType
-            })
-        }
-
-        // var timer = 0;
-        // var delay = 200;
-        // var prevent = false;
-
 		element.on('click', function (event) {
-            // timer = setTimeout(function() {
-            //     if (!prevent) {
-                    doClickAction(event, scope);
-            //     }
-            //     prevent = false;
-            // }, delay);
-			
-		}).on("dblclick", function() {
-            // clearTimeout(timer);
-            // prevent = true;
-            // doDoubleClickAction($rootScope);
-        });
+            doClickAction(event, scope);
+		});
 
 		element.on('mouseup', function (event) {
 			if (event.ctrlKey)
@@ -231,6 +211,10 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 			rectNode.removeClass("node_selected");
 			scope.$emit('nodeMouseUp', event);
 		});
+
+        scope.$on('node:move_' + scope.nodeData.id, function (event, data) {
+            element.attr('transform', "translate(" + data.pos.x + "," + data.pos.y + ")");
+        });
 	}
 
 	function portEventsHandler(scope, portIn, portOut, idNode) {
@@ -265,7 +249,8 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 			portOut.on('mousedown', function (event) {
 				if (event.button === 0) {
 					scope.$emit('portOutMouseDown', {
-						id: idNode
+						id: idNode,
+                        event: event
 					});
 				}
 			});
@@ -276,11 +261,6 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 				});
 			});
 		}
-	}
-
-	function getOffsetPos(element, event) {
-		var elementRect = element[0].getBoundingClientRect();
-		return {x: event.clientX - elementRect.left, y: event.clientY - elementRect.top};
 	}
 }
 
