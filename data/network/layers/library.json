@@ -10,7 +10,7 @@
       "datasetId": ""
     },
     "template": "frontend/components/layers/data/node-test-2.svg",
-    "icon": "frontend/assets/img/layers/data-input.png"
+    "icon": "frontend/assets/img/palette/data.gif"
   },
   {
     "id": 2,
@@ -28,7 +28,7 @@
       "isTrainable":true
     },
     "template": "frontend/components/layers/convol/node-test-2.svg",
-    "icon": "frontend/assets/img/layers/convol.png"
+    "icon": "frontend/assets/img/palette/convol.gif"
   },
   {
     "id": 3,
@@ -42,7 +42,7 @@
       "isTrainable":true
     },
     "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg",
-    "icon": "frontend/assets/img/layers/dense.png"
+    "icon": "frontend/assets/img/palette/dense.gif"
   },
   {
     "id": 4,
@@ -60,6 +60,6 @@
       "optimizer": "SGD"
     },
     "template": "frontend/components/layers/solver/node-test-4.svg",
-    "icon": "frontend/assets/img/layers/solver.png"
+    "icon": "frontend/assets/img/palette/solver.gif"
   }
 ]

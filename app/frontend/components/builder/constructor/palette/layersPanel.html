@@ -1,15 +1,17 @@
-<md-content>
-    <md-list flex>
-        <md-toolbar class="md-primary unselectable" ng-click="toggle()" tabIndex = "-1">
+<md-content  >
+    
+        <!--md-toolbar class="md-primary unselectable" ng-click="toggle()" tabIndex = "-1">
             <div class="md-toolbar-tools">
                 <h2 class="md-flex">{{section.name}}</h2>
             </div>
-        </md-toolbar>
-        <div ng-show="section.state" ng-repeat="layer in section.items" draggable="layer">
-            <md-list-item>
-                <img class="layer-icon" ng-src="{{ layer.icon }}"></img>
-            </md-list-item>
+        </md-toolbar-->
+         <h4 class="md-flex layer-section-header">{{section.name}}</h4>
+    <div layout="row">
+        <div flex  class="layer-panel-item" ng-repeat="layer in section.items" draggable="layer" data-icon="{{ layer.icon}}">
+            <div flex>
+                <img class="layer-icon" ng-src="{{ layer.icon }}" data-icon="{{ layer.icon}}"></img>
+                <p class="layer-label" data-icon="{{ layer.icon}}">{{ layer.name }}</p>
+            </div>
         </div>
-        <md-divider ></md-divider>
-    </md-list>
+    </div>
 </md-content>

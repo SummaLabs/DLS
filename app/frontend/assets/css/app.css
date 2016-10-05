@@ -150,7 +150,11 @@ md-sidenav.md-closed-add.md-closed-add-active, md-sidenav.md-closed-remove.md-cl
     transition: all 0s cubic-bezier(0.25, 0.8, 0.25, 1); }
 
 .layer-icon{
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
+}
+
+.layer-label{
+        padding-left: 7px;
 }
 
