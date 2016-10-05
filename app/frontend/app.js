@@ -45,6 +45,8 @@ angular.module('dlsApp')
             markerText: 'text',
             markerPortIn: 'in',
             markerPortOut: 'out',
+            markerShapeIn: 'shape_in',
+            markerShapeOut: 'shape_out',
             areaWidth: 10000,
             areaHeight: 10000,
             scaleMin: 0.2,

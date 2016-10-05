@@ -103,7 +103,7 @@
                              style="font-size:11px"><tspan
                                id="tspan4074"
                                style="font-size:10px"><tspan
-                                 id="tspan4076"
+                                 id="shape_in"
                                  style="font-size:8px">[*,32,32,128] </tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></text>
       <text
          x="90"
@@ -122,7 +122,7 @@
                style="font-size:10px"><tspan
                  id="tspan4050"
                  style="font-size:6px"><tspan
-                   id="tspan4078"
+                   id="shape_out"
                    style="font-size:8px">[*,16,16,256] </tspan></tspan></tspan></tspan></tspan></text>
       <path
          d="m 88,194.83786 0,31.07542 0,0"

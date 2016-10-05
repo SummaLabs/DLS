@@ -21,7 +21,7 @@ function link() {
 			$scope.from = {
 			    x: $scope.linkData.nodes[0].pos.x + $scope.linkData.nodes[0].displayData.portOut.offsetCenter.x,
 			    y: $scope.linkData.nodes[0].pos.y + $scope.linkData.nodes[0].displayData.portOut.offsetCenter.y
-			}
+			};
 
 			if($scope.linkData.nodes[1].id === 'activePoint') {
 				$scope.to = $scope.linkData.nodes[1].pos;
@@ -32,13 +32,15 @@ function link() {
                     y: $scope.linkData.nodes[1].pos.y + $scope.linkData.nodes[1].displayData.portIn.offsetCenter.y
                 }
 			}
+
+			updatePos(element, $scope.from, $scope.to);
 			linkWatcher.bind(this)($scope, element);
 			eventsHandler.bind(this)($scope, element);
 		}
-	}
+	};
 
 	function linkWatcher(scope, element) {
-		scope.$watch('linkData.isActive', function(newValue, oldValue) {
+		scope.$watch('linkData.isActive', function(newValue) {
 			if (newValue) {
 				element.addClass("link_line_active");
 				element.attr('stroke-dasharray', '5,5');
@@ -48,7 +50,7 @@ function link() {
 			}
 		});
 
-		scope.$watch('linkData.nodes[0].pos.x', function(newValue, oldValue) {
+		/*scope.$watch('linkData.nodes[0].pos.x', function(newValue, oldValue) {
 			scope.from.x += newValue - oldValue;
 			updatePos(element, scope.from, scope.to);
 		});
@@ -66,7 +68,7 @@ function link() {
 		scope.$watch('linkData.nodes[1].pos.y', function(newValue, oldValue) {
 		    scope.to.y += newValue - oldValue;
 			updatePos(element, scope.from, scope.to);
-		});
+		});*/
 	}
 
 	function eventsHandler(scope, element) {
@@ -92,6 +94,29 @@ function link() {
                 selected: scope.linkData.isActive
             });
 		});
+
+
+        var prev_from_x = scope.linkData.nodes[0].pos.x;
+        var prev_from_y = scope.linkData.nodes[0].pos.y;
+        scope.$on('node:move_' + scope.linkData.nodes[0].id, function (event, data) {
+            scope.from.x += scope.linkData.nodes[0].pos.x - prev_from_x;
+            scope.from.y += scope.linkData.nodes[0].pos.y - prev_from_y;
+            prev_from_x = scope.linkData.nodes[0].pos.x;
+            prev_from_y = scope.linkData.nodes[0].pos.y;
+            updatePos(element, scope.from, scope.to);
+        });
+
+        var prev_to_x = scope.linkData.nodes[1].pos.x;
+        var prev_to_y = scope.linkData.nodes[1].pos.y;
+
+        scope.$on('node:move_' + scope.linkData.nodes[1].id, function (event, data) {
+            scope.to.x += scope.linkData.nodes[1].pos.x - prev_to_x;
+            scope.to.y += scope.linkData.nodes[1].pos.y - prev_to_y;
+            prev_to_x = scope.linkData.nodes[1].pos.x;
+            prev_to_y = scope.linkData.nodes[1].pos.y;
+            updatePos(element, scope.from, scope.to);
+
+        });
 	}
 
 	function updatePos(element, from, to){
