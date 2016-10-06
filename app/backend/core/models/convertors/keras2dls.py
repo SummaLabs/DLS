@@ -117,7 +117,7 @@ def generateCoordsForLayersPG(dictDlsLayers, graphvizLayout, isHorizontal):
         theGraphPos[kk] = tuple(tpos)
     return theGraphPos
 
-def convertKeras2DLS(dataJson, isDebug=False, graphvizLayout='dot', isHorizontal=True):
+def convertKeras2DLS(dataJson, isDebug=False, graphvizLayout='dot', isHorizontal=False):
     if isinstance(dataJson, str) or isinstance(dataJson, unicode):
         outModelName = os.path.splitext(os.path.basename(dataJson))[0]
         with open(dataJson, 'r') as f:

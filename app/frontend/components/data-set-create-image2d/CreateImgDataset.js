@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('createImgDataset', ['ngMaterial','ngMessages'])
+    angular.module('createImgDataset', ['ngMaterial','ngMessages', 'taskManagerService'])
         .component('createImgDataset', {
             templateUrl: '/frontend/components/data-set-create-image2d/create-img-dataset.html',
             bindings: {
@@ -9,7 +9,7 @@
                 formFileImport: "<",
                 formDbBackend: "<"
             },
-            controller: function ($mdDialog, $http, appConfig) {
+            controller: function ($mdDialog, $http, appConfig, taskManagerService) {
                 var self = this;
                 self.$onInit = function () {
                     self.formImage = {
@@ -76,28 +76,8 @@
                     console.log("error: show up error message" + error);
                 }
 
-                self.formSubmit = function () {
-
-                    // TODO: include logic for composing "data" object
-                    // for example:
-                    // testImages = separateTestImgFolder ? testImages : null;
-
-                    var req = {
-                        method: "POST",
-                        url: "/some/url",
-                        data: {
-                            formImage: this.formImage,
-                            formFileImport: this.formFileImport,
-                            formDbBackend: this.formDbBackend
-                        }
-                    };
-
-                    $http(req).then(successCallback, errorCallback);
-
-                    console.log("form fired!");
-                };
-                self.showJson = function(ev) {
-                    var ret =  {
+                self.getConfigJson = function () {
+                    return {
                         formImage: {
                             imgTypeSelectedId:          self.formImage.imgTypeSelectedId,
                             imgSizes:                   self.formImage.imgSizes,
@@ -115,6 +95,24 @@
                         },
                         datasetname:                    self.formDbBackend.datasetname
                     };
+                };
+                self.formSubmit = function () {
+                    var dataJson = self.getConfigJson();
+                    $http({
+                        method: "POST",
+                        url:    '/dbpreview/checkconfig/',
+                        data:   dataJson
+                    }).then(
+                        function successCallback(response) {
+                            console.log(response.data);
+                        },
+                        function errorCallback(response) {
+                            console.log(response.data);
+                        }
+                    );
+                };
+                self.showJson = function(ev) {
+                    var ret = self.getConfigJson();
                     console.log(ret);
                     $mdDialog.show(
                         $mdDialog.confirm().
