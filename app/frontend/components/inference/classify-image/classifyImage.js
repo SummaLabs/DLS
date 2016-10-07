@@ -35,45 +35,42 @@
                             parent: angular.element(document.body),
                             targetEvent: event,
                             clickOutsideToClose: false,
-                            controller: function (scope, $mdDialog, $rootScope, $window) {
+                            controller: function (scope, $mdDialog, $rootScope, $window, modelService) {
 
                                 scope.select = function (answer) {
                                     $mdDialog.hide(answer);
 
                                     var imagesPath = [];
-                                    $rootScope.selectedFiles.forEach(function (item) {
-                                        var path = "";
-                                        item.model.path.forEach(function (folder) {
-                                            path += folder + "/";
-                                        });
-                                        path += item.model.name;
-                                        imagesPath.push(path);
+                                    $rootScope.selectedFiles.forEach(function (item, i, array) {
+                                        console.log(item.model.fullPath(), item.model.name, item.model.type, item.model.size);
+                                        imagesPath.push(item.model.fullPath());
                                     });
 
-                                    var concatImagesPath = "";
-                                    for (var i = 0; i < imagesPath.length; i++) {
-                                        concatImagesPath = concatImagesPath.concat(imagesPath[i]);
-                                        if (i < imagesPath.length - 1) {
-                                            concatImagesPath = concatImagesPath.concat(";");
-                                        }
-                                    }
-
-                                    if (concatImagesPath) {
+                                    if (imagesPath.length > 0) {
                                         $scope.state = state.LOADING;
                                         $scope.images.length = 0;
-                                        var future = imageService.classifyImages(concatImagesPath, $scope.modelId);
+
+                                        var future = modelService.inference(imagesPath, $scope.modelId);
                                         future.then(function mySucces(response) {
 
-                                            var images = showNClasses(response.data.images, 6   );
-                                            images.forEach(function (image) {
-                                                $scope.images.push(image);
+                                            response.data.data.forEach(function (result) {
+                                                var classifiedImage = {
+                                                    'classProbabilities' : result.result.distrib,
+                                                    'imagePath' : result.filepath
+                                                };
+                                                $scope.images.push(classifiedImage);
                                             });
 
+                                            // var images = showNClasses(response.data.images, 6   );
+                                            // images.forEach(function (image) {
+                                            //     $scope.images.push(image);
+                                            // });
+
                                             //build reference to download
-                                            var csv = buildCSV(response.data);
-                                            var blob = new Blob([csv], {type: 'text/plain'});
-                                            var url = $window.URL || $window.webkitURL;
-                                            $scope.fileUrl = url.createObjectURL(blob);
+                                            // var csv = buildCSV(response.data);
+                                            // var blob = new Blob([csv], {type: 'text/plain'});
+                                            // var url = $window.URL || $window.webkitURL;
+                                            // $scope.fileUrl = url.createObjectURL(blob);
 
                                             $scope.state = state.LOADED;
                                         }, function myError(response) {

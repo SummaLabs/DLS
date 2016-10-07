@@ -21,6 +21,7 @@
                                     'name': info.name,
                                     'network': "Test Network",
                                     'dataSet': info['dataset-name'],
+                                    'type': info.type,
                                     'date': info.date.str + " " + info.time.str,
                                     'size': info.size.str
                                 });

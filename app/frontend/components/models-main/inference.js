@@ -8,7 +8,7 @@
             function buildTemplate(modelType, modelId) {
                 var inferenceType =
                 {
-                    'image-classification': '<classify-image model-id="' + modelId + '"></classify-image>'
+                    'image2d-classification': '<classify-image model-id="' + modelId + '"></classify-image>'
                 };
                 return inferenceType[modelType];
             }
