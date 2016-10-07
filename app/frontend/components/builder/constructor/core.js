@@ -186,13 +186,17 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
     };
 
     this.resetView = function (event) {
-        self.svgControl.reset();
+        // self.svgControl.reset();
+        var image = buildPreviewImage(networkDataService.getNetwork().layers, 300, 300, 20);
+        var im = document.getElementById('img1');
+        im.setAttribute('src', image);
+
+
     };
 
     function constructorListeners() {
 
         networkDataService.subNetworkUpdateEvent(setUpNetwork);
-
 
         $scope.$on('graph:init', function (event, node) {
             setUpNetwork();
@@ -301,7 +305,7 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
         }
     }
     
-    function buildPreviewImage(layers, wh, ht) {
+    function buildPreviewImage(layers, wh, ht, margin) {
 
         var x_min = Number.MAX_VALUE;
         var x_max = Number.MIN_VALUE;
@@ -317,32 +321,54 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 
         var width = x_max - x_min;
         var height = y_max - y_min;
+        if (width < 1)
+            width = 1;
+        if (height < 1)
+            height = 1;
 
-        var scaleX = wh / width;
-        var scaleY = ht / height;
-
-        var html = '';
-        layers.forEach(function (node) {
-            html += '<circle r="5" cy="' + node.pos.y * scaleX+ '" cx="' + node.pos.x * scaleY+ '" style="fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"></circle>';
-        });
+        var scaleX = (wh - (margin * 2)) / width;
+        var scaleY = (ht - (margin * 2)) / height;
+        var offsetX = margin - x_min * scaleX;
+        var offsetY = margin - y_min * scaleY;
 
         var svg = document.createElement('svg');
+        svg.setAttribute('width', wh);
+        svg.setAttribute('height', ht);
+        svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
-        svg.setAttribute('width', '' + wh);
-        svg.setAttribute('height', '' + ht);
+        var html = '';
+        layers.forEach(function (layer_from) {
+            if (layer_from.wires)
+                layer_from.wires.forEach(function (node_id) {
+                    for (let a = 0; a < layers.length; a++) {
+                        if (layers[a].id == node_id) {
+                            html += '<line x1="' + (offsetX + layer_from.pos.x * scaleX) + '"' +
+                                'y1="' + (offsetY + layer_from.pos.y * scaleY) + '"' +
+                                'x2="' + (offsetX + layers[a].pos.x * scaleX) + '"' +
+                                'y2="' + (offsetY + layers[a].pos.y * scaleY) + '"' +
+                                'stroke="blue" stroke-width="1"></line>';
+                            break;
+                        }
+                    }
+                });
+        });
+
+        var radius = 10 * scaleX;
+        if (radius < 2)
+            radius = 2;
+        layers.forEach(function (node) {
+            html += '<circle r="' + radius + '" ' +
+                'cx="' + (offsetX + node.pos.x * scaleX) + '" ' +
+                'cy="' + (offsetY + node.pos.y * scaleY) + '" ' +
+                'style="fill:#ff0000;fill-opacity:1;stroke:blue;stroke-width:0.5;stroke-opacity:1"></circle>';
+        });
+
         svg.innerHTML = html;
-
-        console.log(svg, html);
 		var xml = new XMLSerializer().serializeToString(svg);
 
 		var svg64 = btoa(xml);
 		var b64Start = 'data:image/svg+xml;base64,';
-
-		// prepend a "header"
 		var image64 = b64Start + svg64;
-
-        console.log(image64);
-		// set it as the source of the img element
 		return image64;
     }
 }
