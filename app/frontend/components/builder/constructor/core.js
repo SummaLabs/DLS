@@ -186,10 +186,10 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
     };
 
     this.resetView = function (event) {
-        // self.svgControl.reset();
-        var image = buildPreviewImage(networkDataService.getNetwork().layers, 300, 300, 20);
+        self.svgControl.reset();
+/*        var image = buildPreviewImage(networkDataService.getNetwork().layers, 300, 300, 20);
         var im = document.getElementById('img1');
-        im.setAttribute('src', image);
+        im.setAttribute('src', image);*/
 
 
     };

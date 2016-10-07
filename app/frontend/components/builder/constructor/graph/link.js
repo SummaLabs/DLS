@@ -142,7 +142,34 @@ function link() {
 			.y(function(d) { return d.y; })
 			.curve(d3.curveBasis);
 
+        // var line = bezierFourthOrder(points, 20);
 		return linkFunction(points);
+	}
+
+	function bezierFourthOrder(points, num)
+	{
+		var line = 'M';
+		if(points.length != 4)
+			return null;
+		var step = 1.00 / (num - 1);
+
+		for(let t= 0; t < 1.00; t += step) {
+			var point = Position.pos();
+			point.x = Math.pow(1.00 - t, 3) * points[0].x + 3.0 * t * Math.pow(1.00 - t, 2) * points[1].x +
+				3.0 * t * t *(1.00 - t) * points[2].x +
+				t * t * t * points[3].x;
+			point.y = Math.pow(1.00 - t, 3) * points[0].y +
+				3.0 * t * Math.pow(1.00 - t, 2) * points[1].y +
+				3.0 * t * t *(1.00 - t) * points[2].y +
+				t * t * t * points[3].y;
+
+            if (t > 0)
+                line += 'L';
+            line += point.x + ' ' + point.y + ' ';
+		}
+        line += 'L' + points[points.length - 1].x + ' ' + points[points.length - 1].y;
+
+		return line;
 	}
 }
 

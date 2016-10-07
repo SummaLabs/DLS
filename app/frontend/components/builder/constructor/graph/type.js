@@ -5,6 +5,7 @@ function Position(x, y, step) {
     this.y = y - y % step;
 }
 
+Position.pos = (x, y) => new Position(x, y);
 Position.prototype.getScaledPos = function(scale) {
     return new Position(this.x * scale, this.y * scale);
 };
