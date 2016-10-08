@@ -9,7 +9,8 @@
       "datasetType": "",
       "datasetId": ""
     },
-    "template": "frontend/components/layers/data/node-test-2.svg"
+   "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg",
+    "icon": "frontend/assets/img/palette/data.gif"
   },
   {
     "id": 2,
@@ -26,7 +27,8 @@
       "subsamplingSize": 2,
       "isTrainable":true
     },
-    "template": "frontend/components/layers/convol/node-test-2.svg"
+    "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg",
+    "icon": "frontend/assets/img/palette/convol.gif"
   },
   {
     "id": 3,
@@ -39,7 +41,8 @@
       "activationFunction": "relu",
       "isTrainable":true
     },
-    "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg",
+    "icon": "frontend/assets/img/palette/dense.gif"
   },
   {
     "id": 4,
@@ -56,6 +59,7 @@
       "learningRate": 0.01,
       "optimizer": "SGD"
     },
-    "template": "frontend/components/layers/solver/node-test-4.svg"
+    "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg",
+    "icon": "frontend/assets/img/palette/solver.gif"
   }
 ]

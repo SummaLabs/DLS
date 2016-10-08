@@ -1,6 +1,8 @@
 from flask import Response
 import flask
-from app.backend.device import device as dlsdevice
+import json
+from app.backend.device import device as dlsdevice, checkenv
+
 
 
 device = flask.Blueprint(__name__, __name__)
@@ -14,3 +16,8 @@ def get_system_info():
 @device.route('/available', methods=["GET"])
 def get_available_devices():
     return Response(dlsdevice.get_available_devices_list_json(), mimetype='application/json')
+
+
+@device.route('/checkenv', methods=["GET"])
+def get_check_env_info():
+    return Response(json.dumps(checkenv.check_environment()),  mimetype='application/json')

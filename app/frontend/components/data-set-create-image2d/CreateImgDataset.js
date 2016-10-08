@@ -93,7 +93,46 @@ angular.module('createImgDataset', ['ngMaterial','ngMessages', 'taskManagerServi
                         isUseThreading:             self.formDbBackend.isUseThreading
                     },
                     datasetname:                    self.formDbBackend.datasetname
-                };
+                }
+            };
+            // self.showJson = function(ev) {
+            //     var ret =  {
+            //         formImage: {
+            //             imgTypeSelectedId:          self.formImage.imgTypeSelectedId,
+            //             imgSizes:                   self.formImage.imgSizes,
+            //             resizeTransformSelectedId:  self.formImage.resizeTransformSelectedId
+            //         },
+            //         formFileImport: {
+            //             selectedType:               self.listFromTypes[self.formFileImport.selectedTabIndex],
+            //             fromDir:                    self.formFileImport.fromDir,
+            //             fromTxt:                    self.formFileImport.fromTxt
+            //         },
+            //         formDbBackend: {
+            //             dbBackendSelectedId:        self.formDbBackend.dbBackendSelectedId,
+            //             imageEncodingsSelectedId:   self.formDbBackend.imageEncodingsSelectedId,
+            //             isUseThreading:             self.formDbBackend.isUseThreading
+            //         },
+            //         datasetname:                    self.formDbBackend.datasetname
+            //     };
+            //     console.log(ret);
+            //     $mdDialog.show(
+            //         $mdDialog.confirm().
+            //         title('Training Log').
+            //         textContent(JSON.stringify(ret, null, 2)).
+            //         ariaLabel('Json').
+            //         targetEvent(ev).
+            //         ok('Ok')
+            //     );
+            // };
+            this.setTrainImagesDir = function (ptype) {
+                var pref = ptype.split('-')[0];
+                if (pref == 'dir') {
+                    appConfig.fileManager.pickFile = true;
+                    appConfig.fileManager.pickFolder = true;
+                } else {
+                    appConfig.fileManager.pickFile = true;
+                    appConfig.fileManager.pickFolder = false;
+                }
             };
             self.formSubmit = function () {
                 var dataJson = self.getConfigJson();
