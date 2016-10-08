@@ -114,10 +114,6 @@ def check_model_list():
     ret = modelsWatcher.getModelsInfoAsList()
     return Response(json.dumps(ret), mimetype='application/json')
 
-@models.route('/inference/image/load/<string:imagePath>', methods=['POST', 'GET'])
-def inference_image_load(imagePath):
-    with open(imagePath, 'r') as f:
-        return f.read()
 
 if __name__ == '__main__':
     pass

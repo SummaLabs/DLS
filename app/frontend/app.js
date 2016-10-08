@@ -56,6 +56,9 @@ angular.module('dlsApp')
             pickFile: true,
             pickFolder: true,
             singleSelection: true
+        },
+        image: {
+            loadApiUrl: '/images/load?imagePath='
         }
     }).config(['$compileProvider', function ($compileProvider) {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(|blob|):/);

@@ -11,7 +11,7 @@
                     fileUrl: '<'
                 },
                 templateUrl: '/frontend/components/inference/classify-image/classify-image.html',
-                controller: function ($scope, $mdDialog, appConfig, imageService) {
+                controller: function ($scope, $mdDialog, appConfig) {
                     var self = this;
 
                     const state = {
@@ -53,24 +53,13 @@
                                         var future = modelService.inference(imagesPath, $scope.modelId);
                                         future.then(function mySucces(response) {
 
-                                            response.data.data.forEach(function (result) {
-                                                var classifiedImage = {
-                                                    'classProbabilities' : result.result.distrib,
-                                                    'imagePath' : result.filepath
-                                                };
-                                                $scope.images.push(classifiedImage);
-                                            });
-
-                                            // var images = showNClasses(response.data.images, 6   );
-                                            // images.forEach(function (image) {
-                                            //     $scope.images.push(image);
-                                            // });
+                                            showNClasses(response.data.data, 8);
 
                                             //build reference to download
-                                            // var csv = buildCSV(response.data);
-                                            // var blob = new Blob([csv], {type: 'text/plain'});
-                                            // var url = $window.URL || $window.webkitURL;
-                                            // $scope.fileUrl = url.createObjectURL(blob);
+                                            var csv = buildCSV(response.data.data);
+                                            var blob = new Blob([csv], {type: 'text/plain'});
+                                            var url = $window.URL || $window.webkitURL;
+                                            $scope.fileUrl = url.createObjectURL(blob);
 
                                             $scope.state = state.LOADED;
                                         }, function myError(response) {
@@ -100,33 +89,33 @@
                     };
 
                     function showNClasses(images, classesNumber) {
-                        var imagesToShow = [];
-                        images.forEach(function(image) {
-                            var imageToShow = {};
-                            imageToShow['path'] = image['path'];
-                            imageToShow['content'] = image['content'];
-                            var classProbabilities = [];
-                            var i = 0;
-                            image['classProbabilities'].forEach(function(classProb) {
-                                if (i < classesNumber) {
-                                    classProbabilities.push(classProb)
-                                }
-                                i++;
-                            });
-                            imageToShow['classProbabilities'] = classProbabilities;
-                            imagesToShow.push(imageToShow);
+                        var imagesApiPath = appConfig.image.loadApiUrl;
+                        var i = 0;
+                        images.forEach(function (result) {
+                            var classifiedImage = {
+                                'classProbabilities': result.result.distrib.slice(0, classesNumber),
+                                'imagePath': imagesApiPath + result.filepath
+                            };
+                            $scope.images.push(classifiedImage);
+                            i++;
                         });
-
-                        return imagesToShow;
                     }
 
-                    function buildCSV(data) {
+                    function buildCSV(images) {
                         //csv header
+                        var classes = [];
                         var csv = "path,";
                         var i = 0;
-                        data.classes.forEach(function (className) {
-                            csv += className;
-                            if (i < data.classes.length - 1) {
+                        var classProbs = images[0].result.distrib;
+                        classProbs.forEach(function (classProb) {
+                            classes.push(classProb[0]);
+                        });
+
+                        classes.sort();
+
+                        classes.forEach(function (clazz) {
+                            csv += clazz;
+                            if (i < classes.length - 1) {
                                 csv += ",";
                             } else {
                                 csv += '\n';
@@ -134,14 +123,14 @@
                             i++;
                         });
                         //csv content
-                        data.images.forEach(function (image) {
-                            csv += image.path + ',';
+                        images.forEach(function (image) {
+                            csv += image.filepath + ',';
                             i = 0;
-                            data.classes.forEach(function (className) {
-                                image.classProbabilities.forEach(function (classProb) {
-                                    if (classProb.name == className) {
-                                        csv += classProb.value;
-                                        if (i < data.classes.length - 1) {
+                            classes.forEach(function (className) {
+                                image.result.distrib.forEach(function (classProb) {
+                                    if (classProb[0] == className) {
+                                        csv += classProb[1];
+                                        if (i < classes.length - 1) {
                                             csv += ",";
                                         }
                                         i++;

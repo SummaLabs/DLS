@@ -17,7 +17,7 @@
                 <md-list>
                     <md-list-item ng-repeat="image in images" ng-click="null">
                         <div layout="row" layout-fill>
-                            <img ng-src="/models/inference/image/load/{{image.imagePath}}" flex="30" layout-margin alt=""/>
+                            <img ng-src="{{image.imagePath}}" flex style="height: 500px; width: 500px" layout-margin alt=""/>
                             <div class="md-item-text md-whiteframe-z1" layout="column" layout-margin flex>
                                 <md-list>
                                     <md-list-item ng-repeat="classProbability in image.classProbabilities">

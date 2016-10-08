@@ -67,6 +67,13 @@ def build_model_response(base_path, images_path):
     return model_response
 
 
+@images.route('/load', methods=['GET'])
+def load_image():
+    imagePath = request.args.get('imagePath')
+    with open(imagePath, 'r') as f:
+        return f.read()
+
+
 @images.route('/rocs/load/<path:model_id>')
 def load_model_rocs(model_id):
 
