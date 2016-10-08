@@ -34,7 +34,8 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     "inference",
     "validation",
     'modelsService',
-    'taskManagerService'
+    'taskManagerService',
+    'env'
 ]);
 
 

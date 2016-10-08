@@ -158,3 +158,6 @@ md-sidenav.md-closed-add.md-closed-add-active, md-sidenav.md-closed-remove.md-cl
         padding-left: 7px;
 }
 
+.device-status-label{
+    margin-right: 15px;
+}

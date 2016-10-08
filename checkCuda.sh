@@ -26,8 +26,12 @@ fi
 # started with a bare ubuntu 14.04.3 LTS install, with only ubuntu-desktop installed
 # script will install the bare minimum, with all "extras" in a seperate venv
 
+if [ -z "$1" ]
+  then
+    echo $0: usage: checkCuda.sh version
+fi
 # CUDA version
-export CUDA_VERSION=7.5
+export CUDA_VERSION=$1
 # CUDA Home directory. Assuming standard home directory
 export CUDA_HOME=/usr/local/cuda-$CUDA_VERSION
 
