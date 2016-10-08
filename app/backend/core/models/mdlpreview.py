@@ -10,7 +10,8 @@ from datetime import datetime
 from functools import wraps
 
 from app.backend.core import utils as dlsutils
-from app.backend.core.models.cfg import CFG_MODEL, CFG_SOLVER, CFG_MODEL_TRAIN, PREFIX_SNAPSHOT, EXT_MODEL_WEIGHTS, PREFIX_TASKS_DIR
+from app.backend.core.models.cfg import CFG_MODEL, CFG_SOLVER, CFG_MODEL_TRAIN, CFG_PROGRESS, \
+    PREFIX_SNAPSHOT, EXT_MODEL_WEIGHTS, PREFIX_TASKS_DIR
 
 from flow_parser import DLSDesignerFlowsParser
 from batcher_image2d import BatcherImage2DLMDB
@@ -66,6 +67,7 @@ class ModelTaskDirBuilder:
         }
         with open(foutConfig, 'w') as f:
             f.write(json.dumps(modelConfig, indent=4))
+        return (taskId, dirTaskOut)
 
 ####################################
 class ModelInfo:
@@ -105,6 +107,7 @@ class ModelInfo:
         self.pathCfg       = os.path.join(self.dirModel, CFG_MODEL)
         self.pathModelCfg  = os.path.join(self.dirModel, CFG_MODEL_TRAIN)
         self.pathSolverCfg = os.path.join(self.dirModel, CFG_SOLVER)
+        self.pathProgress  = os.path.join(self.dirModel, CFG_PROGRESS)
         #
         dlsutils.checkFilePathNotFoundError(self.pathCfg)
         dlsutils.checkFilePathNotFoundError(self.pathModelCfg)
@@ -116,6 +119,10 @@ class ModelInfo:
             tmpModelCfg = json.load(f)
         with open(self.pathSolverCfg, 'r') as f:
             tmpSolverCfg = json.load(f)
+        progressJson = None
+        if os.path.isfile(self.pathProgress):
+            with open(self.pathProgress, 'r') as f:
+                progressJson = json.load(f)
         sizeModelDir = dlsutils.getDirectorySizeInBytes(self.dirModel)
         sizeModelStr = dlsutils.humanReadableSize(sizeModelDir)
         tmpCfg['size'] = {
@@ -127,7 +134,8 @@ class ModelInfo:
         self.cfgDict = {
             'info':      tmpCfg,
             'solver':    tmpSolverCfg,
-            'snapshots': lstSnapshotsId
+            'snapshots': lstSnapshotsId,
+            'progress':  progressJson
         }
     def isInitialized(self):
         return (self.cfgDict is not None)

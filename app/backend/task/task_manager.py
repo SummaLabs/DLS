@@ -52,6 +52,8 @@ class TaskManager:
         task_data = []
         for t in self.tasks.values():
             task_data.append(t.status())
+        # from pprint import pprint
+        # pprint (task_data)
         socketio.emit('task_monitor', json.dumps(task_data))
         return task_data
 

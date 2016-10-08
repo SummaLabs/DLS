@@ -23,6 +23,11 @@ def start_task():
     tm.start_task(task)
     return Response(json.dumps({'taskId': task.id}), mimetype='application/json')
 
+@task.route('/test', methods=["POST"])
+def start_test_task():
+    task = TaskFactory.create('default', None)
+    tm.start_task(task)
+    return Response(json.dumps({'taskId': task.id}), mimetype='application/json')
 
 # Kill task
 @task.route('/term', methods=["POST"])

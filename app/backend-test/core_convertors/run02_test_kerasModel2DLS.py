@@ -25,7 +25,7 @@ if __name__ == '__main__':
     pprint(lstModelsPaths)
     #
     for ii,pp in enumerate(lstModelsPaths):
-        theFinalDLSModel = keras2dls.convertKeras2DLS(pp, graphvizLayout='neato')
+        theFinalDLSModel = keras2dls.convertKeras2DLS(pp, graphvizLayout='dot')
         foutModel=os.path.abspath('%s/%s_converted.json' % (pathOutModels, os.path.splitext(os.path.basename(pp))[0]))
         print ('[%d/%d] convert: %s --> [%s]' % (ii, len(lstModelsPaths), os.path.basename(pp), foutModel))
         with open(foutModel, 'w') as f:

@@ -30,7 +30,7 @@ function CoreService() {
     };
 }
 
-function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkDataService, networkLayerService, modelsService, coreService, appConfig, $mdSidenav) {
+function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scope, $rootScope, taskManagerService, networkDataService, networkLayerService, modelsService, coreService, appConfig) {
     var self = this;
     self.svgWidth = appConfig.svgDefinitions.areaWidth;
     self.svgHeight = appConfig.svgDefinitions.areaHeight;
@@ -53,7 +53,43 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
             $scope.networkName = networkDataService.getNetwork().name;
         });
     };
-
+    this.trainModel = function ($event) {
+        doUpdateNetwork();
+        var dataNetwork = networkDataService.getNetwork();
+        modelsService.checkNetworkFast(dataNetwork).then(
+            function successCallback(response) {
+                var ret = response.data;
+                if ( (ret.length<1) || (ret[0] != 'ok') ) {
+                    var toast = $mdToast.simple()
+                    .textContent("ERROR: " + response.data)
+                    .action('UNDO')
+                    .highlightAction(true)
+                    .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
+                    .position('top right');
+                } else {
+                    taskManagerService.startTask('model-train-image2d-cls', dataNetwork).then(
+                        function successCallback(response) {
+                            $location.url('/task');
+                            var toast = $mdToast.simple()
+                                .textContent("Train Model task added to Tasks-Queue")
+                                .position('top right');
+                            $mdToast.show(toast).then(function (response) {
+                                if (response == 'ok') {
+                                    //todo
+                                }
+                            });
+                        },
+                        function errorCallback(response) {
+                            console.log(response.data);
+                        }
+                    );
+                }
+            },
+            function errorCallback(response) {
+                console.log(response.data);
+            }
+        );
+    };
     this.checkModelJson = function ($event) {
         doUpdateNetwork();
         var dataNetwork = networkDataService.getNetwork();

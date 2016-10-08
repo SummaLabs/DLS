@@ -24,6 +24,7 @@ class Task:
         self.state = 'ready'
         self.text = 'base task'
         self.type = 'base'
+        self.basetype = 'base'
         self.rows = []
         self.logger = self.init_logger()
         self.logger.info('task ' + str(self.id) + ' created')
@@ -56,6 +57,7 @@ class Task:
         stt['progress'] = self.progress
         stt['text'] = self.text
         stt['type'] = self.type
+        stt['basetype'] = self.basetype
         stt['rows'] = self.rows
         stt['state'] = self.state
         return stt

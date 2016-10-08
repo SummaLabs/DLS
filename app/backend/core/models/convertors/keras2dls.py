@@ -5,6 +5,7 @@ __author__ = 'ar'
 import os
 import json
 import networkx as nx
+import pygraphviz as pyg
 import numpy as np
 import keras
 
@@ -77,7 +78,46 @@ def convetLayersParamsKeras2DLS(kerasLayer):
     retParams['id'] = retLayerId
     return (retLayerId, retParams)
 
-def convertKeras2DLS(dataJson, isDebug=False, graphvizLayout='neato'):
+def generateCoordsForLayersNX(dictDlsLayers, graphvizLayout, isHorizontal):
+    theGraph = nx.Graph()
+    for kk, vv in dictDlsLayers.items():
+        for ll in vv['cfg']['wires']:
+            theGraph.add_edge(kk, ll)
+    if graphvizLayout is None:
+        theGraphPos = nx.spectral_layout(theGraph)
+        for kk in theGraphPos.keys():
+            tpos = (1200 * theGraphPos[kk]).astype(np.int)
+            theGraphPos[kk] = (tpos[0], tpos[1])
+    else:
+        if isHorizontal:
+            pArgs = '-Grankdir=TB'
+        else:
+            pArgs = '-Grankdir=LR'
+        theGraphPos = nx.nx_agraph.graphviz_layout(theGraph, prog=graphvizLayout, args=pArgs)
+        for kk in theGraphPos.keys():
+            theGraphPos[kk] = (2 * int(theGraphPos[kk][0]), 2 * int(theGraphPos[kk][1]))
+    return theGraphPos
+
+def generateCoordsForLayersPG(dictDlsLayers, graphvizLayout, isHorizontal):
+    theGraph = pyg.AGraph()
+    for kk, vv in dictDlsLayers.items():
+        for ll in vv['cfg']['wires']:
+            theGraph.add_edge(kk, ll)
+    if isHorizontal:
+        pArgs = '-Grankdir=LR'
+    else:
+        pArgs = '-Grankdir=TB'
+    if graphvizLayout is None:
+        graphvizLayout = 'dot'
+    theGraph.layout(prog=graphvizLayout, args=pArgs)
+    theGraphPos={}
+    for kk in dictDlsLayers.keys():
+        tnode = theGraph.get_node(kk)
+        tpos  = [int(float(xx)) for xx in tnode.attr['pos'].split(',')]
+        theGraphPos[kk] = tuple(tpos)
+    return theGraphPos
+
+def convertKeras2DLS(dataJson, isDebug=False, graphvizLayout='dot', isHorizontal=False):
     if isinstance(dataJson, str) or isinstance(dataJson, unicode):
         outModelName = os.path.splitext(os.path.basename(dataJson))[0]
         with open(dataJson, 'r') as f:
@@ -97,19 +137,8 @@ def convertKeras2DLS(dataJson, isDebug=False, graphvizLayout='neato'):
             print ('[%d] %s --> %s' % (kk, layerClassName, layerParams['wires']))
     if isDebug:
         pprint(tmpDictLayers)
-    theGraph = nx.Graph()
-    for kk, vv in tmpDictLayers.items():
-        for ll in vv['cfg']['wires']:
-            theGraph.add_edge(kk, ll)
-    if graphvizLayout is None:
-        theGraphPos = nx.spectral_layout(theGraph)
-        for kk in theGraphPos.keys():
-            tpos = (1200 * theGraphPos[kk]).astype(np.int)
-            theGraphPos[kk] = (tpos[0], tpos[1])
-    else:
-        theGraphPos = nx.nx_agraph.graphviz_layout(theGraph, prog='neato')
-        for kk in theGraphPos.keys():
-            theGraphPos[kk] = (2*int(theGraphPos[kk][0]), 2*int(theGraphPos[kk][1]))
+    # theGraphPos = generateCoordsForLayersNX(tmpDictLayers, graphvizLayout=graphvizLayout, isHorizontal=isHorizontal)
+    theGraphPos = generateCoordsForLayersPG(tmpDictLayers, graphvizLayout=graphvizLayout, isHorizontal=isHorizontal)
     #
     theFinalLayers = []
     for kk, vv in tmpDictLayers.items():
