@@ -34,7 +34,8 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     "inference",
     "validation",
     'modelsService',
-    'taskManagerService'
+    'taskManagerService',
+    'env'
 ]);
 
 
@@ -45,8 +46,10 @@ angular.module('dlsApp')
             markerText: 'text',
             markerPortIn: 'in',
             markerPortOut: 'out',
-            areaWidth: 10000,
-            areaHeight: 10000,
+            markerShapeIn: 'shape_in',
+            markerShapeOut: 'shape_out',
+            areaWidth: 5000,
+            areaHeight: 5000,
             scaleMin: 0.2,
             scaleMax: 4.0,
             scaleFactor: 1.2,

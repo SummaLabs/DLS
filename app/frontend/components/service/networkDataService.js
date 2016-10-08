@@ -138,7 +138,8 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
                 params: layer.params,
                 wires: layer.wires,
                 pos: layer.pos,
-                template: layer.template
+                template: layer.template,
+                icon: layer.icon
             };
             filteredNetwork.push(filteredLayer)
         });

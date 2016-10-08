@@ -24,6 +24,7 @@ class ROCAnalysisTask(Task):
 
         self.model_id = model_id
         self.data_set_id = data_set_id
+        self.basetype = 'inference'
 
     def perform(self):
         from datetime import datetime

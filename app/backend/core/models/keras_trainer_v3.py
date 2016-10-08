@@ -24,13 +24,50 @@ from keras.layers import Dense, Dropout, Activation, Flatten, Convolution2D, Inp
 from keras.optimizers import SGD
 from keras.models import model_from_json
 from keras.optimizers import Optimizer
+from keras.optimizers import SGD, RMSprop, Adagrad, Adadelta, Adam, Adamax
 
 
 from app.backend.core import utils as dlsutils
 from batcher_image2d import BatcherImage2DLMDB
-import flow_parser
+# from flow_parser import getKerasOptimizerName
 
 from cfg import CFG_MODEL_TRAIN, CFG_SOLVER
+
+#########################
+def getOptimizerJson2Keras(strOpt, parLR=0.1):
+    # FIXME: only Learning Rate is processed correctly, other Optimizer-specific field is defined by default...
+    if strOpt == "SGD":
+        return SGD(lr=parLR)
+    elif strOpt == "RMSprop":
+        return RMSprop(lr=parLR)
+    elif strOpt == "Adagrad":
+        return Adagrad(lr=parLR)
+    elif strOpt == "Adadelta":
+        return Adadelta(lr=parLR)
+    elif strOpt == "Adam":
+        return Adam(lr=parLR)
+    elif strOpt == "Adamax":
+        return Adamax(lr=parLR)
+    elif strOpt == "Nadam":
+        return None
+    else:
+        return None
+
+def getKerasOptimizerName(optObj):
+    if isinstance(optObj, SGD):
+        return 'SGD'
+    elif isinstance(optObj, RMSprop):
+        return 'RMSprop'
+    elif isinstance(optObj, Adagrad):
+        return 'Adagrad'
+    elif isinstance(optObj, Adadelta):
+        return 'Adadelta'
+    elif isinstance(optObj, Adam):
+        return 'Adam'
+    elif isinstance(optObj, Adamax):
+        return 'Adamax'
+    else:
+        return None
 
 #########################
 def split_list_by_blocks(lst, psiz):
@@ -238,6 +275,34 @@ class KerasTrainer:
             self.pathModelConfig = None
     def printError(self, strError):
         print("keras-error#%s" % strError)
+    def trainOneIter(self):
+        modelInputShape = list(self.model.input_shape)
+        dataX, dataY = self.batcherLMDB.getBatchTrain(reshape2Shape=modelInputShape)
+        tlossTrain = self.model.train_on_batch(dataX, dataY)
+        isNeedPrintInfo = False
+        if (self.currentIter % self.printInterval == 0):
+            dataXval, dataYval = self.batcherLMDB.getBatchVal(reshape2Shape=modelInputShape)
+            tlossVal = self.model.test_on_batch(dataXval, dataYval)
+            self.trainLog['epoch'].append(self.currentEpoch)
+            self.trainLog['iter'].append(self.currentIter)
+            self.trainLog['lossTrain'].append(float(tlossTrain[0]))
+            self.trainLog['accTrain'].append(float(tlossTrain[1]))
+            self.trainLog['lossVal'].append(float(tlossVal[0]))
+            self.trainLog['accVal'].append(float(tlossVal[1]))
+            print(("keras-info#%s#%s#%d|%d|%0.5f|%0.5f|%0.5f|%0.5f") % (
+                'I',
+                time.strftime('%Y.%m.%d-%H:%M:%S'),
+                self.currentEpoch,
+                self.currentIter,
+                self.trainLog['lossTrain'][-1],
+                self.trainLog['accTrain'][-1],
+                self.trainLog['lossVal'][-1],
+                self.trainLog['accVal'][-1]
+            ))
+            sys.stdout.flush()
+            isNeedPrintInfo = True
+        self.currentIter += 1
+        return isNeedPrintInfo
     def trainOneEpoch(self):
         if not self.isOk():
             strErr='KerasTrainer is not correctly initialized'
@@ -420,7 +485,7 @@ class KerasTrainer:
         #
         #FIXME: this is temporary solution, fix this in the future!
         tmpOptimizerCfg = self.model.optimizer.get_config()
-        tmpOptimizerCfg['name'] = flow_parser.getKerasOptimizerName(self.model.optimizer)
+        tmpOptimizerCfg['name'] = getKerasOptimizerName(self.model.optimizer)
         jsonSolverState={
             'optimizer'         : tmpOptimizerCfg,
             'loss'              : self.model.loss,

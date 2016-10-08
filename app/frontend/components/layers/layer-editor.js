@@ -3,7 +3,7 @@
 
     angular
         .module('layerEditor', ['ngMaterial'])
-        .directive('layerEditor', ['$compile', function($compile) {
+        .directive('layerEditor', ['$compile', function($compile, $mdSidenav) {
 
             function buildTemplate(layerId, layerType) {
                 var layerDirectives =

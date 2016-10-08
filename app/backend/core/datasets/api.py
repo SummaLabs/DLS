@@ -15,9 +15,10 @@ dbpreview = Blueprint(__name__, __name__)
 
 from app.backend.file_manager.api import getRealPathFromFMUrlPath, validateSeverPathFromUrlPath
 from dbpreview import DatasetsWatcher, DatasetImage2dInfo
+from dbbuilder import DBImage2DConfig
 
 ###############################
-datasetWatcher              = DatasetsWatcher()
+datasetWatcher = DatasetsWatcher()
 datasetWatcher.refreshDatasetsInfo()
 #FIXME: only for DEBUG!
 if len(datasetWatcher.dictDbInfo.keys())<1:
@@ -26,6 +27,13 @@ else:
     print ('\nAvailable datasets: ')
     for ii,db in enumerate(datasetWatcher.dictDbInfo.values()):
         print ('\t%d : %s' % (ii, db))
+
+###############################
+@dbpreview.route('/checkconfig/', methods=['GET', 'POST'])
+def dbpreview_db_check_config():
+    dataJson = json.loads(request.data)
+    config = DBImage2DConfig()
+    print (dataJson)
 
 ###############################
 @dbpreview.route('/dbinfolist/', methods=['GET', 'POST'])

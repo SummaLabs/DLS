@@ -129,3 +129,35 @@ md-tab-item {
 md-dialog.md-log_dialog-theme {
    white-space: pre-wrap;
 }
+
+
+.md-sidenav-custom{
+        position: inherit;
+     -webkit-transform: translate(0%, 0);
+     transform: translate(0%, 0);
+}
+
+md-sidenav.md-closed-add, md-sidenav.md-closed-remove {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-transition: 0.0s ease-in all;
+    transition: 0.0s ease-in all; 
+}
+
+md-sidenav.md-closed-add.md-closed-add-active, md-sidenav.md-closed-remove.md-closed-remove-active {
+    -webkit-transition: all 0s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: all 0s cubic-bezier(0.25, 0.8, 0.25, 1); }
+
+.layer-icon{
+    width: 50px;
+    height: 50px;
+}
+
+.layer-label{
+        padding-left: 7px;
+}
+
+.device-status-label{
+    margin-right: 15px;
+}

@@ -23,6 +23,8 @@ class Config(object):
     LOG_DIR_TASK = "logs/tasks"
     # Allowed file extensions for File Manager uploading
     ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'json', 'xml', 'zip'])
+    # Cuda Version
+    CUDA_VERSION = "7.5"
 
     DLS_MODELS_BASE_PATH = models_dir = os.path.join(basedir, 'data/model')
 

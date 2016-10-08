@@ -30,7 +30,7 @@ function CoreService() {
     };
 }
 
-function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkDataService, networkLayerService, modelsService, coreService, appConfig) {
+function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scope, $rootScope, taskManagerService, networkDataService, networkLayerService, modelsService, coreService, appConfig) {
     var self = this;
     self.svgWidth = appConfig.svgDefinitions.areaWidth;
     self.svgHeight = appConfig.svgDefinitions.areaHeight;
@@ -53,7 +53,43 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
             $scope.networkName = networkDataService.getNetwork().name;
         });
     };
-
+    this.trainModel = function ($event) {
+        doUpdateNetwork();
+        var dataNetwork = networkDataService.getNetwork();
+        modelsService.checkNetworkFast(dataNetwork).then(
+            function successCallback(response) {
+                var ret = response.data;
+                if ( (ret.length<1) || (ret[0] != 'ok') ) {
+                    var toast = $mdToast.simple()
+                    .textContent("ERROR: " + response.data)
+                    .action('UNDO')
+                    .highlightAction(true)
+                    .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
+                    .position('top right');
+                } else {
+                    taskManagerService.startTask('model-train-image2d-cls', dataNetwork).then(
+                        function successCallback(response) {
+                            $location.url('/task');
+                            var toast = $mdToast.simple()
+                                .textContent("Train Model task added to Tasks-Queue")
+                                .position('top right');
+                            $mdToast.show(toast).then(function (response) {
+                                if (response == 'ok') {
+                                    //todo
+                                }
+                            });
+                        },
+                        function errorCallback(response) {
+                            console.log(response.data);
+                        }
+                    );
+                }
+            },
+            function errorCallback(response) {
+                console.log(response.data);
+            }
+        );
+    };
     this.checkModelJson = function ($event) {
         doUpdateNetwork();
         var dataNetwork = networkDataService.getNetwork();
@@ -109,6 +145,12 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
                 } else {
                     console.log('*** Model with shapes ***');
                     console.log(ret['data']);
+                    ret['data'].layers.forEach(function (layer) {
+                        if (layer.shape) {
+                            self.svgControl.setShape(layer.id, layer.shape.inp, 'in');
+                            self.svgControl.setShape(layer.id, layer.shape.out, 'out');
+                        }
+                    });
                 }
                 var toast = $mdToast.simple()
                     .textContent(retMessage)
@@ -151,6 +193,9 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 
             $scope.saveNetwork = function () {
                 networkDataService.saveNetwork($scope.network.name, $scope.network.description);
+               /* var image = buildPreviewImage(networkDataService.getNetwork().layers, 150, 150);
+                var im = document.getElementById('img1');
+                im.setAttribute('src', image);*/
                 $mdDialog.hide();
             };
 
@@ -178,12 +223,14 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 
     this.resetView = function (event) {
         self.svgControl.reset();
+       /* var image = buildPreviewImage(networkDataService.getNetwork().layers, 300, 300, 20);
+        var im = document.getElementById('img1');
+        im.setAttribute('src', image);*/
     };
 
     function constructorListeners() {
 
         networkDataService.subNetworkUpdateEvent(setUpNetwork);
-
 
         $scope.$on('graph:init', function (event, node) {
             setUpNetwork();
@@ -277,9 +324,124 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
             layer.pos.y = node.pos.y;
             event.stopPropagation();
         });
+        
+        $scope.toggleLeft = buildToggler('left');
+        $scope.toggleRight = buildToggler('right');
+
+        function buildToggler(componentId) {
+            return function() {
+                $mdSidenav(componentId).toggle();
+            }
+        }
 
         function setUpNetwork() {
+            // adaptNetworkPositions(networkDataService.getLayers(), 300, 300);
             self.svgControl.setLayers(networkDataService.getLayers());
+
         }
+    }
+    
+    function buildPreviewImage(layers, wh, ht, margin) {
+
+        var x_min = Number.MAX_VALUE;
+        var x_max = Number.MIN_VALUE;
+        var y_min = Number.MAX_VALUE;
+        var y_max = Number.MIN_VALUE;
+
+        layers.forEach(function (node) {
+            x_min = Math.min(x_min, node.pos.x);
+            y_min = Math.min(y_min, node.pos.y);
+            x_max = Math.max(x_max, node.pos.x);
+            y_max = Math.max(y_max, node.pos.y);
+        });
+
+        var width = x_max - x_min;
+        var height = y_max - y_min;
+        if (width < 1)
+            width = 1;
+        if (height < 1)
+            height = 1;
+
+        var scaleX = (wh - (margin * 2)) / width;
+        var scaleY = (ht - (margin * 2)) / height;
+        var offsetX = margin - x_min * scaleX;
+        var offsetY = margin - y_min * scaleY;
+
+        var svg = document.createElement('svg');
+        svg.setAttribute('width', wh);
+        svg.setAttribute('height', ht);
+        svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+        var html = '';
+        layers.forEach(function (layer_from) {
+            if (layer_from.wires)
+                layer_from.wires.forEach(function (node_id) {
+                    for (let a = 0; a < layers.length; a++) {
+                        if (layers[a].id == node_id) {
+                            html += '<line x1="' + (offsetX + layer_from.pos.x * scaleX) + '"' +
+                                'y1="' + (offsetY + layer_from.pos.y * scaleY) + '"' +
+                                'x2="' + (offsetX + layers[a].pos.x * scaleX) + '"' +
+                                'y2="' + (offsetY + layers[a].pos.y * scaleY) + '"' +
+                                'stroke="blue" stroke-width="1"></line>';
+                            break;
+                        }
+                    }
+                });
+        });
+
+        var radius = 10 * scaleX;
+        if (radius < 2)
+            radius = 2;
+        layers.forEach(function (node) {
+            html += '<circle r="' + radius + '" ' +
+                'cx="' + (offsetX + node.pos.x * scaleX) + '" ' +
+                'cy="' + (offsetY + node.pos.y * scaleY) + '" ' +
+                'style="fill:#ff0000;fill-opacity:1;stroke:blue;stroke-width:0.5;stroke-opacity:1"></circle>';
+        });
+
+        svg.innerHTML = html;
+		var xml = new XMLSerializer().serializeToString(svg);
+
+		var svg64 = btoa(xml);
+		var b64Start = 'data:image/svg+xml;base64,';
+		var image64 = b64Start + svg64;
+		return image64;
+    }
+
+    "use strict";
+    function adaptNetworkPositions(layers, maxWidth, maxHeight) {
+        iteration();
+        function iteration() {
+
+            let mustMoved = false;
+
+            do {
+                mustMoved = false;
+                for (let a = 0; a < layers.length; a++) {
+                    if (!layers[a].wires)
+                            continue;
+                    for (let w = 0; w < layers[a].wires.length; w ++) {
+
+                        for (let b = 0; b < layers.length; b++) {
+
+                            if (layers[a].wires[w] === layers[b].id) {
+                                let diff = layers[b].pos.y - layers[a].pos.y;
+
+                                if (diff > 0 && diff < maxHeight) {
+                                    mustMoved = true;
+                                    layers[b].pos.y = layers[a].pos.y + maxHeight;
+                                } else if (diff < 0 && diff > -maxHeight) {
+                                    mustMoved = true;
+                                    layers[a].pos.y = layers[b].pos.y + maxHeight;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            } while (mustMoved);
+        }
+        iteration();
+
     }
 }

@@ -9,6 +9,12 @@
         <md-button class="md-warn md-raised" ng-click="$ctrl.calcModelShape($event)">
             Calc Shapes
         </md-button>
+        <md-button ng-click="toggleRight()" class="md-raised">
+            Toggle Right Menu
+        </md-button>
+        <md-button class="md-warn md-raised" ng-click="$ctrl.trainModel($event)">
+            Train Model
+        </md-button>
         <span class="md-headline">Network name: {{networkName}}</span>
     </div>
     <div layout="row" class="unselectable">
@@ -31,22 +37,28 @@
                     </md-button>
                 </div>
             </div>
+        <img id = "img1" src="">
         </div>
-        <div id="layer-info">
-            <md-content>
-                <md-tabs md-dynamic-height md-border-bottom>
-                    <md-tab label="Settings">
-                        <md-content class="md-padding">
-                            <layer-editor layer-id="{{$ctrl.layerId}}" layer-type="{{$ctrl.layerType}}"></layer-editor>
-                        </md-content>
-                    </md-tab>
-                    <md-tab label="Info">
-                        <md-content class="md-padding">
-
-                        </md-content>
-                    </md-tab>
+          <md-sidenav class="md-sidenav-custom md-sidenav-right" md-component-id="right"
+                md-disable-backdrop md-whiteframe="4" md-is-open="true">
+            <img id="img1" src="">
+            <div id="layer-info">
+              
+                <md-content>
+                    <md-tabs md-dynamic-height md-border-bottom>
+                        <md-tab label="Settings">
+                            <md-content class="md-padding">
+                                <layer-editor layer-id="{{$ctrl.layerId}}" layer-type="{{$ctrl.layerType}}"></layer-editor>
+                            </md-content>
+                        </md-tab>
+                        <md-tab label="Info">
+                            <md-content class="md-padding">
+                            </md-content>
+                        </md-tab>
                 </md-tabs>
-            </md-content>
-        </div>
+                </md-content>
+                         
+            </div>
+       </md-sidenav>
     </div>
 </div>

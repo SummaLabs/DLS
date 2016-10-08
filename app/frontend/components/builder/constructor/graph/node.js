@@ -6,7 +6,6 @@ angular.module('graph')
 function node($compile, $templateCache, $http, appConfig, $rootScope, coreService) {
 
 	var patternDefinitions = appConfig.svgDefinitions;
-	var scale = 1;
 
 	function NodeCtrl($scope, $element, $document) {
 
@@ -46,6 +45,8 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
                         var portIn = angular.element(element[0].querySelector('#' + patternDefinitions.markerPortIn));
                         var portOut = angular.element(element[0].querySelector('#' + patternDefinitions.markerPortOut));
 
+						var shapeIn = angular.element(element[0].querySelector('#' + patternDefinitions.markerShapeIn));
+						var shapeOut = angular.element(element[0].querySelector('#' + patternDefinitions.markerShapeOut));
 
                         $scope.nodeData.displayData.portIn.element = portIn;
                         $scope.nodeData.displayData.portOut.element = portOut;
@@ -56,17 +57,41 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
                         if (!rectNode && !textNode) {
 							message('File "' + newType + '" isn\'t valid!', 'error');
                         }
+                        if (rectNode) {
+							rectNode.attr('id', '#' + patternDefinitions.markerRect + idNode);
+						}
+						if (textNode) {
+							textNode.attr('id', '#' + patternDefinitions.markerText + idNode);
+						}
+						if (portIn) {
+							portIn.attr('id', '#' + patternDefinitions.markerPortIn + idNode);
+						}
+						if (portOut) {
+							portOut.attr('id', '#' + patternDefinitions.markerPortOut + idNode);
+						}
+
+						if (shapeIn) {
+							shapeIn.attr('id', '#' + patternDefinitions.markerShapeIn + idNode);
+							shapeIn.text('[*]');
+						}
+
+						if (shapeOut) {
+							shapeOut.attr('id', '#' + patternDefinitions.markerShapeOut + idNode);
+							shapeOut.text('[*]');
+						}
+
                         element.attr('id', 'id_' + idNode);
 
                         $scope.nodeData.portIn = portIn;
                         $scope.nodeData.portOut = portOut;
-
-                        textNode.text($scope.nodeData.name);
+						textNode.text($scope.nodeData.name);
+						// textNode[0].innerHTML = '<g transform="scale(' + '0.2' + ')"><tspan>' + textNode[0].innerHTML + '</tspan></g>';
                         textNode.addClass('unselectable');
 
                         nodeWatcher($scope, rectNode);
 						nodeEventsHandler($scope, element, rectNode, idNode);
                         portEventsHandler($scope, portIn, portOut, idNode);
+						shapeEvents($scope, shapeIn, shapeOut, idNode);
                         $scope.$emit('nodeInit', {
 							id: idNode
 						});
@@ -151,13 +176,6 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 				rectNode.removeClass("node_active");
 			}
 		});
-
-		scope.$watch(function () {
-			return coreService.param('scale');
-		}, function(newValue, oldValue) {
-			scale = newValue;
-		}, true);
-
 	}
 
 	function nodeEventsHandler(scope, element, rectNode, idNode) {
@@ -215,6 +233,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
         scope.$on('node:move_' + scope.nodeData.id, function (event, data) {
             element.attr('transform', "translate(" + data.pos.x + "," + data.pos.y + ")");
         });
+
 	}
 
 	function portEventsHandler(scope, portIn, portOut, idNode) {
@@ -262,6 +281,35 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 			});
 		}
 	}
+
+	function shapeEvents(scope, shapeIn, shapeOut, idNode) {
+		scope.$on('node:set_shapes_' + idNode, function (event, data) {
+			if (data.type === 'in' && shapeIn[0]) {
+				setShapes(shapeIn, data.shapes);
+			} else if (data.type === 'out' && shapeOut[0]) {
+                setShapes(shapeOut, data.shapes);
+			}
+
+        });
+	}
+
+	function setShapes(node, shapes) {
+        if (!shapes || shapes === 'Unknown')
+            return;
+        var text = '';
+        for (let a = 0; a < shapes.length; a ++) {
+            if (shapes[a])
+                text += shapes[a] + ',';
+            else
+                text += '*,';
+        }
+        if (shapes.length > 1)
+            shapes.length -= 1;
+        else
+            text += '*';
+        node.text('[' + text + ']');
+    }
+
 }
 
 
