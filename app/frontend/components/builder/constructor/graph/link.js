@@ -124,50 +124,33 @@ function link() {
 		element.attr('d', path);
 	}
 
-	function calculatePath(from, to) {
-		var ARC_OFFSET = 0.3;
+	function calculatePath(from, to, orientation = 'horizontal') {
+		var ARC_OFFSET = 0.5;
 		var ARC_MIN = 30;
 		var points = [];
 		var dx = to.x - from.x;
 		var dy = to.y - from.y;
 
 		var distance = Math.max(Math.sqrt(dx * dx + dy * dy) * ARC_OFFSET, ARC_MIN);
+
 		points.push(from);
-		points.push({x: from.x + distance, y: from.y});
-		points.push({x: to.x - distance, y: to.y});
+		if (orientation === 'horizontal') {
+			points.push({x: from.x + distance, y: from.y});
+			points.push({x: to.x - distance, y: to.y});
+		} else {
+			points.push({x: from.x, y: from.y  + distance});
+			points.push({x: to.x, y: to.y - distance});
+		}
 		points.push(to);
 
-		var linkFunction = d3.line()
-			.x(function(d) { return d.x; })
-			.y(function(d) { return d.y; })
-			.curve(d3.curveBasis);
-
-        // var line = bezierFourthOrder(points, 20);
-		return linkFunction(points);
-	}
-
-	function bezierFourthOrder(points, num)
-	{
-		var line = 'M';
+        var line = 'M';
 		if(points.length != 4)
 			return null;
-		var step = 1.00 / (num - 1);
 
-		for(let t= 0; t < 1.00; t += step) {
-			var point = Position.pos();
-			point.x = Math.pow(1.00 - t, 3) * points[0].x + 3.0 * t * Math.pow(1.00 - t, 2) * points[1].x +
-				3.0 * t * t *(1.00 - t) * points[2].x +
-				t * t * t * points[3].x;
-			point.y = Math.pow(1.00 - t, 3) * points[0].y +
-				3.0 * t * Math.pow(1.00 - t, 2) * points[1].y +
-				3.0 * t * t *(1.00 - t) * points[2].y +
-				t * t * t * points[3].y;
-
-            if (t > 0)
-                line += 'L';
-            line += point.x + ' ' + point.y + ' ';
-		}
-        line += 'L' + points[points.length - 1].x + ' ' + points[points.length - 1].y;
+		line += '' + points[0].x + ', ' + points[0].y +
+				 ' C' + points[1].x + ', ' + points[1].y +
+				 ' ' + points[2].x + ', ' + points[2].y +
+				 ' ' + points[3].x + ', ' + points[3].y;
 
 		return line;
 	}

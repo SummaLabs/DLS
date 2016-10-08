@@ -84,8 +84,8 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
                         $scope.nodeData.portIn = portIn;
                         $scope.nodeData.portOut = portOut;
-
-                        textNode.text($scope.nodeData.name);
+						textNode.text($scope.nodeData.name);
+						// textNode[0].innerHTML = '<g transform="scale(' + '0.2' + ')"><tspan>' + textNode[0].innerHTML + '</tspan></g>';
                         textNode.addClass('unselectable');
 
                         nodeWatcher($scope, rectNode);

@@ -157,7 +157,7 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 
             $scope.saveNetwork = function () {
                 networkDataService.saveNetwork($scope.network.name, $scope.network.description);
-              /*  var image = buildPreviewImage(networkDataService.getNetwork().layers, 150, 150);
+               /* var image = buildPreviewImage(networkDataService.getNetwork().layers, 150, 150);
                 var im = document.getElementById('img1');
                 im.setAttribute('src', image);*/
                 $mdDialog.hide();
@@ -187,11 +187,9 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 
     this.resetView = function (event) {
         self.svgControl.reset();
-/*        var image = buildPreviewImage(networkDataService.getNetwork().layers, 300, 300, 20);
+       /* var image = buildPreviewImage(networkDataService.getNetwork().layers, 300, 300, 20);
         var im = document.getElementById('img1');
         im.setAttribute('src', image);*/
-
-
     };
 
     function constructorListeners() {
@@ -301,7 +299,9 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
         }
 
         function setUpNetwork() {
+            // adaptNetworkPositions(networkDataService.getLayers(), 300, 300);
             self.svgControl.setLayers(networkDataService.getLayers());
+
         }
     }
     
@@ -370,5 +370,42 @@ function ConstructorController($mdDialog, $mdToast, $scope, $rootScope, networkD
 		var b64Start = 'data:image/svg+xml;base64,';
 		var image64 = b64Start + svg64;
 		return image64;
+    }
+
+    "use strict";
+    function adaptNetworkPositions(layers, maxWidth, maxHeight) {
+        iteration();
+        function iteration() {
+
+            let mustMoved = false;
+
+            do {
+                mustMoved = false;
+                for (let a = 0; a < layers.length; a++) {
+                    if (!layers[a].wires)
+                            continue;
+                    for (let w = 0; w < layers[a].wires.length; w ++) {
+
+                        for (let b = 0; b < layers.length; b++) {
+
+                            if (layers[a].wires[w] === layers[b].id) {
+                                let diff = layers[b].pos.y - layers[a].pos.y;
+
+                                if (diff > 0 && diff < maxHeight) {
+                                    mustMoved = true;
+                                    layers[b].pos.y = layers[a].pos.y + maxHeight;
+                                } else if (diff < 0 && diff > -maxHeight) {
+                                    mustMoved = true;
+                                    layers[a].pos.y = layers[b].pos.y + maxHeight;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            } while (mustMoved);
+        }
+        iteration();
+
     }
 }
