@@ -105,12 +105,12 @@
                 self.listDats = [];
                 self.chartData = function () {
                     if (self.selectedIndex >= 0) {
-                        return self.listDats[self.selectedIndex].plot;
+                        return self.takskMap[self.selectedIndex].plot;
                     }
                 };
                 self.curr = function () {
                     if (self.selectedIndex > -1) {
-                        return self.listDats[self.selectedIndex];
+                        return self.takskMap[self.selectedIndex];
                     }
                 };
                 self.doPrimaryAction = function ($event, $index) {
@@ -164,6 +164,11 @@
                         tasks[i].plot.data.rows = tasks[i].rows;
                     }
 
+                    self.takskMap = {};
+                    for(var i in tasks){
+                        var t = tasks[i]
+                        self.takskMap[t.id] = t;
+                    }
                     self.listDats = tasks;
                     $scope.$apply()
                 });

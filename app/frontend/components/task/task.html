@@ -22,7 +22,7 @@
                 <md-list>
                     <md-list-item flex layout="row"
                                   class="secondary-button-padding"
-                                  ng-click="$ctrl.doPrimaryAction($event,$index)"
+                                  ng-click="$ctrl.doPrimaryAction($event,dat.id)"
                                   ng-repeat="dat in $ctrl.listDats | filter:$ctrl.stateFilter | orderBy : 'id'">
                         <div ng-switch="dat.basetype">
                             <div ng-switch-when="model">
