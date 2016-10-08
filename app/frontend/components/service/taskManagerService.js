@@ -9,7 +9,7 @@ function TaskManagerService($rootScope, $http) {
 
     var socket = io.connect('http://' + document.domain + ':' + location.port);
     socket.on('task_monitor', function (msg) {
-        console.log(msg);
+        // console.log(msg);
         var tasks = JSON.parse(msg);
         $rootScope.$emit(status.UPDATE, tasks);
     });

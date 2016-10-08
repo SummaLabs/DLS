@@ -24,7 +24,7 @@
                                   class="secondary-button-padding"
                                   ng-click="$ctrl.doPrimaryAction($event,$index)"
                                   ng-repeat="dat in $ctrl.listDats | filter:$ctrl.stateFilter | orderBy : 'id'">
-                        <div ng-switch="dat.type">
+                        <div ng-switch="dat.basetype">
                             <div ng-switch-when="model">
                                 <img width="64px" height="64px" src="/frontend/assets/icon/img/img-model1.png" />
                             </div>
@@ -35,14 +35,14 @@
                         <div class="md-list-item-text" flex="80">
                             <div ng-show="dat.state=='finished'">
                                 <div layout="col" layout-align="center center">
-                                    <h3>{{dat.text}}</h3>
+                                    <h3>{{dat.text}}</h3> ({{ dat.id }})
                                 </div>
                             </div>
                             <div ng-show="dat.state!='finished'">
                                 <div layout="row" layout-align="center center">
                                     <div flex="50">
                                         <div layout="column" layout-align="center center">
-                                            <h4>{{dat.text}}</h4>
+                                            <h4>{{dat.text}}</h4> ({{ dat.id }})
                                         </div>
                                     </div>
                                     <md-progress-linear value="{{dat.progress}}" flex="50"></md-progress-linear>
@@ -73,7 +73,7 @@
                     <md-list flex>
                         <md-list-item layout="row" layout-align="center center">
                             <div flex="100" layout="column" layout-align="center center">
-                                <h3>Current Item: {{$ctrl.curr().text}}</h3>
+                                <h3>Current Item: {{$ctrl.curr().text}}</h3> ({{ $ctrl.curr().id }})
                             </div>
                             <md-button 
                                        class="md-raised md-primary"
@@ -83,8 +83,8 @@
                         </md-list-item>
                         <md-divider></md-divider>
                         <md-list-item layout="row" layout-align="center">
-                             <div ng-switch="$ctrl.curr().type">
-                                <div ng-switch-when="model">
+                             <div ng-switch="$ctrl.curr().basetype">
+                                <div ng-switch-when="model" >
                                     <img width="140px" height="140px" src="/frontend/assets/icon/img/img-model1.png" />
                                 </div>
                                 <div ng-switch-default="">
