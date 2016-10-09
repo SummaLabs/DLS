@@ -49,8 +49,8 @@ function DraggableCtrl($scope, $element, $rootScope, $compile, $templateCache, $
 
         event.target.style.opacity = '0.8';
         event.dataTransfer.effectAllowed = 'move';
-        if(dragIcon.src = event.srcElement.attributes['data-icon']){
-            dragIcon.src = event.srcElement.attributes['data-icon'].value;
+        if(dragIcon.src = event.target.attributes['data-icon']){
+            dragIcon.src = event.target.attributes['data-icon'].value;
         }
 		event.dataTransfer.setDragImage(dragIcon, elemOffset.x, elemOffset.y);
 		event.dataTransfer.setData('text/html', this.innerHTML);
