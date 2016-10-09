@@ -3,6 +3,7 @@ import os
 import subprocess
 import logging
 import config
+from theano.sandbox.cuda import dnn
 
 logger = logging.getLogger("dls")
 cfg = config.Config()
@@ -70,12 +71,23 @@ def check_graphviz():
     return result
 
 
+def check_cudnn():
+    result  ={}
+    try:
+        result['available'] = dnn.dnn_available()
+    except:
+        result['available'] = False
+    return result
+
+
+
 def check_environment():
     """High level method. Returns Map with results of environment chech"""
     result =  {}
     result['packages'] = check_required_packages()
     result['cuda'] = check_cuda()
     result['graphvis'] = check_graphviz()
+    result['cudnn'] = check_cudnn()
     return result
 
 
