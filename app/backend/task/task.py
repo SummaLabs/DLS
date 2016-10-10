@@ -58,8 +58,13 @@ class Task:
         stt['text'] = self.text
         stt['type'] = self.type
         stt['basetype'] = self.basetype
-        stt['rows'] = self.rows
+        #stt['rows'] = self.rows
         stt['state'] = self.state
+        return stt
+
+    def detailed_status(self):
+        stt = self.status()
+        stt['rows'] = self.rows
         return stt
 
     def init_logger(self):

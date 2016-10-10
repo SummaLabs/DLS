@@ -50,6 +50,6 @@ from app.backend.core import datasets
 from app.backend.core.datasets import api
 from app.backend.core import models
 from app.backend.core.models import api
-from app.backend.device import socket
+from app.backend.device import sockets
 
 

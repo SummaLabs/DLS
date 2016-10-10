@@ -180,7 +180,7 @@ class DatasetImage2dInfo:
     def getMeanImageDataRaw(self):
         with open(self.pathMeanImage, 'r') as f:
             return f.read()
-    def getRawImageFromDB(self, ptype, imdIdx):
+    def getRawImageFromDB(self, ptype, imdIdx, isNumpyArray=False):
         if ptype in self.dbIndex.keys():
             tdbIndex = self.dbIndex[ptype]
             pathLMDB = tdbIndex['pathdb']
@@ -189,10 +189,13 @@ class DatasetImage2dInfo:
                     tidx = int(imdIdx)
                     tkey = tdbIndex['keys'][tidx]
                     timg = ImageTransformer2D.decodeLmdbItem2Image(txn.get(tkey))
-                    strBuff = StringIO()
-                    buffImg=Image.fromarray(timg)
-                    buffImg.save(strBuff, format='JPEG')
-                    return strBuff.getvalue()
+                    if isNumpyArray:
+                        return timg
+                    else:
+                        strBuff = StringIO()
+                        buffImg=Image.fromarray(timg)
+                        buffImg.save(strBuff, format='JPEG')
+                        return strBuff.getvalue()
     def getDbRangeInfo(self, ptype, labelIdx, idxFrom, idxTo):
         if ptype in self.dbIndex.keys():
             tdbIndex    = self.dbIndex[ptype]
