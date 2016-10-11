@@ -98,9 +98,10 @@
                                 <!--{{ctrl.curr()}}-->
                             <!--</h2>-->
                         <!--</md-list-item>-->
-                        <md-list-item layout="row" layout-align="center center">
+                         
+                        <md-list-item layout="row">
                             <!--<div flex="100" ng-cloak>-->
-                                <div flex ng-cloak google-chart chart="$ctrl.chartData()" style="height: 300px"></div>
+                              <task-view task-type="{{$ctrl.curr().type}}" task-id="{{$ctrl.selectedIndex}}" style="width: 100%"></task-view> 
                             <!--</div>-->
                         </md-list-item>
                         <md-divider></md-divider>

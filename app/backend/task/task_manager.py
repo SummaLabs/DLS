@@ -58,6 +58,11 @@ class TaskManager:
         return task_data
 
 
+    def task_info(self, id):
+        t = self.tasks[int(id)]
+        return t.detailed_status()
+
+
 # Some simple testing
 if __name__ == '__main__':
 

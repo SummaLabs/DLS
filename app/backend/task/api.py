@@ -45,3 +45,10 @@ def get_log(task_id):
     log_text = log_file.read()
     return Response(log_text, mimetype='text/plain')
 
+
+# Get Task's Custom View Data
+@task.route('/info/<path:task_id>', methods=["GET"])
+def get_task_data(task_id):
+    info = tm.task_info(task_id)
+    return Response(json.dumps(info), mimetype='text/plain')
+

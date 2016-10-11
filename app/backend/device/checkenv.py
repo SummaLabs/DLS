@@ -75,6 +75,8 @@ def check_cudnn():
     result  ={}
     try:
         result['available'] = dnn.dnn_available()
+        if len(dnn.version()) > 0:
+            result['version'] = str(dnn.version()[0])
     except:
         result['available'] = False
     return result
