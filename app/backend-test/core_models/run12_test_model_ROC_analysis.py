@@ -7,6 +7,8 @@ import glob
 import pprint
 import json
 
+from datetime import datetime
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import skimage.io as skio
@@ -18,7 +20,7 @@ from app.backend.core.models.keras_trainer_v3 import KerasTrainer as ModelProces
 from app.backend.core.datasets.api import datasetWatcher
 from app.backend.core.models.api import modelsWatcher
 import app.backend.core.utils as dlsutils
-from app.backend.core.models.cfg import PREFIX_EVAL_ROC, CFG_EVAL_ROC, PREFIX_EVAL_ROC_TABLE, PREFIX_EVAL_ROC_ROC
+from app.backend.core.models.cfg import PREFIX_EVAL_ROC_DIR, CFG_EVAL_ROC, PREFIX_EVAL_ROC_TABLE, PREFIX_EVAL_ROC_ROC
 
 dirWithImages='../../../data-test/test-inference'
 
@@ -45,21 +47,14 @@ if __name__ == '__main__':
                 continue
                 # raise Exception('The number of model labels (%d) must be equal number of dataset labels (%d)' % (numLabelsDb, numLabelsModel))
             # (2) Prepare directory with output
-            evalId = dlsutils.getUniqueTaskId(PREFIX_EVAL_ROC)
+            evalId = dlsutils.getUniqueTaskId(PREFIX_EVAL_ROC_DIR)
             dirEvalROC = os.path.join(modelInfo.dirModel, evalId)
             dlsutils.makeDirIfNotExists(dirEvalROC)
-            foutCfg=os.path.join(dirEvalROC, CFG_EVAL_ROC)
-            tmpCfg = {
-                'id':           evalId,
-                'modelId':      modelInfo.getId(),
-                'datasetId':    dbInfo.getId()
-            }
-            with open(foutCfg, 'w') as f:
-                f.write(json.dumps(tmpCfg,indent=4))
             # (4) Iterate over dataset-type (train and val)
-            dbTypes=dbInfo.dbIndex.keys()
+            dbTypes = dbInfo.dbIndex.keys()
             plt.figure()
             lstLegend=[]
+            rocResult={}
             for dbi,dbType in enumerate(dbTypes):
                 tdataIndex = dbInfo.dbIndex[dbType]
                 tnumImages = len(tdataIndex['keys'])
@@ -78,13 +73,36 @@ if __name__ == '__main__':
                 foutTableCSV  = os.path.join(dirEvalROC, '%s_%s.csv' % (PREFIX_EVAL_ROC_TABLE, dbType) )
                 csvData.to_csv(foutTableCSV, index=None)
                 #
+                tmpListROCs=[]
                 for clsId,clsName in enumerate(dbInfo.labels):
                     fpr, tpr, thresholds = sklearn.metrics.roc_curve(tdataIndex['lblid'], arrProb[:, clsId], pos_label=clsId)
                     rocScore = roc_auc_score(tdataIndex['lblid']==clsId, arrProb[:, clsId])
                     tstr = '%s: Class=%s, AUC=%0.3f' % (dbType, clsName, rocScore)
                     lstLegend.append(tstr)
                     plt.plot(fpr, tpr)
+                    #
+                    tmpClsROC={
+                        'name':      clsName,
+                        'auc':       rocScore,
+                        'rocPoints': [{'x': xx, 'y': yy} for xx,yy in zip(fpr,tpr)]
+                    }
+                    tmpListROCs.append(tmpClsROC)
+                rocResult[dbType] = tmpListROCs
             plt.title('Model [%s] trained on: %s, modelId=%s' % (modelInfo.getName(), modelInfo.getInfo()['dataset-name'], modelInfo.getId()))
             plt.grid(True)
             plt.legend(lstLegend)
+            # (5) Export ROC-config files in JSON:
+            foutCfg = os.path.join(dirEvalROC, CFG_EVAL_ROC)
+            tmpCfg = {
+                'id':           evalId,
+                'model-id':     modelInfo.getId(),
+                'model-name':   modelInfo.getName(),
+                'dataset-id':   dbInfo.getId(),
+                'dataset-name': dbInfo.getName(),
+                'dbtypes':      dbTypes,
+                'date':         datetime.now().strftime('%Y.%m.%d-%H:%M:%S'),
+                'roc':          rocResult
+            }
+            with open(foutCfg, 'w') as f:
+                f.write(json.dumps(tmpCfg, indent=4))
     plt.show()
