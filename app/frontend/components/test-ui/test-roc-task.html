@@ -1,0 +1,39 @@
+<md-list>
+    <md-subheader class="md-primary">Models:</md-subheader>
+    <md-select ng-model="$ctrl.selectedModel">
+        <md-option ng-value="selectedModel" ng-repeat="selectedModel in $ctrl.listModels">
+            <strong>{{selectedModel.info.name}}</strong> ({{selectedModel.info.id}}), dataset: {{selectedModel.info['dataset-name']}}
+        </md-option>
+    </md-select>
+    <md-checkbox ng-model="$ctrl.showDebugModel">Show Model Debug Info</md-checkbox>
+    <h3 ng-if="$ctrl.showDebugModel">
+        <md-list>
+            <md-list-item ng-repeat="(kk,vv) in $ctrl.selectedModel.info"><h4>{{kk}} : <strong>{{vv}}</strong></h4></md-list-item>
+            <div style="background: lightsalmon">
+                <h3>ROC-Results ID's:</h3>
+                <md-list-item ng-repeat="kk in $ctrl.selectedModel.rocid"><h4><strong>{{kk}}</strong></h4></md-list-item>
+            </div>
+        </md-list>
+        <md-divider></md-divider>
+    </h3>
+
+    <md-subheader class="md-primary">Datasets:</md-subheader>
+    <md-select ng-model="$ctrl.selectedDataset">
+        <md-option ng-value="selectedDataset" ng-repeat="selectedDataset in $ctrl.listDatasets">
+            <strong>{{selectedDataset.name}}</strong> : ({{selectedDataset.id}})
+        </md-option>
+    </md-select>
+    <md-checkbox ng-model="$ctrl.showDebugDataset">Show Dataset Debug Info</md-checkbox>
+    <h3 ng-if="$ctrl.showDebugDataset">
+        <md-list>
+            <md-list-item ng-repeat="(kk,vv) in $ctrl.selectedDataset.info"><h4>{{kk}} : <strong>{{vv}}</strong></h4></md-list-item>
+            <div style="background: lightsalmon">
+                <h3>Dataset shape:</h3>
+                <md-list-item ng-repeat="(kk,vv) in $ctrl.selectedDataset.shape"><h4>{{kk}} : <strong>{{vv}}</strong></h4></md-list-item>
+            </div>
+        </md-list>
+    </h3>
+    <md-divider></md-divider>
+    <md-button class="md-primary md-raised" ng-click="$ctrl.runTaskROC()">Start ROC-Analysis Task</md-button>
+
+</md-list>
