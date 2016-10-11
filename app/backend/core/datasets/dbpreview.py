@@ -125,6 +125,8 @@ class DatasetImage2dInfo:
                 }
     def getId(self):
         return self.dbId
+    def getName(self):
+        return self.cfg.getDBName()
     def toString(self):
         if self.isInitialized():
             tstr = '%s (%s)' % (self.cfg.getDBName(), self.getId())

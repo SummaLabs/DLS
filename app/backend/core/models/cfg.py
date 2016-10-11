@@ -9,7 +9,7 @@ CFG_SOLVER='solver_keras.json'
 CFG_EVAL_ROC='cfg.json'
 PREFIX_SNAPSHOT='snapshot'
 PREFIX_TASKS_DIR='mdltask'
-PREFIX_EVAL_ROC='eval_roc'
+PREFIX_EVAL_ROC_DIR= 'eval_roc'
 PREFIX_EVAL_ROC_TABLE='table'
 PREFIX_EVAL_ROC_ROC='roc'
 
