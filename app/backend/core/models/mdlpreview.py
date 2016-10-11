@@ -131,11 +131,13 @@ class ModelInfo:
         }
         listSnaphosts=glob.glob('%s/%s*.%s' % (self.dirModel, PREFIX_SNAPSHOT, EXT_MODEL_WEIGHTS))
         lstSnapshotsId=[os.path.splitext(os.path.basename(xx))[0] for xx in listSnaphosts]
+        lstIdROC=self.getListIdROC()
         self.cfgDict = {
             'info':      tmpCfg,
             'solver':    tmpSolverCfg,
             'snapshots': lstSnapshotsId,
-            'progress':  progressJson
+            'progress':  progressJson,
+            'rocid':     lstIdROC
         }
     def isInitialized(self):
         return (self.cfgDict is not None)
@@ -168,7 +170,18 @@ class ModelInfo:
     @checkInit
     def getConfigJson(self):
         return json.dumps(self.cfgDict, indent=4)
-    @checkInit
+    def getListIdROC(self):
+        tret = []
+        lstDirROC = glob.glob('%s/%s*' % (self.dirModel, PREFIX_EVAL_ROC_DIR))
+        tmplLen=len(PREFIX_EVAL_ROC_DIR)+1
+        for ll in lstDirROC:
+            fnROC = os.path.join(ll, CFG_EVAL_ROC)
+            if os.path.isfile(fnROC):
+                #FIXME: it is a good solution?
+                rocId = os.path.basename(ll)
+                if len(rocId)>tmplLen:
+                    tret.append(rocId[tmplLen:])
+        return tret
     def getDataROC(self):
         tret=[]
         lstDirROC=glob.glob('%s/%s*' % (self.dirModel, PREFIX_EVAL_ROC_DIR))
