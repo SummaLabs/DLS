@@ -1,8 +1,8 @@
 angular.module('solverLayer', [])
-    .service('solverLayer', [solverLayer]);
+    .service('solverLayer', [SolverLayer]);
 
-function solverLayer() {
-
+function SolverLayer() {
+    
     this.getLossFunctions = function () {
         return [
             {value: "mean_squared_error", text: "Mean Squared Error"},
@@ -32,15 +32,29 @@ function solverLayer() {
         ];
     };
 
-    this.getDefaultSettings = function () {
+    this.getDefault = function () {
         return {
-            "lossFunction": "categorical_crossentropy",
-            "epochsCount": 2048,
-            "snapshotInterval": 100,
-            "validationInterval": 100,
-            "batchSize": 1024,
-            "learningRate": 0.01,
-            "optimizer": "SGD"
+            "id": 0,
+            "name": "solver",
+            "layerType": 'solver',
+            "category": "output",
+            "params": {
+                "lossFunction": "categorical_crossentropy",
+                "epochsCount": 2048,
+                "snapshotInterval": 100,
+                "validationInterval": 100,
+                "batchSize": 1024,
+                "learningRate": 0.01,
+                "optimizer": "SGD"
+            }
         }
-    }
+    };
+    
+    this.getTemplatePath = function () {
+      return "frontend/components/layers/dense/layer_with_shapes_exp.svg";  
+    };
+    
+    this.getIconPath = function () {
+        return "frontend/assets/img/palette/solver.gif"
+    };
 }

@@ -1,6 +1,6 @@
 
 angular.module('palette')
-	.directive('menuToggle', [ '$timeout', '$mdUtil', function($timeout, $mdUtil) {
+	.directive('menuToggle', ['layerService', function(layerService) {
 		return {
 			scope: {
 				section: '='
@@ -13,6 +13,10 @@ angular.module('palette')
 					state = !state;
 					$scope.section.state = state;
 				};
+
+				$scope.getIconPath = function (type) {
+					return layerService.getIconByType(type);
+				}
 			}
 		};
-	}])
+	}]);

@@ -1,5 +1,5 @@
 
-function SchemaController($scope, $rootScope, $element, coreService, appConfig, $compile) {
+function SchemaController($scope, $rootScope, $element, coreService, appConfig, $compile, layerService) {
     const state = {
         DEFAULT: 0,
         SELECTION: 1,
@@ -171,7 +171,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 				var correctPos = { x: (pos.x + (viewX ) - data.offset.x) / self.scale, y: (pos.y + (viewY) - data.offset.y) / self.scale};
 				if (correctPos.x > 0 && correctPos.y > 0) {
 					$scope.$apply( function() {
-						addNode(data.node.name, data.node.layerType, data.node.category, data.node.template, correctPos)
+                        var templatePath = layerService.getTemplatePathByType(data.node.layerType);
+						addNode(data.node.name, data.node.layerType, data.node.category, templatePath, correctPos)
 					});
 				}
 			}

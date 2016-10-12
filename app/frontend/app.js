@@ -39,7 +39,8 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'taskView',
     'taskTest',
     'taskModel',
-    'taskDataset'
+    'taskDataset',
+    'layerService'
 ]);
 
 
