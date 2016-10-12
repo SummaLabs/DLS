@@ -3,6 +3,7 @@ from app.backend.task.roc_analysis_task import ROCAnalysisTask
 
 from task_db_image2d_cls import TaskDBImage2DBuilder
 from task_model_image2d_cls import TaskModelTeainImage2DCls
+from task_roc_image2d_cls import TaskROCImage2DCls
 
 
 class TaskFactory:
@@ -20,5 +21,7 @@ class TaskFactory:
             return TaskDBImage2DBuilder(params)
         elif type == 'model-train-image2d-cls':
             return TaskModelTeainImage2DCls(params)
+        elif type == 'roc-image2d-cls':
+            return TaskROCImage2DCls(params)
         else:
             return NotImplemented
