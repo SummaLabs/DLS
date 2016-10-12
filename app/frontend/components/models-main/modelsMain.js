@@ -19,7 +19,8 @@
                                 var info = model.info;
                                 self.models.push({
                                     'name': info.name,
-                                    'network': "Test Network",
+                                    'id': info.id,
+                                    'network': "Test Network",//TODO Add network name to description of trained model
                                     'dataSet': info['dataset-name'],
                                     'type': info.type,
                                     'date': info.date.str + " " + info.time.str,

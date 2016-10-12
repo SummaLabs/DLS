@@ -23,7 +23,7 @@
                         if (value) {
                             element.empty();
                             var modelJson = JSON.parse(scope.model);
-                            var template = buildTemplate(modelJson.type, modelJson.name);
+                            var template = buildTemplate(modelJson.type, modelJson.id);
                             var compiled = $compile(template)(scope);
                             element.append(compiled);
                         }
