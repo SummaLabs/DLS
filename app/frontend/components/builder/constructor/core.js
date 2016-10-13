@@ -30,7 +30,7 @@ function CoreService() {
     };
 }
 
-function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scope, $rootScope, taskManagerService, networkDataService, networkLayerService, modelsService, coreService, appConfig) {
+function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scope, $rootScope, taskManagerService, networkDataService, networkLayerService, modelsService, coreService, appConfig, layerService) {
     var self = this;
     self.svgWidth = appConfig.svgDefinitions.areaWidth;
     self.svgHeight = appConfig.svgDefinitions.areaHeight;
@@ -239,7 +239,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
         $scope.$on('graph:addNode', function (event, node) {
             console.log('graph:addNode');
             var layers = networkDataService.getLayers();
-            var layer = networkLayerService.getLayerByType(node.layerType);
+            var layer = layerService.getLayerByType(node.layerType);
             layers.push(layer);
             layer.id = node.id;
             layer.name = node.name;

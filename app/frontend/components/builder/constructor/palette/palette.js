@@ -103,9 +103,8 @@ function createTree(categories, layers) {
 					name: item.name,
 					layerType: item.layerType,
 					id: ++idCounter,
-					template: item.template,
 					params: item.params,
-                    icon: item.icon
+					category: item.category
 				});
 			}
 		});
