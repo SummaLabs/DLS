@@ -10,7 +10,14 @@ class Task:
     __metaclass__ = abc.ABCMeta
 
     """Base task class.
-    Extend this class if you need custom task behaviour"""
+    Extend this class if you need custom task behaviour
+    Possible States:
+    - ready
+    - running
+    - finished
+    - killed
+    - failed
+    """
 
     alive = True
 
@@ -34,7 +41,9 @@ class Task:
         self.logger.info('starting task ' + str(self.id))
         try:
             self.perform()
-        except IOError:
+        except Exception:
+            self.logger.info('task ' + str(self.id) + ' failed')
+            self.state = 'failed'
             print "interrupted"
 
     @abstractmethod
