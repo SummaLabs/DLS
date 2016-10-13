@@ -10,23 +10,12 @@
                     doOnSubmit: '&'
                 },
                 templateUrl: "frontend/components/layers/convol/convol-editor.html",
-                controller: function ($scope, networkDataService) {
+                controller: function ($scope, networkDataService, convolutionLayer) {
                     this.$onInit = function () {
                         setUpLayerParams($scope, networkDataService);
-                        $scope.activationFunctionList = [
-                            {value: "softplus", text: "SoftPlus"},
-                            {value: "softsign", text: "SoftSign"},
-                            {value: "relu", text: "ReLU"},
-                            {value: "tanh", text: "Tanh"},
-                            {value: "sigmoid", text: "Sigmoid"},
-                            {value: "hard_sigmoid", text: "Hard Sigmoid"},
-                            {value: "linear", text: "Linear"}
-                        ];
+                        $scope.activationFunctionList = convolutionLayer.getActivationFunctions();
 
-                        $scope.subsamplingTypeList = [
-                            {value: "max_pooling", text: "Max Pooling"},
-                            {value: "average_pooling", text: "Average Pooling"}
-                        ];
+                        $scope.subsamplingTypeList = convolutionLayer.getSubSamplingTypes();
 
                         $scope.onSubmit = function () {
                             var layer = networkDataService.getLayerById($scope.layerId);

@@ -8,22 +8,12 @@ angular
             doOnSubmit: '&'
         },
         templateUrl: "frontend/components/layers/data/input-data-editor.html",
-        controller: function ($scope, networkDataService, networkLayerService, dbinfoService) {
+        controller: function ($scope, networkDataService, layerService, dbinfoService, dataLayer) {
             this.$onInit = function () {
-                setUpLayerParams($scope, networkDataService, networkLayerService);
-                $scope.datasetTypeList = [
-                    {value: "Image", text: "Image"},
-                    {value: "CSV", text: "CSV"}
-                ];
+                setUpLayerParams($scope, networkDataService, layerService);
+                $scope.datasetTypeList = dataLayer.getDataTypes();
                 $scope.selectedDB = null;
                 $scope.datasetIdList = null;
-
-                // $scope.datasetIdList = [
-                //     {value: "load1", text: "load1"},
-                //     {value: "load2", text: "load2"},
-                //     {value: "load3", text: "load3"},
-                //     {value: "load4", text: "load4"}
-                // ];
 
                 dbinfoService.getDatasetsInfoStatList().then(
                     function successCallback(response) {
@@ -60,10 +50,10 @@ angular
                         layer.params.datasetId = $scope.selectedDB.id;
                 }
 
-                function setUpLayerParams($scope, networkDataService, networkLayerService) {
+                function setUpLayerParams($scope, networkDataService, layerService) {
                     var currentLayer = networkDataService.getLayerById($scope.layerId);
                     var savedParams = currentLayer.params;
-                    var defaultParams = networkLayerService.getLayerByType(currentLayer.name).params;
+                    var defaultParams = layerService.getLayerByType(currentLayer.layerType).params;
                     setUpParam($scope, savedParams, defaultParams, 'datasetType');
                     setUpParam($scope, savedParams, defaultParams, 'datasetId');
                 }

@@ -9,18 +9,10 @@
                     doOnSubmit: '&'
                 },
                 templateUrl: "frontend/components/layers/dense/dense-editor.html",
-                controller: function ($scope, networkDataService) {
+                controller: function ($scope, networkDataService, denseLayer) {
                     this.$onInit = function () {
                         setUpLayerParams($scope, networkDataService);
-                        $scope.activationFunctionList = [
-                            {value: "softplus", text: "SoftPlus"},
-                            {value: "softsign", text: "SoftSign"},
-                            {value: "relu", text: "ReLU"},
-                            {value: "tanh", text: "Tanh"},
-                            {value: "sigmoid", text: "Sigmoid"},
-                            {value: "hard_sigmoid", text: "Hard Sigmoid"},
-                            {value: "linear", text: "Linear"}
-                        ];
+                        $scope.activationFunctionList = denseLayer.getActivationFunctions();
 
                         $scope.onSubmit = function () {
                             var layer = networkDataService.getLayerById($scope.layerId);

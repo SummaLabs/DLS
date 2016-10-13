@@ -30,7 +30,7 @@ function CoreService() {
     };
 }
 
-function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scope, $rootScope, taskManagerService, networkDataService, networkLayerService, modelsService, coreService, appConfig, layerService) {
+function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scope, $rootScope, taskManagerService, networkDataService, modelsService, coreService, appConfig, layerService) {
     var self = this;
     self.svgWidth = appConfig.svgDefinitions.areaWidth;
     self.svgHeight = appConfig.svgDefinitions.areaHeight;
