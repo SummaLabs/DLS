@@ -75,108 +75,69 @@ angular.module('dlsApp')
         $stateProvider
         .state('networks', {
             url: "/networks",
-            template: "<network-main></network-main>"
+            template: "<network-main></network-main>",
+            controller: function ($rootScope) {
+                $rootScope.tabIndex = 0;
+            }
         }).state('designer', {
             url: "/designer",
-            template: "<constructor  style='height:100%;'></constructor>"
+            template: "<constructor  style='height:100%;'></constructor>",
+            controller: function ($rootScope) {
+                $rootScope.tabIndex = 1;
+            }
         }).state('models', {
             url: "/models",
             template: "<model-main></model-main>",
             data: {
                 displayName: 'Models'
+            },
+            controller: function ($rootScope) {
+                $rootScope.tabIndex = 2;
             }
         }).state('classify-image', {
             url: "/models/classify-image",
             template: "<classify-image></classify-image>",
             data: {
                 displayName: 'Classify Image'
+            },
+            controller: function ($rootScope) {
+
             }
         }).state('data-set', {
             url: "/data-set",
-            template: "<main-data-set></main-data-set>"
-        })/*.state('preview', {
-            url: "/preview",
-            template: "<dataset-image2d-preview></dataset-image2d-preview>"
-        })*/.state('data-set-builder', {
+            template: "<main-data-set></main-data-set>",
+            controller: function ($rootScope) {
+                $rootScope.tabIndex = 3;
+            }
+        }).state('data-set-builder', {
             url: "/data-set-builder",
-            template: "<dataset-builder></dataset-builder>"
+            template: "<dataset-builder></dataset-builder>",
+            controller: function ($rootScope) {
+                $rootScope.tabIndex = 4;
+            }
         }).state('file-manager', {
             url: "/file-manager",
-            template: "<angular-filemanager></angular-filemanager>"
+            template: "<angular-filemanager></angular-filemanager>",
+            controller: function ($rootScope) {
+                $rootScope.tabIndex = 5;
+            }
         }).state('task', {
             url: "/task",
-            template: "<task></task>"
+            template: "<task></task>",
+            controller: function ($rootScope) {
+                $rootScope.tabIndex = 6;
+            }
         }).state('settings', {
             url: "/settings",
-            template: "<settings></settings>"
+            template: "<settings></settings>",
+            controller: function ($rootScope) {
+                $rootScope.tabIndex = 7;
+            }
         });
     }).controller('mainCtrl', function($rootScope, $scope, $location) {
-
-    // $rootScope.$on('$stateChangeSuccess',
-    //     function (event, toState, toParams, fromState, fromParams) {
-    //         if (fromState.name == '') {
-    //             switch (toState.name) {
-    //                 case "networks":
-    //                     $scope.selectedIndex = 0;
-    //                     break;
-    //                 case "designer":
-    //                     $scope.selectedIndex = 1;
-    //                     break;
-    //                 case "models":
-    //                     $scope.selectedIndex = 2;
-    //                     break;
-    //                 case "data-set":
-    //                     $scope.selectedIndex = 3;
-    //                     break;
-    //                 case "preview":
-    //                     $scope.selectedIndex = 4;
-    //                     break;
-    //                 case "data-set-builder":
-    //                     $scope.selectedIndex = 5;
-    //                     break;
-    //                 case "file-manager":
-    //                     $scope.selectedIndex = 6;
-    //                     break;
-    //                 case "settings":
-    //                     $scope.selectedIndex = 7;
-    //                     break;
-    //             }
-    //         }
-    //     }
-    // );
-    //
-    // $scope.$watch('selectedIndex', function (current, old) {
-    //     if (current != null && old != null) {
-    //         switch (current) {
-    //             case 0:
-    //                 $location.url("/networks");
-    //                 break;
-    //             case 1:
-    //                 $location.url("/designer");
-    //                 break;
-    //             case 2:
-    //                 $location.url("/models");
-    //                 break;
-    //             case 3:
-    //                 $location.url("/data-set");
-    //                 break;
-    //             case 4:
-    //                 $location.url("/preview");
-    //                 break;
-    //             case 5:
-    //                 $location.url("/data-set-builder");
-    //                 break;
-    //             case 6:
-    //                 $location.url("/file-manager");
-    //                 break;
-    //             case 7:
-    //                 $location.url("/settings");
-    //                 break;
-    //         }
-    //     }
-    // });
-    //
-    // $scope.$on('switchTab', function (event, data) {
-    //         $scope.selectedIndex = data.id;
-    // });
+        $rootScope.tabIndex = 0;
+        $scope.selectedIndex = 0;
+        $rootScope.$watch('tabIndex', function(newValue) {
+            $scope.selectedIndex = newValue;
+		});
     });

@@ -9,6 +9,7 @@
                 selected:'<'
             },
             controller: function (modelService, modelsService) {
+
                 var self = this;
                 this.$onInit = function () {
                     self.models = [];

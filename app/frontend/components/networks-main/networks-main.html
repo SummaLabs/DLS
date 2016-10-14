@@ -1,3 +1,4 @@
+<!--
 <md-list ng-cloak>
     <md-subheader class="md-no-sticky">Default Templates</md-subheader>
     <md-list-item ng-repeat="network in $ctrl.networkTemplates">
@@ -11,4 +12,90 @@
         <md-button class="md-secondary" ng-click="$ctrl.removeNetworkByName($event, network)">Delete</md-button>
     </md-list-item>
 </md-list>
+-->
+
+<div layout="column">
+    <div flex layout="row" layout-wrap ng-cloak>
+        <md-tabs class="md-default" flex md-dynamic-height md-border-bottom md-autoselect
+                 md-center-tabs="true" style="padding-top: 16px">
+            <md-tab class="unselectable">
+                <md-tab-label>
+                    <md-icon md-font-library="material-icons" aria-label="dashboard">dashboard</md-icon>
+                    <strong>Grid View</strong>
+                </md-tab-label>
+                <md-tab-body>
+                    <div class='md-padding' layout="row" layout-wrap>
+                        <md-card ng-repeat="network in $ctrl.savedNetworks" class="md-whiteframe-8dp network-list-card">
+                            <img ng-src="{{network.preview}}" class="md-card-image md-whiteframe-2dp" alt="preview">
+                            <md-card-content>
+                                <h4>
+                                    {{network.name}}
+                                </h4>
+                                <p>
+                                    <strong>Layers: </strong>{{network.size}}
+                                </p>
+                            </md-card-content>
+                          <div class="md-actions" layout="row" layout-align="end center">
+                            <md-button class="" ng-click="$ctrl.createOpenNetworkDialog($event, network)">
+                                <md-icon md-font-library="material-icons" aria-label="show">visibility</md-icon>
+                                Open In Builder
+                            </md-button>
+                            <md-button class="md-warn" ng-click="$ctrl.removeNetworkByName($event, network)">
+                                <md-icon md-font-library="material-icons" aria-label="delete">delete</md-icon>
+                                Delete
+                            </md-button>
+                          </div>
+                        </md-card>
+                    </div>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab class="unselectable">
+                <md-tab-label>
+                    <md-icon md-font-library="material-icons" aria-label="view_list">view_list</md-icon>
+                    <strong>List View</strong>
+                </md-tab-label>
+                <md-tab-body>
+                    <div layout="column" flex="80" flex-offset="10" ng-cloak>
+                        <md-list>
+                            <md-list-item flex layout="row" ng-repeat="network in $ctrl.savedNetworks"
+                                          class="md-whiteframe-1dp" layout-padding>
+                                <div layout="column" flex>
+                                    <div layout="row" class = "network-list">
+                                        <!--<md-icon md-font-library="material-icons"
+                                                 aria-label="$ctrl.items['{{ db.type }}'].name" class="avatar">
+                                            {{ $ctrl.items[ db.type].icon }}
+                                        </md-icon>-->
+                                        <div layout="column" flex>
+                                            <div layout="row">
+                                                <h4>
+                                                    {{ network.name }}
+                                                </h4>
+                                            </div>
+
+                                            <md-chips>
+                                                <md-chip class="dbpreview-chip-size-main">Layers: {{network.size}}</md-chip>
+                                            </md-chips>
+                                        </div>
+
+                                        <md-button class="" ng-click="$ctrl.createOpenNetworkDialog($event, network)">
+                                            <md-icon md-font-library="material-icons" aria-label="show">visibility</md-icon>
+                                            Open In Builder
+                                        </md-button>
+                                        <md-button class="md-warn" ng-click="$ctrl.removeNetworkByName($event, network)">
+                                            <md-icon md-font-library="material-icons" aria-label="delete">delete</md-icon>
+                                            Delete
+                                        </md-button>
+                                    </div>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-tab-body>
+            </md-tab>
+        </md-tabs>
+    </div>
+
+</div>
+
 
