@@ -8,7 +8,8 @@
                 models: '<',
                 selected:'<'
             },
-            controller: function (modelService) {
+            controller: function (modelService, $rootScope) {
+
                 var self = this;
                 this.$onInit = function () {
                     self.models = [];

@@ -32,6 +32,7 @@ function CoreService() {
 
 function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scope, $rootScope, taskManagerService, networkDataService, networkLayerService, modelsService, coreService, appConfig) {
     var self = this;
+
     self.svgWidth = appConfig.svgDefinitions.areaWidth;
     self.svgHeight = appConfig.svgDefinitions.areaHeight;
     self.svgControl = {};
@@ -192,10 +193,10 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
             };
 
             $scope.saveNetwork = function () {
+
+                var image = networkDataService.buildPreviewImage(networkDataService.getNetwork().layers, 150, 150, 20);
+                networkDataService.getNetwork().preview = image;
                 networkDataService.saveNetwork($scope.network.name, $scope.network.description);
-               /* var image = buildPreviewImage(networkDataService.getNetwork().layers, 150, 150);
-                var im = document.getElementById('img1');
-                im.setAttribute('src', image);*/
                 $mdDialog.hide();
             };
 
@@ -223,9 +224,6 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
 
     this.resetView = function (event) {
         self.svgControl.reset();
-       /* var image = buildPreviewImage(networkDataService.getNetwork().layers, 300, 300, 20);
-        var im = document.getElementById('img1');
-        im.setAttribute('src', image);*/
     };
 
     function constructorListeners() {
@@ -339,73 +337,6 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
             self.svgControl.setLayers(networkDataService.getLayers());
 
         }
-    }
-    
-    function buildPreviewImage(layers, wh, ht, margin) {
-
-        var x_min = Number.MAX_VALUE;
-        var x_max = Number.MIN_VALUE;
-        var y_min = Number.MAX_VALUE;
-        var y_max = Number.MIN_VALUE;
-
-        layers.forEach(function (node) {
-            x_min = Math.min(x_min, node.pos.x);
-            y_min = Math.min(y_min, node.pos.y);
-            x_max = Math.max(x_max, node.pos.x);
-            y_max = Math.max(y_max, node.pos.y);
-        });
-
-        var width = x_max - x_min;
-        var height = y_max - y_min;
-        if (width < 1)
-            width = 1;
-        if (height < 1)
-            height = 1;
-
-        var scaleX = (wh - (margin * 2)) / width;
-        var scaleY = (ht - (margin * 2)) / height;
-        var offsetX = margin - x_min * scaleX;
-        var offsetY = margin - y_min * scaleY;
-
-        var svg = document.createElement('svg');
-        svg.setAttribute('width', wh);
-        svg.setAttribute('height', ht);
-        svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-
-        var html = '';
-        layers.forEach(function (layer_from) {
-            if (layer_from.wires)
-                layer_from.wires.forEach(function (node_id) {
-                    for (let a = 0; a < layers.length; a++) {
-                        if (layers[a].id == node_id) {
-                            html += '<line x1="' + (offsetX + layer_from.pos.x * scaleX) + '"' +
-                                'y1="' + (offsetY + layer_from.pos.y * scaleY) + '"' +
-                                'x2="' + (offsetX + layers[a].pos.x * scaleX) + '"' +
-                                'y2="' + (offsetY + layers[a].pos.y * scaleY) + '"' +
-                                'stroke="blue" stroke-width="1"></line>';
-                            break;
-                        }
-                    }
-                });
-        });
-
-        var radius = 10 * scaleX;
-        if (radius < 2)
-            radius = 2;
-        layers.forEach(function (node) {
-            html += '<circle r="' + radius + '" ' +
-                'cx="' + (offsetX + node.pos.x * scaleX) + '" ' +
-                'cy="' + (offsetY + node.pos.y * scaleY) + '" ' +
-                'style="fill:#ff0000;fill-opacity:1;stroke:blue;stroke-width:0.5;stroke-opacity:1"></circle>';
-        });
-
-        svg.innerHTML = html;
-		var xml = new XMLSerializer().serializeToString(svg);
-
-		var svg64 = btoa(xml);
-		var b64Start = 'data:image/svg+xml;base64,';
-		var image64 = b64Start + svg64;
-		return image64;
     }
 
     "use strict";

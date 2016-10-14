@@ -11,6 +11,7 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService'])
             currentDbInfo:  '<'
         },
         controller: function ($scope, $rootScope, $mdDialog, $timeout, appConfig, dbinfoService) {
+
             var self = this;
             self.$onInit = function () {
                 dbinfoService.getDatasetsInfoStatList().then(

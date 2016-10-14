@@ -271,7 +271,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
             $scope.$apply( function() {
                 var divSvg = document.getElementById('workspace');
-                viewBox(viewX, viewY, divSvg.offsetWidth, divSvg.offsetHeight);
+                if (divSvg)
+                    viewBox(viewX, viewY, divSvg.offsetWidth, divSvg.offsetHeight);
             });
             
 

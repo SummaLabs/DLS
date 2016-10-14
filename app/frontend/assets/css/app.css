@@ -161,3 +161,18 @@ md-sidenav.md-closed-add.md-closed-add-active, md-sidenav.md-closed-remove.md-cl
 .device-status-label{
     margin-right: 15px;
 }
+
+.network-list {
+
+}
+
+.network-list-card {
+
+}
+.network-list-card h4 {
+    overflow: hidden;max-width: 250px; white-space: nowrap; text-overflow: ellipsis;
+}
+
+.network-list h4 {
+
+}
