@@ -35,6 +35,7 @@ class Task:
         self.rows = []
         self.logger = self.init_logger()
         self.logger.info('task ' + str(self.id) + ' created')
+        self.icon = "/frontend/assets/icon/img/img-model1.png"
 
     def execute(self):
         self.state = 'running'
@@ -69,6 +70,7 @@ class Task:
         stt['basetype'] = self.basetype
         #stt['rows'] = self.rows
         stt['state'] = self.state
+        stt['icon'] = self.icon
         return stt
 
     def detailed_status(self):
