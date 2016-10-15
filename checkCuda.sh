@@ -26,12 +26,18 @@ fi
 # started with a bare ubuntu 14.04.3 LTS install, with only ubuntu-desktop installed
 # script will install the bare minimum, with all "extras" in a seperate venv
 
-if [ -z "$1" ]
+
+DETECTED_VERSION=$(nvcc --version | grep -o 'release [0-9.][0-9.]*' | grep -o  [0-9.][0-9.]*)
+#nvcc --version | grep -o V[0-9\.][0-9.]*
+CUDA_VERSION=$DETECTED_VERSION
+
+if [ $DETECTED_VERSION == "" ]
   then
-    echo $0: usage: checkCuda.sh version
+    CUDA_VERSION=$1
 fi
 # CUDA version
-export CUDA_VERSION=$1
+echo "CUDA VERSION" $CUDA_VERSION
+
 # CUDA Home directory. Assuming standard home directory
 export CUDA_HOME=/usr/local/cuda-$CUDA_VERSION
 
