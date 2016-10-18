@@ -23,7 +23,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 		   nodeData: '=',
 		},
 		template: '<g ng-attr-transform="translate({{nodeData.pos.x}},{{nodeData.pos.y}})" width="100%" height="100%"></g>',
-		// templateNamespace: 'svg',
+		templateNamespace: 'svg',
 
 
 		link: function($scope, element, attrs) {
@@ -85,8 +85,8 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
                         $scope.nodeData.portIn = portIn;
                         $scope.nodeData.portOut = portOut;
 						textNode.text($scope.nodeData.name);
-						// textNode[0].innerHTML = '<g transform="scale(' + '0.2' + ')"><tspan>' + textNode[0].innerHTML + '</tspan></g>';
-                        textNode.addClass('unselectable');
+					    textNode.addClass('unselectable');
+                        textNode.text(adaptText(rectNode, textNode ,$scope.nodeData.name));
 
                         nodeWatcher($scope, rectNode);
 						nodeEventsHandler($scope, element, rectNode, idNode);
@@ -95,6 +95,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
                         $scope.$emit('nodeInit', {
 							id: idNode
 						});
+
                     });
                 }
             })
@@ -308,6 +309,24 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
         else
             text += '*';
         node.text('[' + text + ']');
+    }
+
+    function adaptText(node, textNode, text) {
+        var textRect = node[0].getBoundingClientRect();
+        var textWidth = textNode[0].getComputedTextLength();
+
+        if (textWidth < textRect.width)
+            return text;
+
+        let adaptedText = '';
+
+        let charWidth = textWidth / text.length;
+        let numRemoved = text.length - (textRect.width / charWidth) + 4;
+        adaptedText = text.slice(0, -numRemoved);
+        adaptedText += '..';
+
+        return adaptedText;
+
     }
 
 }
