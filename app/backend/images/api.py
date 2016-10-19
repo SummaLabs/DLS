@@ -80,9 +80,11 @@ def load_model_rocs(model_id):
     if request.method == 'GET':
 
         roc_analysis = []
-        validation_dir = os.path.join(models_dir, os.path.join(model_id, 'validation'))
-        for roc_file_path in os.listdir(validation_dir):
-            with open(os.path.join(validation_dir, roc_file_path), 'r') as f:
-                roc_analysis.append(json.load(f))
+        model_dir = os.path.join(models_dir, model_id)
+        for file in os.listdir(model_dir):
+            file_path = os.path.join(model_dir, file)
+            if os.path.isdir(file_path) and ("eval_roc" in file_path):
+                with open(os.path.join(file_path, "cfg.json"), 'r') as f:
+                    roc_analysis.append(json.load(f))
 
         return Response(json.dumps(roc_analysis), mimetype='application/json')

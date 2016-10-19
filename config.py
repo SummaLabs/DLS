@@ -26,7 +26,7 @@ class Config(object):
     # Cuda Version
     CUDA_VERSION = "7.5"
 
-    DLS_MODELS_BASE_PATH = models_dir = os.path.join(basedir, 'data/model')
+    DLS_MODELS_BASE_PATH = models_dir = os.path.join(basedir, 'data/models')
 
 class ProductionConfig(Config):
     pass

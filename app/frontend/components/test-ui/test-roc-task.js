@@ -12,7 +12,7 @@ angular.module('testRocTask', ['ngMaterial'])
         var self = this;
         self.$onInit = function () {
             // (1) Load Models Info:
-            modelsService.getListModelsInfo().then(
+            modelsService.listInfo().then(
                 function successCallback(response) {
                     self.listModels = response.data;
                     if(self.listModels.length>0) {
