@@ -3,6 +3,7 @@ import os
 import subprocess
 import logging
 import config
+import re
 from theano.sandbox.cuda import dnn
 
 logger = logging.getLogger("dls")
@@ -45,7 +46,20 @@ def check_cuda():
         logger.exception(e)
         result['return'] = -1
         result['error'] = str(e)
+    result['version'] = check_cuda_version()
     return result
+
+
+def check_cuda_version():
+    try:
+        bash_command = "nvcc --version"
+        process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE)
+        out = process.communicate()[0]
+
+        return re.search("release ([0-9.]*)", out).group(1)
+    except OSError as e:
+        logger.exception(e)
+    return ""
 
 
 def check_graphviz():
@@ -108,5 +122,6 @@ if __name__ == '__main__':
     else:
         print 'Graphviz: NOK'
         print(info['graphvis']['error'])
+
 
 

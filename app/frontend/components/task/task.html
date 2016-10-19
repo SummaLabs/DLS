@@ -24,12 +24,9 @@
                                   class="secondary-button-padding"
                                   ng-click="$ctrl.doPrimaryAction($event,dat.id)"
                                   ng-repeat="dat in $ctrl.listDats | filter:$ctrl.stateFilter | orderBy : 'id'">
-                        <div ng-switch="dat.basetype">
-                            <div ng-switch-when="model">
-                                <img width="64px" height="64px" src="/frontend/assets/icon/img/img-model1.png" />
-                            </div>
-                            <div ng-switch-default="">
-                                <img width="64px" height="64px" src="/frontend/assets/icon/img/img-dataset1.png" />
+                        <div >
+                            <div >
+                                <img width="64px" height="64px" ng-src="{{ dat.icon }}" />
                             </div>
                         </div>
                         <div class="md-list-item-text" flex="80">
@@ -86,14 +83,9 @@
                         </md-list-item>
                         <md-divider></md-divider>
                         <md-list-item layout="row" layout-align="center">
-                             <div ng-switch="$ctrl.curr().basetype">
-                                <div ng-switch-when="model" >
-                                    <img width="140px" height="140px" src="/frontend/assets/icon/img/img-model1.png" />
+                                <div >
+                                    <img width="140px" height="140px"  ng-src="{{$ctrl.curr().icon}}" />
                                 </div>
-                                <div ng-switch-default="">
-                                    <img width="140px" height="140px"  src="/frontend/assets/icon/img/img-dataset1.png" />
-                                </div>
-                            </div>
                         </md-list-item>
                         <md-divider></md-divider>
                         <!--<md-list-item layout="row" layout-align="center center">-->
@@ -108,9 +100,6 @@
                             <!--</div>-->
                         </md-list-item>
                         <md-divider></md-divider>
-                        <md-list-item layout="row" layout-align="center center">
-                            <md-button ng-disabled="$ctrl.curr().isFinished" class="md-raised md-primary" ng-click="$ctrl.addRandomPoint()">Add Random point</md-button>
-                        </md-list-item>
                     </md-list>
                 </md-whiteframe>
             </div>

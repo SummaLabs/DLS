@@ -37,6 +37,7 @@ class TaskDBImage2DBuilder(Task, DBImage2DBuilder):
         self.text   = 'Image2D DB Builder'
         self.type   = 'db-image2d-cls'
         self.basetype = 'dataset'
+        self.icon = "/frontend/assets/icon/img/img-dataset1.png"
     def perform(self):
         self.initializeInfo()
         if self.isInitialized():
@@ -164,6 +165,17 @@ class TaskDBImage2DBuilder(Task, DBImage2DBuilder):
         #     if self.progress>=100:
         #         self.state='finished'
         #         self.alive=False
+
+    def detailed_status(self):
+        stt = self.status()
+        info = {}
+        info['numLabels'] = self.imgReader2D.numLabels
+        info['labels'] = self.imgReader2D.listLabels
+        info['numTrain'] = self.imgReader2D.numTrainImages
+        info['numVal'] = self.imgReader2D.numValImages
+        info['name'] = self.cfg2D.cfg['datasetname']
+        stt['info'] = info
+        return stt
 
 if __name__ == '__main__':
     pass

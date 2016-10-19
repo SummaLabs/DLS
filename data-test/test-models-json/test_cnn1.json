@@ -8,7 +8,7 @@
       "pos": {
         "y": 50, 
         "x": 25
-      }, 
+      },
       "layerType": "data",
       "params": {
         "datasetType": "", 
@@ -25,7 +25,7 @@
       "pos": {
         "y": 100, 
         "x": 425
-      }, 
+      },
       "layerType": "convolution",
       "params": {
         "isTrainable": true, 
@@ -47,7 +47,7 @@
       "pos": {
         "y": 100, 
         "x": 425
-      }, 
+      },
       "layerType": "convolution",
       "params": {
         "isTrainable": true, 
@@ -69,7 +69,7 @@
       "pos": {
         "y": 250, 
         "x": 150
-      }, 
+      },
       "layerType": "dense",
       "params": {
         "isTrainable": true, 
@@ -85,7 +85,7 @@
       "pos": {
         "y": 350, 
         "x": 475
-      }, 
+      },
       "layerType": "solver",
       "params": {
         "optimizer": "SGD", 

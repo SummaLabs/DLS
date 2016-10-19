@@ -185,7 +185,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
         var y_min = Number.MAX_VALUE;
         var y_max = Number.MIN_VALUE;
 
-        var svg = document.createElement('svg');
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('width', wh);
         svg.setAttribute('height', ht);
         svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
@@ -240,13 +240,16 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
         }
 
         svg.innerHTML = html;
-		var xml = new XMLSerializer().serializeToString(svg);
-
+        var XMLS = new XMLSerializer();
+		var xml = XMLS.serializeToString(svg);
 		var svg64 = btoa(xml);
+
+
 		var b64Start = 'data:image/svg+xml;base64,';
 		var image64 = b64Start + svg64;
+
 		return image64;
-    }
+    };
 
     function loadNetworkByName(name) {
         return $http({

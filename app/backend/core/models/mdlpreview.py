@@ -63,6 +63,7 @@ class ModelTaskDirBuilder:
             'time':         tdateTime['time'],
             'type':         'image2d-classification',
             'name':         cfgModel['name'],
+            'network':      cfgModel['name'],
             'description':  cfgModel['description']
         }
         with open(foutConfig, 'w') as f:
