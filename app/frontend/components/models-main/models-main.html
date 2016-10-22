@@ -31,6 +31,14 @@
                 </md-chips>
             <md-tabs md-dynamic-height md-border-bottom>
                 <md-tab label="Training">
+                    <md-card>
+                        <md-card-content>
+                            <div layout-padding layout="row" layout-fill>
+                                <div flex ng-cloak google-chart chart="rocData" class="md-item-text md-whiteframe-z1"
+                                     style="height: 600px"></div>
+                            </div>
+                        </md-card-content>
+                    </md-card>
                 </md-tab>
                 <md-tab label="Inference">
                     <div inference model="{{$ctrl.selected}}"></div>

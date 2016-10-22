@@ -27,6 +27,7 @@
                         future.then(function mySucces(response) {
                             setModelROCsHistoryData(response.data);
                         }, function myError(response) {
+                            console.log();
                         });
                         
                         $scope.$watch('rocHistorySelected', function (newValue, oldValue) {
@@ -66,13 +67,15 @@
                             var reloadRocData = false;
                             tasks.forEach(function (task) {
                                 if (task.type = 'roc-image2d-cls') {
-                                    $scope.rocsIds.forEach(function (rocId) {
+                                    for (var i = 0; i < $scope.rocsIds.length; i++) {
+                                        var rocId = $scope.rocsIds[i];
                                         if (rocId.hasOwnProperty('taskId')
                                             && rocId.taskId == task.id
                                             && task.state == 'finished') {
+                                            $scope.rocsIds.splice(i, 1);
                                             reloadRocData = true;
                                         }
-                                    })
+                                    }
                                 }
                             });
                             if (reloadRocData) {
@@ -125,11 +128,12 @@
                                     var futureTask = taskManagerService.startTask('roc-image2d-cls', params);
                                     futureTask.then(function mySucces(response) {
                                         var taskId = response.data.taskId;
-                                        $rootScope.$emit(ROCAnalysis.RUN, {
+                                        var runningTask = {
                                             name: $scope.dataSetSelected,
                                             inProgress: true,
                                             taskId : taskId
-                                        });
+                                        };
+                                        $rootScope.$emit(ROCAnalysis.RUN, runningTask);
                                         self.showToast('ROC Analysis task is running. Task id: ' + taskId);
                                     }, function myError(response) {
                                     });
@@ -174,7 +178,6 @@
                             dataSetTypesRocData.push(rocData.roc[type]);
                         });
                         $scope.dsTypeSelected = $scope.dsTypes[0];
-                        var networkName = rocData['model-name'];
                         setROCDataForClass(dataSetTypesRocData[0]);
                     }
 
@@ -240,6 +243,6 @@
                     
                 }
             }
-        })
+        });
 
 })();

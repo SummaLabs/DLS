@@ -84,7 +84,10 @@ def load_model_rocs(model_id):
         for file in os.listdir(model_dir):
             file_path = os.path.join(model_dir, file)
             if os.path.isdir(file_path) and ("eval_roc" in file_path):
-                with open(os.path.join(file_path, "cfg.json"), 'r') as f:
-                    roc_analysis.append(json.load(f))
+                try:
+                    with open(os.path.join(file_path, "cfg.json"), 'r') as f:
+                        roc_analysis.append(json.load(f))
+                except IOError as e:
+                    print "ROC analysis file not found: {0}".format(e.strerror)
 
         return Response(json.dumps(roc_analysis), mimetype='application/json')

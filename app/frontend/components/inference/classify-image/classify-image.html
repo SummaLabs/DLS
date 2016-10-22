@@ -22,10 +22,10 @@
                                 <md-list>
                                     <md-list-item ng-repeat="classProbability in image.classProbabilities">
                                         <div layout="column" layout-fill>
-                                            <p>{{classProbability[1]}}% - {{classProbability[0]}}</p>
+                                            <p>{{classProbability[1] * 100}}% - {{classProbability[0]}}</p>
                                             <md-progress-linear md-mode="determinate"
                                                                 ng-class="{'md-warn' : $index == 0}"
-                                                                value="{{classProbability[1]}}"></md-progress-linear>
+                                                                value="{{classProbability[1] * 100}}"></md-progress-linear>
                                         </div>
                                     </md-list-item>
                                 </md-list>
