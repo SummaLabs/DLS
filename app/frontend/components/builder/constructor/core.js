@@ -233,6 +233,11 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
         self.svgControl.reset();
     };
 
+    this.clear = function (event) {
+        self.svgControl.clear();
+        networkDataService.clearLayers();
+    };
+
     function constructorListeners() {
 
         networkDataService.subNetworkUpdateEvent(setUpNetwork);
@@ -329,18 +334,27 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
             layer.pos.y = node.pos.y;
             event.stopPropagation();
         });
-        
+
+        $scope.toggleIcon = 'keyboard_tab';
         $scope.toggleLeft = buildToggler('left');
         $scope.toggleRight = buildToggler('right');
 
         function buildToggler(componentId) {
+            let opened = true;
             return function() {
                 $mdSidenav(componentId).toggle();
+                if (componentId === 'right') {
+                    opened = !opened;
+                    if (opened) {
+                        $scope.toggleIcon = 'keyboard_tab';
+                    } else {
+                        $scope.toggleIcon = 'keyboard_return'
+                    }
+                }
             }
         }
 
         function setUpNetwork() {
-            // adaptNetworkPositions(networkDataService.getLayers(), 300, 300);
             self.svgControl.setLayers(networkDataService.getLayers());
 
         }

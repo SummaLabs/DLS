@@ -158,6 +158,10 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
         }
     };
 
+    this.clearLayers = function () {
+        network.layers.length = 0;
+    };
+
     this.removeLayerById = function(id) {
         var index = -1;
         for (var i = 0, len = network.layers.length; i < len; i++) {
@@ -202,10 +206,10 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
 
             var width = x_max - x_min;
             var height = y_max - y_min;
-            if (width < 1)
-                width = 1;
-            if (height < 1)
-                height = 1;
+            if (width < 100)
+                width = 100;
+            if (height < 100)
+                height = 100;
 
             var scaleX = (wh - (margin * 2)) / width;
             var scaleY = (ht - (margin * 2)) / height;

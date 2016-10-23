@@ -34,6 +34,17 @@
                         });
                     }, function myError(response) {
                     });
+
+                    self.viewGrid = true;
+                    self.toggleIcon = 'dashboard';
+                    self.toggleView = function () {
+                        self.viewGrid = !self.viewGrid;
+                        if (self.viewGrid) {
+                            self.toggleIcon = 'dashboard';
+                        } else {
+                            self.toggleIcon = 'view_list';
+                        }
+                    }
                 };
 
                 this.createOpenNetworkDialog = function ($event, name) {

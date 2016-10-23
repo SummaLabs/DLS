@@ -72,14 +72,20 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         return true;
     };
 
+    $scope.controlItem.clear = function() {
+        schema.clear();
+  	};
+
     var addLinks = null;
 
     $scope.controlItem.setLayers = function(layers) {
         self.counterNodesInit = 0;
         schema.clear();
         for (let a = 0; a < layers.length; a ++) {
-            if(!$scope.controlItem.addLayer(layers[a]))
+            if(!$scope.controlItem.addLayer(layers[a])) {
+                console.log('addLayer:error');
                 return false;
+            }
         }
 
         addLinks = function () {

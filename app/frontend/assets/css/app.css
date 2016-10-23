@@ -179,3 +179,18 @@ md-sidenav.md-closed-add.md-closed-add-active, md-sidenav.md-closed-remove.md-cl
 .network-list h4 {
 
 }
+
+#network-main {
+    position: relative;
+}
+
+#network-view-toggle {
+    position: absolute;
+    padding: 10px;
+    top: 0px;
+    right: 0px;
+}
+
+#network-view-toggle md-icon {
+    font-size: 30px;
+}
