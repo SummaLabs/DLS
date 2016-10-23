@@ -54,43 +54,50 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
             $scope.networkName = networkDataService.getNetwork().name;
         });
     };
+
     this.trainModel = function ($event) {
         doUpdateNetwork();
         var dataNetwork = networkDataService.getNetwork();
         modelsService.checkNetworkFast(dataNetwork).then(
             function successCallback(response) {
                 var ret = response.data;
-                if ( (ret.length<1) || (ret[0] != 'ok') ) {
-                    var toast = $mdToast.simple()
-                    .textContent("ERROR: " + response.data)
-                    .action('UNDO')
-                    .highlightAction(true)
-                    .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
-                    .position('top right');
+                if ((ret.length < 1) || (ret[0] != 'ok')) {
+                    showToast(response.data) ;
                 } else {
-                    taskManagerService.startTask('model-train-image2d-cls', dataNetwork).then(
-                        function successCallback(response) {
-                            $location.url('/task');
-                            var toast = $mdToast.simple()
-                                .textContent("Train Model task added to Tasks-Queue")
-                                .position('top right');
-                            $mdToast.show(toast).then(function (response) {
-                                if (response == 'ok') {
-                                    //todo
-                                }
-                            });
-                        },
-                        function errorCallback(response) {
-                            console.log(response.data);
-                        }
-                    );
+                    showTrainModelDialog(dataNetwork, $event);
                 }
             },
             function errorCallback(response) {
                 console.log(response.data);
             }
         );
+        console.log();
     };
+
+    function showToast(message) {
+        $mdToast.show(
+            $mdToast.simple()
+                .textContent(message)
+                .position('top right')
+                .hideDelay(3000)
+        );
+    }
+
+    function showTrainModelDialog(network, $event) {
+        $mdDialog.show({
+            clickOutsideToClose: true,
+            parent: angular.element(document.body),
+            targetEvent: $event,
+            templateUrl: '/frontend/components/training-parameters/train-model-dialog.html',
+            controller: function ($scope) {
+                $scope.network = network;
+                $scope.closeDialog = function () {
+                    $mdDialog.hide();
+                }
+            }
+        });
+    }
+
     this.checkModelJson = function ($event) {
         doUpdateNetwork();
         var dataNetwork = networkDataService.getNetwork();
