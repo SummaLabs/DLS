@@ -3,7 +3,7 @@
         <md-content flex="30">
             <md-list layout-padding>
                 <md-list-item class="md-whiteframe-1dp" ng-repeat="model in $ctrl.models"
-                              ng-click="$ctrl.$selectModel(model)">
+                              ng-click="$ctrl.selectModel(model)">
                     <div layout="row">
                         <md-icon md-font-library="material-icons" class="avatar"
                                  ng-class="{'avatar-selected' : model == $ctrl.selected }">apps
@@ -34,7 +34,7 @@
                     <md-card>
                         <md-card-content>
                             <div layout-padding layout="row" layout-fill>
-                                <div flex ng-cloak google-chart chart="rocData" class="md-item-text md-whiteframe-z1"
+                                <div flex ng-cloak google-chart chart="{{ $ctrl.getChartData($ctrl.selected) }}" class="md-item-text md-whiteframe-z1"
                                      style="height: 600px"></div>
                             </div>
                         </md-card-content>

@@ -25,7 +25,8 @@
                                     'dataSet': info['dataset-name'],
                                     'type': info.type,
                                     'date': info.date.str + " " + info.time.str,
-                                    'size': info.size.str
+                                    'size': info.size.str,
+                                    "trainingData":model.progress
                                 });
                             });
                             self.selected = self.models[0];
@@ -35,10 +36,83 @@
                         })
                 };
 
-                this.$selectModel = function( model ) {
+                this.selectModel = function( model ) {
                     self.selected = angular.isNumber(model) ? $scope.models[model] : model;
                 };
+                
+                this.getChartData = function(model) {
+                    var chartPoints = createChartPoints(model.trainingData);
+                    var chartSettings = getDefaultChartSettings();
+                    chartSettings['data']['rows'] = chartPoints;
+                    return chartSettings;
+                };
 
+                function createChartPoints(trainingData) {
+                    var chartPoints = [];
+                    for (var i = 0; i < trainingData.iter.length; i++) {
+                        chartPoints.push({
+                            "c": [
+                                {"v": trainingData.iter[i]},
+                                {"v": trainingData.accTrain[i]},
+                                {"v": trainingData.lossTrain[i]},
+                                {"v": trainingData.lossVal[i]},
+                                {"v": trainingData.accVal[i]}
+                            ]
+                        })
+                    }
+
+                    return chartPoints;
+                }
+
+                function getDefaultChartSettings() {
+                    return {
+                        "type": "AreaChart",
+                        "displayed": false,
+                        "data": {
+                            "cols": [
+                                {
+                                    "id": "Iteration",
+                                    "type": "number",
+                                    "p": {}
+                                },
+                                {
+                                    "id": "lossFunctionTraining",
+                                    "label": "Loss Function Training",
+                                    "type": "number",
+                                    "p": {}
+                                },
+                                {
+                                    "id": "lossFunctionValue",
+                                    "label": "Loss Function Value",
+                                    "type": "number",
+                                    "p": {}
+                                },
+                                {
+                                    "id": "accuracyTraining",
+                                    "label": "Accuracy Training",
+                                    "type": "number",
+                                    "p": {}
+                                },
+                                {
+                                    "id": "accuracyValue",
+                                    "label": "Accuracy Training",
+                                    "type": "number",
+                                    "p": {}
+                                }
+                            ],
+                            "rows": []
+                        },
+                        "options": {
+                            "vAxis": {
+                                "title": "True Positive Rate"
+                            },
+                            "hAxis": {
+                                "title": "False Positive Rate"
+                            }
+                        },
+                        "formatters": {}
+                    };
+                }
             }
         });
 })();
