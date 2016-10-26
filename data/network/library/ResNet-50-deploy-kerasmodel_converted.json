@@ -1,0 +1,3800 @@
+{
+    "layers": [
+        {
+            "wires": [
+                "Activation_0x7f199bf2381"
+            ], 
+            "name": "*Scale_scale3c_branch2a", 
+            "pos": {
+                "y": 182, 
+                "x": 356
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199bf621d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c0ff85"
+            ], 
+            "name": "*BatchNormalization_bn3a_branch1", 
+            "pos": {
+                "y": 577, 
+                "x": 190
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c14a49", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199ba2c65"
+            ], 
+            "name": "*Scale_scale4c_branch2c", 
+            "pos": {
+                "y": 146, 
+                "x": 832
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199baea15", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199ee9ca5"
+            ], 
+            "name": "*Activation_res5a_branch2b_relu", 
+            "pos": {
+                "y": 909, 
+                "x": 1128
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c6a2b1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c023e1"
+            ], 
+            "name": "*Scale_scale3b_branch2a", 
+            "pos": {
+                "y": 330, 
+                "x": 278
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c06351", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c404dd"
+            ], 
+            "name": "*BatchNormalization_bn2a_branch2c", 
+            "pos": {
+                "y": 1072, 
+                "x": 28
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c47cbd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199edf7a9"
+            ], 
+            "name": "*BatchNormalization_bn5a_branch1", 
+            "pos": {
+                "y": 842, 
+                "x": 1107
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199ee38dd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199bda029"
+            ], 
+            "name": "*Merge_res3d", 
+            "pos": {
+                "y": 77, 
+                "x": 474
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199bda0d9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c355e5"
+            ], 
+            "name": "*Scale_scale2b_branch2a", 
+            "pos": {
+                "y": 999, 
+                "x": 48
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c39385", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199b77865"
+            ], 
+            "name": "*BatchNormalization_bn4f_branch2c", 
+            "pos": {
+                "y": 615, 
+                "x": 1044
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199b778a9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199c3df75"
+            ], 
+            "name": "*Scale_scale2a_branch1", 
+            "pos": {
+                "y": 1062, 
+                "x": 31
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c44569", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c6b8fd"
+            ], 
+            "name": "*ZeroPadding2D_res5a_branch2b_zeropadding", 
+            "pos": {
+                "y": 832, 
+                "x": 1107
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199c5e8fd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199ba9ad9"
+            ], 
+            "name": "*BatchNormalization_bn4c_branch2b", 
+            "pos": {
+                "y": 101, 
+                "x": 820
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199ba9a99", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199b905b5"
+            ], 
+            "name": "*Scale_scale4e_branch2a", 
+            "pos": {
+                "y": 381, 
+                "x": 963
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199b9434d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199bc93e9"
+            ], 
+            "name": "*Activation_res4a_branch2b_relu", 
+            "pos": {
+                "y": 3, 
+                "x": 617
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199bcf6e9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199ee28fd"
+            ], 
+            "name": "*Merge_res5b", 
+            "pos": {
+                "y": 1089, 
+                "x": 1173
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199ee2889", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199b96821"
+            ], 
+            "name": "*Scale_scale4d_branch2b", 
+            "pos": {
+                "y": 240, 
+                "x": 904
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199b9ff29", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c56d4d"
+            ], 
+            "name": "*BatchNormalization_bn_conv1", 
+            "pos": {
+                "y": 1165, 
+                "x": 3
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c56d49", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199bee131"
+            ], 
+            "name": "*Scale_scale3c_branch2b", 
+            "pos": {
+                "y": 152, 
+                "x": 370
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199bf3e99", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199bb3281"
+            ], 
+            "name": "*Merge_res4b", 
+            "pos": {
+                "y": 71, 
+                "x": 749
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199bb2989", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199be56c9"
+            ], 
+            "name": "Convolution2D_res3d_branch2a", 
+            "pos": {
+                "y": 98, 
+                "x": 435
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 128, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199be5691", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199ecbca9"
+            ], 
+            "name": "*ZeroPadding2D_res5b_branch2b_zeropadding", 
+            "pos": {
+                "y": 1096, 
+                "x": 1176
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199b73fe5", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c14a89"
+            ], 
+            "name": "Convolution2D_res3a_branch2c", 
+            "pos": {
+                "y": 505, 
+                "x": 211
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 512, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c14a05", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199bd2bd9"
+            ], 
+            "name": "*Activation_res4a_branch2a_relu", 
+            "pos": {
+                "y": 10, 
+                "x": 563
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199bd20e1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199bb32a5", 
+                "Merge_0x7f199ba2c65"
+            ], 
+            "name": "*Activation_res4b_relu", 
+            "pos": {
+                "y": 111, 
+                "x": 794
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199bb3281", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199b9430d"
+            ], 
+            "name": "Convolution2D_res4e_branch2a", 
+            "pos": {
+                "y": 375, 
+                "x": 955
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199b925cd", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199c5e8fd"
+            ], 
+            "name": "*Activation_res5a_branch2a_relu", 
+            "pos": {
+                "y": 811, 
+                "x": 1101
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c5e821", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c47cbd"
+            ], 
+            "name": "Convolution2D_res2a_branch2c", 
+            "pos": {
+                "y": 1088, 
+                "x": 24
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c47c39", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199b88dad"
+            ], 
+            "name": "*Activation_res4e_branch2a_relu", 
+            "pos": {
+                "y": 386, 
+                "x": 967
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199b905b5", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199bda0d9"
+            ], 
+            "name": "*Scale_scale3d_branch2c", 
+            "pos": {
+                "y": 68, 
+                "x": 470
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199bd8f71", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199b76e61"
+            ], 
+            "name": "*Scale_scale4f_branch2b", 
+            "pos": {
+                "y": 596, 
+                "x": 1041
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199b7a3dd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199bcf6e9"
+            ], 
+            "name": "*Scale_scale4a_branch2b", 
+            "pos": {
+                "y": 0, 
+                "x": 606
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199bd4811", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c02369"
+            ], 
+            "name": "*BatchNormalization_bn3b_branch2b", 
+            "pos": {
+                "y": 301, 
+                "x": 287
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c00ecd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199bbef65"
+            ], 
+            "name": "*Activation_res4b_branch2b_relu", 
+            "pos": {
+                "y": 27, 
+                "x": 738
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199bb5725", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199bc0375"
+            ], 
+            "name": "*Activation_res4b_branch2a_relu", 
+            "pos": {
+                "y": 17, 
+                "x": 722
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199bbf97d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199b9434d"
+            ], 
+            "name": "*BatchNormalization_bn4e_branch2a", 
+            "pos": {
+                "y": 378, 
+                "x": 959
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199b9430d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199baea15"
+            ], 
+            "name": "*BatchNormalization_bn4c_branch2c", 
+            "pos": {
+                "y": 133, 
+                "x": 830
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199baa4dd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c722dd"
+            ], 
+            "name": "*Scale_scale5c_branch2b", 
+            "pos": {
+                "y": 1195, 
+                "x": 1199
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c746b5", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199bee1c9"
+            ], 
+            "name": "*Activation_res3c_branch2b_relu", 
+            "pos": {
+                "y": 151, 
+                "x": 373
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199bee131", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199be3c79"
+            ], 
+            "name": "*BatchNormalization_bn3d_branch2b", 
+            "pos": {
+                "y": 53, 
+                "x": 452
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199be1fc5", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c31df5"
+            ], 
+            "name": "*Scale_scale2b_branch2b", 
+            "pos": {
+                "y": 985, 
+                "x": 51
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c3caf5", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c05a19", 
+                "Merge_0x7f199bf50bd"
+            ], 
+            "name": "*Activation_res3a_relu", 
+            "pos": {
+                "y": 361, 
+                "x": 275
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c054f1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199ee82a1"
+            ], 
+            "name": "*BatchNormalization_bn5b_branch2b", 
+            "pos": {
+                "y": 1106, 
+                "x": 1178
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199ecbc31", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199c6f031"
+            ], 
+            "name": "*Scale_scale5c_branch2c", 
+            "pos": {
+                "y": 1170, 
+                "x": 1193
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c63d19", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c2b9dd"
+            ], 
+            "name": "Convolution2D_res3a_branch2b", 
+            "pos": {
+                "y": 588, 
+                "x": 178
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 128, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c1621d", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199bf50bd"
+            ], 
+            "name": "*Scale_scale3b_branch2c", 
+            "pos": {
+                "y": 288, 
+                "x": 306
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199bf92f1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199bd5a69", 
+                "Convolution2D_0x7f199bc9305"
+            ], 
+            "name": "*Activation_res3d_relu", 
+            "pos": {
+                "y": 54, 
+                "x": 520
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199bda029", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199ba6791"
+            ], 
+            "name": "*Activation_res4c_branch2b_relu", 
+            "pos": {
+                "y": 113, 
+                "x": 825
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199ba67ad", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199bd20e1"
+            ], 
+            "name": "*Scale_scale4a_branch2a", 
+            "pos": {
+                "y": 18, 
+                "x": 552
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199bd6089", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199be56e5"
+            ], 
+            "name": "*BatchNormalization_bn3d_branch2a", 
+            "pos": {
+                "y": 86, 
+                "x": 437
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199be56c9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199bb62d5"
+            ], 
+            "name": "Convolution2D_res4b_branch2c", 
+            "pos": {
+                "y": 35, 
+                "x": 741
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 1024, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199bbef65", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c14a49"
+            ], 
+            "name": "Convolution2D_res3a_branch1", 
+            "pos": {
+                "y": 642, 
+                "x": 165
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 512, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c1401d", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199ba3259"
+            ], 
+            "name": "*Merge_res4c", 
+            "pos": {
+                "y": 160, 
+                "x": 834
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199ba2c65", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199b73fe5"
+            ], 
+            "name": "*Activation_res5b_branch2a_relu", 
+            "pos": {
+                "y": 1088, 
+                "x": 1174
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199b73f61", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199ba327d", 
+                "Merge_0x7f199b930ed"
+            ], 
+            "name": "*Activation_res4c_relu", 
+            "pos": {
+                "y": 224, 
+                "x": 876
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199ba3259", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199b9dbe5"
+            ], 
+            "name": "Convolution2D_res4d_branch2b", 
+            "pos": {
+                "y": 228, 
+                "x": 898
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199b99019", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c6d529"
+            ], 
+            "name": "*Merge_res5c", 
+            "pos": {
+                "y": 1159, 
+                "x": 1190
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199c6f031", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199b83c95"
+            ], 
+            "name": "Convolution2D_res4f_branch2a", 
+            "pos": {
+                "y": 549, 
+                "x": 1020
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199b83cdd", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199bb5725"
+            ], 
+            "name": "*Scale_scale4b_branch2b", 
+            "pos": {
+                "y": 21, 
+                "x": 735
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199bb97a1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199b8060d"
+            ], 
+            "name": "*Scale_scale4f_branch2a", 
+            "pos": {
+                "y": 563, 
+                "x": 1028
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199b83c89", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199b8a18d"
+            ], 
+            "name": "Convolution2D_res4e_branch2b", 
+            "pos": {
+                "y": 396, 
+                "x": 973
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199b89699", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199be321d"
+            ], 
+            "name": "*ZeroPadding2D_res3d_branch2b_zeropadding", 
+            "pos": {
+                "y": 60, 
+                "x": 446
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199be2c35", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c343d1"
+            ], 
+            "name": "Convolution2D_res2b_branch2c", 
+            "pos": {
+                "y": 969, 
+                "x": 56
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c33be9", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199b7a39d"
+            ], 
+            "name": "Convolution2D_res4f_branch2b", 
+            "pos": {
+                "y": 583, 
+                "x": 1037
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199b79981", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199b79981"
+            ], 
+            "name": "*ZeroPadding2D_res4f_branch2b_zeropadding", 
+            "pos": {
+                "y": 576, 
+                "x": 1035
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199b79299", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199bf92f1"
+            ], 
+            "name": "*BatchNormalization_bn3b_branch2c", 
+            "pos": {
+                "y": 289, 
+                "x": 302
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199bf92b1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199e94d61", 
+                "Merge_0x7f199ee2889"
+            ], 
+            "name": "*Activation_res5a_relu", 
+            "pos": {
+                "y": 1036, 
+                "x": 1159
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199e94dbd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199b83c89"
+            ], 
+            "name": "*BatchNormalization_bn4f_branch2a", 
+            "pos": {
+                "y": 556, 
+                "x": 1025
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199b83c95", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199bb059d"
+            ], 
+            "name": "*Activation_res4c_branch2a_relu", 
+            "pos": {
+                "y": 94, 
+                "x": 810
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199bafca5", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199ee38dd"
+            ], 
+            "name": "Convolution2D_res5a_branch1", 
+            "pos": {
+                "y": 779, 
+                "x": 1089
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 2048, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199ef4c29", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Dense_0x7f199c67e6d"
+            ], 
+            "name": "*Flatten_fc1000_flatten", 
+            "pos": {
+                "y": 1186, 
+                "x": 1197
+            }, 
+            "params": {}, 
+            "layerType": "Flatten", 
+            "id": "Flatten_0x7f199c67e45", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c39345"
+            ], 
+            "name": "Convolution2D_res2b_branch2a", 
+            "pos": {
+                "y": 993, 
+                "x": 50
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 64, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c38e4d", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199bc9a71"
+            ], 
+            "name": "Convolution2D_res4a_branch2c", 
+            "pos": {
+                "y": 8, 
+                "x": 628
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 1024, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199bc93e9", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199bfc789", 
+                "Merge_0x7f199be4f75"
+            ], 
+            "name": "*Activation_res3b_relu", 
+            "pos": {
+                "y": 218, 
+                "x": 350
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199bf5049", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199be927d"
+            ], 
+            "name": "Convolution2D_res3c_branch2c", 
+            "pos": {
+                "y": 151, 
+                "x": 377
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 512, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199bee1c9", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199bc26a1"
+            ], 
+            "name": "*Scale_scale4a_branch1", 
+            "pos": {
+                "y": 37, 
+                "x": 626
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199bc5d69", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199c28c89"
+            ], 
+            "name": "*Scale_scale2b_branch2c", 
+            "pos": {
+                "y": 946, 
+                "x": 64
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c34815", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199bf2b79"
+            ], 
+            "name": "*Activation_res3c_branch2a_relu", 
+            "pos": {
+                "y": 173, 
+                "x": 358
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199bf2381", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c4d10d", 
+                "Convolution2D_0x7f199c47351"
+            ], 
+            "name": "*MaxPooling2D_pool1", 
+            "pos": {
+                "y": 1131, 
+                "x": 12
+            }, 
+            "params": {}, 
+            "layerType": "MaxPooling2D", 
+            "id": "MaxPooling2D_0x7f199c54825", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199ba3e75"
+            ], 
+            "name": "Convolution2D_res4d_branch2a", 
+            "pos": {
+                "y": 221, 
+                "x": 880
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199ba327d", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c5f2bd"
+            ], 
+            "name": "*BatchNormalization_bn5a_branch2b", 
+            "pos": {
+                "y": 873, 
+                "x": 1119
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c5da95", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199c25cb1"
+            ], 
+            "name": "*Activation_res2c_branch2a_relu", 
+            "pos": {
+                "y": 860, 
+                "x": 87
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c254b9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c1621d"
+            ], 
+            "name": "*ZeroPadding2D_res3a_branch2b_zeropadding", 
+            "pos": {
+                "y": 608, 
+                "x": 170
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199c1ae8d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199b89699"
+            ], 
+            "name": "*ZeroPadding2D_res4e_branch2b_zeropadding", 
+            "pos": {
+                "y": 391, 
+                "x": 970
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199b88dad", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c62bfd"
+            ], 
+            "name": "*Activation_res5c_branch2b_relu", 
+            "pos": {
+                "y": 1193, 
+                "x": 1199
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c722dd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c59715"
+            ], 
+            "name": "*Merge_res4f", 
+            "pos": {
+                "y": 626, 
+                "x": 1044
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199c601d1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [], 
+            "name": "*Activation_prob", 
+            "pos": {
+                "y": 1194, 
+                "x": 1199
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c67ecd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c054f1"
+            ], 
+            "name": "*Merge_res3a", 
+            "pos": {
+                "y": 446, 
+                "x": 240
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199c0a459", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199ee4d99"
+            ], 
+            "name": "*Scale_scale5c_branch2a", 
+            "pos": {
+                "y": 1173, 
+                "x": 1194
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199ee20fd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c1941d"
+            ], 
+            "name": "*Merge_res2c", 
+            "pos": {
+                "y": 792, 
+                "x": 113
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199c20a25", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199c0a459"
+            ], 
+            "name": "*Scale_scale3a_branch1", 
+            "pos": {
+                "y": 511, 
+                "x": 214
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c0ff85", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c74675"
+            ], 
+            "name": "Convolution2D_res5c_branch2b", 
+            "pos": {
+                "y": 1194, 
+                "x": 1199
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 512, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199ee617d", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c36dad"
+            ], 
+            "name": "Convolution2D_res2c_branch2a", 
+            "pos": {
+                "y": 864, 
+                "x": 88
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 64, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c301a9", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199c00ed1"
+            ], 
+            "name": "*Activation_res3b_branch2a_relu", 
+            "pos": {
+                "y": 321, 
+                "x": 280
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c023e1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c02dc9"
+            ], 
+            "name": "*ZeroPadding2D_res3b_branch2b_zeropadding", 
+            "pos": {
+                "y": 314, 
+                "x": 282
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199c00ed1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199ecbc31"
+            ], 
+            "name": "Convolution2D_res5b_branch2b", 
+            "pos": {
+                "y": 1102, 
+                "x": 1177
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 512, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199ecbca9", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199c601d1"
+            ], 
+            "name": "*Scale_scale4f_branch2c", 
+            "pos": {
+                "y": 621, 
+                "x": 1044
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199b77865", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199bd206d"
+            ], 
+            "name": "*ZeroPadding2D_res4a_branch2b_zeropadding", 
+            "pos": {
+                "y": 5, 
+                "x": 574
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199bd2bd9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199b970fd"
+            ], 
+            "name": "Convolution2D_res4d_branch2c", 
+            "pos": {
+                "y": 257, 
+                "x": 908
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 1024, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199b97019", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199b7a3dd"
+            ], 
+            "name": "*BatchNormalization_bn4f_branch2b", 
+            "pos": {
+                "y": 589, 
+                "x": 1040
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199b7a39d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c33be9"
+            ], 
+            "name": "*Activation_res2b_branch2b_relu", 
+            "pos": {
+                "y": 978, 
+                "x": 53
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c31df5", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199bb97a1"
+            ], 
+            "name": "*BatchNormalization_bn4b_branch2b", 
+            "pos": {
+                "y": 17, 
+                "x": 732
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199bb9761", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199b930ed"
+            ], 
+            "name": "*Scale_scale4d_branch2c", 
+            "pos": {
+                "y": 279, 
+                "x": 911
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199b97941", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199bc2fd9"
+            ], 
+            "name": "Convolution2D_res4b_branch2a", 
+            "pos": {
+                "y": 37, 
+                "x": 711
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199bcc8cd", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c6a2b1"
+            ], 
+            "name": "*Scale_scale5a_branch2b", 
+            "pos": {
+                "y": 891, 
+                "x": 1124
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c5f2bd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c3caf5"
+            ], 
+            "name": "*BatchNormalization_bn2b_branch2b", 
+            "pos": {
+                "y": 991, 
+                "x": 49
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c3675d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c47c39"
+            ], 
+            "name": "*Activation_res2a_branch2b_relu", 
+            "pos": {
+                "y": 1102, 
+                "x": 20
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c44d65", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199bafca5"
+            ], 
+            "name": "*Scale_scale4c_branch2a", 
+            "pos": {
+                "y": 96, 
+                "x": 806
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199bb0ced", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c09969"
+            ], 
+            "name": "*BatchNormalization_bn3a_branch2c", 
+            "pos": {
+                "y": 485, 
+                "x": 220
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c14a89", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c56381"
+            ], 
+            "name": "*ZeroPadding2D_conv1_zeropadding", 
+            "pos": {
+                "y": 1176, 
+                "x": 0
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199c56379", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199be92bd"
+            ], 
+            "name": "*BatchNormalization_bn3c_branch2c", 
+            "pos": {
+                "y": 153, 
+                "x": 381
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199be927d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199b877b1"
+            ], 
+            "name": "Convolution2D_res4e_branch2c", 
+            "pos": {
+                "y": 425, 
+                "x": 981
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 1024, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199b8579d", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199bc1289"
+            ], 
+            "name": "*Merge_res4a", 
+            "pos": {
+                "y": 35, 
+                "x": 661
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199bc26a1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199b97019"
+            ], 
+            "name": "*Activation_res4d_branch2b_relu", 
+            "pos": {
+                "y": 248, 
+                "x": 906
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199b96821", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199bf3365"
+            ], 
+            "name": "*ZeroPadding2D_res3c_branch2b_zeropadding", 
+            "pos": {
+                "y": 166, 
+                "x": 361
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199bf2b79", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c50671"
+            ], 
+            "name": "*BatchNormalization_bn2a_branch2b", 
+            "pos": {
+                "y": 1123, 
+                "x": 14
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c4a01d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199ecad75"
+            ], 
+            "name": "*Scale_scale5a_branch1", 
+            "pos": {
+                "y": 904, 
+                "x": 1124
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199edf7a9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "AveragePooling2D_0x7f199c6d54d"
+            ], 
+            "name": "*Activation_res5c_relu", 
+            "pos": {
+                "y": 1170, 
+                "x": 1193
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c6d529", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199bf621d"
+            ], 
+            "name": "*BatchNormalization_bn3c_branch2a", 
+            "pos": {
+                "y": 193, 
+                "x": 354
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199bf5ad9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199ba8f85"
+            ], 
+            "name": "*ZeroPadding2D_res4c_branch2b_zeropadding", 
+            "pos": {
+                "y": 95, 
+                "x": 813
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199bb059d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199bc26a1"
+            ], 
+            "name": "*Scale_scale4a_branch2c", 
+            "pos": {
+                "y": 24, 
+                "x": 650
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199bc1ea9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c5fba5"
+            ], 
+            "name": "Convolution2D_res5a_branch2a", 
+            "pos": {
+                "y": 740, 
+                "x": 1079
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 512, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c58d59", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c26799"
+            ], 
+            "name": "*ZeroPadding2D_res2c_branch2b_zeropadding", 
+            "pos": {
+                "y": 857, 
+                "x": 88
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199c25cb1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c19441", 
+                "Convolution2D_0x7f199c1401d"
+            ], 
+            "name": "*Activation_res2c_relu", 
+            "pos": {
+                "y": 708, 
+                "x": 141
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c1941d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199bf5049"
+            ], 
+            "name": "*Merge_res3b", 
+            "pos": {
+                "y": 289, 
+                "x": 310
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199bf50bd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199b9f625"
+            ], 
+            "name": "*Scale_scale4d_branch2a", 
+            "pos": {
+                "y": 220, 
+                "x": 888
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199ba3eb5", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c06311"
+            ], 
+            "name": "Convolution2D_res3b_branch2a", 
+            "pos": {
+                "y": 350, 
+                "x": 276
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 128, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c05a19", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c13825"
+            ], 
+            "name": "*Scale_scale3a_branch2b", 
+            "pos": {
+                "y": 546, 
+                "x": 193
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c15341", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199bcc8cd", 
+                "Merge_0x7f199bb2989"
+            ], 
+            "name": "*Activation_res4a_relu", 
+            "pos": {
+                "y": 47, 
+                "x": 707
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199bc1289", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199b835c1"
+            ], 
+            "name": "*Scale_scale4e_branch2c", 
+            "pos": {
+                "y": 443, 
+                "x": 983
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199b877f1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c14a05"
+            ], 
+            "name": "*Activation_res3a_branch2b_relu", 
+            "pos": {
+                "y": 526, 
+                "x": 202
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c13825", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c5fb25"
+            ], 
+            "name": "*BatchNormalization_bn5a_branch2a", 
+            "pos": {
+                "y": 765, 
+                "x": 1087
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c5fba5", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199ba3eb5"
+            ], 
+            "name": "*BatchNormalization_bn4d_branch2a", 
+            "pos": {
+                "y": 220, 
+                "x": 884
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199ba3e75", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199ba9a99"
+            ], 
+            "name": "Convolution2D_res4c_branch2b", 
+            "pos": {
+                "y": 97, 
+                "x": 816
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199ba8f85", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199e939bd"
+            ], 
+            "name": "Convolution2D_res5b_branch2a", 
+            "pos": {
+                "y": 1051, 
+                "x": 1164
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 512, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199e94d61", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c254b9"
+            ], 
+            "name": "*Scale_scale2c_branch2a", 
+            "pos": {
+                "y": 863, 
+                "x": 87
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c29605", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199b778a9"
+            ], 
+            "name": "Convolution2D_res4f_branch2c", 
+            "pos": {
+                "y": 608, 
+                "x": 1043
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 1024, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199b77859", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199ee20fd"
+            ], 
+            "name": "*BatchNormalization_bn5c_branch2a", 
+            "pos": {
+                "y": 1162, 
+                "x": 1191
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199ee20bd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199b9ff29"
+            ], 
+            "name": "*BatchNormalization_bn4d_branch2b", 
+            "pos": {
+                "y": 234, 
+                "x": 901
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199b9dbe5", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199bd4811"
+            ], 
+            "name": "*BatchNormalization_bn4a_branch2b", 
+            "pos": {
+                "y": 0, 
+                "x": 596
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199bd3dcd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199bc361d"
+            ], 
+            "name": "*BatchNormalization_bn4b_branch2a", 
+            "pos": {
+                "y": 28, 
+                "x": 715
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199bc2fd9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199be1f61"
+            ], 
+            "name": "*Scale_scale3d_branch2a", 
+            "pos": {
+                "y": 75, 
+                "x": 440
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199be56e5", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199bbf97d"
+            ], 
+            "name": "*Scale_scale4b_branch2a", 
+            "pos": {
+                "y": 22, 
+                "x": 719
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199bc361d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c26f99"
+            ], 
+            "name": "Convolution2D_res2c_branch2b", 
+            "pos": {
+                "y": 852, 
+                "x": 89
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 64, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c26799", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199bc0359"
+            ], 
+            "name": "*ZeroPadding2D_res4b_branch2b_zeropadding", 
+            "pos": {
+                "y": 15, 
+                "x": 726
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199bc0375", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199b73f61"
+            ], 
+            "name": "*Scale_scale5b_branch2a", 
+            "pos": {
+                "y": 1078, 
+                "x": 1171
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199e93995", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199bd6049"
+            ], 
+            "name": "Convolution2D_res4a_branch2a", 
+            "pos": {
+                "y": 40, 
+                "x": 531
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199bd5a69", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c52185"
+            ], 
+            "name": "*Scale_scale_conv1", 
+            "pos": {
+                "y": 1156, 
+                "x": 6
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c56d4d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199ee2809", 
+                "Merge_0x7f199c6f031"
+            ], 
+            "name": "*Activation_res5b_relu", 
+            "pos": {
+                "y": 1133, 
+                "x": 1184
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199ee28fd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c00ecd"
+            ], 
+            "name": "Convolution2D_res3b_branch2b", 
+            "pos": {
+                "y": 307, 
+                "x": 285
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 128, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c02dc9", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199baa4dd"
+            ], 
+            "name": "Convolution2D_res4c_branch2c", 
+            "pos": {
+                "y": 123, 
+                "x": 828
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 1024, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199ba6791", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199be2c35"
+            ], 
+            "name": "*Activation_res3d_branch2a_relu", 
+            "pos": {
+                "y": 67, 
+                "x": 443
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199be1f61", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199bc9a31"
+            ], 
+            "name": "Convolution2D_res4a_branch1", 
+            "pos": {
+                "y": 46, 
+                "x": 555
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 1024, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199bc9305", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199bc5d69"
+            ], 
+            "name": "*BatchNormalization_bn4a_branch1", 
+            "pos": {
+                "y": 41, 
+                "x": 591
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199bc9a31", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199b83cdd", 
+                "Merge_0x7f199c601d1"
+            ], 
+            "name": "*Activation_res4e_relu", 
+            "pos": {
+                "y": 543, 
+                "x": 1016
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199b83cb9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c6c01d"
+            ], 
+            "name": "Convolution2D_res5c_branch2c", 
+            "pos": {
+                "y": 1188, 
+                "x": 1198
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 2048, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c62bfd", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c5ecf9"
+            ], 
+            "name": "*BatchNormalization_bn5b_branch2c", 
+            "pos": {
+                "y": 1103, 
+                "x": 1177
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c5ecb9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c19d39"
+            ], 
+            "name": "Convolution2D_res3a_branch2a", 
+            "pos": {
+                "y": 688, 
+                "x": 146
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 128, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c19441", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c194dd"
+            ], 
+            "name": "*BatchNormalization_bn3a_branch2a", 
+            "pos": {
+                "y": 669, 
+                "x": 152
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c19d39", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c5e1d1"
+            ], 
+            "name": "*Activation_res5b_branch2b_relu", 
+            "pos": {
+                "y": 1109, 
+                "x": 1179
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199ee8225", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199c0a459"
+            ], 
+            "name": "*Scale_scale3a_branch2c", 
+            "pos": {
+                "y": 465, 
+                "x": 230
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c09969", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199c3df75"
+            ], 
+            "name": "*Scale_scale2a_branch2c", 
+            "pos": {
+                "y": 1055, 
+                "x": 33
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c404dd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c34815"
+            ], 
+            "name": "*BatchNormalization_bn2b_branch2c", 
+            "pos": {
+                "y": 958, 
+                "x": 60
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c343d1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c26fd9"
+            ], 
+            "name": "*BatchNormalization_bn2c_branch2b", 
+            "pos": {
+                "y": 846, 
+                "x": 91
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c26f99", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c4d131"
+            ], 
+            "name": "Convolution2D_res2a_branch2a", 
+            "pos": {
+                "y": 1136, 
+                "x": 11
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 64, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c4d10d", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199be566d"
+            ], 
+            "name": "*Merge_res3c", 
+            "pos": {
+                "y": 161, 
+                "x": 389
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199be4f75", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c4d171"
+            ], 
+            "name": "*BatchNormalization_bn2a_branch2a", 
+            "pos": {
+                "y": 1139, 
+                "x": 10
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c4d131", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199b79299"
+            ], 
+            "name": "*Activation_res4f_branch2a_relu", 
+            "pos": {
+                "y": 569, 
+                "x": 1032
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199b8060d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199b8a1cd"
+            ], 
+            "name": "*BatchNormalization_bn4e_branch2b", 
+            "pos": {
+                "y": 403, 
+                "x": 975
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199b8a18d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199bb0ced"
+            ], 
+            "name": "*BatchNormalization_bn4c_branch2a", 
+            "pos": {
+                "y": 99, 
+                "x": 802
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199bb2915", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c23cfd"
+            ], 
+            "name": "*Activation_res2c_branch2b_relu", 
+            "pos": {
+                "y": 832, 
+                "x": 96
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c23c79", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199b99019"
+            ], 
+            "name": "*ZeroPadding2D_res4d_branch2b_zeropadding", 
+            "pos": {
+                "y": 224, 
+                "x": 895
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199ba3e25", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c5e821"
+            ], 
+            "name": "*Scale_scale5a_branch2a", 
+            "pos": {
+                "y": 788, 
+                "x": 1094
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c5fb25", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c243a1"
+            ], 
+            "name": "*BatchNormalization_bn2c_branch2c", 
+            "pos": {
+                "y": 814, 
+                "x": 104
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c24359", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199bb2989"
+            ], 
+            "name": "*Scale_scale4b_branch2c", 
+            "pos": {
+                "y": 57, 
+                "x": 747
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199bb6719", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Flatten_0x7f199c67e45"
+            ], 
+            "name": "*AveragePooling2D_pool5", 
+            "pos": {
+                "y": 1179, 
+                "x": 1196
+            }, 
+            "params": {}, 
+            "layerType": "AveragePooling2D", 
+            "id": "AveragePooling2D_0x7f199c6d54d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c4bd75"
+            ], 
+            "name": "*Merge_res2a", 
+            "pos": {
+                "y": 1035, 
+                "x": 39
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199c3df75", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199bf3e59"
+            ], 
+            "name": "Convolution2D_res3c_branch2b", 
+            "pos": {
+                "y": 160, 
+                "x": 363
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 128, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199bf3365", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199c355c1"
+            ], 
+            "name": "*Activation_res2b_branch2a_relu", 
+            "pos": {
+                "y": 999, 
+                "x": 47
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c355e5", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199bf5ad9"
+            ], 
+            "name": "Convolution2D_res3c_branch2a", 
+            "pos": {
+                "y": 204, 
+                "x": 352
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 128, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199bfc789", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199c49109"
+            ], 
+            "name": "*Activation_res2a_branch2a_relu", 
+            "pos": {
+                "y": 1139, 
+                "x": 10
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c49181", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c3675d"
+            ], 
+            "name": "Convolution2D_res2b_branch2b", 
+            "pos": {
+                "y": 996, 
+                "x": 48
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 64, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c35e5d", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c67ecd"
+            ], 
+            "name": "Dense_fc1000", 
+            "pos": {
+                "y": 1191, 
+                "x": 1198
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "activationFunction": "linear", 
+                "neuronsCount": 1000
+            }, 
+            "layerType": "dense", 
+            "id": "Dense_0x7f199c67e6d", 
+            "template": "frontend/components/layers/dense/node-test-4.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c39385"
+            ], 
+            "name": "*BatchNormalization_bn2b_branch2a", 
+            "pos": {
+                "y": 997, 
+                "x": 48
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c39345", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c56d49"
+            ], 
+            "name": "Convolution2D_conv1", 
+            "pos": {
+                "y": 1172, 
+                "x": 1
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 64, 
+                "filterWidth": 7, 
+                "activationFunction": "linear", 
+                "filterHeight": 7
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c56381", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199c1ae8d"
+            ], 
+            "name": "*Activation_res3a_branch2a_relu", 
+            "pos": {
+                "y": 629, 
+                "x": 164
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c20295", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "MaxPooling2D_0x7f199c54825"
+            ], 
+            "name": "*Activation_conv1_relu", 
+            "pos": {
+                "y": 1144, 
+                "x": 9
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c52185", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c06351"
+            ], 
+            "name": "*BatchNormalization_bn3b_branch2a", 
+            "pos": {
+                "y": 339, 
+                "x": 277
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c06311", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199be5691", 
+                "Merge_0x7f199bda0d9"
+            ], 
+            "name": "*Activation_res3c_relu", 
+            "pos": {
+                "y": 112, 
+                "x": 433
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199be566d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c4a01d"
+            ], 
+            "name": "Convolution2D_res2a_branch2b", 
+            "pos": {
+                "y": 1131, 
+                "x": 12
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 64, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c4a095", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199ee8225"
+            ], 
+            "name": "*Scale_scale5b_branch2b", 
+            "pos": {
+                "y": 1109, 
+                "x": 1179
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199ee82a1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c4a095"
+            ], 
+            "name": "*ZeroPadding2D_res2a_branch2b_zeropadding", 
+            "pos": {
+                "y": 1136, 
+                "x": 10
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199c49109", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c301a9", 
+                "Merge_0x7f199c20a25"
+            ], 
+            "name": "*Activation_res2b_relu", 
+            "pos": {
+                "y": 863, 
+                "x": 90
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c28c09", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199ee4891"
+            ], 
+            "name": "*Activation_res5c_branch2a_relu", 
+            "pos": {
+                "y": 1182, 
+                "x": 1196
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199ee4d99", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199b77859"
+            ], 
+            "name": "*Activation_res4f_branch2b_relu", 
+            "pos": {
+                "y": 602, 
+                "x": 1043
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199b76e61", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199bc1ea9"
+            ], 
+            "name": "*BatchNormalization_bn4a_branch2c", 
+            "pos": {
+                "y": 15, 
+                "x": 639
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199bc9a71", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199ee2889"
+            ], 
+            "name": "*Scale_scale5b_branch2c", 
+            "pos": {
+                "y": 1097, 
+                "x": 1175
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c5ecf9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199bd8f71"
+            ], 
+            "name": "*BatchNormalization_bn3d_branch2c", 
+            "pos": {
+                "y": 62, 
+                "x": 466
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199bd8f55", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199e94dbd"
+            ], 
+            "name": "*Merge_res5a", 
+            "pos": {
+                "y": 965, 
+                "x": 1141
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199ecad75", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199bd8f2d"
+            ], 
+            "name": "*Activation_res3d_branch2b_relu", 
+            "pos": {
+                "y": 53, 
+                "x": 459
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199be0635", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199be0635"
+            ], 
+            "name": "*Scale_scale3d_branch2b", 
+            "pos": {
+                "y": 52, 
+                "x": 455
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199be3c79", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199b925cd", 
+                "Merge_0x7f199b835c1"
+            ], 
+            "name": "*Activation_res4d_relu", 
+            "pos": {
+                "y": 373, 
+                "x": 950
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199b93009", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199bffed1"
+            ], 
+            "name": "*Scale_scale3b_branch2b", 
+            "pos": {
+                "y": 297, 
+                "x": 290
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c02369", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c44569"
+            ], 
+            "name": "*BatchNormalization_bn2a_branch1", 
+            "pos": {
+                "y": 1087, 
+                "x": 24
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c47c7d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199bf3e99"
+            ], 
+            "name": "*BatchNormalization_bn3c_branch2b", 
+            "pos": {
+                "y": 155, 
+                "x": 366
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199bf3e59", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199bb9761"
+            ], 
+            "name": "Convolution2D_res4b_branch2b", 
+            "pos": {
+                "y": 15, 
+                "x": 729
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199bc0359", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199ee20bd"
+            ], 
+            "name": "Convolution2D_res5c_branch2a", 
+            "pos": {
+                "y": 1149, 
+                "x": 1188
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 512, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199ee2809", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199ecad75"
+            ], 
+            "name": "*Scale_scale5a_branch2c", 
+            "pos": {
+                "y": 953, 
+                "x": 1138
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199ecada1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c5ecb9"
+            ], 
+            "name": "Convolution2D_res5b_branch2c", 
+            "pos": {
+                "y": 1107, 
+                "x": 1178
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 2048, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c5e1d1", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c00bc9"
+            ], 
+            "name": "*Activation_res3b_branch2b_relu", 
+            "pos": {
+                "y": 293, 
+                "x": 294
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199bffed1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199c56379"
+            ], 
+            "name": "InputLayer_input", 
+            "pos": {
+                "y": 1179, 
+                "x": 0
+            }, 
+            "params": {}, 
+            "layerType": "data", 
+            "id": "InputLayer_0x7f199c56361", 
+            "template": "frontend/components/layers/data/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199bf92b1"
+            ], 
+            "name": "Convolution2D_res3b_branch2c", 
+            "pos": {
+                "y": 290, 
+                "x": 298
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 512, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c00bc9", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c44d65"
+            ], 
+            "name": "*Scale_scale2a_branch2b", 
+            "pos": {
+                "y": 1113, 
+                "x": 17
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c50671", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199ee38b1"
+            ], 
+            "name": "Convolution2D_res5a_branch2c", 
+            "pos": {
+                "y": 925, 
+                "x": 1132
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 2048, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199ee9ca5", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199b93009"
+            ], 
+            "name": "*Merge_res4d", 
+            "pos": {
+                "y": 291, 
+                "x": 912
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199b930ed", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c35e5d"
+            ], 
+            "name": "*ZeroPadding2D_res2b_branch2b_zeropadding", 
+            "pos": {
+                "y": 998, 
+                "x": 47
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199c355c1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c23c79"
+            ], 
+            "name": "*Scale_scale2c_branch2b", 
+            "pos": {
+                "y": 840, 
+                "x": 94
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c26fd9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199ba67ad"
+            ], 
+            "name": "*Scale_scale4c_branch2b", 
+            "pos": {
+                "y": 106, 
+                "x": 822
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199ba9ad9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199ee617d"
+            ], 
+            "name": "*ZeroPadding2D_res5c_branch2b_zeropadding", 
+            "pos": {
+                "y": 1189, 
+                "x": 1198
+            }, 
+            "params": {}, 
+            "layerType": "ZeroPadding2D", 
+            "id": "ZeroPadding2D_0x7f199ee4891", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c15341"
+            ], 
+            "name": "*BatchNormalization_bn3a_branch2b", 
+            "pos": {
+                "y": 567, 
+                "x": 185
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c2b9dd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199b8579d"
+            ], 
+            "name": "*Activation_res4e_branch2b_relu", 
+            "pos": {
+                "y": 417, 
+                "x": 979
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199b86ac9", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c746b5"
+            ], 
+            "name": "*BatchNormalization_bn5c_branch2b", 
+            "pos": {
+                "y": 1196, 
+                "x": 1200
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c74675", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c47c7d"
+            ], 
+            "name": "Convolution2D_res2a_branch1", 
+            "pos": {
+                "y": 1110, 
+                "x": 18
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c47351", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c58d59", 
+                "Convolution2D_0x7f199ef4c29"
+            ], 
+            "name": "*Activation_res4f_relu", 
+            "pos": {
+                "y": 715, 
+                "x": 1071
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c59715", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c20295"
+            ], 
+            "name": "*Scale_scale3a_branch2a", 
+            "pos": {
+                "y": 649, 
+                "x": 157
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c194dd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Convolution2D_0x7f199c38e4d", 
+                "Merge_0x7f199c28c89"
+            ], 
+            "name": "*Activation_res2a_relu", 
+            "pos": {
+                "y": 988, 
+                "x": 52
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199c4bd75", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199bd8f55"
+            ], 
+            "name": "Convolution2D_res3d_branch2c", 
+            "pos": {
+                "y": 56, 
+                "x": 462
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 512, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199bd8f2d", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199bd3dcd"
+            ], 
+            "name": "Convolution2D_res4a_branch2b", 
+            "pos": {
+                "y": 1, 
+                "x": 585
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199bd206d", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199ecada1"
+            ], 
+            "name": "*BatchNormalization_bn5a_branch2c", 
+            "pos": {
+                "y": 940, 
+                "x": 1135
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199ee38b1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199b86ac9"
+            ], 
+            "name": "*Scale_scale4e_branch2b", 
+            "pos": {
+                "y": 410, 
+                "x": 978
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199b8a1cd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199be4f75"
+            ], 
+            "name": "*Scale_scale3c_branch2c", 
+            "pos": {
+                "y": 156, 
+                "x": 385
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199be92bd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c29605"
+            ], 
+            "name": "*BatchNormalization_bn2c_branch2a", 
+            "pos": {
+                "y": 864, 
+                "x": 87
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c36dad", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Merge_0x7f199c20a25"
+            ], 
+            "name": "*Scale_scale2c_branch2c", 
+            "pos": {
+                "y": 803, 
+                "x": 108
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c243a1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c24359"
+            ], 
+            "name": "Convolution2D_res2c_branch2c", 
+            "pos": {
+                "y": 823, 
+                "x": 100
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c23cfd", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199b97941"
+            ], 
+            "name": "*BatchNormalization_bn4d_branch2c", 
+            "pos": {
+                "y": 268, 
+                "x": 910
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199b970fd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199c63d19"
+            ], 
+            "name": "*BatchNormalization_bn5c_branch2c", 
+            "pos": {
+                "y": 1180, 
+                "x": 1196
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199c6c01d", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199bb6719"
+            ], 
+            "name": "*BatchNormalization_bn4b_branch2c", 
+            "pos": {
+                "y": 45, 
+                "x": 744
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199bb62d5", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199be1fc5"
+            ], 
+            "name": "Convolution2D_res3d_branch2b", 
+            "pos": {
+                "y": 56, 
+                "x": 449
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 128, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199be321d", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199e93995"
+            ], 
+            "name": "*BatchNormalization_bn5b_branch2a", 
+            "pos": {
+                "y": 1065, 
+                "x": 1168
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199e939bd", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199bb2915"
+            ], 
+            "name": "Convolution2D_res4c_branch2a", 
+            "pos": {
+                "y": 104, 
+                "x": 798
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 256, 
+                "filterWidth": 1, 
+                "activationFunction": "linear", 
+                "filterHeight": 1
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199bb32a5", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "BatchNormalization_0x7f199c5da95"
+            ], 
+            "name": "Convolution2D_res5a_branch2b", 
+            "pos": {
+                "y": 853, 
+                "x": 1113
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "filtersCount": 512, 
+                "filterWidth": 3, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution", 
+            "id": "Convolution2D_0x7f199c6b8fd", 
+            "template": "frontend/components/layers/convol/node-test-2.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199b877f1"
+            ], 
+            "name": "*BatchNormalization_bn4e_branch2c", 
+            "pos": {
+                "y": 434, 
+                "x": 982
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199b877b1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199b83cb9"
+            ], 
+            "name": "*Merge_res4e", 
+            "pos": {
+                "y": 453, 
+                "x": 983
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199b835c1", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "ZeroPadding2D_0x7f199ba3e25"
+            ], 
+            "name": "*Activation_res4d_branch2a_relu", 
+            "pos": {
+                "y": 222, 
+                "x": 892
+            }, 
+            "params": {}, 
+            "layerType": "Activation", 
+            "id": "Activation_0x7f199b9f625", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Scale_0x7f199bd6089"
+            ], 
+            "name": "*BatchNormalization_bn4a_branch2a", 
+            "pos": {
+                "y": 28, 
+                "x": 541
+            }, 
+            "params": {}, 
+            "layerType": "BatchNormalization", 
+            "id": "BatchNormalization_0x7f199bd6049", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c49181"
+            ], 
+            "name": "*Scale_scale2a_branch2a", 
+            "pos": {
+                "y": 1140, 
+                "x": 9
+            }, 
+            "params": {}, 
+            "layerType": "Scale", 
+            "id": "Scale_0x7f199c4d171", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }, 
+        {
+            "wires": [
+                "Activation_0x7f199c28c09"
+            ], 
+            "name": "*Merge_res2b", 
+            "pos": {
+                "y": 933, 
+                "x": 68
+            }, 
+            "params": {}, 
+            "layerType": "Merge", 
+            "id": "Merge_0x7f199c28c89", 
+            "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+        }
+    ], 
+    "name": "ResNet-50-deploy-kerasmodel", 
+    "description": ""
+}

@@ -25,12 +25,7 @@
                             if (!net_name['preview']) {
                                 net_name['preview'] = networkDataService.buildPreviewImage([], 150, 150, 20);
                             }
-                            self.savedNetworks.push(
-                                {
-                                    'name' : net_name['name'],
-                                    'preview': net_name['preview'],
-                                    'size': net_name['size']
-                                })
+                            self.savedNetworks.push(net_name)
                         });
                     }, function myError(response) {
                     });
@@ -49,7 +44,7 @@
 
                 this.createOpenNetworkDialog = function ($event, name) {
                     var loadNetworkFunc = function () {
-                        networkDataService.loadNetwork(name.name);
+                        networkDataService.loadNetwork(name.name, name.source);
                         networkDataService.setChangesSaved(true);
                         $state.go('designer');
                     };
@@ -108,5 +103,15 @@
                     }
                 }
             }
+        }).filter('networksFilter', function () {
+            return function (items, tabIndex) {
+                return items.filter(function (item) {
+                    if (tabIndex === 0 && item.source === 'prepared')
+                        return true;
+                    else if (tabIndex === 1 && item.source === 'custom')
+                        return true;
+                    return false;
+                });
+            };
         });
 })();

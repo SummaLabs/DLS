@@ -18,6 +18,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
     {
         name: 'New network',
         description: '',
+        source: 'custom',
         preview: '',
         layers: []
     };
@@ -60,17 +61,18 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
         return network;
     };
 
-    this.loadNetwork = function(name) {
-        $timeout(function () {
+    this.loadNetwork = function(name, source) {
+        // $timeout(function () {
             network = {
                 name: '',
                 description: '',
+                source: 'custom',
                 preview: '',
                 layers: []
             };
 
             self.pubClearNetworkEvent();
-            var future = loadNetworkByName(name);
+            var future = loadNetworkByName(name, source);
             future.then(function mySucces(response) {
                 network.name = response.data.name;
                 network.description = response.data.description;
@@ -80,7 +82,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
                 self.pubNetworkUpdateEvent();
             }, function myError(response) {
             });
-        }, 400)
+        // }, 400)
     };
 
     this.deleteNetwork = function(name) {
@@ -96,7 +98,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
                 }
             });
         } else {
-            return removeNetworkByName(name.name);
+            return removeNetworkByName(name.name, name.source);
         }
     };
 
@@ -119,6 +121,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
         network.name = name;
         network.description = description;
         network.layers = filterNetwork(network.layers);
+        network.source = 'custom';
         var result = saveNetwork(network, name);
         result.then(function (response) {
                 isChangesSaved = true;
@@ -225,7 +228,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
                                     'y1="' + (offsetY + layer_from.pos.y * scaleY) + '"' +
                                     'x2="' + (offsetX + layers[a].pos.x * scaleX) + '"' +
                                     'y2="' + (offsetY + layers[a].pos.y * scaleY) + '"' +
-                                    'stroke="blue" stroke-width="1"></line>';
+                                    'style="stroke:#0000cc;stroke-width:1;stroke-opacity:0.5;"></line>';
                                 break;
                             }
                         }
@@ -239,7 +242,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
                 html += '<circle r="' + radius + '" ' +
                     'cx="' + (offsetX + node.pos.x * scaleX) + '" ' +
                     'cy="' + (offsetY + node.pos.y * scaleY) + '" ' +
-                    'style="fill:#ff0000;fill-opacity:1;stroke:blue;stroke-width:0.5;stroke-opacity:1"></circle>';
+                    'style="fill:#0000cc;fill-opacity:0.5;stroke:#0000cc;stroke-width:0.5;stroke-opacity:0.5"></circle>';
             });
         }
 
@@ -255,10 +258,10 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
 		return image64;
     };
 
-    function loadNetworkByName(name) {
+    function loadNetworkByName(name, type) {
         return $http({
             method: "GET",
-            url: "/network/load/" + name
+            url: "/network/load/" + type + '/' + name
         })
     }
 
@@ -271,10 +274,10 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
         })
     }
 
-    function removeNetworkByName(name) {
+    function removeNetworkByName(name, type) {
         return $http({
             method: "GET",
-            url: "/network/remove/" + name
+            url: "/network/remove/"+ type + '/' + name
         })
     }
 }

@@ -1,0 +1,851 @@
+{
+  "layers": [
+    {
+      "wires": [
+        "Convolution2D_0x7f199c78c8d"
+      ], 
+      "name": "*ZeroPadding2D_conv4_3_zeropadding", 
+      "pos": {
+        "y": 1100, 
+        "x": 750
+      }, 
+      "params": {}, 
+      "layerType": "ZeroPadding2D", 
+      "id": "ZeroPadding2D_0x7f199c7b9a5", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "ZeroPadding2D_0x7f199ca45fd"
+      ], 
+      "name": "*Activation_relu3_1", 
+      "pos": {
+        "y": 850, 
+        "x": 275
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199ca454d", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199ca454d"
+      ], 
+      "name": "Convolution2D_conv3_1", 
+      "pos": {
+        "y": 800, 
+        "x": 250
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "filtersCount": 256, 
+        "filterWidth": 3, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution", 
+      "id": "Convolution2D_0x7f199ca2e1d", 
+      "template": "frontend/components/layers/convol/node-test-2.svg"
+    }, 
+    {
+      "wires": [
+        "Convolution2D_0x7f199c680c1"
+      ], 
+      "name": "*ZeroPadding2D_conv2_1_zeropadding", 
+      "pos": {
+        "y": 250, 
+        "x": 50
+      }, 
+      "params": {}, 
+      "layerType": "ZeroPadding2D", 
+      "id": "ZeroPadding2D_0x7f199c77169", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "ZeroPadding2D_0x7f199ca13c9"
+      ], 
+      "name": "*Activation_relu3_2", 
+      "pos": {
+        "y": 1025, 
+        "x": 375
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199ca1319", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199c66905"
+      ], 
+      "name": "Convolution2D_conv1_1", 
+      "pos": {
+        "y": 0, 
+        "x": 0
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "filtersCount": 64, 
+        "filterWidth": 3, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution", 
+      "id": "Convolution2D_0x7f199c5aba9", 
+      "template": "frontend/components/layers/convol/node-test-2.svg"
+    }, 
+    {
+      "wires": [
+        "Dense_0x7f199c86d85"
+      ], 
+      "name": "*Dropout_drop7", 
+      "pos": {
+        "y": 0, 
+        "x": 1175
+      }, 
+      "params": {}, 
+      "layerType": "Dropout", 
+      "id": "Dropout_0x7f199c88359", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "ZeroPadding2D_0x7f199c7b9a5"
+      ], 
+      "name": "*Activation_relu4_2", 
+      "pos": {
+        "y": 1150, 
+        "x": 700
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199c7ecf1", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Convolution2D_0x7f199c5aba9"
+      ], 
+      "name": "*ZeroPadding2D_conv1_1_zeropadding", 
+      "pos": {
+        "y": 0, 
+        "x": 0
+      }, 
+      "params": {}, 
+      "layerType": "ZeroPadding2D", 
+      "id": "ZeroPadding2D_0x7f199c5ab81", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "MaxPooling2D_0x7f199ca3111"
+      ], 
+      "name": "*Activation_relu2_2", 
+      "pos": {
+        "y": 575, 
+        "x": 175
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199c6743d", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199c7ecf1"
+      ], 
+      "name": "Convolution2D_conv4_2", 
+      "pos": {
+        "y": 1150, 
+        "x": 675
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "filtersCount": 512, 
+        "filterWidth": 3, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution", 
+      "id": "Convolution2D_0x7f199c7e4c1", 
+      "template": "frontend/components/layers/convol/node-test-2.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199c7d5d1"
+      ], 
+      "name": "Convolution2D_conv3_3", 
+      "pos": {
+        "y": 1100, 
+        "x": 425
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "filtersCount": 256, 
+        "filterWidth": 3, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution", 
+      "id": "Convolution2D_0x7f199ca4951", 
+      "template": "frontend/components/layers/convol/node-test-2.svg"
+    }, 
+    {
+      "wires": [
+        "ZeroPadding2D_0x7f199c5ab81"
+      ], 
+      "name": "InputLayer_input", 
+      "pos": {
+        "y": 0, 
+        "x": 0
+      }, 
+      "params": {}, 
+      "layerType": "data", 
+      "id": "InputLayer_0x7f199c5ab91", 
+      "template": "frontend/components/layers/data/node-test-2.svg"
+    }, 
+    {
+      "wires": [], 
+      "name": "*Activation_prob", 
+      "pos": {
+        "y": 0, 
+        "x": 1200
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199c86ecd", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199c6743d"
+      ], 
+      "name": "Convolution2D_conv2_2", 
+      "pos": {
+        "y": 525, 
+        "x": 150
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "filtersCount": 128, 
+        "filterWidth": 3, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution", 
+      "id": "Convolution2D_0x7f199c65d45", 
+      "template": "frontend/components/layers/convol/node-test-2.svg"
+    }, 
+    {
+      "wires": [
+        "Convolution2D_0x7f199c65d45"
+      ], 
+      "name": "*ZeroPadding2D_conv2_2_zeropadding", 
+      "pos": {
+        "y": 450, 
+        "x": 125
+      }, 
+      "params": {}, 
+      "layerType": "ZeroPadding2D", 
+      "id": "ZeroPadding2D_0x7f199c76b65", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Convolution2D_0x7f199c7e4c1"
+      ], 
+      "name": "*ZeroPadding2D_conv4_2_zeropadding", 
+      "pos": {
+        "y": 1175, 
+        "x": 650
+      }, 
+      "params": {}, 
+      "layerType": "ZeroPadding2D", 
+      "id": "ZeroPadding2D_0x7f199c808d9", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199c8179d"
+      ], 
+      "name": "Convolution2D_conv5_3", 
+      "pos": {
+        "y": 450, 
+        "x": 1050
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "filtersCount": 512, 
+        "filterWidth": 3, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution", 
+      "id": "Convolution2D_0x7f199c81989", 
+      "template": "frontend/components/layers/convol/node-test-2.svg"
+    }, 
+    {
+      "wires": [
+        "Convolution2D_0x7f199c7b065"
+      ], 
+      "name": "*ZeroPadding2D_conv5_1_zeropadding", 
+      "pos": {
+        "y": 925, 
+        "x": 875
+      }, 
+      "params": {}, 
+      "layerType": "ZeroPadding2D", 
+      "id": "ZeroPadding2D_0x7f199c7a3b1", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "MaxPooling2D_0x7f199c84a51"
+      ], 
+      "name": "*Activation_relu5_3", 
+      "pos": {
+        "y": 375, 
+        "x": 1075
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199c8179d", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "MaxPooling2D_0x7f199c7a359"
+      ], 
+      "name": "*Activation_relu4_3", 
+      "pos": {
+        "y": 1025, 
+        "x": 800
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199c79ca5", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199c83ced"
+      ], 
+      "name": "Convolution2D_conv5_2", 
+      "pos": {
+        "y": 650, 
+        "x": 975
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "filtersCount": 512, 
+        "filterWidth": 3, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution", 
+      "id": "Convolution2D_0x7f199c829bd", 
+      "template": "frontend/components/layers/convol/node-test-2.svg"
+    }, 
+    {
+      "wires": [
+        "MaxPooling2D_0x7f199c77199"
+      ], 
+      "name": "*Activation_relu1_2", 
+      "pos": {
+        "y": 150, 
+        "x": 25
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199c680e5", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "ZeroPadding2D_0x7f199c791d5"
+      ], 
+      "name": "*Activation_relu5_1", 
+      "pos": {
+        "y": 800, 
+        "x": 925
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199c7a3d5", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "ZeroPadding2D_0x7f199c669b5"
+      ], 
+      "name": "*Activation_relu1_1", 
+      "pos": {
+        "y": 25, 
+        "x": 0
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199c66905", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199ca1319"
+      ], 
+      "name": "Convolution2D_conv3_2", 
+      "pos": {
+        "y": 975, 
+        "x": 325
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "filtersCount": 256, 
+        "filterWidth": 3, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution", 
+      "id": "Convolution2D_0x7f199ca3fe5", 
+      "template": "frontend/components/layers/convol/node-test-2.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199c8521d"
+      ], 
+      "name": "Dense_fc7", 
+      "pos": {
+        "y": 75, 
+        "x": 1175
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "activationFunction": "linear", 
+        "neuronsCount": 4096
+      }, 
+      "layerType": "dense", 
+      "id": "Dense_0x7f199c84c75", 
+      "template": "frontend/components/layers/dense/node-test-4.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199c784c5"
+      ], 
+      "name": "Convolution2D_conv2_1", 
+      "pos": {
+        "y": 325, 
+        "x": 75
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "filtersCount": 128, 
+        "filterWidth": 3, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution", 
+      "id": "Convolution2D_0x7f199c680c1", 
+      "template": "frontend/components/layers/convol/node-test-2.svg"
+    }, 
+    {
+      "wires": [
+        "ZeroPadding2D_0x7f199c76b65"
+      ], 
+      "name": "*Activation_relu2_1", 
+      "pos": {
+        "y": 375, 
+        "x": 100
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199c784c5", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "ZeroPadding2D_0x7f199c808d9"
+      ], 
+      "name": "*Activation_relu4_1", 
+      "pos": {
+        "y": 1175, 
+        "x": 600
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199c7d511", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Convolution2D_0x7f199c806f5"
+      ], 
+      "name": "*ZeroPadding2D_conv4_1_zeropadding", 
+      "pos": {
+        "y": 1175, 
+        "x": 525
+      }, 
+      "params": {}, 
+      "layerType": "ZeroPadding2D", 
+      "id": "ZeroPadding2D_0x7f199c806d1", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Convolution2D_0x7f199c6569d"
+      ], 
+      "name": "*ZeroPadding2D_conv1_2_zeropadding", 
+      "pos": {
+        "y": 75, 
+        "x": 0
+      }, 
+      "params": {}, 
+      "layerType": "ZeroPadding2D", 
+      "id": "ZeroPadding2D_0x7f199c669b5", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199c7a3d5"
+      ], 
+      "name": "Convolution2D_conv5_1", 
+      "pos": {
+        "y": 850, 
+        "x": 900
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "filtersCount": 512, 
+        "filterWidth": 3, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution", 
+      "id": "Convolution2D_0x7f199c7b065", 
+      "template": "frontend/components/layers/convol/node-test-2.svg"
+    }, 
+    {
+      "wires": [
+        "Dropout_0x7f199c88359"
+      ], 
+      "name": "*Activation_relu7", 
+      "pos": {
+        "y": 25, 
+        "x": 1175
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199c8521d", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Dropout_0x7f199c88391"
+      ], 
+      "name": "*Activation_relu6", 
+      "pos": {
+        "y": 150, 
+        "x": 1150
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199c821f5", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "MaxPooling2D_0x7f199c7fcb9"
+      ], 
+      "name": "*Activation_relu3_3", 
+      "pos": {
+        "y": 1150, 
+        "x": 475
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199c7d5d1", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199c7d511"
+      ], 
+      "name": "Convolution2D_conv4_1", 
+      "pos": {
+        "y": 1175, 
+        "x": 575
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "filtersCount": 512, 
+        "filterWidth": 3, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution", 
+      "id": "Convolution2D_0x7f199c806f5", 
+      "template": "frontend/components/layers/convol/node-test-2.svg"
+    }, 
+    {
+      "wires": [
+        "ZeroPadding2D_0x7f199c77169"
+      ], 
+      "name": "*MaxPooling2D_pool1", 
+      "pos": {
+        "y": 200, 
+        "x": 50
+      }, 
+      "params": {}, 
+      "layerType": "MaxPooling2D", 
+      "id": "MaxPooling2D_0x7f199c77199", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Convolution2D_0x7f199c829bd"
+      ], 
+      "name": "*ZeroPadding2D_conv5_2_zeropadding", 
+      "pos": {
+        "y": 725, 
+        "x": 950
+      }, 
+      "params": {}, 
+      "layerType": "ZeroPadding2D", 
+      "id": "ZeroPadding2D_0x7f199c791d5", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Convolution2D_0x7f199c81989"
+      ], 
+      "name": "*ZeroPadding2D_conv5_3_zeropadding", 
+      "pos": {
+        "y": 525, 
+        "x": 1025
+      }, 
+      "params": {}, 
+      "layerType": "ZeroPadding2D", 
+      "id": "ZeroPadding2D_0x7f199c81ba1", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199c86ecd"
+      ], 
+      "name": "Dense_fc8", 
+      "pos": {
+        "y": 0, 
+        "x": 1175
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "activationFunction": "linear", 
+        "neuronsCount": 1000
+      }, 
+      "layerType": "dense", 
+      "id": "Dense_0x7f199c86d85", 
+      "template": "frontend/components/layers/dense/node-test-4.svg"
+    }, 
+    {
+      "wires": [
+        "Convolution2D_0x7f199ca4951"
+      ], 
+      "name": "*ZeroPadding2D_conv3_3_zeropadding", 
+      "pos": {
+        "y": 1075, 
+        "x": 400
+      }, 
+      "params": {}, 
+      "layerType": "ZeroPadding2D", 
+      "id": "ZeroPadding2D_0x7f199ca13c9", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "ZeroPadding2D_0x7f199ca31f5"
+      ], 
+      "name": "*MaxPooling2D_pool2", 
+      "pos": {
+        "y": 650, 
+        "x": 200
+      }, 
+      "params": {}, 
+      "layerType": "MaxPooling2D", 
+      "id": "MaxPooling2D_0x7f199ca3111", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199c680e5"
+      ], 
+      "name": "Convolution2D_conv1_2", 
+      "pos": {
+        "y": 100, 
+        "x": 25
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "filtersCount": 64, 
+        "filterWidth": 3, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution", 
+      "id": "Convolution2D_0x7f199c6569d", 
+      "template": "frontend/components/layers/convol/node-test-2.svg"
+    }, 
+    {
+      "wires": [
+        "Dense_0x7f199c84c75"
+      ], 
+      "name": "*Dropout_drop6", 
+      "pos": {
+        "y": 100, 
+        "x": 1150
+      }, 
+      "params": {}, 
+      "layerType": "Dropout", 
+      "id": "Dropout_0x7f199c88391", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Convolution2D_0x7f199ca2e1d"
+      ], 
+      "name": "*ZeroPadding2D_conv3_1_zeropadding", 
+      "pos": {
+        "y": 725, 
+        "x": 225
+      }, 
+      "params": {}, 
+      "layerType": "ZeroPadding2D", 
+      "id": "ZeroPadding2D_0x7f199ca31f5", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Flatten_0x7f199c84a9d"
+      ], 
+      "name": "*MaxPooling2D_pool5", 
+      "pos": {
+        "y": 325, 
+        "x": 1100
+      }, 
+      "params": {}, 
+      "layerType": "MaxPooling2D", 
+      "id": "MaxPooling2D_0x7f199c84a51", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199c79ca5"
+      ], 
+      "name": "Convolution2D_conv4_3", 
+      "pos": {
+        "y": 1075, 
+        "x": 775
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "filtersCount": 512, 
+        "filterWidth": 3, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution", 
+      "id": "Convolution2D_0x7f199c78c8d", 
+      "template": "frontend/components/layers/convol/node-test-2.svg"
+    }, 
+    {
+      "wires": [
+        "ZeroPadding2D_0x7f199c806d1"
+      ], 
+      "name": "*MaxPooling2D_pool3", 
+      "pos": {
+        "y": 1150, 
+        "x": 500
+      }, 
+      "params": {}, 
+      "layerType": "MaxPooling2D", 
+      "id": "MaxPooling2D_0x7f199c7fcb9", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "ZeroPadding2D_0x7f199c81ba1"
+      ], 
+      "name": "*Activation_relu5_2", 
+      "pos": {
+        "y": 575, 
+        "x": 1000
+      }, 
+      "params": {}, 
+      "layerType": "Activation", 
+      "id": "Activation_0x7f199c83ced", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "ZeroPadding2D_0x7f199c7a3b1"
+      ], 
+      "name": "*MaxPooling2D_pool4", 
+      "pos": {
+        "y": 975, 
+        "x": 850
+      }, 
+      "params": {}, 
+      "layerType": "MaxPooling2D", 
+      "id": "MaxPooling2D_0x7f199c7a359", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Dense_0x7f199c84a21"
+      ], 
+      "name": "*Flatten_fc6_flatten", 
+      "pos": {
+        "y": 250, 
+        "x": 1125
+      }, 
+      "params": {}, 
+      "layerType": "Flatten", 
+      "id": "Flatten_0x7f199c84a9d", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Convolution2D_0x7f199ca3fe5"
+      ], 
+      "name": "*ZeroPadding2D_conv3_2_zeropadding", 
+      "pos": {
+        "y": 925, 
+        "x": 300
+      }, 
+      "params": {}, 
+      "layerType": "ZeroPadding2D", 
+      "id": "ZeroPadding2D_0x7f199ca45fd", 
+      "template": "frontend/components/layers/dense/layer_with_shapes_exp.svg"
+    }, 
+    {
+      "wires": [
+        "Activation_0x7f199c821f5"
+      ], 
+      "name": "Dense_fc6", 
+      "pos": {
+        "y": 200, 
+        "x": 1125
+      }, 
+      "params": {
+        "isTrainable": true, 
+        "activationFunction": "linear", 
+        "neuronsCount": 4096
+      }, 
+      "layerType": "dense", 
+      "id": "Dense_0x7f199c84a21", 
+      "template": "frontend/components/layers/dense/node-test-4.svg"
+    }
+  ], 
+  "preview": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48bGluZSB4MT0iODguNzUiIHkxPSIxMjIuOTc4NzIzNDA0MjU1MzIiIHgyPSI5MS4wNDE2NjY2NjY2NjY2NiIgeTI9IjEyMC42MzgyOTc4NzIzNDA0MiIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iNDUuMjA4MzMzMzMzMzMzMzMiIHkxPSI5OS41NzQ0NjgwODUxMDYzNyIgeDI9IjQ3LjUiIHkyPSIxMDYuNTk1NzQ0NjgwODUxMDYiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjQyLjkxNjY2NjY2NjY2NjY2NCIgeTE9Ijk0Ljg5MzYxNzAyMTI3NjYiIHgyPSI0NS4yMDgzMzMzMzMzMzMzMyIgeTI9Ijk5LjU3NDQ2ODA4NTEwNjM3IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIyNC41ODMzMzMzMzMzMzMzMzIiIHkxPSI0My40MDQyNTUzMTkxNDg5MyIgeDI9IjI2Ljg3NSIgeTI9IjUwLjQyNTUzMTkxNDg5MzYxIiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI1NC4zNzUiIHkxPSIxMTUuOTU3NDQ2ODA4NTEwNjQiIHgyPSI1Ni42NjY2NjY2NjY2NjY2NjQiIHkyPSIxMjAuNjM4Mjk3ODcyMzQwNDIiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjIwIiB5MT0iMjAiIHgyPSIyMCIgeTI9IjIyLjM0MDQyNTUzMTkxNDg5MiIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iMTI3LjcwODMzMzMzMzMzMzMzIiB5MT0iMjAiIHgyPSIxMjcuNzA4MzMzMzMzMzMzMzMiIHkyPSIyMCIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iODQuMTY2NjY2NjY2NjY2NjYiIHkxPSIxMjcuNjU5NTc0NDY4MDg1MSIgeDI9Ijg4Ljc1IiB5Mj0iMTIyLjk3ODcyMzQwNDI1NTMyIiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIyMCIgeTE9IjIwIiB4Mj0iMjAiIHkyPSIyMCIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iMzYuMDQxNjY2NjY2NjY2NjY0IiB5MT0iNzMuODI5Nzg3MjM0MDQyNTYiIHgyPSIzOC4zMzMzMzMzMzMzMzMzMyIgeTI9IjgwLjg1MTA2MzgyOTc4NzIyIiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI4MS44NzUiIHkxPSIxMjcuNjU5NTc0NDY4MDg1MSIgeDI9Ijg0LjE2NjY2NjY2NjY2NjY2IiB5Mj0iMTI3LjY1OTU3NDQ2ODA4NTEiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjU4Ljk1ODMzMzMzMzMzMzMzIiB5MT0iMTIyLjk3ODcyMzQwNDI1NTMyIiB4Mj0iNjMuNTQxNjY2NjY2NjY2NjY0IiB5Mj0iMTI3LjY1OTU3NDQ2ODA4NTEiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjIwIiB5MT0iMjAiIHgyPSIyMCIgeTI9IjIwIiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIzMy43NSIgeTE9IjY5LjE0ODkzNjE3MDIxMjc2IiB4Mj0iMzYuMDQxNjY2NjY2NjY2NjY0IiB5Mj0iNzMuODI5Nzg3MjM0MDQyNTYiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjMxLjQ1ODMzMzMzMzMzMzMzMiIgeTE9IjYyLjEyNzY1OTU3NDQ2ODA4IiB4Mj0iMzMuNzUiIHkyPSI2OS4xNDg5MzYxNzAyMTI3NiIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iNzkuNTgzMzMzMzMzMzMzMzMiIHkxPSIxMzAiIHgyPSI4MS44NzUiIHkyPSIxMjcuNjU5NTc0NDY4MDg1MSIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iMTE2LjI1IiB5MT0iNjIuMTI3NjU5NTc0NDY4MDgiIHgyPSIxMTguNTQxNjY2NjY2NjY2NjYiIHkyPSI1NS4xMDYzODI5Nzg3MjM0IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIxMDAuMjA4MzMzMzMzMzMzMzMiIHkxPSIxMDYuNTk1NzQ0NjgwODUxMDYiIHgyPSIxMDIuNSIgeTI9Ijk5LjU3NDQ2ODA4NTEwNjM3IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIxMTguNTQxNjY2NjY2NjY2NjYiIHkxPSI1NS4xMDYzODI5Nzg3MjM0IiB4Mj0iMTIwLjgzMzMzMzMzMzMzMzMzIiB5Mj0iNTAuNDI1NTMxOTE0ODkzNjEiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjkzLjMzMzMzMzMzMzMzMzMzIiB5MT0iMTE1Ljk1NzQ0NjgwODUxMDY0IiB4Mj0iOTcuOTE2NjY2NjY2NjY2NjYiIHkyPSIxMTEuMjc2NTk1NzQ0NjgwODUiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjEwOS4zNzUiIHkxPSI4MC44NTEwNjM4Mjk3ODcyMiIgeDI9IjExMS42NjY2NjY2NjY2NjY2NiIgeTI9IjczLjgyOTc4NzIzNDA0MjU2IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIyMi4yOTE2NjY2NjY2NjY2NjgiIHkxPSIzNC4wNDI1NTMxOTE0ODkzNiIgeDI9IjI0LjU4MzMzMzMzMzMzMzMzMiIgeTI9IjM4LjcyMzQwNDI1NTMxOTE1IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIxMDQuNzkxNjY2NjY2NjY2NjYiIHkxPSI5NC44OTM2MTcwMjEyNzY2IiB4Mj0iMTA3LjA4MzMzMzMzMzMzMzMzIiB5Mj0iODcuODcyMzQwNDI1NTMxOTIiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjIwIiB5MT0iMjIuMzQwNDI1NTMxOTE0ODkyIiB4Mj0iMjAiIHkyPSIyNy4wMjEyNzY1OTU3NDQ2OCIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iNDkuNzkxNjY2NjY2NjY2NjY0IiB5MT0iMTExLjI3NjU5NTc0NDY4MDg1IiB4Mj0iNTQuMzc1IiB5Mj0iMTE1Ljk1NzQ0NjgwODUxMDY0IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIxMjcuNzA4MzMzMzMzMzMzMzMiIHkxPSIyNy4wMjEyNzY1OTU3NDQ2OCIgeDI9IjEyNy43MDgzMzMzMzMzMzMzMyIgeTI9IjIyLjM0MDQyNTUzMTkxNDg5MiIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iMjYuODc1IiB5MT0iNTAuNDI1NTMxOTE0ODkzNjEiIHgyPSIyOS4xNjY2NjY2NjY2NjY2NjQiIHkyPSI1NS4xMDYzODI5Nzg3MjM0IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIyOS4xNjY2NjY2NjY2NjY2NjQiIHkxPSI1NS4xMDYzODI5Nzg3MjM0IiB4Mj0iMzEuNDU4MzMzMzMzMzMzMzMyIiB5Mj0iNjIuMTI3NjU5NTc0NDY4MDgiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9Ijc1IiB5MT0iMTMwIiB4Mj0iNzkuNTgzMzMzMzMzMzMzMzMiIHkyPSIxMzAiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjY4LjEyNSIgeTE9IjEzMCIgeDI9IjcyLjcwODMzMzMzMzMzMzMzIiB5Mj0iMTMwIiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIyMCIgeTE9IjI3LjAyMTI3NjU5NTc0NDY4IiB4Mj0iMjIuMjkxNjY2NjY2NjY2NjY4IiB5Mj0iMjkuMzYxNzAyMTI3NjU5NTc2IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIxMDIuNSIgeTE9Ijk5LjU3NDQ2ODA4NTEwNjM3IiB4Mj0iMTA0Ljc5MTY2NjY2NjY2NjY2IiB5Mj0iOTQuODkzNjE3MDIxMjc2NiIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iMTI3LjcwODMzMzMzMzMzMzMzIiB5MT0iMjIuMzQwNDI1NTMxOTE0ODkyIiB4Mj0iMTI3LjcwODMzMzMzMzMzMzMzIiB5Mj0iMjAiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjEyNS40MTY2NjY2NjY2NjY2NiIgeTE9IjM0LjA0MjU1MzE5MTQ4OTM2IiB4Mj0iMTI1LjQxNjY2NjY2NjY2NjY2IiB5Mj0iMjkuMzYxNzAyMTI3NjU5NTc2IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI2My41NDE2NjY2NjY2NjY2NjQiIHkxPSIxMjcuNjU5NTc0NDY4MDg1MSIgeDI9IjY1LjgzMzMzMzMzMzMzMzMzIiB5Mj0iMTI3LjY1OTU3NDQ2ODA4NTEiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjcyLjcwODMzMzMzMzMzMzMzIiB5MT0iMTMwIiB4Mj0iNzUiIHkyPSIxMzAiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjI0LjU4MzMzMzMzMzMzMzMzMiIgeTE9IjM4LjcyMzQwNDI1NTMxOTE1IiB4Mj0iMjQuNTgzMzMzMzMzMzMzMzMyIiB5Mj0iNDMuNDA0MjU1MzE5MTQ4OTMiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjEwNy4wODMzMzMzMzMzMzMzMyIgeTE9Ijg3Ljg3MjM0MDQyNTUzMTkyIiB4Mj0iMTA5LjM3NSIgeTI9IjgwLjg1MTA2MzgyOTc4NzIyIiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIxMTMuOTU4MzMzMzMzMzMzMzMiIHkxPSI2OS4xNDg5MzYxNzAyMTI3NiIgeDI9IjExNi4yNSIgeTI9IjYyLjEyNzY1OTU3NDQ2ODA4IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIxMjcuNzA4MzMzMzMzMzMzMzMiIHkxPSIyMCIgeDI9IjEzMCIgeTI9IjIwIiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI1Ni42NjY2NjY2NjY2NjY2NjQiIHkxPSIxMjAuNjM4Mjk3ODcyMzQwNDIiIHgyPSI1OC45NTgzMzMzMzMzMzMzMyIgeTI9IjEyMi45Nzg3MjM0MDQyNTUzMiIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iMzguMzMzMzMzMzMzMzMzMzMiIHkxPSI4MC44NTEwNjM4Mjk3ODcyMiIgeDI9IjQwLjYyNSIgeTI9Ijg3Ljg3MjM0MDQyNTUzMTkyIiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIyMi4yOTE2NjY2NjY2NjY2NjgiIHkxPSIyOS4zNjE3MDIxMjc2NTk1NzYiIHgyPSIyMi4yOTE2NjY2NjY2NjY2NjgiIHkyPSIzNC4wNDI1NTMxOTE0ODkzNiIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iMTI1LjQxNjY2NjY2NjY2NjY2IiB5MT0iMjkuMzYxNzAyMTI3NjU5NTc2IiB4Mj0iMTI3LjcwODMzMzMzMzMzMzMzIiB5Mj0iMjcuMDIxMjc2NTk1NzQ0NjgiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjQwLjYyNSIgeTE9Ijg3Ljg3MjM0MDQyNTUzMTkyIiB4Mj0iNDIuOTE2NjY2NjY2NjY2NjY0IiB5Mj0iOTQuODkzNjE3MDIxMjc2NiIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iMTIwLjgzMzMzMzMzMzMzMzMzIiB5MT0iNTAuNDI1NTMxOTE0ODkzNjEiIHgyPSIxMjMuMTI0OTk5OTk5OTk5OTkiIHkyPSI0My40MDQyNTUzMTkxNDg5MyIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iOTEuMDQxNjY2NjY2NjY2NjYiIHkxPSIxMjAuNjM4Mjk3ODcyMzQwNDIiIHgyPSI5My4zMzMzMzMzMzMzMzMzMyIgeTI9IjExNS45NTc0NDY4MDg1MTA2NCIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iNjUuODMzMzMzMzMzMzMzMzMiIHkxPSIxMjcuNjU5NTc0NDY4MDg1MSIgeDI9IjY4LjEyNSIgeTI9IjEzMCIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iMTExLjY2NjY2NjY2NjY2NjY2IiB5MT0iNzMuODI5Nzg3MjM0MDQyNTYiIHgyPSIxMTMuOTU4MzMzMzMzMzMzMzMiIHkyPSI2OS4xNDg5MzYxNzAyMTI3NiIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iOTcuOTE2NjY2NjY2NjY2NjYiIHkxPSIxMTEuMjc2NTk1NzQ0NjgwODUiIHgyPSIxMDAuMjA4MzMzMzMzMzMzMzMiIHkyPSIxMDYuNTk1NzQ0NjgwODUxMDYiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjEyMy4xMjQ5OTk5OTk5OTk5OSIgeTE9IjQzLjQwNDI1NTMxOTE0ODkzIiB4Mj0iMTIzLjEyNDk5OTk5OTk5OTk5IiB5Mj0iMzguNzIzNDA0MjU1MzE5MTUiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjQ3LjUiIHkxPSIxMDYuNTk1NzQ0NjgwODUxMDYiIHgyPSI0OS43OTE2NjY2NjY2NjY2NjQiIHkyPSIxMTEuMjc2NTk1NzQ0NjgwODUiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjEyMy4xMjQ5OTk5OTk5OTk5OSIgeTE9IjM4LjcyMzQwNDI1NTMxOTE1IiB4Mj0iMTI1LjQxNjY2NjY2NjY2NjY2IiB5Mj0iMzQuMDQyNTUzMTkxNDg5MzYiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGNpcmNsZSByPSIyIiBjeD0iODguNzUiIGN5PSIxMjIuOTc4NzIzNDA0MjU1MzIiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iNDUuMjA4MzMzMzMzMzMzMzMiIGN5PSI5OS41NzQ0NjgwODUxMDYzNyIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSI0Mi45MTY2NjY2NjY2NjY2NjQiIGN5PSI5NC44OTM2MTcwMjEyNzY2IiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjI0LjU4MzMzMzMzMzMzMzMzMiIgY3k9IjQzLjQwNDI1NTMxOTE0ODkzIiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjU0LjM3NSIgY3k9IjExNS45NTc0NDY4MDg1MTA2NCIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSIyMCIgY3k9IjIwIiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjEyNy43MDgzMzMzMzMzMzMzMyIgY3k9IjIwIiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9Ijg0LjE2NjY2NjY2NjY2NjY2IiBjeT0iMTI3LjY1OTU3NDQ2ODA4NTEiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMjAiIGN5PSIyMCIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSIzNi4wNDE2NjY2NjY2NjY2NjQiIGN5PSI3My44Mjk3ODcyMzQwNDI1NiIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSI4MS44NzUiIGN5PSIxMjcuNjU5NTc0NDY4MDg1MSIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSI1OC45NTgzMzMzMzMzMzMzMyIgY3k9IjEyMi45Nzg3MjM0MDQyNTUzMiIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSIyMCIgY3k9IjIwIiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjEzMCIgY3k9IjIwIiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjMzLjc1IiBjeT0iNjkuMTQ4OTM2MTcwMjEyNzYiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMzEuNDU4MzMzMzMzMzMzMzMyIiBjeT0iNjIuMTI3NjU5NTc0NDY4MDgiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iNzkuNTgzMzMzMzMzMzMzMzMiIGN5PSIxMzAiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMTE2LjI1IiBjeT0iNjIuMTI3NjU5NTc0NDY4MDgiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMTAwLjIwODMzMzMzMzMzMzMzIiBjeT0iMTA2LjU5NTc0NDY4MDg1MTA2IiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjExOC41NDE2NjY2NjY2NjY2NiIgY3k9IjU1LjEwNjM4Mjk3ODcyMzQiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iOTMuMzMzMzMzMzMzMzMzMzMiIGN5PSIxMTUuOTU3NDQ2ODA4NTEwNjQiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMTA5LjM3NSIgY3k9IjgwLjg1MTA2MzgyOTc4NzIyIiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjIyLjI5MTY2NjY2NjY2NjY2OCIgY3k9IjM0LjA0MjU1MzE5MTQ4OTM2IiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjEwNC43OTE2NjY2NjY2NjY2NiIgY3k9Ijk0Ljg5MzYxNzAyMTI3NjYiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMjAiIGN5PSIyMi4zNDA0MjU1MzE5MTQ4OTIiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iNDkuNzkxNjY2NjY2NjY2NjY0IiBjeT0iMTExLjI3NjU5NTc0NDY4MDg1IiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjEyNy43MDgzMzMzMzMzMzMzMyIgY3k9IjI3LjAyMTI3NjU5NTc0NDY4IiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjI2Ljg3NSIgY3k9IjUwLjQyNTUzMTkxNDg5MzYxIiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjI5LjE2NjY2NjY2NjY2NjY2NCIgY3k9IjU1LjEwNjM4Mjk3ODcyMzQiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iNzUiIGN5PSIxMzAiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iNjguMTI1IiBjeT0iMTMwIiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjIwIiBjeT0iMjcuMDIxMjc2NTk1NzQ0NjgiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMTAyLjUiIGN5PSI5OS41NzQ0NjgwODUxMDYzNyIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSIxMjcuNzA4MzMzMzMzMzMzMzMiIGN5PSIyMi4zNDA0MjU1MzE5MTQ4OTIiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMTI1LjQxNjY2NjY2NjY2NjY2IiBjeT0iMzQuMDQyNTUzMTkxNDg5MzYiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iNjMuNTQxNjY2NjY2NjY2NjY0IiBjeT0iMTI3LjY1OTU3NDQ2ODA4NTEiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iNzIuNzA4MzMzMzMzMzMzMzMiIGN5PSIxMzAiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMjQuNTgzMzMzMzMzMzMzMzMyIiBjeT0iMzguNzIzNDA0MjU1MzE5MTUiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMTA3LjA4MzMzMzMzMzMzMzMzIiBjeT0iODcuODcyMzQwNDI1NTMxOTIiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMTEzLjk1ODMzMzMzMzMzMzMzIiBjeT0iNjkuMTQ4OTM2MTcwMjEyNzYiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMTI3LjcwODMzMzMzMzMzMzMzIiBjeT0iMjAiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iNTYuNjY2NjY2NjY2NjY2NjY0IiBjeT0iMTIwLjYzODI5Nzg3MjM0MDQyIiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjM4LjMzMzMzMzMzMzMzMzMzIiBjeT0iODAuODUxMDYzODI5Nzg3MjIiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMjIuMjkxNjY2NjY2NjY2NjY4IiBjeT0iMjkuMzYxNzAyMTI3NjU5NTc2IiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjEyNS40MTY2NjY2NjY2NjY2NiIgY3k9IjI5LjM2MTcwMjEyNzY1OTU3NiIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSI0MC42MjUiIGN5PSI4Ny44NzIzNDA0MjU1MzE5MiIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSIxMjAuODMzMzMzMzMzMzMzMzMiIGN5PSI1MC40MjU1MzE5MTQ4OTM2MSIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSI5MS4wNDE2NjY2NjY2NjY2NiIgY3k9IjEyMC42MzgyOTc4NzIzNDA0MiIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSI2NS44MzMzMzMzMzMzMzMzMyIgY3k9IjEyNy42NTk1NzQ0NjgwODUxIiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjExMS42NjY2NjY2NjY2NjY2NiIgY3k9IjczLjgyOTc4NzIzNDA0MjU2IiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9Ijk3LjkxNjY2NjY2NjY2NjY2IiBjeT0iMTExLjI3NjU5NTc0NDY4MDg1IiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjEyMy4xMjQ5OTk5OTk5OTk5OSIgY3k9IjQzLjQwNDI1NTMxOTE0ODkzIiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjQ3LjUiIGN5PSIxMDYuNTk1NzQ0NjgwODUxMDYiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMTIzLjEyNDk5OTk5OTk5OTk5IiBjeT0iMzguNzIzNDA0MjU1MzE5MTUiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PC9zdmc+", 
+  "name": "VGG_ILSVRC_16_layers-kerasmodel_converted", 
+  "description": ""
+}
