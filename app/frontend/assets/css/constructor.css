@@ -92,8 +92,9 @@
 }
 
 #viewport {
-    float: right;
-	position: relative;
+	position: absolute;
+    right:0px;
+    bottom:0px;
     background: #6699ff;
     height:200px;
     width:200px;
@@ -134,7 +135,6 @@
 }
 
 #constructor-tools {
-    float: left;
     position: absolute;
     bottom: 0px;
     height:60px;

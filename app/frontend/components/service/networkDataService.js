@@ -228,7 +228,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
                                     'y1="' + (offsetY + layer_from.pos.y * scaleY) + '"' +
                                     'x2="' + (offsetX + layers[a].pos.x * scaleX) + '"' +
                                     'y2="' + (offsetY + layers[a].pos.y * scaleY) + '"' +
-                                    'style="stroke:#0000cc;stroke-width:1;stroke-opacity:0.5;"></line>';
+                                    'stroke="blue" stroke-width="1"></line>';
                                 break;
                             }
                         }
@@ -242,7 +242,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
                 html += '<circle r="' + radius + '" ' +
                     'cx="' + (offsetX + node.pos.x * scaleX) + '" ' +
                     'cy="' + (offsetY + node.pos.y * scaleY) + '" ' +
-                    'style="fill:#0000cc;fill-opacity:0.5;stroke:#0000cc;stroke-width:0.5;stroke-opacity:0.5"></circle>';
+                    'style="fill:#ff0000;fill-opacity:1;stroke:blue;stroke-width:0.5;stroke-opacity:1"></circle>';
             });
         }
 
