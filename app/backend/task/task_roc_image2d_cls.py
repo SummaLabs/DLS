@@ -31,6 +31,18 @@ class TaskROCImage2DCls(Task):
         # (2) Configure params:
         self.modelId    = configJson['model-id']
         self.datasetId  = configJson['dataset-id']
+        # (3) Ext. analysis params: PCA + t-SNE
+        self.isPCA = False
+        try:
+            self.isPCA = configJson['is-pca']
+        except:# Exception as err:
+            self.logger.error('PCA analysis flag is not defined explicitly, set to [%s]' % self.isPCA)
+        self.isTSNE = False
+        try:
+            self.isTSNE = configJson['is-tsne']
+        except:# Exception as err:
+            self.logger.error('t-SNE analysis flag is not defined explicitly, set to [%s]' % self.isTSNE)
+        #
         self.text   = 'ROC Analysis: Image2D Cls'
         self.type   = 'roc-image2d-cls'
         self.basetype = 'model'
