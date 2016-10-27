@@ -53,9 +53,9 @@
                         chartPoints.push({
                             "c": [
                                 {"v": trainingData.iter[i]},
-                                {"v": trainingData.accTrain[i]},
                                 {"v": trainingData.lossTrain[i]},
                                 {"v": trainingData.lossVal[i]},
+                                {"v": trainingData.accTrain[i]},
                                 {"v": trainingData.accVal[i]}
                             ]
                         })
@@ -83,7 +83,7 @@
                                 },
                                 {
                                     "id": "lossFunctionValue",
-                                    "label": "Loss Function Value",
+                                    "label": "Loss Function Validation",
                                     "type": "number",
                                     "p": {}
                                 },
@@ -95,7 +95,7 @@
                                 },
                                 {
                                     "id": "accuracyValue",
-                                    "label": "Accuracy Training",
+                                    "label": "Accuracy Validation",
                                     "type": "number",
                                     "p": {}
                                 }
@@ -104,10 +104,10 @@
                         },
                         "options": {
                             "vAxis": {
-                                "title": "True Positive Rate"
+                                "title": "Training Parameters"
                             },
                             "hAxis": {
-                                "title": "False Positive Rate"
+                                "title": "Iterations"
                             }
                         },
                         "formatters": {}
