@@ -4,6 +4,7 @@
         .component('task', {
             templateUrl: '/frontend/components/task/task.html',
             controller: function ($mdDialog, $rootScope, $scope, $http) {
+
                 var self = this;
                 //
                 self.paramMaxPts = 20;

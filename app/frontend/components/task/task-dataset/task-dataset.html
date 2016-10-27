@@ -1,1 +1,24 @@
-<div>Task-dataset</div>
+<md-list>
+    <md-list-item>
+        <h4>Name: <strong>{{ info.name }}</strong></h4>
+
+    </md-list-item>
+    <md-list-item>
+        <div class="md-item-text md-whiteframe-z1 flex" style="background: lightgoldenrodyellow">
+            <h4>Samples:</h4>
+            <h4>
+                                            Total: <strong>{{ info.numTrain + info.numVal }}</strong><br>
+                                            Train: <strong>{{ info.numTrain }}</strong><br>
+                                            Val: <strong>{{ info.numVal }}</strong><br>
+                                        </h4>
+        </div>
+    </md-list-item>
+    <md-list-item>
+        <div layout-padding layout="row" layout-align="center center">
+            <h4>Labels:&nbsp;</h4>
+            <div class="md-whiteframe-z1" ng-repeat="ll in info.labels">
+                {{ ll }}
+            </div>
+        </div>
+    </md-list-item>
+</md-list>

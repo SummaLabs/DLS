@@ -19,9 +19,6 @@ angular.module('constructorCore')
 			    var visibleHeight;
 			    var ratio;
 
-			    visibleEl.style.left = '0px';
-				visibleEl.style.top = '0px';
-
                 angular.element(window).on('resize', function (event) {
 					update();
 					if (ratio <=0)
@@ -62,7 +59,7 @@ angular.module('constructorCore')
 					element[0].style.width = viewportWidth + 'px';
 					element[0].style.height = viewportHeight + 'px';
                     // element[0].style.right = -viewportWidth + 'px';
-					 element[0].style.bottom = viewportHeight + 'px';
+					 // element[0].style.bottom = viewportHeight + 'px';
 
 					visibleEl.style.width = visibleWidth + 'px';
 					visibleEl.style.height = visibleHeight + 'px';

@@ -1,6 +1,10 @@
 <form ng-submit="onSubmit()">
     <div layout-margin>
         <div layout="column">
+            <md-input-container class="md-block">
+                <label>Model Name</label>
+                <input ng-model="modelName" required>
+            </md-input-container>
             <md-input-container>
                 <label>Loss Function</label>
                 <md-select ng-model="lossFunction" ng-model-options="{trackBy: '$value'}" required>
@@ -38,6 +42,9 @@
                 </md-select>
             </md-input-container>
         </div>
-        <md-button type="submit" class="md-warn md-raised md-hue-2">Submit</md-button>
+        <div layout="row" layout-align="space-between center">
+            <md-button ng-click="closeDialog()" class="md-raised">Close</md-button>
+            <md-button type="submit" class="md-warn md-raised md-hue-2">Start Training</md-button>
+        </div>
     </div>
 </form>

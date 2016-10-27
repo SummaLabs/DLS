@@ -67,15 +67,27 @@ def build_model_response(base_path, images_path):
     return model_response
 
 
+@images.route('/load', methods=['GET'])
+def load_image():
+    imagePath = request.args.get('imagePath')
+    with open(imagePath, 'r') as f:
+        return f.read()
+
+
 @images.route('/rocs/load/<path:model_id>')
 def load_model_rocs(model_id):
 
     if request.method == 'GET':
 
         roc_analysis = []
-        validation_dir = os.path.join(models_dir, os.path.join(model_id, 'validation'))
-        for roc_file_path in os.listdir(validation_dir):
-            with open(os.path.join(validation_dir, roc_file_path), 'r') as f:
-                roc_analysis.append(json.load(f))
+        model_dir = os.path.join(models_dir, model_id)
+        for file in os.listdir(model_dir):
+            file_path = os.path.join(model_dir, file)
+            if os.path.isdir(file_path) and ("eval_roc" in file_path):
+                try:
+                    with open(os.path.join(file_path, "cfg.json"), 'r') as f:
+                        roc_analysis.append(json.load(f))
+                except IOError as e:
+                    print "ROC analysis file not found: {0}".format(e.strerror)
 
         return Response(json.dumps(roc_analysis), mimetype='application/json')

@@ -22,15 +22,29 @@
                     var future = networkDataService.loadSavedNetworks();
                     future.then(function mySucces(response) {
                         response.data.forEach(function (net_name) {
+                            if (!net_name['preview']) {
+                                net_name['preview'] = networkDataService.buildPreviewImage([], 150, 150, 20);
+                            }
                             self.savedNetworks.push(net_name)
                         });
                     }, function myError(response) {
                     });
+
+                    self.viewGrid = true;
+                    self.toggleIcon = 'dashboard';
+                    self.toggleView = function () {
+                        self.viewGrid = !self.viewGrid;
+                        if (self.viewGrid) {
+                            self.toggleIcon = 'dashboard';
+                        } else {
+                            self.toggleIcon = 'view_list';
+                        }
+                    }
                 };
 
                 this.createOpenNetworkDialog = function ($event, name) {
                     var loadNetworkFunc = function () {
-                        networkDataService.loadNetwork(name);
+                        networkDataService.loadNetwork(name.name, name.source);
                         networkDataService.setChangesSaved(true);
                         $state.go('designer');
                     };
@@ -89,5 +103,15 @@
                     }
                 }
             }
+        }).filter('networksFilter', function () {
+            return function (items, tabIndex) {
+                return items.filter(function (item) {
+                    if (tabIndex === 0 && item.source === 'prepared')
+                        return true;
+                    else if (tabIndex === 1 && item.source === 'custom')
+                        return true;
+                    return false;
+                });
+            };
         });
 })();

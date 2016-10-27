@@ -73,6 +73,7 @@
 .constructor {
 	height:100%;
 	max-width: 100%;
+    position: relative;
 }
 .constructor div:first-child {
 	max-width: 100%;
@@ -84,14 +85,16 @@
 }
 
 #workspace {
+    position: relative;
 	overflow: hidden;
 	height:100%;
     border: 2px solid darkgray;
 }
 
 #viewport {
-    float: right;
-	position: relative;
+	position: absolute;
+    right:0px;
+    bottom:0px;
     background: #6699ff;
     height:200px;
     width:200px;
@@ -105,29 +108,42 @@
     width:50px;
 }
 
-#constructor-tools {
-    float: left;
-    position: relative;
-    bottom: 60px;
-    height:60px;
-    width:170px;
-    opacity: 0.7;
+#constructor-network-name {
+    position: absolute;
+    margin-left: 5px;
+    left: 50%;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 20px;
+    color: darkslategray;
+    font-family: Monospaced;
+    font-style: italic;
+    ext-transform: uppercase;
 }
-#constructor-tools md-icon {
+#constructor-network-name span {
+    position: relative;
+    left: -50%;
+}
+
+#constructor-info-panel-toggle {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+#constructor-info-panel-toggle md-icon {
     font-size: 38px;
 }
 
-/*md-tab-content {
-	height:0px;
-}*/
-
-/*md-tab-content > div:first-child {
-	height:100%;
-}*/
-
-/*#workspace:focus {
-  background: Silver;
-}*/
+#constructor-tools {
+    position: absolute;
+    bottom: 0px;
+    height:60px;
+    width:260px;
+    opacity: 0.7;
+}
+#constructor-tools md-icon {
+    font-size: 35px;
+}
 
 #svg {
 	overflow: visible;

@@ -8,5 +8,16 @@ function ModelService($http) {
             method: "GET",
             url: "/model/load/all"
         })
-    }
+    };
+
+    this.inference = function (imagesPath, modelId) {
+        return $http({
+            method: 'POST',
+            url: '/models/inference/',
+            data: {
+                'imagesPath': imagesPath,
+                'modelId': modelId
+            }
+        })
+    };
 }

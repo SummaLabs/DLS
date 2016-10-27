@@ -29,7 +29,7 @@
     <h3>Deep Learning Studio</h3>
 </md-toolbar>
 
-<md-tabs md-border-bottom md-dynamic-height>
+<md-tabs md-selected="selectedIndex" md-border-bottom md-dynamic-height>
     <md-tab ui-sref="networks" class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="networks">apps</md-icon>
@@ -55,7 +55,7 @@
         </md-tab-label>
     </md-tab>
     <!--<md-tab ui-sref="preview" label="Preview" class="unselectable">-->
-    </md-tab>
+    <!--</md-tab>-->
     <!--md-tab label="DataSetTest" class="unselectable">
         <create-img-dataset></create-img-dataset>
     </md-tab-->
@@ -121,18 +121,18 @@
 <script src="/frontend/components/layers/solver/solver-editor.js"></script>
 <script src="/frontend/components/layers/layer-editor.js"></script>
 <script src="/frontend/components/service/networkDataService.js"></script>
-<script src="/frontend/components/service/networkLayerService.js"></script>
 <script src="/frontend/components/data-set-create-image2d/CreateImgDataset.js"></script>
 <script src="/frontend/components/builder/dataset/DatasetBuilder.js"></script>
 <script src="/frontend/components/inference/classify-image/classifyImage.js"></script>
 <script src="/frontend/components/service/imageService.js"></script>
-<script src="/frontend/components/inference/classify-dataset/classifyDataset.js"></script>
+<script src="/frontend/components/inference/roc-analysis/rocAnalysis.js"></script>
 <script src="/frontend/lib/material-angular-paging.js"></script>
 <!--<script src="/frontend/components/preview/dataset-image2d-preview/dataset-image2d-paging.js"></script>-->
 <script src="/frontend/components/preview/dataset-image2d-preview/dataset-image2d-paging2.js"></script>
 <!--<script src="/frontend/components/preview/dataset-image2d-preview/dataset-image2d-preview.js"></script>-->
 <script src="/frontend/components/preview/dataset-image2d-preview/dataset-image2d-preview2.js"></script>
 <script src="frontend/components/settings/settings.js"></script>
+<script src="/frontend/components/training-parameters/training-parameters.js"></script>
 
 <!-- Services: BEGIN-->
 <script src="/frontend/components/service/dbinfoService.js"></script>
@@ -175,6 +175,13 @@
 <!-- END: TEST COMPONENTS -->
     
 <script src="frontend/components/device/env.js"></script>
+
+<!-- LAYERS -->
+<script src="/frontend/components/layers/LayerService.js"></script>
+<script src="/frontend/components/layers/convol/ConvolutionLayer.js"></script>
+<script src="/frontend/components/layers/data/DataLayer.js"></script>
+<script src="/frontend/components/layers/dense/DenseLayer.js"></script>
+<script src="/frontend/components/layers/solver/SolverLayer.js"></script>
 
 </body>
 </html>

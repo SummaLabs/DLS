@@ -4,7 +4,7 @@ angular.module('graph', [])
     .directive('svgGraph', function () {
         return {
             restrict: 'E',
-            controller: ['$scope', '$rootScope', '$element', 'coreService', 'appConfig', '$compile', SchemaController],
+            controller: ['$scope', '$rootScope', '$element', 'coreService', 'appConfig', '$compile', 'layerService', SchemaController],
             controllerAs: 'svg',
             replace: true,
             scope: {

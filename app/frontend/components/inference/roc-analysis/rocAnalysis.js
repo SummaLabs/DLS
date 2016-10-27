@@ -1,45 +1,61 @@
 (function () {
     'use strict';
 
-    angular.module('classifyDataSet', ['ngMaterial'])
-        .directive('classifyDataSet', function () {
+    angular.module('rocAnalysis', ['ngMaterial'])
+        .directive('rocAnalysis', function () {
             return {
                 scope: {
                     modelId: '@'
                 },
-                templateUrl: '/frontend/components/inference/classify-dataset/classify-dataset.html',
+                templateUrl: '/frontend/components/inference/roc-analysis/roc-analysis.html',
                 controller: function ($rootScope, $scope, $mdDialog, $mdToast, imageService, taskManagerService) {
                     var self = this;
 
                     const ROCAnalysis = {
                         RUN: 'ROCAnalysis:run'
                     };
-                    var rocsData = [];
-                    var classesROC = [];
+
+                    var modelRocHistoryData = [];
+                    var dataSetTypesRocData = [];
+                    var classesRocData = [];
 
                     this.$onInit = function () {
                         $scope.rocsIds = [];
+                        $scope.dsTypes = [];
                         $scope.classNames = [];
                         var future = imageService.loadModelROCsData($scope.modelId);
                         future.then(function mySucces(response) {
                             setModelROCsHistoryData(response.data);
                         }, function myError(response) {
+                            console.log();
                         });
                         
-                        $scope.$watch('rocSelected', function () {
-                            var index = 0;
-                            $scope.rocsIds.forEach(function (rocId) {
-                                if (rocId.name == $scope.rocSelected) {
-                                    setROCData(rocsData[index]);
-                                }
-                                index++;
-                            });
+                        $scope.$watch('rocHistorySelected', function (newValue, oldValue) {
+                            if (oldValue != null) {
+                                var index = 0;
+                                $scope.rocsIds.forEach(function (rocId) {
+                                    if (rocId.name == $scope.rocHistorySelected) {
+                                        setROCDataForDsType(modelRocHistoryData[index]);
+                                    }
+                                    index++;
+                                });
+                            }
                         });
 
-                        $scope.$watch('classNameSelected', function () {
-                            var classNames = $scope.classNames;
-                            var index = classNames.indexOf($scope.classNameSelected);
-                            $scope.rocData = classesROC[index];
+                        $scope.$watch('dsTypeSelected', function (newValue, oldValue) {
+                            if (oldValue != null) {
+                                var types = $scope.dsTypes;
+                                var index = types.indexOf($scope.dsTypeSelected);
+                                setROCDataForClass(dataSetTypesRocData[index]);
+                            }
+                        });
+
+                        $scope.$watch('classNameSelected', function (newValue, oldValue) {
+                            if (oldValue != null) {
+                                var classNames = $scope.classNames;
+                                var index = classNames.indexOf($scope.classNameSelected);
+                                $scope.rocData = classesRocData[index];
+                            }
                         });
 
                         $rootScope.$on(ROCAnalysis.RUN, function ($event, data) {
@@ -50,19 +66,23 @@
                             event.stopPropagation();
                             var reloadRocData = false;
                             tasks.forEach(function (task) {
-                                console.log(task);
-                                if (task.type = 'roc-analysis') {
-                                    $scope.rocsIds.forEach(function (rocId) {
-                                        if (typeof rocId.taskId != "undefined" && rocId.taskId == task.id) {
+                                if (task.type = 'roc-image2d-cls') {
+                                    for (var i = 0; i < $scope.rocsIds.length; i++) {
+                                        var rocId = $scope.rocsIds[i];
+                                        if (rocId.hasOwnProperty('taskId')
+                                            && rocId.taskId == task.id
+                                            && task.state == 'finished') {
+                                            $scope.rocsIds.splice(i, 1);
                                             reloadRocData = true;
                                         }
-                                    })
+                                    }
                                 }
                             });
                             if (reloadRocData) {
                                 var future = imageService.loadModelROCsData($scope.modelId);
                                 future.then(function mySucces(response) {
                                     updateModelROCsHistoryData(response.data);
+                                    self.showToast('ROC Analysis task is completed!');
                                 }, function myError(response) {
                                 });
                             }
@@ -84,13 +104,15 @@
                             clickOutsideToClose: true,
                             parent: angular.element(document.body),
                             targetEvent: $event,
-                            templateUrl: '/frontend/components/inference/classify-dataset/apply-ROC-analysis.html',
+                            templateUrl: '/frontend/components/inference/roc-analysis/apply-roc-analysis.html',
                             controller: function ($scope, dbinfoService, taskManagerService) {
+                                var dataSetInfo = [];
                                 $scope.dataSetNames = [];
 
                                 var future = dbinfoService.getDatasetsInfoStatList();
                                 future.then(function mySucces(response) {
                                     response.data.forEach(function (dataSet) {
+                                        dataSetInfo.push(dataSet);
                                         $scope.dataSetNames.push(dataSet.name);
                                     });
                                     $scope.dataSetSelected = $scope.dataSetNames[0];
@@ -98,15 +120,20 @@
                                 });
 
                                 $scope.submitROCAnalysisTask = function () {
-                                    var futureTask = taskManagerService.startTask('roc-analysis',
-                                        {model_id: model_id, data_set_id: $scope.dataSetSelected});
+                                    var index = $scope.dataSetNames.indexOf($scope.dataSetSelected);
+                                    var params = {
+                                        'model-id': model_id,
+                                        'dataset-id': dataSetInfo[index].id
+                                    };
+                                    var futureTask = taskManagerService.startTask('roc-image2d-cls', params);
                                     futureTask.then(function mySucces(response) {
                                         var taskId = response.data.taskId;
-                                        $rootScope.$emit(ROCAnalysis.RUN, {
+                                        var runningTask = {
                                             name: $scope.dataSetSelected,
                                             inProgress: true,
                                             taskId : taskId
-                                        });
+                                        };
+                                        $rootScope.$emit(ROCAnalysis.RUN, runningTask);
                                         self.showToast('ROC Analysis task is running. Task id: ' + taskId);
                                     }, function myError(response) {
                                     });
@@ -124,34 +151,48 @@
 
                     };
 
-                    function updateModelROCsHistoryData() {
-                        console.log("update");
+                    function updateModelROCsHistoryData(rocsHistoryData) {
+                        $scope.rocsIds.length = 0;
+                        $scope.classNames.length = 0;
+                        modelRocHistoryData.length = 0;
+                        classesRocData.length = 0;
+                        setModelROCsHistoryData(rocsHistoryData)
                     }
 
-                    function setModelROCsHistoryData(ROCsHistoryData) {
-                        ROCsHistoryData.forEach(function (rocData) {
-                            rocsData.push(rocData);
+                    function setModelROCsHistoryData(rocsHistoryData) {
+                        rocsHistoryData.forEach(function (rocData) {
+                            modelRocHistoryData.push(rocData);
                             $scope.rocsIds.push({
-                                name: rocData.dataSet + "-" + rocData.date,
+                                name: rocData['dataset-name'] + "-" + rocData['date'],
                                 inProgress: false
                             });
                         });
-                        $scope.rocSelected = $scope.rocsIds[0].name;
-                        
-                        setROCData(rocsData[0]);
+                        $scope.rocHistorySelected = $scope.rocsIds[0].name;
+                        setROCDataForDsType(modelRocHistoryData[0]);
                     }
 
-                    function setROCData(ROCData) {
+                    function setROCDataForDsType(rocData) {
+                        $scope.dsTypes = [];
+                        rocData.dbtypes.forEach(function (type) {
+                            $scope.dsTypes.push(type);
+                            dataSetTypesRocData.push(rocData.roc[type]);
+                        });
+                        $scope.dsTypeSelected = $scope.dsTypes[0];
+                        setROCDataForClass(dataSetTypesRocData[0]);
+                    }
+
+                    function setROCDataForClass(rocData) {
                         $scope.classNames = [];
-                        $scope.classNameSelected = ROCData.classes[0].name;
-                        ROCData.classes.forEach(function (classROC) {
+                        classesRocData.length = 0;
+                        rocData.forEach(function (classROC) {
                             $scope.classNames.push(classROC.name);
                             var chartPoints = createRocChartPoints(classROC.rocPoints);
-                            var chartSettings = getDefaultChartSettings(ROCData.network);
+                            var chartSettings = getDefaultChartSettings(classROC.auc);
                             chartSettings['data']['rows'] = chartPoints;
-                            classesROC.push(chartSettings)
+                            classesRocData.push(chartSettings)
                         });
-                        $scope.rocData = classesROC[0];
+                        $scope.classNameSelected = $scope.classNames[0];
+                        $scope.rocData = classesRocData[0];
                     }
 
                     function createRocChartPoints(classRocPointsJson) {
@@ -168,7 +209,7 @@
                         return classRocPoints;
                     }
 
-                    function getDefaultChartSettings(networkName) {
+                    function getDefaultChartSettings(auc) {
                         return {
                             "type": "AreaChart",
                             "displayed": false,
@@ -181,7 +222,7 @@
                                     },
                                     {
                                         "id": "FP",
-                                        "label": "" + networkName + "",
+                                        "label": "AUC: " + auc + "",
                                         "type": "number",
                                         "p": {}
                                     }
@@ -199,8 +240,9 @@
                             "formatters": {}
                         };
                     }
+                    
                 }
             }
-        })
+        });
 
 })();

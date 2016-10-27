@@ -7,7 +7,7 @@ angular.module('datasetBuilder', ['ngMaterial'])
         datasetTypes: '<',
         selected: '<'
     },
-    controller: function ($scope, $mdDialog) {
+    controller: function ($scope, $mdDialog, $rootScope) {
         var self = this;
         self.hidden = false;
         self.isOpen = false;
