@@ -41,7 +41,11 @@
                     </md-option>
                 </md-select>
             </md-input-container>
-        </div>
+            <md-input-container>
+                <label>Training Device</label>
+                <device-selector ng-model="device"></device-selector>
+            </md-input-container>
+
         <div layout="row" layout-align="space-between center">
             <md-button ng-click="closeDialog()" class="md-raised">Close</md-button>
             <md-button type="submit" class="md-warn md-raised md-hue-2">Start Training</md-button>

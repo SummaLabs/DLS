@@ -108,6 +108,7 @@
                             controller: function ($scope, dbinfoService, taskManagerService) {
                                 var dataSetInfo = [];
                                 $scope.dataSetNames = [];
+                                $scope.device = "";
 
                                 var future = dbinfoService.getDatasetsInfoStatList();
                                 future.then(function mySucces(response) {
@@ -123,7 +124,8 @@
                                     var index = $scope.dataSetNames.indexOf($scope.dataSetSelected);
                                     var params = {
                                         'model-id': model_id,
-                                        'dataset-id': dataSetInfo[index].id
+                                        'dataset-id': dataSetInfo[index].id,
+                                        'deviceType': $scope.device.type
                                     };
                                     var futureTask = taskManagerService.startTask('roc-image2d-cls', params);
                                     futureTask.then(function mySucces(response) {

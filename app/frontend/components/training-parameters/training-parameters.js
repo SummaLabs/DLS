@@ -20,7 +20,8 @@
                             "validationInterval": 100,
                             "batchSize": 1024,
                             "learningRate": 0.01,
-                            "optimizer": "SGD"
+                            "optimizer": "SGD",
+                            "deviceType": 'gpu'
                         };
 
                         $scope.lossFunctionList = [
@@ -82,6 +83,7 @@
                             params.batchSize = $scope.batchSize;
                             params.learningRate = $scope.learningRate;
                             params.optimizer = $scope.optimizer;
+                            params.deviceType = $scope.device.type;
                             return params;
                         }
 

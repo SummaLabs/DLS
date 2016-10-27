@@ -5,11 +5,19 @@
       </div>
     </md-toolbar>
     <md-dialog-content>
-            <div layout-padding>
+        <div layout="column" layout-align="center start" layout-padding>
+            <md-input-container>
+                <label>Select Data Set</label>
                 <md-select placeholder="ROC Analysis" ng-model="dataSetSelected" class="md-no-underline">
-                    <md-option ng-value="dataSetName" ng-repeat="dataSetName in dataSetNames">{{dataSetName}}</md-option>
+                    <md-option ng-value="dataSetName" ng-repeat="dataSetName in dataSetNames">{{dataSetName}}
+                    </md-option>
                 </md-select>
-            </div>
+            </md-input-container>
+            <md-input-container>
+                <label>Select Device</label>
+                <device-selector ng-model="device"></device-selector>
+            </md-input-container>
+        </div>
     </md-dialog-content>
     <md-dialog-actions>
         <md-button ng-click="closeDialog()" class="md-raised">
