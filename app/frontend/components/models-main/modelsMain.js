@@ -40,31 +40,58 @@
                     self.selected = angular.isNumber(model) ? $scope.models[model] : model;
                 };
                 
-                this.getChartData = function(model) {
-                    var chartPoints = createChartPoints(model.trainingData);
-                    var chartSettings = getDefaultChartSettings();
+                this.getChartData = function(model, type) {
+                    var chartPoints = createChartPoints(model.trainingData, type);
+                    var chartSettings = getDefaultChartSettings(type);
                     chartSettings['data']['rows'] = chartPoints;
                     return chartSettings;
                 };
 
-                function createChartPoints(trainingData) {
+                function createChartPoints(trainingData, type) {
                     var chartPoints = [];
                     for (var i = 0; i < trainingData.iter.length; i++) {
+                        var columns = [];
+                        if (type == 'training') {
+                            columns.push({"v": trainingData.iter[i]});
+                            columns.push({"v": trainingData.lossTrain[i]});
+                            columns.push({"v": trainingData.accTrain[i]});
+                        }
+                        if (type == 'validation') {
+                            columns.push({"v": trainingData.iter[i]});
+                            columns.push({"v": trainingData.lossVal[i]});
+                            columns.push({"v": trainingData.accVal[i]});
+                        }
                         chartPoints.push({
-                            "c": [
-                                {"v": trainingData.iter[i]},
-                                {"v": trainingData.lossTrain[i]},
-                                {"v": trainingData.lossVal[i]},
-                                {"v": trainingData.accTrain[i]},
-                                {"v": trainingData.accVal[i]}
-                            ]
+                            "c": columns
                         })
                     }
 
                     return chartPoints;
                 }
 
-                function getDefaultChartSettings() {
+                function getDefaultChartSettings(type) {
+                    var chartSettings = {
+                        "lossFunctionId": "",
+                        "lossFunctionLabel": "",
+                        "accuracyId": "",
+                        "accuracyLabel": ""
+                    };
+                    if (type == 'training') {
+                        chartSettings.lossFunctionId = "lossFunctionTraining";
+                        chartSettings.lossFunctionLabel = "Loss Function";
+                        chartSettings.accuracyId = "accuracyTraining";
+                        chartSettings.accuracyLabel = "Accuracy";
+                        chartSettings.title = "Training Data Set";
+                    }
+                    if (type == 'validation') {
+                        chartSettings.lossFunctionId = "lossFunctionValidation";
+                        chartSettings.lossFunctionLabel = "Loss Function";
+                        chartSettings.accuracyId = "accuracyValidation";
+                        chartSettings.accuracyLabel = "Accuracy";
+                        chartSettings.title = "Validation Data Set";
+                    }
+
+
                     return {
                         "type": "AreaChart",
                         "displayed": false,
@@ -76,26 +103,14 @@
                                     "p": {}
                                 },
                                 {
-                                    "id": "lossFunctionTraining",
-                                    "label": "Loss Function Training",
+                                    "id": chartSettings.lossFunctionId,
+                                    "label": chartSettings.lossFunctionLabel,
                                     "type": "number",
                                     "p": {}
                                 },
                                 {
-                                    "id": "lossFunctionValue",
-                                    "label": "Loss Function Validation",
-                                    "type": "number",
-                                    "p": {}
-                                },
-                                {
-                                    "id": "accuracyTraining",
-                                    "label": "Accuracy Training",
-                                    "type": "number",
-                                    "p": {}
-                                },
-                                {
-                                    "id": "accuracyValue",
-                                    "label": "Accuracy Validation",
+                                    "id": chartSettings.accuracyId,
+                                    "label": chartSettings.accuracyLabel,
                                     "type": "number",
                                     "p": {}
                                 }
@@ -103,12 +118,14 @@
                             "rows": []
                         },
                         "options": {
+                            "title": chartSettings.title,
                             "vAxis": {
                                 "title": "Training Parameters"
                             },
                             "hAxis": {
                                 "title": "Iterations"
-                            }
+                            },
+                            height: 600
                         },
                         "formatters": {}
                     };
