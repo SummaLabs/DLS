@@ -5,12 +5,15 @@ from app.backend.api import app_flask
 import json
 import os
 import flask
+import werkzeug
+import logging
 
 model = flask.Blueprint(__name__, __name__)
 
 models_dir = app_flask.config['DLS_MODELS_BASE_PATH']
 
 model_desc_file_name = 'model-description.json'
+logger = logging.getLogger("dls")
 
 
 @model.route('/load/all')
@@ -24,3 +27,20 @@ def load_all_models():
                 models.append(json.load(f))
 
         return Response(json.dumps(models), mimetype='application/json')
+
+
+@model.route('/uploadFile', methods=['POST'])
+def upload_file():
+
+    dest = app_flask.config['DLS_FILEMANAGER_BASE_PATH'] + '/inference_tmp'
+    print dest
+    uploaded = []
+    for file in request.files.values():
+        print file.filename
+        if file.filename :
+            filename = werkzeug.utils.secure_filename(file.filename)
+            fullname = os.path.join(dest, filename)
+            logger.info('uploading file to ' + fullname)
+            file.save(fullname)
+            uploaded.append(fullname)
+    return Response(json.dumps(uploaded), mimetype='application/json')

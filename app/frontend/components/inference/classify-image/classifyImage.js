@@ -11,7 +11,7 @@
                     fileUrl: '<'
                 },
                 templateUrl: '/frontend/components/inference/classify-image/classify-image.html',
-                controller: function ($scope, $mdDialog, appConfig) {
+                controller: function ($scope, $mdDialog, appConfig, Upload) {
                     var self = this;
 
                     const state = {
@@ -26,6 +26,45 @@
                         $scope.fileUrl = '';
                     };
 
+                    $scope.uploadFiles = function(file, errFiles) {
+                        $scope.f = file;
+                        $scope.errFile = errFiles && errFiles[0];
+                        if (file) {
+                            file.upload = Upload.upload({
+                                url: 'model/uploadFile',
+                                data: {file: file}
+                            });
+
+                            file.upload.then(function (response) {
+                                
+                                    file.result = response.data;
+                                    console.log(response.data);
+                                    var future = modelService.inference(response.data, $scope.modelId);
+                                    future.then(function mySucces(response) {
+
+                                    showNClasses(response.data.data, 8);
+
+                                    //build reference to download
+                                    var csv = buildCSV(response.data.data);
+                                    var blob = new Blob([csv], {type: 'text/plain'});
+                                    var url = $window.URL || $window.webkitURL;
+                                    $scope.fileUrl = url.createObjectURL(blob);
+                                    $scope.state = state.LOADED;
+                                    }, function myError(response) {
+                                            console.log(response);
+                                    });
+                               
+                            }, function (response) {
+                                if (response.status > 0)
+                                    $scope.errorMsg = response.status + ': ' + response.data;
+                            }, function (evt) {
+                            file.progress = Math.min(100, parseInt(100.0 * 
+                            evt.loaded / evt.total));
+                            });
+                        }
+                        console.log("uploading file");
+                    }
+                    
                     $scope.choseImages = function (event) {
                         appConfig.fileManager.pickFile = true;
                         appConfig.fileManager.pickFolder = false;

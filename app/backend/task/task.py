@@ -42,8 +42,9 @@ class Task:
         self.logger.info('starting task ' + str(self.id))
         try:
             self.perform()
-        except Exception:
-            self.logger.info('task ' + str(self.id) + ' failed')
+        except Exception as e:
+            self.logger.error('task ' + str(self.id) + ' failed')
+            self.logger.error("caught " + e.message, exc_info=True)
             self.state = 'failed'
             print "interrupted"
 
