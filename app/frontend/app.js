@@ -110,29 +110,17 @@ angular.module('dlsApp')
             controller: function ($rootScope) {
                 $rootScope.tabIndex = 3;
             }
-        }).state('data-set-builder', {
-            url: "/data-set-builder",
-            template: "<dataset-builder></dataset-builder>",
-            controller: function ($rootScope) {
-                $rootScope.tabIndex = 4;
-            }
-        }).state('file-manager', {
-            url: "/file-manager",
-            template: "<angular-filemanager></angular-filemanager>",
-            controller: function ($rootScope) {
-                $rootScope.tabIndex = 5;
-            }
         }).state('task', {
             url: "/task",
             template: "<task></task>",
             controller: function ($rootScope) {
-                $rootScope.tabIndex = 6;
+                $rootScope.tabIndex = 4;
             }
         }).state('settings', {
             url: "/settings",
             template: "<settings></settings>",
             controller: function ($rootScope) {
-                $rootScope.tabIndex = 7;
+                $rootScope.tabIndex = 5;
             }
         });
     }).controller('mainCtrl', function($rootScope, $scope, $location) {
