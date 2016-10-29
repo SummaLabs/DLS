@@ -1,6 +1,6 @@
 <div layout="column">
     <div layout="row">
-        <md-button class="md-raised md-primary">Upload</md-button>
+        <md-button class="md-raised md-primary"  type="file" ngf-select="uploadFiles($file, $invalidFiles)" accept="image/*">Upload</md-button>
         <md-button class="md-raised md-primary" ng-click="choseImages($event)">From Server</md-button>
         <md-button ng-show="state == 'LOADED'" ng-href="{{fileUrl}}" download="classifiedImages.json" class="md-primary md-raised">
             Download CSV
