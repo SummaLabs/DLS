@@ -1,10 +1,7 @@
 <md-select placeholder="Select Device" ng-model="selectedDevice" required>
-    <md-option ng-value="selectedDevice" ng-repeat="selectedDevice in deviceList" ng-disabled="selectedDevice.isbusy">
+    <md-option ng-value="selectedDevice" ng-repeat="selectedDevice in deviceList" ng-disabled="!selectedDevice.isAvalible">
         <div>
-            <span ng-show="selectedDevice.type == 'cpu'">CPU: </span>
-            <span ng-show="selectedDevice.type == 'gpu'">GPU: </span>
-            <span ng-show="!selectedDevice.isbusy">{{selectedDevice.name}}</span>
-            <span ng-show="selectedDevice.isbusy">Not Available</span>
+            <span>{{getDeviceName(selectedDevice)}}</span>
         </div>
     </md-option>
 </md-select>

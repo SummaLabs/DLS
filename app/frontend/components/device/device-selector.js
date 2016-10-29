@@ -21,6 +21,22 @@ angular.module('deviceSelector', ['ngMaterial'])
                         }
                     );
                 };
+
+                $scope.getDeviceName = function (device) {
+                    var deviceName;
+                    if (device.type == 'cpu') {
+                        deviceName = "CPU: ";
+                    } else if (device.type == 'gpu') {
+                        deviceName = "GPU: ";
+                    }
+                    if (!device.isAvalible) {
+                        return deviceName += "Not Available";
+                    }
+                    
+                    device.isbusy ? deviceName += "Is Busy": deviceName += device.name;
+                    
+                    return deviceName;
+                };
             }
         }
     });
