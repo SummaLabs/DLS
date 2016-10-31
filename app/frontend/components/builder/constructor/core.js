@@ -18,9 +18,10 @@ angular.module('constructorCore')
     .service('coreService', CoreService);
 
 
-function CoreService() {
+function CoreService(layerService, appConfig) {
     var store = {};
     store.scale = 1;
+    let counter = 0;
 
     this.param = function (key, value) {
         if (arguments.length === 1)
@@ -28,6 +29,82 @@ function CoreService() {
 
         store[key] = value;
     };
+
+    this.getNodeTemplate = function(layerType) {
+		let template = layerService.getTemplateByType(layerType);
+		if (!template)
+			template = layerService.getTemplateByType('data');
+
+		return template;
+	}
+
+	this.getNodeDefinition = function(layerType) {
+		let templateDefs = this.param(layerType);
+		if (!templateDefs) {
+			counter ++;
+			let templateHtml = layerService.getTemplateByType(layerType);
+			if (!templateHtml)
+				templateHtml = layerService.getTemplateByType('data');
+//			console.log(layerType);
+        	templateDefs = calculateProportions(templateHtml, appConfig.svgDefinitions.markerPortIn, appConfig.svgDefinitions.markerPortOut);
+        	this.param(layerType, templateDefs);
+		}
+		console.log(counter);
+
+		return templateDefs;
+	}
+
+
+	function calculateProportions(templateHtml, portInSign, portOutSign) {
+	    var displayData = {};
+
+        var svg = document.createElement('div');
+        svg.style.position = 'absolute';
+        svg.style.top = '-1000px';
+        svg.innerHTML = '<svg>' + templateHtml + '</svg>';
+        document.body.appendChild(svg);
+
+        var portIn = angular.element(svg.querySelector('#' + portInSign));
+        var portInRect = portIn[0].getBoundingClientRect();
+        var portOut = angular.element(svg.querySelector('#' + portOutSign));
+        var portOutRect = portOut[0].getBoundingClientRect();
+        var rect = angular.element(svg.firstElementChild.firstElementChild);
+        var elementRect = rect[0].getBoundingClientRect();
+
+        displayData.portIn = {
+            element: null,
+            offsetCenter: {
+                x: portInRect.left + (portInRect.right - portInRect.left) / 2,
+                y: portInRect.top  + (portInRect.bottom - portInRect.top) / 2 + 1000
+            },
+            width: portInRect.right - portInRect.left,
+            height: portInRect.bottom - portInRect.top
+        };
+
+        displayData.portOut = {
+            element: null,
+            offsetCenter: {
+                x: portOutRect.left + (portOutRect.right - portOutRect.left) / 2,
+                y: portOutRect.top  + (portOutRect.bottom - portOutRect.top) / 2 + 1000
+            },
+            width: portOutRect.right - portOutRect.left,
+            height: portOutRect.bottom - portOutRect.top
+        };
+
+
+
+        displayData.node = {
+            offsetCenter: {
+                x: elementRect.left + (elementRect.right - elementRect.left) / 2,
+                y: elementRect.top  + (elementRect.bottom - elementRect.top) / 2 + 1000
+            },
+            width: elementRect.right - elementRect.left,
+            height: elementRect.bottom - elementRect.top
+        };
+        document.body.removeChild(svg);
+        return displayData;
+	}
+
 }
 
 function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scope, $rootScope, taskManagerService, networkDataService, modelsService, coreService, appConfig, layerService) {

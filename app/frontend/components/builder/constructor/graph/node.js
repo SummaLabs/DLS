@@ -27,14 +27,15 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
 
 		link: function($scope, element, attrs) {
-            $scope.$watch('nodeData.template', function(newType) {
-                if (newType != "" && newType != undefined) {
-                    $http.get(newType, {cache: $templateCache}).success(function(html) {
+//            $scope.$watch('nodeData.template', function(newType) {
+//                if (newType != "" && newType != undefined) {
+//                    $http.get(newType, {cache: $templateCache}).success(function(html) {
 
                         var idNode = $scope.nodeData.id;
-                        $scope.nodeData.displayData = calculateProportions(html, patternDefinitions);
+                        $scope.nodeData.displayData = coreService.getNodeDefinition($scope.nodeData.layerType);//calculateProportions(html, patternDefinitions);
 
-                        element.html(html);
+//						if ($scope.nodeData.layerType);
+                        element.html(coreService.getNodeTemplate($scope.nodeData.layerType));
                         $compile(element.contents())($scope);
 
                         $scope.isPort = false;
@@ -96,9 +97,9 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 							id: idNode
 						});
 
-                    });
-                }
-            })
+//                    });
+//                }
+//            })
         }
 	};
 
