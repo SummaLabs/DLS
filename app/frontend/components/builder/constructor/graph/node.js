@@ -27,131 +27,72 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
 
 		link: function($scope, element, attrs) {
-//            $scope.$watch('nodeData.template', function(newType) {
-//                if (newType != "" && newType != undefined) {
-//                    $http.get(newType, {cache: $templateCache}).success(function(html) {
+			var idNode = $scope.nodeData.id;
+			$scope.nodeData.displayData = coreService.getNodeDefinition($scope.nodeData.layerType);
 
-                        var idNode = $scope.nodeData.id;
-                        $scope.nodeData.displayData = coreService.getNodeDefinition($scope.nodeData.layerType);//calculateProportions(html, patternDefinitions);
+			element.html(coreService.getNodeTemplate($scope.nodeData.layerType));
+			$compile(element.contents())($scope);
 
-//						if ($scope.nodeData.layerType);
-                        element.html(coreService.getNodeTemplate($scope.nodeData.layerType));
-                        $compile(element.contents())($scope);
+			$scope.isPort = false;
 
-                        $scope.isPort = false;
+			var rectNode = angular.element(element[0].querySelector('#' + patternDefinitions.markerRect));
+			var textNode = angular.element(element[0].querySelector('#' + patternDefinitions.markerText));
 
-                        var rectNode = angular.element(element[0].querySelector('#' + patternDefinitions.markerRect));
-                        var textNode = angular.element(element[0].querySelector('#' + patternDefinitions.markerText));
+			var portIn = angular.element(element[0].querySelector('#' + patternDefinitions.markerPortIn));
+			var portOut = angular.element(element[0].querySelector('#' + patternDefinitions.markerPortOut));
 
-                        var portIn = angular.element(element[0].querySelector('#' + patternDefinitions.markerPortIn));
-                        var portOut = angular.element(element[0].querySelector('#' + patternDefinitions.markerPortOut));
+			var shapeIn = angular.element(element[0].querySelector('#' + patternDefinitions.markerShapeIn));
+			var shapeOut = angular.element(element[0].querySelector('#' + patternDefinitions.markerShapeOut));
 
-						var shapeIn = angular.element(element[0].querySelector('#' + patternDefinitions.markerShapeIn));
-						var shapeOut = angular.element(element[0].querySelector('#' + patternDefinitions.markerShapeOut));
+			$scope.nodeData.displayData.portIn.element = portIn;
+			$scope.nodeData.displayData.portOut.element = portOut;
 
-                        $scope.nodeData.displayData.portIn.element = portIn;
-                        $scope.nodeData.displayData.portOut.element = portOut;
+			portInit(portIn, patternDefinitions.markerPortIn, idNode);
+			portInit(portOut, patternDefinitions.markerPortOut, idNode);
 
-                        portInit(portIn, patternDefinitions.markerPortIn, idNode);
-                        portInit(portOut, patternDefinitions.markerPortOut, idNode);
+			if (!rectNode && !textNode) {
+				message('File "' + newType + '" isn\'t valid!', 'error');
+			}
+			if (rectNode) {
+				rectNode.attr('id', '#' + patternDefinitions.markerRect + idNode);
+			}
+			if (textNode) {
+				textNode.attr('id', '#' + patternDefinitions.markerText + idNode);
+			}
+			if (portIn) {
+				portIn.attr('id', '#' + patternDefinitions.markerPortIn + idNode);
+			}
+			if (portOut) {
+				portOut.attr('id', '#' + patternDefinitions.markerPortOut + idNode);
+			}
 
-                        if (!rectNode && !textNode) {
-							message('File "' + newType + '" isn\'t valid!', 'error');
-                        }
-                        if (rectNode) {
-							rectNode.attr('id', '#' + patternDefinitions.markerRect + idNode);
-						}
-						if (textNode) {
-							textNode.attr('id', '#' + patternDefinitions.markerText + idNode);
-						}
-						if (portIn) {
-							portIn.attr('id', '#' + patternDefinitions.markerPortIn + idNode);
-						}
-						if (portOut) {
-							portOut.attr('id', '#' + patternDefinitions.markerPortOut + idNode);
-						}
+			if (shapeIn) {
+				shapeIn.attr('id', '#' + patternDefinitions.markerShapeIn + idNode);
+				shapeIn.text('[*]');
+			}
 
-						if (shapeIn) {
-							shapeIn.attr('id', '#' + patternDefinitions.markerShapeIn + idNode);
-							shapeIn.text('[*]');
-						}
+			if (shapeOut) {
+				shapeOut.attr('id', '#' + patternDefinitions.markerShapeOut + idNode);
+				shapeOut.text('[*]');
+			}
 
-						if (shapeOut) {
-							shapeOut.attr('id', '#' + patternDefinitions.markerShapeOut + idNode);
-							shapeOut.text('[*]');
-						}
+			element.attr('id', 'id_' + idNode);
 
-                        element.attr('id', 'id_' + idNode);
+			$scope.nodeData.portIn = portIn;
+			$scope.nodeData.portOut = portOut;
+			textNode.text($scope.nodeData.name);
+			textNode.addClass('unselectable');
+			textNode.text(adaptText(rectNode, textNode ,$scope.nodeData.name));
 
-                        $scope.nodeData.portIn = portIn;
-                        $scope.nodeData.portOut = portOut;
-						textNode.text($scope.nodeData.name);
-					    textNode.addClass('unselectable');
-                        textNode.text(adaptText(rectNode, textNode ,$scope.nodeData.name));
-
-                        nodeWatcher($scope, rectNode);
-						nodeEventsHandler($scope, element, rectNode, idNode);
-                        portEventsHandler($scope, portIn, portOut, idNode);
-						shapeEvents($scope, shapeIn, shapeOut, idNode);
-                        $scope.$emit('nodeInit', {
-							id: idNode
-						});
-
-//                    });
-//                }
-//            })
+			nodeWatcher($scope, rectNode);
+			nodeEventsHandler($scope, element, rectNode, idNode);
+			portEventsHandler($scope, portIn, portOut, idNode);
+			shapeEvents($scope, shapeIn, shapeOut, idNode);
+			$scope.$emit('nodeInit', {
+				id: idNode
+			});
         }
 	};
-
-	function calculateProportions(nodeHtml, patternDefinitions) {
-	    var displayData = {};
-
-        var svg = document.createElement('div');
-        svg.style.position = 'absolute';
-        svg.style.top = '-1000px';
-        svg.innerHTML = '<svg>' + nodeHtml + '</svg>';
-        document.body.appendChild(svg);
-
-        var portIn = angular.element(svg.querySelector('#' + patternDefinitions.markerPortIn));
-        var portInRect = portIn[0].getBoundingClientRect();
-        var portOut = angular.element(svg.querySelector('#' + patternDefinitions.markerPortOut));
-        var portOutRect = portOut[0].getBoundingClientRect();
-        var rect = angular.element(svg.firstElementChild.firstElementChild);
-        var elementRect = rect[0].getBoundingClientRect();
-
-        displayData.portIn = {
-            element: null,
-            offsetCenter: {
-                x: portInRect.left + (portInRect.right - portInRect.left) / 2,
-                y: portInRect.top  + (portInRect.bottom - portInRect.top) / 2 + 1000
-            },
-            width: portInRect.right - portInRect.left,
-            height: portInRect.bottom - portInRect.top
-        };
-
-        displayData.portOut = {
-            element: null,
-            offsetCenter: {
-                x: portOutRect.left + (portOutRect.right - portOutRect.left) / 2,
-                y: portOutRect.top  + (portOutRect.bottom - portOutRect.top) / 2 + 1000
-            },
-            width: portOutRect.right - portOutRect.left,
-            height: portOutRect.bottom - portOutRect.top
-        };
-
-
-
-        displayData.node = {
-            offsetCenter: {
-                x: elementRect.left + (elementRect.right - elementRect.left) / 2,
-                y: elementRect.top  + (elementRect.bottom - elementRect.top) / 2 + 1000
-            },
-            width: elementRect.right - elementRect.left,
-            height: elementRect.bottom - elementRect.top
-        };
-        document.body.removeChild(svg);
-        return displayData;
-	}
 
 	function message(message, type) {
 		$scope.$emit('node_message', {

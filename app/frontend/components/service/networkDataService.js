@@ -209,10 +209,10 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
 
             var width = x_max - x_min;
             var height = y_max - y_min;
-            if (width < 100)
-                width = 100;
-            if (height < 100)
-                height = 100;
+            if (width < 10)
+                width = 10;
+            if (height < 10)
+                height = 10;
 
             var scaleX = (wh - (margin * 2)) / width;
             var scaleY = (ht - (margin * 2)) / height;

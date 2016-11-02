@@ -23,12 +23,16 @@ function CoreService(layerService, appConfig) {
     store.scale = 1;
     let counter = 0;
 
+    let layerDefinition = {};
+
     this.param = function (key, value) {
         if (arguments.length === 1)
             return store[key];
 
         store[key] = value;
     };
+
+
 
     this.getNodeTemplate = function(layerType) {
 		let template = layerService.getTemplateByType(layerType);
@@ -39,19 +43,16 @@ function CoreService(layerService, appConfig) {
 	}
 
 	this.getNodeDefinition = function(layerType) {
-		let templateDefs = this.param(layerType);
-		if (!templateDefs) {
+		if (!layerDefinition[layerType]) {
 			counter ++;
-			let templateHtml = layerService.getTemplateByType(layerType);
+			let templateHtml = this.getNodeTemplate(layerType);
 			if (!templateHtml)
-				templateHtml = layerService.getTemplateByType('data');
-//			console.log(layerType);
-        	templateDefs = calculateProportions(templateHtml, appConfig.svgDefinitions.markerPortIn, appConfig.svgDefinitions.markerPortOut);
-        	this.param(layerType, templateDefs);
-		}
-		console.log(counter);
+				console.log('Template for "layerType" did not loaded!');
 
-		return templateDefs;
+        	layerDefinition[layerType] = calculateProportions(templateHtml, appConfig.svgDefinitions.markerPortIn, appConfig.svgDefinitions.markerPortOut);
+		}
+
+		return layerDefinition[layerType];
 	}
 
 
@@ -65,6 +66,8 @@ function CoreService(layerService, appConfig) {
         document.body.appendChild(svg);
 
         var portIn = angular.element(svg.querySelector('#' + portInSign));
+        if (!portIn[0])
+        	console.log(portIn, portInSign, templateHtml);
         var portInRect = portIn[0].getBoundingClientRect();
         var portOut = angular.element(svg.querySelector('#' + portOutSign));
         var portOutRect = portOut[0].getBoundingClientRect();
@@ -198,7 +201,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
                     .textContent(retMessage)
                     .action('UNDO')
                     .highlightAction(true)
-                    .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
+                    .highlightClass('md-accent')
                     .position('top right');
                 $mdToast.show(toast).then(function (response) {
                     if (response == 'ok') {

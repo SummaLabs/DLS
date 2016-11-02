@@ -43,11 +43,13 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         };
         self.selRect = null;
         schemaEvents();
-        initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element, $compile);
+        //initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element, $compile);
         self.emitEvent(events.INIT, {});
 	};
 
 	$scope.controlItem.viewportPos = function(x, y) {
+		if (isNaN(x)  || isNaN(y))
+			return;
         $scope.$apply( function() {
             viewX = x;
             viewY = y;
@@ -88,6 +90,19 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
             }
         }
 
+        let rectView = schema.rect();
+
+        if(rectView) {
+			if (rectView.right() > $scope.svgWidth) {
+				$scope.svgWidth = rectView.right() * 1.2;
+			}
+			if (rectView.bottom() > $scope.svgHeight) {
+				$scope.svgHeight = rectView.bottom() * 1.2;
+			}
+		}
+
+		initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element, $compile);
+
         addLinks = function () {
             for (let a = 0; a < layers.length; a ++) {
                 if (layers[a].wires && layers[a].wires.length > 0)
@@ -96,8 +111,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                     });
             }
 
-            if (layers.length > 1)
-                $scope.controlItem.reset();
+            /*if (layers.length > 1)
+                $scope.controlItem.reset();*/
         };
 
         return true;
@@ -532,6 +547,9 @@ function initBackground(self, scope, step, element, $compile) {
     self.grid.vertical = [];
     self.grid.horizontal = [];
     var viewGroup = angular.element(element[0].querySelector('#view'));
+    while (viewGroup[0].firstChild) {
+    	viewGroup[0].removeChild(viewGroup[0].firstChild);
+}
     var line = angular.element('<line>');
     line.attr('style', 'stroke:rgb(111,111,111);stroke-width:0.5');
     var html = '';
