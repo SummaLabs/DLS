@@ -11,7 +11,7 @@
                     fileUrl: '<'
                 },
                 templateUrl: '/frontend/components/inference/classify-image/classify-image.html',
-                controller: function ($scope, $mdDialog, appConfig, Upload) {
+                controller: function ($scope, $mdDialog, appConfig, Upload, modelService, $window) {
                     var self = this;
 
                     const state = {
