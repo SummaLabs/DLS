@@ -41,7 +41,8 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'taskDataset',
     'testRocTask',
     'layerService',
-    'trainingParameters'
+    'trainingParameters',
+    'create2dImgDataset'
 ]);
 
 
@@ -102,11 +103,23 @@ angular.module('dlsApp')
                 displayName: 'Classify Image'
             },
             controller: function ($rootScope) {
-
+                $rootScope.tabIndex = 2;
             }
-        }).state('data-set', {
-            url: "/data-set",
+        }).state('data', {
+            url: "/data",
             template: "<main-data-set></main-data-set>",
+            controller: function ($rootScope) {
+                $rootScope.tabIndex = 3;
+            }
+        }).state('data-create', {
+            url: "/data/create",
+            template: "<create2d-img-dataset></create2d-img-dataset>",
+            controller: function ($rootScope) {
+                $rootScope.tabIndex = 3;
+            }
+        }).state('data-file-manager', {
+            url: "/data/file-manager",
+            templateUrl: "/frontend/components/2d-img-dataset/file-manager.html",
             controller: function ($rootScope) {
                 $rootScope.tabIndex = 3;
             }

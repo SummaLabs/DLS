@@ -10,8 +10,8 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService'])
             selectedDbId:   '@',
             currentDbInfo:  '<'
         },
-        controller: function ($scope, $rootScope, $mdDialog, $timeout, appConfig, dbinfoService) {
-
+        controller: function ($scope, $rootScope, $mdDialog, $mdPanel, $timeout, $location, appConfig, dbinfoService) {
+            this._mdPanel = $mdPanel;
             var self = this;
             self.$onInit = function () {
                 dbinfoService.getDatasetsInfoStatList().then(
@@ -108,6 +108,7 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService'])
                 { name: 'Data Set 3'},
                 { name: 'Data Set 4'}
             ];
+
             this.createDialog = function(event) {
                 appConfig.fileManager.pickFile = true;
                 appConfig.fileManager.pickFolder = true;
@@ -119,6 +120,12 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService'])
                     targetEvent: event,
                     clickOutsideToClose:false
                 });
+            };
+
+            var originatorEv;
+            this.openMenu = function ($mdOpenMenu, ev) {
+                originatorEv = ev;
+                $mdOpenMenu(ev);
             };
         }
     });

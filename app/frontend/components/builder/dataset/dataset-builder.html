@@ -32,9 +32,10 @@
             <div ng-switch-when="image2d">
                 <create-img-dataset></create-img-dataset>
             </div>
-            <div ng-switch-when="image3d">Image 3D {{$ctrl.selected}}</div>
+            <div ng-switch-when="image3d">
+                <create2d-img-dataset></create2d-img-dataset>
+            </div>
             <div ng-switch-default>
-
             </div>
         </div>
     </md-content>
