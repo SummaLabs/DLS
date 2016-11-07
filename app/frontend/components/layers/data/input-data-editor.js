@@ -8,10 +8,8 @@ angular
             doOnSubmit: '&'
         },
         templateUrl: "frontend/components/layers/data/input-data-editor.html",
-        controller: function ($scope, networkDataService, layerService, dbinfoService, dataLayer) {
+        controller: function ($scope, networkDataService, layerService, dbinfoService) {
             this.$onInit = function () {
-                setUpLayerParams($scope, networkDataService, layerService);
-                $scope.datasetTypeList = dataLayer.getDataTypes();
                 $scope.selectedDB = null;
                 $scope.datasetIdList = null;
 
@@ -28,9 +26,10 @@ angular
                             tlist.push(tmp);
                         }
                         $scope.datasetIdList = tlist;
-                        if($scope.datasetIdList.length>0) {
+                        if($scope.datasetIdList.length > 0) {
                             $scope.selectedDB = $scope.datasetIdList[0];
                         }
+                        setUpLayerParams($scope, tlist, networkDataService, layerService);
                     },
                     function errorCallback(response) {
                         console.log(response.data);
@@ -45,24 +44,26 @@ angular
                 };
 
                 function editLayer(layer) {
-                    layer.params.datasetType = $scope.datasetType;
                     if ($scope.selectedDB)
                         layer.params.datasetId = $scope.selectedDB.id;
                 }
 
-                function setUpLayerParams($scope, networkDataService, layerService) {
+                function setUpLayerParams($scope, dataSetList, networkDataService, layerService) {
                     var currentLayer = networkDataService.getLayerById($scope.layerId);
                     var savedParams = currentLayer.params;
-                    var defaultParams = layerService.getLayerByType(currentLayer.layerType).params;
-                    setUpParam($scope, savedParams, defaultParams, 'datasetType');
-                    setUpParam($scope, savedParams, defaultParams, 'datasetId');
-                }
-
-                function setUpParam($scope, savedParams, defaultParams, param) {
-                    if (savedParams[param] == "") {
-                        $scope[param] = defaultParams[param];
+                    var savedDataSetIndex = -1;
+                    for (var i = 0; i < dataSetList.length; i++) {
+                        if (savedParams['datasetId'] == dataSetList[i].id) {
+                            savedDataSetIndex = i;
+                        }
+                    }
+                    if (savedDataSetIndex > -1) {
+                        $scope.selectedDB = $scope.datasetIdList[savedDataSetIndex];
                     } else {
-                        $scope[param] = savedParams[param];
+                        if(dataSetList.length > 0) {
+                            $scope.selectedDB = dataSetList[0];
+                        }
+                        currentLayer.params = layerService.getLayerByType(currentLayer.layerType).params;
                     }
                 }
             }
