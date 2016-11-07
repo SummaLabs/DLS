@@ -1,50 +1,53 @@
-<div layout="column">
+<md-content layout="column" layout-fill>
+    <div layout="column">
 
-    <div layout="row" layout-align="space-between center">
-        <md-button ui-sref="data-file-manager" class="md-raised">File Manager</md-button>
-        <md-menu>
-         <md-button ng-click="$ctrl.openMenu($mdOpenMenu, $event)" aria-label="menu" class="md-fab md-warn">
-            <md-tooltip md-direction="top" md-visible="tooltipVisible">Create Data Set</md-tooltip>
-            <md-icon md-font-library="material-icons" aria-label="menu">add</md-icon>
-        </md-button>
-            <md-menu-content width="4">
-                <md-menu-item>
-                    <md-button ui-sref="data-create">
-                        Create 2D Image Data Set
-                    </md-button>
-                </md-menu-item>
-                <md-menu-item>
-                    <md-button disabled="disabled">
-                        Create 3D Image Data Set
-                    </md-button>
-                </md-menu-item>
-                <md-menu-item>
-                    <md-button disabled="disabled">
-                        Create Text Data Set
-                    </md-button>
-                </md-menu-item>
-            </md-menu-content>
-        </md-menu>
-    </div>
-
-    <div class='md-padding' layout="row" layout-wrap>
-        <md-card ng-repeat="db in $ctrl.datasets" class="md-whiteframe-8dp">
-            <img ng-src="/dbpreview/dbimgpreview/{{db.id}}" class="md-card-image md-whiteframe-2dp" alt="user avatar">
-            <md-card-content>
-                <h2>{{db.name}}</h2>
-                <p>{{db.type}}, <strong>{{db.shapestr}}</strong>, {{db.info.date.str}} ({{db.info.time.str}})</p>
-            </md-card-content>
-            <div class="md-actions" layout="row" layout-align="end center">
-                <md-button class="" ng-click="$ctrl.createDialogPreviewDB($event, db.id)">
-                    <md-icon md-font-library="material-icons" aria-label="show">visibility</md-icon>
-                    Info
+        <div layout="row" layout-align="space-between center">
+            <md-button ui-sref="data-file-manager" class="md-raised">File Manager</md-button>
+            <md-menu>
+                <md-button ng-click="$ctrl.openMenu($mdOpenMenu, $event)" aria-label="menu" class="md-fab md-warn">
+                    <md-tooltip md-direction="top" md-visible="tooltipVisible">Create Data Set</md-tooltip>
+                    <md-icon md-font-library="material-icons" aria-label="menu">add</md-icon>
                 </md-button>
-                <md-button class="md-warn">
-                    <md-icon md-font-library="material-icons" aria-label="delete">delete</md-icon>
-                    Delete
-                </md-button>
-            </div>
-        </md-card>
-    </div>
+                <md-menu-content width="4">
+                    <md-menu-item>
+                        <md-button ui-sref="data-create">
+                            Create 2D Image Data Set
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                        <md-button disabled="disabled">
+                            Create 3D Image Data Set
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                        <md-button disabled="disabled">
+                            Create Text Data Set
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+        </div>
 
-</div>
+        <div class='md-padding' layout="row" layout-wrap>
+            <md-card ng-repeat="db in $ctrl.datasets" class="md-whiteframe-8dp">
+                <img ng-src="/dbpreview/dbimgpreview/{{db.id}}" class="md-card-image md-whiteframe-2dp"
+                     alt="user avatar">
+                <md-card-content>
+                    <h2>{{db.name}}</h2>
+                    <p>{{db.type}}, <strong>{{db.shapestr}}</strong>, {{db.info.date.str}} ({{db.info.time.str}})</p>
+                </md-card-content>
+                <div class="md-actions" layout="row" layout-align="end center">
+                    <md-button class="" ng-click="$ctrl.createDialogPreviewDB($event, db.id)">
+                        <md-icon md-font-library="material-icons" aria-label="show">visibility</md-icon>
+                        Info
+                    </md-button>
+                    <md-button class="md-warn">
+                        <md-icon md-font-library="material-icons" aria-label="delete">delete</md-icon>
+                        Delete
+                    </md-button>
+                </div>
+            </md-card>
+        </div>
+
+    </div>
+</md-content>
