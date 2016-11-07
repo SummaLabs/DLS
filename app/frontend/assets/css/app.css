@@ -152,12 +152,50 @@ md-sidenav.md-closed-add.md-closed-add-active, md-sidenav.md-closed-remove.md-cl
 .layer-icon{
     width: 50px;
     height: 50px;
+    margin: 0 auto;
+    display: block;
+    
 }
 
 .layer-label{
-        padding-left: 7px;
+    padding-left: 7px;
+    margin: 0 auto;
+    display: table;
 }
 
 .device-status-label{
     margin-right: 15px;
+}
+
+.network-list {
+
+}
+
+.network-list-card {
+
+}
+.network-list-card h4 {
+    overflow: hidden;
+    max-width: 250px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.network-list h4 {
+
+}
+
+#network-main {
+    position: relative;
+}
+
+#network-view-toggle {
+    position: absolute;
+    padding: 10px;
+    top: 0px;
+    right: 0px;
+}
+
+#network-view-toggle md-icon {
+    font-size: 30px;
 }

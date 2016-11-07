@@ -1,5 +1,5 @@
 
-function SchemaController($scope, $rootScope, $element, coreService, appConfig, $compile) {
+function SchemaController($scope, $rootScope, $element, coreService, appConfig, $compile, layerService) {
     const state = {
         DEFAULT: 0,
         SELECTION: 1,
@@ -43,11 +43,13 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         };
         self.selRect = null;
         schemaEvents();
-        initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element, $compile);
+        //initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element, $compile);
         self.emitEvent(events.INIT, {});
 	};
 
 	$scope.controlItem.viewportPos = function(x, y) {
+		if (isNaN(x)  || isNaN(y))
+			return;
         $scope.$apply( function() {
             viewX = x;
             viewY = y;
@@ -72,15 +74,34 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         return true;
     };
 
+    $scope.controlItem.clear = function() {
+        schema.clear();
+  	};
+
     var addLinks = null;
 
     $scope.controlItem.setLayers = function(layers) {
         self.counterNodesInit = 0;
         schema.clear();
         for (let a = 0; a < layers.length; a ++) {
-            if(!$scope.controlItem.addLayer(layers[a]))
+            if(!$scope.controlItem.addLayer(layers[a])) {
+                console.log('addLayer:error');
                 return false;
+            }
         }
+
+        let rectView = schema.rect();
+
+        if(rectView) {
+			if (rectView.right() > $scope.svgWidth) {
+				$scope.svgWidth = rectView.right() * 1.2;
+			}
+			if (rectView.bottom() > $scope.svgHeight) {
+				$scope.svgHeight = rectView.bottom() * 1.2;
+			}
+		}
+
+		initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element, $compile);
 
         addLinks = function () {
             for (let a = 0; a < layers.length; a ++) {
@@ -90,8 +111,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                     });
             }
 
-            if (layers.length > 1)
-                $scope.controlItem.reset();
+            /*if (layers.length > 1)
+                $scope.controlItem.reset();*/
         };
 
         return true;
@@ -171,7 +192,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 				var correctPos = { x: (pos.x + (viewX ) - data.offset.x) / self.scale, y: (pos.y + (viewY) - data.offset.y) / self.scale};
 				if (correctPos.x > 0 && correctPos.y > 0) {
 					$scope.$apply( function() {
-						addNode(data.node.name, data.node.layerType, data.node.category, data.node.template, correctPos)
+                        var templatePath = layerService.getTemplatePathByType(data.node.layerType);
+						addNode(data.node.name, data.node.layerType, data.node.category, templatePath, correctPos)
 					});
 				}
 			}
@@ -271,7 +293,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
             $scope.$apply( function() {
                 var divSvg = document.getElementById('workspace');
-                viewBox(viewX, viewY, divSvg.offsetWidth, divSvg.offsetHeight);
+                if (divSvg)
+                    viewBox(viewX, viewY, divSvg.offsetWidth, divSvg.offsetHeight);
             });
             
 
@@ -524,6 +547,9 @@ function initBackground(self, scope, step, element, $compile) {
     self.grid.vertical = [];
     self.grid.horizontal = [];
     var viewGroup = angular.element(element[0].querySelector('#view'));
+    while (viewGroup[0].firstChild) {
+    	viewGroup[0].removeChild(viewGroup[0].firstChild);
+}
     var line = angular.element('<line>');
     line.attr('style', 'stroke:rgb(111,111,111);stroke-width:0.5');
     var html = '';

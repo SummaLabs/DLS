@@ -18,9 +18,12 @@ angular.module('constructorCore')
     .service('coreService', CoreService);
 
 
-function CoreService() {
+function CoreService(layerService, appConfig) {
     var store = {};
     store.scale = 1;
+    let counter = 0;
+
+    let layerDefinition = {};
 
     this.param = function (key, value) {
         if (arguments.length === 1)
@@ -28,10 +31,88 @@ function CoreService() {
 
         store[key] = value;
     };
+
+
+
+    this.getNodeTemplate = function(layerType) {
+		let template = layerService.getTemplateByType(layerType);
+		if (!template)
+			template = layerService.getTemplateByType('data');
+
+		return template;
+	}
+
+	this.getNodeDefinition = function(layerType) {
+		if (!layerDefinition[layerType]) {
+			counter ++;
+			let templateHtml = this.getNodeTemplate(layerType);
+			if (!templateHtml)
+				console.log('Template for "layerType" did not loaded!');
+
+        	layerDefinition[layerType] = calculateProportions(templateHtml, appConfig.svgDefinitions.markerPortIn, appConfig.svgDefinitions.markerPortOut);
+		}
+
+		return layerDefinition[layerType];
+	}
+
+
+	function calculateProportions(templateHtml, portInSign, portOutSign) {
+	    var displayData = {};
+
+        var svg = document.createElement('div');
+        svg.style.position = 'absolute';
+        svg.style.top = '-1000px';
+        svg.innerHTML = '<svg>' + templateHtml + '</svg>';
+        document.body.appendChild(svg);
+
+        var portIn = angular.element(svg.querySelector('#' + portInSign));
+        if (!portIn[0])
+        	console.log(portIn, portInSign, templateHtml);
+        var portInRect = portIn[0].getBoundingClientRect();
+        var portOut = angular.element(svg.querySelector('#' + portOutSign));
+        var portOutRect = portOut[0].getBoundingClientRect();
+        var rect = angular.element(svg.firstElementChild.firstElementChild);
+        var elementRect = rect[0].getBoundingClientRect();
+
+        displayData.portIn = {
+            element: null,
+            offsetCenter: {
+                x: portInRect.left + (portInRect.right - portInRect.left) / 2,
+                y: portInRect.top  + (portInRect.bottom - portInRect.top) / 2 + 1000
+            },
+            width: portInRect.right - portInRect.left,
+            height: portInRect.bottom - portInRect.top
+        };
+
+        displayData.portOut = {
+            element: null,
+            offsetCenter: {
+                x: portOutRect.left + (portOutRect.right - portOutRect.left) / 2,
+                y: portOutRect.top  + (portOutRect.bottom - portOutRect.top) / 2 + 1000
+            },
+            width: portOutRect.right - portOutRect.left,
+            height: portOutRect.bottom - portOutRect.top
+        };
+
+
+
+        displayData.node = {
+            offsetCenter: {
+                x: elementRect.left + (elementRect.right - elementRect.left) / 2,
+                y: elementRect.top  + (elementRect.bottom - elementRect.top) / 2 + 1000
+            },
+            width: elementRect.right - elementRect.left,
+            height: elementRect.bottom - elementRect.top
+        };
+        document.body.removeChild(svg);
+        return displayData;
+	}
+
 }
 
-function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scope, $rootScope, taskManagerService, networkDataService, networkLayerService, modelsService, coreService, appConfig) {
+function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scope, $rootScope, taskManagerService, networkDataService, modelsService, coreService, appConfig, layerService) {
     var self = this;
+
     self.svgWidth = appConfig.svgDefinitions.areaWidth;
     self.svgHeight = appConfig.svgDefinitions.areaHeight;
     self.svgControl = {};
@@ -53,43 +134,50 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
             $scope.networkName = networkDataService.getNetwork().name;
         });
     };
+
     this.trainModel = function ($event) {
         doUpdateNetwork();
         var dataNetwork = networkDataService.getNetwork();
         modelsService.checkNetworkFast(dataNetwork).then(
             function successCallback(response) {
                 var ret = response.data;
-                if ( (ret.length<1) || (ret[0] != 'ok') ) {
-                    var toast = $mdToast.simple()
-                    .textContent("ERROR: " + response.data)
-                    .action('UNDO')
-                    .highlightAction(true)
-                    .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
-                    .position('top right');
+                if ((ret.length < 1) || (ret[0] != 'ok')) {
+                    showToast(response.data) ;
                 } else {
-                    taskManagerService.startTask('model-train-image2d-cls', dataNetwork).then(
-                        function successCallback(response) {
-                            $location.url('/task');
-                            var toast = $mdToast.simple()
-                                .textContent("Train Model task added to Tasks-Queue")
-                                .position('top right');
-                            $mdToast.show(toast).then(function (response) {
-                                if (response == 'ok') {
-                                    //todo
-                                }
-                            });
-                        },
-                        function errorCallback(response) {
-                            console.log(response.data);
-                        }
-                    );
+                    showTrainModelDialog(dataNetwork, $event);
                 }
             },
             function errorCallback(response) {
                 console.log(response.data);
             }
         );
+        console.log();
     };
+
+    function showToast(message) {
+        $mdToast.show(
+            $mdToast.simple()
+                .textContent(message)
+                .position('top right')
+                .hideDelay(3000)
+        );
+    }
+
+    function showTrainModelDialog(network, $event) {
+        $mdDialog.show({
+            clickOutsideToClose: true,
+            parent: angular.element(document.body),
+            targetEvent: $event,
+            templateUrl: '/frontend/components/training-parameters/train-model-dialog.html',
+            controller: function ($scope) {
+                $scope.network = network;
+                $scope.closeDialog = function () {
+                    $mdDialog.hide();
+                }
+            }
+        });
+    }
+
     this.checkModelJson = function ($event) {
         doUpdateNetwork();
         var dataNetwork = networkDataService.getNetwork();
@@ -113,7 +201,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
                     .textContent(retMessage)
                     .action('UNDO')
                     .highlightAction(true)
-                    .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
+                    .highlightClass('md-accent')
                     .position('top right');
                 $mdToast.show(toast).then(function (response) {
                     if (response == 'ok') {
@@ -192,10 +280,10 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
             };
 
             $scope.saveNetwork = function () {
+
+                var image = networkDataService.buildPreviewImage(networkDataService.getNetwork().layers, 150, 150, 20);
+                networkDataService.getNetwork().preview = image;
                 networkDataService.saveNetwork($scope.network.name, $scope.network.description);
-               /* var image = buildPreviewImage(networkDataService.getNetwork().layers, 150, 150);
-                var im = document.getElementById('img1');
-                im.setAttribute('src', image);*/
                 $mdDialog.hide();
             };
 
@@ -223,9 +311,11 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
 
     this.resetView = function (event) {
         self.svgControl.reset();
-       /* var image = buildPreviewImage(networkDataService.getNetwork().layers, 300, 300, 20);
-        var im = document.getElementById('img1');
-        im.setAttribute('src', image);*/
+    };
+
+    this.clear = function (event) {
+        self.svgControl.clear();
+        networkDataService.clearLayers();
     };
 
     function constructorListeners() {
@@ -239,7 +329,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
         $scope.$on('graph:addNode', function (event, node) {
             console.log('graph:addNode');
             var layers = networkDataService.getLayers();
-            var layer = networkLayerService.getLayerByType(node.layerType);
+            var layer = layerService.getLayerByType(node.layerType);
             layers.push(layer);
             layer.id = node.id;
             layer.name = node.name;
@@ -324,88 +414,30 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
             layer.pos.y = node.pos.y;
             event.stopPropagation();
         });
-        
+
+        $scope.toggleIcon = 'keyboard_tab';
         $scope.toggleLeft = buildToggler('left');
         $scope.toggleRight = buildToggler('right');
 
         function buildToggler(componentId) {
+            let opened = true;
             return function() {
                 $mdSidenav(componentId).toggle();
+                if (componentId === 'right') {
+                    opened = !opened;
+                    if (opened) {
+                        $scope.toggleIcon = 'keyboard_tab';
+                    } else {
+                        $scope.toggleIcon = 'keyboard_return'
+                    }
+                }
             }
         }
 
         function setUpNetwork() {
-            // adaptNetworkPositions(networkDataService.getLayers(), 300, 300);
             self.svgControl.setLayers(networkDataService.getLayers());
 
         }
-    }
-    
-    function buildPreviewImage(layers, wh, ht, margin) {
-
-        var x_min = Number.MAX_VALUE;
-        var x_max = Number.MIN_VALUE;
-        var y_min = Number.MAX_VALUE;
-        var y_max = Number.MIN_VALUE;
-
-        layers.forEach(function (node) {
-            x_min = Math.min(x_min, node.pos.x);
-            y_min = Math.min(y_min, node.pos.y);
-            x_max = Math.max(x_max, node.pos.x);
-            y_max = Math.max(y_max, node.pos.y);
-        });
-
-        var width = x_max - x_min;
-        var height = y_max - y_min;
-        if (width < 1)
-            width = 1;
-        if (height < 1)
-            height = 1;
-
-        var scaleX = (wh - (margin * 2)) / width;
-        var scaleY = (ht - (margin * 2)) / height;
-        var offsetX = margin - x_min * scaleX;
-        var offsetY = margin - y_min * scaleY;
-
-        var svg = document.createElement('svg');
-        svg.setAttribute('width', wh);
-        svg.setAttribute('height', ht);
-        svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-
-        var html = '';
-        layers.forEach(function (layer_from) {
-            if (layer_from.wires)
-                layer_from.wires.forEach(function (node_id) {
-                    for (let a = 0; a < layers.length; a++) {
-                        if (layers[a].id == node_id) {
-                            html += '<line x1="' + (offsetX + layer_from.pos.x * scaleX) + '"' +
-                                'y1="' + (offsetY + layer_from.pos.y * scaleY) + '"' +
-                                'x2="' + (offsetX + layers[a].pos.x * scaleX) + '"' +
-                                'y2="' + (offsetY + layers[a].pos.y * scaleY) + '"' +
-                                'stroke="blue" stroke-width="1"></line>';
-                            break;
-                        }
-                    }
-                });
-        });
-
-        var radius = 10 * scaleX;
-        if (radius < 2)
-            radius = 2;
-        layers.forEach(function (node) {
-            html += '<circle r="' + radius + '" ' +
-                'cx="' + (offsetX + node.pos.x * scaleX) + '" ' +
-                'cy="' + (offsetY + node.pos.y * scaleY) + '" ' +
-                'style="fill:#ff0000;fill-opacity:1;stroke:blue;stroke-width:0.5;stroke-opacity:1"></circle>';
-        });
-
-        svg.innerHTML = html;
-		var xml = new XMLSerializer().serializeToString(svg);
-
-		var svg64 = btoa(xml);
-		var b64Start = 'data:image/svg+xml;base64,';
-		var image64 = b64Start + svg64;
-		return image64;
     }
 
     "use strict";

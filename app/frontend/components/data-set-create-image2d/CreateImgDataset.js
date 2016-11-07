@@ -124,6 +124,7 @@ angular.module('createImgDataset', ['ngMaterial','ngMessages', 'taskManagerServi
             //         ok('Ok')
             //     );
             // };
+            
             this.setTrainImagesDir = function (ptype) {
                 var pref = ptype.split('-')[0];
                 if (pref == 'dir') {
@@ -134,6 +135,7 @@ angular.module('createImgDataset', ['ngMaterial','ngMessages', 'taskManagerServi
                     appConfig.fileManager.pickFolder = false;
                 }
             };
+            
             self.formSubmit = function () {
                 var dataJson = self.getConfigJson();
                 $location.url('/task');
@@ -177,7 +179,7 @@ angular.module('createImgDataset', ['ngMaterial','ngMessages', 'taskManagerServi
                     ok('Ok')
                 );
             };
-            this.setTrainImagesDir = function (ptype) {
+            this.setTrainImagesDir = function (ptype, $event) {
                 var pref = ptype.split('-')[0];
                 if(pref=='dir'){
                     appConfig.fileManager.pickFile = false;
@@ -223,7 +225,7 @@ angular.module('createImgDataset', ['ngMaterial','ngMessages', 'taskManagerServi
                     },
                     templateUrl: 'frontend/components/dialog/file-manager.html',
                     parent: angular.element(document.body),
-                    targetEvent: event,
+                    targetEvent: $event,
                     clickOutsideToClose:false
                 });
             };

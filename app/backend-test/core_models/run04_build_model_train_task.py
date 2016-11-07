@@ -20,6 +20,6 @@ if __name__ == '__main__':
         with open(pathTestModel, 'r') as f:
             cfgJson = json.load(f)
             for ll in cfgJson['layers']:
-                if ll['content']=='data':
+                if ll['layerType']=='data':
                     ll['params']['datasetId'] = dbInfo.dbId
             ModelTaskDirBuilder.buildModelTrainTaskDir(cfgJson)

@@ -11,7 +11,7 @@
                     fileUrl: '<'
                 },
                 templateUrl: '/frontend/components/inference/classify-image/classify-image.html',
-                controller: function ($scope, $mdDialog, appConfig, imageService) {
+                controller: function ($scope, $mdDialog, appConfig, Upload, modelService, $window) {
                     var self = this;
 
                     const state = {
@@ -25,7 +25,39 @@
                         $scope.images = [];
                         $scope.fileUrl = '';
                     };
+                    
 
+                    $scope.uploadFiles = function(file, errFiles) {
+                        $scope.f = file;
+                        $scope.errFile = errFiles && errFiles[0];
+                        if (file) {
+                            file.upload = Upload.upload({
+                                url: 'model/uploadFile',
+                                data: {file: file}
+                            });
+
+                            file.upload.then(function (response) {
+                                
+                                    file.result = response.data;
+                                    console.log(response.data);
+                                    $scope.state = state.LOADING;
+                                    $scope.images.length = 0;
+
+                                    var future = modelService.inference(response.data, $scope.modelId);
+                                    processInferenceResult(future);
+                                    
+                               
+                            }, function (response) {
+                                if (response.status > 0)
+                                    $scope.errorMsg = response.status + ': ' + response.data;
+                            }, function (evt) {
+                            file.progress = Math.min(100, parseInt(100.0 * 
+                            evt.loaded / evt.total));
+                            });
+                        }
+                        console.log("uploading file");
+                    }
+                    
                     $scope.choseImages = function (event) {
                         appConfig.fileManager.pickFile = true;
                         appConfig.fileManager.pickFolder = false;
@@ -35,50 +67,23 @@
                             parent: angular.element(document.body),
                             targetEvent: event,
                             clickOutsideToClose: false,
-                            controller: function (scope, $mdDialog, $rootScope, $window) {
+                            controller: function (scope, $mdDialog, $rootScope, $window, modelService) {
 
                                 scope.select = function (answer) {
                                     $mdDialog.hide(answer);
 
                                     var imagesPath = [];
-                                    $rootScope.selectedFiles.forEach(function (item) {
-                                        var path = "";
-                                        item.model.path.forEach(function (folder) {
-                                            path += folder + "/";
-                                        });
-                                        path += item.model.name;
-                                        imagesPath.push(path);
+                                    $rootScope.selectedFiles.forEach(function (item, i, array) {
+                                        console.log(item.model.fullPath(), item.model.name, item.model.type, item.model.size);
+                                        imagesPath.push(item.model.fullPath());
                                     });
 
-                                    var concatImagesPath = "";
-                                    for (var i = 0; i < imagesPath.length; i++) {
-                                        concatImagesPath = concatImagesPath.concat(imagesPath[i]);
-                                        if (i < imagesPath.length - 1) {
-                                            concatImagesPath = concatImagesPath.concat(";");
-                                        }
-                                    }
-
-                                    if (concatImagesPath) {
+                                    if (imagesPath.length > 0) {
                                         $scope.state = state.LOADING;
                                         $scope.images.length = 0;
-                                        var future = imageService.classifyImages(concatImagesPath, $scope.modelId);
-                                        future.then(function mySucces(response) {
 
-                                            var images = showNClasses(response.data.images, 6   );
-                                            images.forEach(function (image) {
-                                                $scope.images.push(image);
-                                            });
-
-                                            //build reference to download
-                                            var csv = buildCSV(response.data);
-                                            var blob = new Blob([csv], {type: 'text/plain'});
-                                            var url = $window.URL || $window.webkitURL;
-                                            $scope.fileUrl = url.createObjectURL(blob);
-
-                                            $scope.state = state.LOADED;
-                                        }, function myError(response) {
-                                            console.log(response);
-                                        });
+                                        var future = modelService.inference(imagesPath, $scope.modelId);
+                                         processInferenceResult(future);
                                     } else {
                                         choseImageAlert();
                                     }
@@ -103,33 +108,33 @@
                     };
 
                     function showNClasses(images, classesNumber) {
-                        var imagesToShow = [];
-                        images.forEach(function(image) {
-                            var imageToShow = {};
-                            imageToShow['path'] = image['path'];
-                            imageToShow['content'] = image['content'];
-                            var classProbabilities = [];
-                            var i = 0;
-                            image['classProbabilities'].forEach(function(classProb) {
-                                if (i < classesNumber) {
-                                    classProbabilities.push(classProb)
-                                }
-                                i++;
-                            });
-                            imageToShow['classProbabilities'] = classProbabilities;
-                            imagesToShow.push(imageToShow);
+                        var imagesApiPath = appConfig.image.loadApiUrl;
+                        var i = 0;
+                        images.forEach(function (result) {
+                            var classifiedImage = {
+                                'classProbabilities': result.result.distrib.slice(0, classesNumber),
+                                'imagePath': imagesApiPath + result.filepath
+                            };
+                            $scope.images.push(classifiedImage);
+                            i++;
                         });
-
-                        return imagesToShow;
                     }
 
-                    function buildCSV(data) {
+                    function buildCSV(images) {
                         //csv header
+                        var classes = [];
                         var csv = "path,";
                         var i = 0;
-                        data.classes.forEach(function (className) {
-                            csv += className;
-                            if (i < data.classes.length - 1) {
+                        var classProbs = images[0].result.distrib;
+                        classProbs.forEach(function (classProb) {
+                            classes.push(classProb[0]);
+                        });
+
+                        classes.sort();
+
+                        classes.forEach(function (clazz) {
+                            csv += clazz;
+                            if (i < classes.length - 1) {
                                 csv += ",";
                             } else {
                                 csv += '\n';
@@ -137,14 +142,14 @@
                             i++;
                         });
                         //csv content
-                        data.images.forEach(function (image) {
-                            csv += image.path + ',';
+                        images.forEach(function (image) {
+                            csv += image.filepath + ',';
                             i = 0;
-                            data.classes.forEach(function (className) {
-                                image.classProbabilities.forEach(function (classProb) {
-                                    if (classProb.name == className) {
-                                        csv += classProb.value;
-                                        if (i < data.classes.length - 1) {
+                            classes.forEach(function (className) {
+                                image.result.distrib.forEach(function (classProb) {
+                                    if (classProb[0] == className) {
+                                        csv += classProb[1];
+                                        if (i < classes.length - 1) {
                                             csv += ",";
                                         }
                                         i++;
@@ -155,6 +160,22 @@
                         });
 
                         return csv;
+                    }
+                    
+                    function processInferenceResult(future){
+                        future.then(function mySucces(response) {
+
+                                    showNClasses(response.data.data, 8);
+
+                                    //build reference to download
+                                    var csv = buildCSV(response.data.data);
+                                    var blob = new Blob([csv], {type: 'text/plain'});
+                                    var url = $window.URL || $window.webkitURL;
+                                    $scope.fileUrl = url.createObjectURL(blob);
+                                    $scope.state = state.LOADED;
+                                    }, function myError(response) {
+                                            console.log(response);
+                                    });
                     }
                 }
             }

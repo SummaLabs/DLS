@@ -46,8 +46,8 @@ class DecimalEncoder(json.JSONEncoder):
 def inference_model_fast():
     print ('---')
     dataJson = json.loads(request.data)
-    modelId     = dataJson['modelid']
-    lstFilesFM  = dataJson['files']
+    modelId     = dataJson['modelId']
+    lstFilesFM  = dataJson['imagesPath']
     if modelId not in modelsWatcher.dictModelsInfo.keys():
         return Response(json.dumps({'status': 'error: invalid model-id'}), mimetype='application/json')
     modelInfo = modelsWatcher.dictModelsInfo[modelId]
@@ -108,10 +108,12 @@ def calcshape_model_json():
         return Response(json.dumps(ret), mimetype='application/json')
     return Response(json.dumps({'status': 'error', 'data': 'invalid request'}), mimetype='application/json')
 
-@models.route('/listinfo/', methods=['POST', 'GET'])
+
+@models.route('/list/info/', methods=['POST', 'GET'])
 def check_model_list():
     ret = modelsWatcher.getModelsInfoAsList()
     return Response(json.dumps(ret), mimetype='application/json')
+
 
 if __name__ == '__main__':
     pass

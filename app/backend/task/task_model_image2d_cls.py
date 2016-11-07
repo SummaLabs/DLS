@@ -31,6 +31,7 @@ class TaskModelTeainImage2DCls(Task, KerasTrainer):
         self.text   = 'Model Train: Image2D Cls'
         self.type   = 'model-train-image2d-cls'
         self.basetype = 'model'
+        self.icon = "/frontend/assets/icon/img/img-model1.png"
     def dumpTrainProgress(self, status):
         if (self.trainLog is not None) and len(self.trainLog)>0:
             tret = self.trainLog

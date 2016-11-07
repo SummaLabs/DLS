@@ -8,7 +8,7 @@
             function buildTemplate(modelType, modelId) {
                 var inferenceType =
                 {
-                    'image-classification': '<classify-image model-id="' + modelId + '"></classify-image>'
+                    'image2d-classification': '<classify-image model-id="' + modelId + '"></classify-image>'
                 };
                 return inferenceType[modelType];
             }
@@ -23,7 +23,7 @@
                         if (value) {
                             element.empty();
                             var modelJson = JSON.parse(scope.model);
-                            var template = buildTemplate(modelJson.type, modelJson.name);
+                            var template = buildTemplate(modelJson.type, modelJson.id);
                             var compiled = $compile(template)(scope);
                             element.append(compiled);
                         }

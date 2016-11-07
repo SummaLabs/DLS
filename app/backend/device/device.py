@@ -4,22 +4,24 @@ import json
 import subprocess
 import datetime
 import re
+import logging
+
+logger = logging.getLogger('DLS')
 
 
 def generate_system_info():
     info = {}
     gpu_info = generate_gpu_info()
-    # gpu_info.append(gpu_info[0])
-    gpu_pids = generate_gpu_pids()
-
-    for g in gpu_info:
-        g['gpu_pids'] = filter(lambda x: x['gpu'] == g['id'], gpu_pids)
+    if (len(gpu_info) > 0):
+        gpu_pids = generate_gpu_pids()
+        for g in gpu_info:
+            g['gpu_pids'] = filter(lambda x: x['gpu'] == g['id'], gpu_pids)
+        info['gpu'] = gpu_info
+        info['gpuSelected'] = gpu_info[0]['id']
 
     info['mem'] = generate_mem_info()
-    info['gpu'] = gpu_info
     info['cpu'] = generate_cpu_info()
     info['ts'] = datetime.datetime.now().time().strftime("%H:%M:%S")
-    info['gpuSelected'] = gpu_info[0]['id']
     return json.dumps(info)
 
 
@@ -56,9 +58,8 @@ def generate_gpu_info():
                 gpu_info.append({'id': tokens[0], 'name': tokens[1], 'mem': tokens[3], 'cores': tokens[6], 'mem_free': tokens[4], 'mem_used': tokens[5],
                                  'util_gpu': tokens[7], 'util_mem': tokens[8]})
     except OSError:
-        # Some mock value for testing on machines without NVidia GPU
-        gpu_info.append({'id': 'not NVidia', 'name': 'not NVidia', 'mem': '0', 'mem_free': '10', 'mem_used': '20',
-                                 'util_gpu': '10', 'util_mem': '0'})
+        logger.info("GPU device is not available")
+
     return gpu_info
 
 def get_available_devices_list():
@@ -75,10 +76,16 @@ def get_available_devices_list():
         'memtotal':     tmemTotal,
         'memusage':     tmemUsage,
         'pmemusage':    int(100*float(tmemUsage)/float(tmemTotal)),
-        'isbusy':       False
+        'isbusy':       False,
+        'isAvalible': True
     })
     gpuInfo = generate_gpu_info()
+    if (len(gpuInfo) == 0):
+        tret.append({'isAvalible': False, 'type': 'gpu'})
+        return tret
+
     for ii in gpuInfo:
+        isAvalible = True
         tid = 'gpu%s' % ii['id']
         tgmemTotal  = re.sub('[A-Za-z:,. ]', '', ii['mem'])
         tgmemUsage  = re.sub('[A-Za-z:,. ]', '', ii['mem_used'])
@@ -89,7 +96,8 @@ def get_available_devices_list():
             tgmemTotal = 'unknown'
             tgmemUsage = 'unknown'
             pgmemUsage = 0
-            isBusy     = True
+            isBusy     = True,
+            isAvalible = False
         tret.append({
             'id':           tid,
             'type':         'gpu',
@@ -97,7 +105,8 @@ def get_available_devices_list():
             'memtotal':     tgmemTotal,
             'memusage':     tgmemUsage,
             'pmemusage':    pgmemUsage,
-            'isbusy':       isBusy
+            'isbusy':       isBusy,
+            'isAvalible': isAvalible
         })
     return tret
 

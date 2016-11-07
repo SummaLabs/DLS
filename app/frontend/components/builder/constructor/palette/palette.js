@@ -32,7 +32,7 @@ function PaletteService() {
 
 }
 
-function DraggableCtrl($scope, $element, $rootScope, $compile, $templateCache, $http) {
+function DraggableCtrl($scope, $element, $rootScope) {
 
     var elemOffset;
 	var dragIcon = document.createElement('img');
@@ -67,18 +67,14 @@ function DraggableCtrl($scope, $element, $rootScope, $compile, $templateCache, $
 
 }
 
-function PaletteController($scope, networkLayerService) {
+function PaletteController(layerService, $scope) {
 
 	var self = this;
 	self.treeItems = [];
 
-	networkLayerService.loadCategoryLayerTree();
-
-	networkLayerService.subLayersUpdateEvent(function() {
-		var categories = networkLayerService.getCategories();
-		var layers = networkLayerService.getLayers();
-		self.treeItems = createTree(categories, layers);
-	});
+	var categories = layerService.getCategories();
+	var layers = layerService.getLayers();
+	self.treeItems = createTree(categories, layers);
 
 	this.categoryClick = function(category_name) {
 	    var state = categoryState[category_name];
@@ -93,6 +89,15 @@ function PaletteController($scope, networkLayerService) {
 	console.log(section);
 		menu.toggleSelectSection(section);
 	}
+    
+    this.trainModel = function ($event) {
+        console.log("Train invoked");
+        $scope.$parent.$ctrl.trainModel($event)
+    }
+    
+    this.saveNetworkDialog = function ($event) {
+        $scope.$parent.$ctrl.saveNetworkDialog($event)
+    }
 }
 
 function createTree(categories, layers) {
@@ -101,21 +106,20 @@ function createTree(categories, layers) {
 	categories.forEach(function(category, i, array) {
 		let items = [];
 		layers.forEach(function(item, i, array) {
-			if (item.category === category.name) {
+			if (item.category === category) {
 				items.push({
 					type: 'item',
 					name: item.name,
 					layerType: item.layerType,
 					id: ++idCounter,
-					template: item.template,
 					params: item.params,
-                    icon: item.icon
+					category: item.category
 				});
 			}
 		});
 		tree.push({
 			type: 'category',
-			name: category.name,
+			name: category,
 			children: [],
 			items: items
 		});

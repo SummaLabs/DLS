@@ -8,8 +8,8 @@
       "pos": {
         "y": 50, 
         "x": 25
-      }, 
-      "content": "data", 
+      },
+      "layerType": "data",
       "params": {
         "datasetType": "", 
         "datasetId": "dbset-20160922-220218-011462"
@@ -25,8 +25,8 @@
       "pos": {
         "y": 100, 
         "x": 425
-      }, 
-      "content": "convolution", 
+      },
+      "layerType": "convolution",
       "params": {
         "isTrainable": true, 
         "subsamplingSize": 3, 
@@ -47,8 +47,8 @@
       "pos": {
         "y": 100, 
         "x": 425
-      }, 
-      "content": "convolution", 
+      },
+      "layerType": "convolution",
       "params": {
         "isTrainable": true, 
         "subsamplingSize": 3, 
@@ -69,8 +69,8 @@
       "pos": {
         "y": 250, 
         "x": 150
-      }, 
-      "content": "dense", 
+      },
+      "layerType": "dense",
       "params": {
         "isTrainable": true, 
         "activationFunction": "relu", 
@@ -85,8 +85,8 @@
       "pos": {
         "y": 350, 
         "x": 475
-      }, 
-      "content": "solver", 
+      },
+      "layerType": "solver",
       "params": {
         "optimizer": "SGD", 
         "snapshotInterval": 1, 

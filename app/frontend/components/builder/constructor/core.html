@@ -1,47 +1,39 @@
 <div class="constructor">
-    <div layout="row">
-        <md-button class="md-primary md-raised" ng-click="$ctrl.saveNetworkDialog($event)">
-            Save
-        </md-button>
-        <md-button class="md-warn md-raised" ng-click="$ctrl.checkModelJson($event)">
-            Check Model
-        </md-button>
-        <md-button class="md-warn md-raised" ng-click="$ctrl.calcModelShape($event)">
-            Calc Shapes
-        </md-button>
-        <md-button ng-click="toggleRight()" class="md-raised">
-            Toggle Right Menu
-        </md-button>
-        <md-button class="md-warn md-raised" ng-click="$ctrl.trainModel($event)">
-            Train Model
-        </md-button>
-        <span class="md-headline">Network name: {{networkName}}</span>
-    </div>
     <div layout="row" class="unselectable">
         <palette style="overflow: auto;"></palette>
         <div flex layout="column" style="height:100%;">
             <div id="workspace" tabindex="1">
-                <svg-graph flex layout="column" control-item="$ctrl.svgControl" svg-width="{{$ctrl.svgWidth}}"
-                           svg-height="{{$ctrl.svgHeight}}" svg-color="#fff" pointer-events="all"
+                <div id="constructor-network-name">
+                    <span>{{networkName}}</span>
+                </div>
+                <div id="constructor-info-panel-toggle">
+                    <md-button ng-click="toggleRight()" class="md-icon-button" aria-label="More">
+                        <md-icon md-font-library="material-icons" class="md-18" aria-label="reset">{{toggleIcon}}</md-icon>
+                    </md-button>
+                </div>
+                <svg-graph flex layout="column" control-item="$ctrl.svgControl" svg-width="$ctrl.svgWidth"
+                           svg-height="$ctrl.svgHeight" svg-color="#fff" pointer-events="all"
                            focusable="false"></svg-graph>
                 <viewport svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}"></viewport>
                 <div id="constructor-tools">
                     <md-button ng-click="$ctrl.zoomOut($event)" class="md-icon-button" aria-label="More">
-                        <md-icon md-font-library="material-icons" aria-label="reset">zoom_out</md-icon>
+                        <md-icon md-font-library="material-icons" aria-label="zoom_out">zoom_out</md-icon>
                     </md-button>
                     <md-button ng-click="$ctrl.zoomIn($event)" class="md-icon-button" aria-label="More">
-                        <md-icon md-font-library="material-icons" aria-label="reset">zoom_in</md-icon>
+                        <md-icon md-font-library="material-icons" aria-label="zoom_in">zoom_in</md-icon>
                     </md-button>
                     <md-button ng-click="$ctrl.resetView($event)" class="md-icon-button" aria-label="More">
                         <md-icon md-font-library="material-icons" class="md-18" aria-label="reset">youtube_searched_for</md-icon>
                     </md-button>
+                    <md-button ng-click="$ctrl.clear($event)" class="md-icon-button" aria-label="More">
+                        <md-icon md-font-library="material-icons" class="md-18" aria-label="clear">clear</md-icon>
+                    </md-button>
                 </div>
+
             </div>
-        <img id = "img1" src="">
         </div>
           <md-sidenav class="md-sidenav-custom md-sidenav-right" md-component-id="right"
                 md-disable-backdrop md-whiteframe="4" md-is-open="true">
-            <img id="img1" src="">
             <div id="layer-info">
               
                 <md-content>
@@ -57,8 +49,8 @@
                         </md-tab>
                 </md-tabs>
                 </md-content>
-                         
             </div>
+
        </md-sidenav>
     </div>
 </div>

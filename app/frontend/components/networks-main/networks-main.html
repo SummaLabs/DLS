@@ -1,14 +1,27 @@
-<md-list ng-cloak>
-    <md-subheader class="md-no-sticky">Default Templates</md-subheader>
-    <md-list-item ng-repeat="network in $ctrl.networkTemplates">
-        <p> {{ network.name }} </p>
-        <md-button class="md-secondary" ng-click="$ctrl.createDialog($event)">Open In Builder</md-button>
-    </md-list-item>
-    <md-subheader class="md-no-sticky">Saved Networks</md-subheader>
-    <md-list-item ng-repeat="network in $ctrl.savedNetworks">
-        <p> {{ network}} </p>
-        <md-button class="md-secondary" ng-click="$ctrl.createOpenNetworkDialog($event, network)">Open In Builder</md-button>
-        <md-button class="md-secondary" ng-click="$ctrl.removeNetworkByName($event, network)">Delete</md-button>
-    </md-list-item>
-</md-list>
+<div layout="column">
+    <div id="network-main" flex layout="row" layout-wrap ng-cloak>
+        <md-tabs class="md-default" flex md-dynamic-height md-border-bottom md-autoselect
+                        md-selected="selectedIndex" md-center-tabs="true" style="padding-top: 16px">
+            <md-tab class="unselectable">
+                <md-tab-label>
+                    <md-icon md-font-library="material-icons" aria-label="dashboard">dashboard</md-icon>
+                    <strong>Library Networks</strong>
+                </md-tab-label>
+                <md-tab-body>
+                    <div ng-include="'frontend/components/networks-main/networks-list.html'"></div>
+                </md-tab-body>
+            </md-tab>
+            <md-tab class="unselectable">
+                <md-tab-label>
+                    <md-icon md-font-library="material-icons" aria-label="dashboard">dashboard</md-icon>
+                    <strong>User Networks</strong>
+                </md-tab-label>
+                <md-tab-body>
+                    <div ng-include="'frontend/components/networks-main/networks-list.html'"></div>
+                </md-tab-body>
+            </md-tab>
+        </md-tabs>
+    </div>
+</div>
+
 

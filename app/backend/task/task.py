@@ -10,7 +10,14 @@ class Task:
     __metaclass__ = abc.ABCMeta
 
     """Base task class.
-    Extend this class if you need custom task behaviour"""
+    Extend this class if you need custom task behaviour
+    Possible States:
+    - ready
+    - running
+    - finished
+    - killed
+    - failed
+    """
 
     alive = True
 
@@ -28,13 +35,17 @@ class Task:
         self.rows = []
         self.logger = self.init_logger()
         self.logger.info('task ' + str(self.id) + ' created')
+        self.icon = "/frontend/assets/icon/img/img-model1.png"
 
     def execute(self):
         self.state = 'running'
         self.logger.info('starting task ' + str(self.id))
         try:
             self.perform()
-        except IOError:
+        except Exception as e:
+            self.logger.error('task ' + str(self.id) + ' failed')
+            self.logger.error("caught " + e.message, exc_info=True)
+            self.state = 'failed'
             print "interrupted"
 
     @abstractmethod
@@ -60,6 +71,7 @@ class Task:
         stt['basetype'] = self.basetype
         #stt['rows'] = self.rows
         stt['state'] = self.state
+        stt['icon'] = self.icon
         return stt
 
     def detailed_status(self):

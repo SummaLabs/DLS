@@ -1,52 +1,7 @@
-<div flex="50" layout="column" layout-align="center center">
-    <md-toolbar>
-        <div class="md-toolbar-tools">
-            <h2>Select device</h2>
-            <span flex></span>
+<md-select placeholder="Select Device" ng-model="selectedDevice" required>
+    <md-option ng-value="selectedDevice" ng-repeat="selectedDevice in deviceList" ng-disabled="!selectedDevice.isAvalible">
+        <div>
+            <span>{{getDeviceName(selectedDevice)}}</span>
         </div>
-    </md-toolbar>
-    <md-select placeholder="Select Device" ng-model="$ctrl.selectedDevice" style="min-width: 200px" required>
-        <!--<md-option ng-value="selectedDevice" ng-repeat="selectedDevice in $ctrl.deviceList" ng-disabled="selectedDevice.isbusy">-->
-        <md-option ng-value="selectedDevice" ng-repeat="selectedDevice in $ctrl.deviceList">
-            <div ng-class="selectedDevice.isbusy ? 'device-list-busy' : 'device-list-available'">
-                <strong>{{selectedDevice.id}}</strong> : <span ng-if="selectedDevice.isbusy"><strong>(busy)</strong></span> {{selectedDevice.name}}
-            </div>
-        </md-option>
-    </md-select>
-    <div layout="row">
-        <div style="min-width: 96px; min-height: 96px;">
-            <div ng-if="$ctrl.selectedDevice.type=='cpu'">
-                <md-icon md-font-library="material-icons" aria-label="hardware-cpu" style="font-size: 56px">memory</md-icon>
-            </div>
-            <div ng-if="$ctrl.selectedDevice.type=='gpu'">
-                <md-icon md-font-library="material-icons" aria-label="hardware-gpu" style="font-size: 56px">developer_board</md-icon>
-            </div>
-        </div>
-        <div layout="column">
-            <md-input-container class="md-block" flex-gt-xs>
-                <label>Device:</label>
-                <input value="{{$ctrl.selectedDevice.name}}" disabled>
-            </md-input-container>
-        </div>
-    </div>
-    <md-input-container flex-gt-xs>
-        <label>Status:</label>
-        <div ng-if="$ctrl.selectedDevice.isbusy">
-            <h3><strong>Busy</strong></h3>
-            <md-icon md-font-library="material-icons" aria-label="status-busy" style="color: lightcoral">watch_later</md-icon>
-        </div>
-        <div ng-if="!$ctrl.selectedDevice.isbusy">
-            <h3><strong>Available</strong></h3>
-            <md-icon md-font-library="material-icons" aria-label="status-available" style="color: lightgreen">check_circle</md-icon>
-        </div>
-        <!--<input value="{{$ctrl.selectedDevice.isbusy}}" disabled>-->
-    </md-input-container>
-    <md-button class="md-primary">Ok</md-button>
-    <br>
-    <md-checkbox ng-model="$ctrl.showDebug">Show debug info</md-checkbox>
-    <h3 ng-if="$ctrl.showDebug">
-        <md-list>
-            <md-list-item ng-repeat="(kk,vv) in $ctrl.selectedDevice"><h3>{{kk}} : <strong>{{vv}}</strong></h3></md-list-item>
-        </md-list>
-    </h3>
-</div>
+    </md-option>
+</md-select>

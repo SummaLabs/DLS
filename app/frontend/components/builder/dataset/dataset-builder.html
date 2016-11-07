@@ -1,29 +1,4 @@
 <div layout="column">
-    <div layout="row">
-        <md-fab-speed-dial ng-hide="$ctrl.hidden" md-direction="left" md-open="$ctrl.eventIsOpen"
-                       class="md-scale md-fab-top-right" ng-class="{ 'md-hover-full': $ctrl.hover }"
-                       ng-mouseenter="$ctrl.eventIsOpen=true" ng-mouseleave="$ctrl.eventIsOpen=false">
-            <md-fab-trigger>
-                <md-button aria-label="menu" class="md-fab md-warn">
-                    <md-tooltip md-direction="top" md-visible="tooltipVisible">Create Dataset</md-tooltip>
-                    <md-icon md-font-library="material-icons" aria-label="menu">add</md-icon>
-                </md-button>
-            </md-fab-trigger>
-            <md-fab-actions>
-                <div ng-repeat="item in $ctrl.items">
-                    <md-button aria-label="{{ item.name }}" class="md-fab md-raised md-mini"
-                               ng-click="$ctrl.openDialogCreateDataset($event, item)">
-                        <md-tooltip md-direction="{{ item.direction }}" md-visible="tooltipVisible"
-                                    md-autohide="false">
-                            {{ item.name }}
-                        </md-tooltip>
-                        <md-icon md-font-library="material-icons" aria-label="{{ item.name }}">{{ item.icon }}</md-icon>
-                    </md-button>
-                </div>
-            </md-fab-actions>
-        </md-fab-speed-dial>
-    </div>
-
 
     <div flex layout="row" flex>
     <!-- Container #3 -->
@@ -57,9 +32,10 @@
             <div ng-switch-when="image2d">
                 <create-img-dataset></create-img-dataset>
             </div>
-            <div ng-switch-when="image3d">Image 3D {{$ctrl.selected}}</div>
+            <div ng-switch-when="image3d">
+                <create2d-img-dataset></create2d-img-dataset>
+            </div>
             <div ng-switch-default>
-
             </div>
         </div>
     </md-content>

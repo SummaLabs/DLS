@@ -1,167 +1,53 @@
-<div layout="column">
-    <div layout="row">
-        <md-fab-speed-dial ng-hide="$ctrl.hidden" md-direction="left" md-open="$ctrl.eventIsOpen"
-                       class="md-scale md-fab-top-right" ng-class="{ 'md-hover-full': $ctrl.hover }"
-                       ng-mouseenter="$ctrl.eventIsOpen=true" ng-mouseleave="$ctrl.eventIsOpen=false">
-            <md-fab-trigger>
-                <md-button aria-label="menu" class="md-fab md-warn">
-                    <md-tooltip md-direction="top" md-visible="tooltipVisible">Create Dataset</md-tooltip>
+<md-content layout="column" layout-fill>
+    <div layout="column">
+
+        <div layout="row" layout-align="space-between center">
+            <md-button ui-sref="data-file-manager" class="md-raised">File Manager</md-button>
+            <md-menu>
+                <md-button ng-click="$ctrl.openMenu($mdOpenMenu, $event)" aria-label="menu" class="md-fab md-warn">
+                    <md-tooltip md-direction="top" md-visible="tooltipVisible">Create Data Set</md-tooltip>
                     <md-icon md-font-library="material-icons" aria-label="menu">add</md-icon>
                 </md-button>
-            </md-fab-trigger>
-            <md-fab-actions>
-                <div ng-repeat="item in $ctrl.items">
-                    <md-button aria-label="{{ item.name }}" class="md-fab md-raised md-mini"
-                               ng-click="$ctrl.openDialogCreateDataset($event, item)">
-                        <md-tooltip md-direction="{{ item.direction }}" md-visible="tooltipVisible"
-                                    md-autohide="false">
-                            {{ item.name }}
-                        </md-tooltip>
-                        <md-icon md-font-library="material-icons" aria-label="{{ item.name }}">{{ item.icon }}</md-icon>
+                <md-menu-content width="4">
+                    <md-menu-item>
+                        <md-button ui-sref="data-create">
+                            Create 2D Image Data Set
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                        <md-button disabled="disabled">
+                            Create 3D Image Data Set
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                        <md-button disabled="disabled">
+                            Create Text Data Set
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+        </div>
+
+        <div class='md-padding' layout="row" layout-wrap>
+            <md-card ng-repeat="db in $ctrl.datasets" class="md-whiteframe-8dp">
+                <img ng-src="/dbpreview/dbimgpreview/{{db.id}}" class="md-card-image md-whiteframe-2dp"
+                     alt="user avatar">
+                <md-card-content>
+                    <h2>{{db.name}}</h2>
+                    <p>{{db.type}}, <strong>{{db.shapestr}}</strong>, {{db.info.date.str}} ({{db.info.time.str}})</p>
+                </md-card-content>
+                <div class="md-actions" layout="row" layout-align="end center">
+                    <md-button class="" ng-click="$ctrl.createDialogPreviewDB($event, db.id)">
+                        <md-icon md-font-library="material-icons" aria-label="show">visibility</md-icon>
+                        Info
+                    </md-button>
+                    <md-button class="md-warn">
+                        <md-icon md-font-library="material-icons" aria-label="delete">delete</md-icon>
+                        Delete
                     </md-button>
                 </div>
-            </md-fab-actions>
-        </md-fab-speed-dial>
+            </md-card>
+        </div>
+
     </div>
-
-    <div flex layout="row" layout-wrap ng-cloak>
-        <md-tabs class="md-default" flex md-dynamic-height md-border-bottom md-autoselect
-                 md-center-tabs="true" style="padding-top: 16px">
-            <md-tab class="unselectable">
-                <md-tab-label>
-                    <md-icon md-font-library="material-icons" aria-label="dashboard">dashboard</md-icon>
-                    <strong>Grid View</strong>
-                </md-tab-label>
-                <md-tab-body>
-                    <div class='md-padding' layout="row" layout-wrap>
-                        <md-card ng-repeat="db in $ctrl.datasets" class="md-whiteframe-8dp">
-                            <img ng-src="/dbpreview/dbimgpreview/{{db.id}}" class="md-card-image md-whiteframe-2dp" alt="user avatar">
-                            <md-card-content>
-                                <h2>{{db.name}}</h2>
-                                <p>{{db.type}}, <strong>{{db.shapestr}}</strong>, {{db.info.date.str}} ({{db.info.time.str}})</p>
-                            </md-card-content>
-                          <div class="md-actions" layout="row" layout-align="end center">
-                            <md-button class="" ng-click="$ctrl.createDialogPreviewDB($event, db.id)">
-                                <md-icon md-font-library="material-icons" aria-label="show">visibility</md-icon>
-                                Info
-                            </md-button>
-                            <md-button class="md-warn">
-                                <md-icon md-font-library="material-icons" aria-label="delete">delete</md-icon>
-                                Delete
-                            </md-button>
-                          </div>
-                        </md-card>
-                    </div>
-                </md-tab-body>
-            </md-tab>
-
-            <md-tab class="unselectable">
-                <md-tab-label>
-                    <md-icon md-font-library="material-icons" aria-label="view_list">view_list</md-icon>
-                    <strong>List View</strong>
-                </md-tab-label>
-                <md-tab-body>
-                    <div layout="column" flex="80" flex-offset="10" ng-cloak>
-                        <md-list>
-                            <md-list-item flex layout="row" ng-repeat="db in $ctrl.datasets"
-                                          class="md-whiteframe-1dp" layout-padding>
-                                <div layout="column" flex>
-                                    <div layout="row">
-                                        <md-icon md-font-library="material-icons"
-                                                 aria-label="$ctrl.items['{{ db.type }}'].name" class="avatar">
-                                            {{ $ctrl.items[ db.type].icon }}
-                                        </md-icon>
-                                        <div layout="column" flex>
-                                            <div layout="row">
-                                                <h3>{{ db.name }}</h3>
-                                            </div>
-                                            <div layout="row" flex>
-                                                <div>
-                                                    Shape: <strong>{{ db.shapestr }}</strong>
-                                                </div>,&nbsp;
-                                                <div>
-                                                    Date:  <strong>{{ db.info.date.str }}&nbsp;{{ db.info.time.str }}</strong>
-                                                </div>,&nbsp;
-                                                <div>
-                                                    #Labels: <strong>{{ db.info.numLabels }}</strong>
-                                                </div>
-                                            </div>
-                                            <md-chips>
-                                                <md-chip class="dbpreview-chip-samples-main">Size: {{ db.info.numTotal }}</md-chip>
-                                                <md-chip class="dbpreview-chip-samples-other">Train: {{ db.info.numTrain }}</md-chip>
-                                                <md-chip class="dbpreview-chip-samples-other">Val: {{ db.info.numVal }}</md-chip>
-
-                                                <md-chip class="dbpreview-chip-size-main">Size: {{ db.size.totalstr }}</md-chip>
-                                                <md-chip class="dbpreview-chip-size-other">Train: {{ db.size.trainstr }}</md-chip>
-                                                <md-chip class="dbpreview-chip-size-other">Val: {{ db.size.valstr }}</md-chip>
-                                            </md-chips>
-                                        </div>
-
-                                        <md-button class="" ng-click="$ctrl.createDialogPreviewDB($event, db.id)">
-                                            <md-icon md-font-library="material-icons" aria-label="show">visibility</md-icon>
-                                            Info
-                                        </md-button>
-                                        <md-button class="md-warn">
-                                            <md-icon md-font-library="material-icons" aria-label="delete">delete</md-icon>
-                                            Delete
-                                        </md-button>
-                                    </div>
-                                </div>
-                            </md-list-item>
-                        </md-list>
-                    </div>
-                </md-tab-body>
-            </md-tab>
-
-            <md-tab class="unselectable">
-                <md-tab-label>
-                    <md-icon md-font-library="material-icons" aria-label="add_box">add_box</md-icon>
-                    <strong>Add Dataset</strong>
-                </md-tab-label>
-                <md-tab-body>
-                    <h1>
-                        Empty
-                    </h1>
-                </md-tab-body>
-            </md-tab>
-        </md-tabs>
-    </div>
-
-
-
-    <!--div flex="80" class='md-padding' layout="row" layout-wrap>
-        <md-card ng-repeat="db in $ctrl.datasets">
-            <img ng-src="/dbpreview/dbimgpreview/{{db.id}}" class="md-card-image md-whiteframe-2dp" alt="user avatar">
-            <md-card-content>
-                <h2>{{db.name}}</h2>
-                <p>{{db.type}}, <strong>{{db.shapestr}}</strong>, {{db.info.date.str}} ({{db.info.time.str}})</p>
-            </md-card-content>
-          <div class="md-actions" layout="row" layout-align="end center">
-            <md-button class="">
-                <md-icon md-font-library="material-icons" aria-label="show">visibility</md-icon>
-                Info
-            </md-button>
-            <md-button class="md-warn">
-                <md-icon md-font-library="material-icons" aria-label="delete">delete</md-icon>
-                Delete
-            </md-button>
-          </div>
-        </md-card>
-    </div-->
-    <!--div flex layout-margin style="margin-top: 80px">
-        <md-list ng-cloak>
-            <md-list-item ng-repeat="model in $ctrl.models">
-                <p> {{ model.name }} </p>
-                <md-progress-linear md-mode="determinate" value="60"></md-progress-linear>
-                <p>In Progress</p>
-                <md-button class="md-secondary" ng-click="$ctrl.createDialog($event)">Open</md-button>
-                <md-button class="md-secondary" ng-click="$ctrl.createDialog($event)">Delete</md-button>
-            </md-list-item>
-        </md-list>
-    </div-->
-
-    <!--div layout="row">
-        <md-button class="md-secondary" ng-click="$ctrl.createDialog($event)">Create New Data Set</md-button>
-    </div-->
-
-</div>
+</md-content>

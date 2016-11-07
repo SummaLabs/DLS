@@ -1,0 +1,289 @@
+<md-content layout="column" layout-fill>
+    <form ng-submit="$ctrl.formSubmit()">
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Create 2D Image Data Set</span>
+                </md-card-title-text>
+            </md-card-title>
+            <md-card-content>
+                <div layout="row" layout-align="space-between center">
+                    <md-button ui-sref="data" class="md-raised">Back</md-button>
+                    <md-input-container style="width:400px">
+                        <label>Enter Data Set Name</label>
+                        <input name="datasetName" required ng-model="$ctrl.formDbBackend.datasetname"
+                               aria-label="dataset-name">
+                    </md-input-container>
+                    <md-button type="submit" class="md-warn md-raised md-hue-2">Create</md-button>
+                </div>
+                <div layout="row">
+                    <md-card flex="50" md-theme-watch>
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Data Input</span>
+                            </md-card-title-text>
+                        </md-card-title>
+                        <md-card-content>
+                            <md-tabs md-dynamic-height md-border-bottom md-selected="$ctrl.formFileImport.selectedTabIndex">
+                                <md-tab label="Use image folder" layout="column">
+                                    <div ng-if="$ctrl.formFileImport.selectedTabIndex == 0">
+                                        <div layout="row" style="padding-top: 24px;">
+                                            <md-input-container flex>
+                                                <label>Training Images</label>
+                                                <input type="text" required name="trainingImages"
+                                                       ng-model="$ctrl.formFileImport.fromDir.pathToImageFolder"
+                                                       aria-label="train-images">
+                                                <div ng-messages="datasetCreateForm.trainingImages.$error" multiple
+                                                     md-auto-hide="false" role="alert">
+                                                    <div ng-message="required">Please input a valid Path to folder with
+                                                        images
+                                                    </div>
+                                                </div>
+                                            </md-input-container>
+                                            <md-button class="md-fab" layout="column" layout-align="center center"
+                                                       ng-click="$ctrl.setTrainImagesDir('dir-train', $event)">
+                                                <i class="material-icons">folder</i>
+                                            </md-button>
+                                        </div>
+                                        <div layout="row">
+                                            <md-switch ng-model="$ctrl.formFileImport.fromDir.isUseSeparateValDir"
+                                                       aria-label="Separate validation directory">
+                                                Use separate validation directory
+                                            </md-switch>
+                                        </div>
+                                        <div ng-show="!$ctrl.formFileImport.fromDir.isUseSeparateValDir">
+                                            <div layout="row" flex>
+                                                <md-input-container class="md-block" flex="20">
+                                                    <label>% for validation</label>
+                                                    <input name="percentValidation"
+                                                           type="number"
+                                                           ng-model="$ctrl.formFileImport.fromDir.percentForValidation"
+                                                           min="1" max="99"
+                                                           required
+                                                           step="1">
+                                                    <div ng-messages="datasetCreateForm.percentValidation.$error"
+                                                         multiple
+                                                         md-auto-hide="false" role="alert">
+                                                        <div ng-message="required">Please input a number between 1 and
+                                                            100 %
+                                                        </div>
+                                                        <div ng-message="min">Minimum number is 1%</div>
+                                                        <div ng-message="max">Maximum number is 99%</div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                        <div ng-if="$ctrl.formFileImport.fromDir.isUseSeparateValDir">
+                                            <div layout="row">
+                                                <md-input-container flex>
+                                                    <label>Validation Images</label>
+                                                    <input type="text" required name="validationImages"
+                                                           ng-model="$ctrl.formFileImport.fromDir.pathToImageFolderVal">
+                                                    <div ng-messages="datasetCreateForm.validationImages.$error"
+                                                         multiple md-auto-hide="false" role="alert">
+                                                        <div ng-message="required">Please input a path to folder with
+                                                            validation set of images
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                                <md-button class="md-fab" layout="column" layout-align="center center"
+                                                           ng-click="$ctrl.setTrainImagesDir('dir-val', $event)"">
+                                                <i class="material-icons">folder</i>
+                                                </md-button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-tab>
+
+                                <md-tab label="Use text files" layout="column">
+                                    <div ng-if="$ctrl.formFileImport.selectedTabIndex == 1">
+                                        <div layout="row" style="padding-top: 24px;">
+                                            <md-input-container flex>
+                                                <label>Path to Training-CSV</label>
+                                                <input type="text" required name="trainingImagesTxt"
+                                                       ng-model="$ctrl.formFileImport.fromTxt.pathToImagesTxt">
+                                                <div ng-messages="datasetCreateForm.trainingImagesTxt.$error" multiple
+                                                     md-auto-hide="false" role="alert">
+                                                    <div ng-message="required">Please input a valid Path to
+                                                        CSV-formatted
+                                                        file
+                                                    </div>
+                                                </div>
+                                            </md-input-container>
+                                            <md-button class="md-fab" layout="column" layout-align="center center"
+                                                       ng-click="$ctrl.setTrainImagesDir('file-train', $event)">
+                                                <i class="material-icons">folder</i>
+                                            </md-button>
+                                        </div>
+                                        <div layout="row">
+                                            <md-switch ng-model="$ctrl.formFileImport.fromTxt.isUseSeparateVal"
+                                                       aria-label="Separate validation directory">
+                                                Use separate validation CSV-file
+                                            </md-switch>
+                                        </div>
+                                        <div ng-if="!$ctrl.formFileImport.fromTxt.isUseSeparateVal">
+                                            <div layout="row" flex>
+                                                <md-input-container class="md-block" flex="20">
+                                                    <label>% for validation</label>
+                                                    <input name="percentValidation"
+                                                           type="number"
+                                                           ng-model="$ctrl.formFileImport.fromDir.percentForValidation"
+                                                           min="1" max="99"
+                                                           required
+                                                           step="5">
+                                                    <div ng-messages="datasetCreateForm.percentValidation.$error"
+                                                         multiple
+                                                         md-auto-hide="false" role="alert">
+                                                        <div ng-message="required">Please input a number between 1 and
+                                                            100 %
+                                                        </div>
+                                                        <div ng-message="min">Minimum number is 1%</div>
+                                                        <div ng-message="max">Maximum number is 99%</div>
+                                                    </div>
+                                                </md-input-container>
+                                            </div>
+                                        </div>
+                                        <div ng-if="$ctrl.formFileImport.fromTxt.isUseSeparateVal">
+                                            <div layout="row">
+                                                <md-input-container flex>
+                                                    <label>Path to Validation-CSV</label>
+                                                    <input type="text" required name="validationImagesTxt"
+                                                           ng-model="$ctrl.formFileImport.fromTxt.pathToImagesTxtVal">
+                                                    <div ng-messages="datasetCreateForm.validationImagesTxt.$error"
+                                                         multiple
+                                                         md-auto-hide="false" role="alert">
+                                                        <div ng-message="required">Please input a path to a valid CSV
+                                                            file
+                                                            with
+                                                            validation set of images
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                                <md-button class="md-fab" layout="column" layout-align="center center"
+                                                           ng-click="$ctrl.setTrainImagesDir('file-val', $event)">
+                                                    <i class="material-icons">folder</i>
+                                                </md-button>
+                                            </div>
+                                        </div>
+
+                                        <div layout="row">
+                                            <md-switch ng-model="$ctrl.formFileImport.fromTxt.isUseRelativeDir"
+                                                       aria-label="Use relative path to images in CSV">
+                                                Use relative path to directory with images
+                                            </md-switch>
+                                        </div>
+
+                                        <div ng-if="$ctrl.formFileImport.fromTxt.isUseRelativeDir">
+                                            <div layout="row">
+                                                <md-input-container flex>
+                                                    <label>Path to directory with images (root for relative
+                                                        path)</label>
+                                                    <input type="text" name="relativeDirPath"
+                                                           ng-model="$ctrl.formFileImport.fromTxt.pathTorRelativeDir">
+                                                    <div ng-messages="datasetCreateForm.relativeDirPath.$error" multiple
+                                                         md-auto-hide="false" role="alert">
+                                                        <div ng-message="required">Please input a path to a directory
+                                                            with
+                                                            images
+                                                        </div>
+                                                    </div>
+                                                </md-input-container>
+                                                <md-button class="md-fab" layout="column" layout-align="center center">
+                                                    <i class="material-icons">folder</i>
+                                                </md-button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </md-tab>
+                            </md-tabs>
+                        </md-card-content>
+                    </md-card>
+                    <md-card flex="50" md-theme-watch>
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Data Set Properties</span>
+                            </md-card-title-text>
+                        </md-card-title>
+                        <md-card-content>
+                            <div layout="column">
+                                <md-input-container>
+                                    <label>Image type</label>
+                                    <md-select ng-model="$ctrl.formImage.imgTypeSelectedId">
+                                        <md-option ng-value="type.id"
+                                                   ng-repeat="type in $ctrl.formImage.imgTypes">{{ type.value }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <div layout="column">
+                                    <h4>Image size</h4>
+                                    <div layout="row" layout-align="center center">
+                                        <md-input-container flex>
+                                            <label>Width</label>
+                                            <input type="number" required name="imageWidth"
+                                                   ng-model="$ctrl.formImage.imgSizes.x"
+                                                   min="16" max="1024"
+                                                   step="8">
+                                            <div ng-messages="datasetCreateForm.imageWidth.$error" multiple
+                                                 md-auto-hide="false"
+                                                 role="alert">
+                                                <div ng-message="min">Number between 16 and 1024.</div>
+                                                <div ng-message="max">Number between 16 and 1024.</div>
+                                            </div>
+                                        </md-input-container>
+                                        <i class="material-icons">clear</i>
+                                        <md-input-container flex>
+                                            <label>Height</label>
+                                            <input type="number" required name="imageHeight"
+                                                   ng-model="$ctrl.formImage.imgSizes.y"
+                                                   min="16" max="1024"
+                                                   step="8">
+                                            <div ng-messages="datasetCreateForm.imageHeight.$error" multiple
+                                                 md-auto-hide="false" role="alert">
+                                                <div ng-message="min">Number between 16 and 1024.</div>
+                                                <div ng-message="max">Number between 16 and 1024.</div>
+                                            </div>
+                                        </md-input-container>
+                                    </div>
+                                </div>
+                                <md-input-container>
+                                    <label>Resize transformation</label>
+                                    <md-select ng-model="$ctrl.formImage.resizeTransformSelectedId">
+                                        <md-option ng-value="transform.id"
+                                                   ng-repeat="transform in $ctrl.formImage.resizeTransforms">{{
+                                            transform.value
+                                            }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <md-input-container>
+                                    <label>Storage Type</label>
+                                    <md-select ng-model="$ctrl.formDbBackend.dbBackendSelectedId"
+                                               aria-label="dbBackendSelectedId">
+                                        <md-option ng-value="db.id"
+                                                   ng-repeat="db in $ctrl.formDbBackend.dbBackends">{{ db.value }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+
+                                <md-input-container>
+                                    <label>Data Format</label>
+                                    <md-select ng-model="$ctrl.formDbBackend.imageEncodingsSelectedId"
+                                               aria-label="imageEncodingsSelectedId">
+                                        <md-option ng-value="encoding.id"
+                                                   ng-repeat="encoding in $ctrl.formDbBackend.imageEncodings">{{
+                                            encoding.value }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <br>
+                                <md-checkbox ng-model="$ctrl.formDbBackend.isUseThreading">
+                                    Use multithreading
+                                </md-checkbox>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                </div>
+            </md-card-content>
+        </md-card>
+    </form>
+</md-content>

@@ -18,6 +18,8 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
     {
         name: 'New network',
         description: '',
+        source: 'custom',
+        preview: '',
         layers: []
     };
 
@@ -59,16 +61,18 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
         return network;
     };
 
-    this.loadNetwork = function(name) {
-        $timeout(function () {
+    this.loadNetwork = function(name, source) {
+        // $timeout(function () {
             network = {
                 name: '',
                 description: '',
+                source: 'custom',
+                preview: '',
                 layers: []
             };
 
             self.pubClearNetworkEvent();
-            var future = loadNetworkByName(name);
+            var future = loadNetworkByName(name, source);
             future.then(function mySucces(response) {
                 network.name = response.data.name;
                 network.description = response.data.description;
@@ -78,13 +82,13 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
                 self.pubNetworkUpdateEvent();
             }, function myError(response) {
             });
-        }, 400)
+        // }, 400)
     };
 
     this.deleteNetwork = function(name) {
-        if (network.name === name && network.layers.length > 0) {
+        if (network.name === name.name && network.layers.length > 0) {
             var toast = $mdToast.simple()
-                .textContent('Could not remove network. "' + name + '"is open in in designer!')
+                .textContent('Could not remove network. "' + name.name + '"is open in in designer!')
                 .highlightAction(true)
                 .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
                 .position('top right');
@@ -94,7 +98,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
                 }
             });
         } else {
-            return removeNetworkByName(name);
+            return removeNetworkByName(name.name, name.source);
         }
     };
 
@@ -117,6 +121,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
         network.name = name;
         network.description = description;
         network.layers = filterNetwork(network.layers);
+        network.source = 'custom';
         var result = saveNetwork(network, name);
         result.then(function (response) {
                 isChangesSaved = true;
@@ -156,6 +161,10 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
         }
     };
 
+    this.clearLayers = function () {
+        network.layers.length = 0;
+    };
+
     this.removeLayerById = function(id) {
         var index = -1;
         for (var i = 0, len = network.layers.length; i < len; i++) {
@@ -176,10 +185,83 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
 
     };
 
-    function loadNetworkByName(name) {
+    this.buildPreviewImage = function(layers, wh, ht, margin) {
+
+        var x_min = Number.MAX_VALUE;
+        var x_max = Number.MIN_VALUE;
+        var y_min = Number.MAX_VALUE;
+        var y_max = Number.MIN_VALUE;
+
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', wh);
+        svg.setAttribute('height', ht);
+        svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+        var html = '';
+
+        if (layers.length > 1) {
+            layers.forEach(function (node) {
+                x_min = Math.min(x_min, node.pos.x);
+                y_min = Math.min(y_min, node.pos.y);
+                x_max = Math.max(x_max, node.pos.x);
+                y_max = Math.max(y_max, node.pos.y);
+            });
+
+            var width = x_max - x_min;
+            var height = y_max - y_min;
+            if (width < 10)
+                width = 10;
+            if (height < 10)
+                height = 10;
+
+            var scaleX = (wh - (margin * 2)) / width;
+            var scaleY = (ht - (margin * 2)) / height;
+            var offsetX = margin - x_min * scaleX;
+            var offsetY = margin - y_min * scaleY;
+
+            layers.forEach(function (layer_from) {
+                if (layer_from.wires)
+                    layer_from.wires.forEach(function (node_id) {
+                        for (let a = 0; a < layers.length; a++) {
+                            if (layers[a].id == node_id) {
+                                html += '<line x1="' + (offsetX + layer_from.pos.x * scaleX) + '"' +
+                                    'y1="' + (offsetY + layer_from.pos.y * scaleY) + '"' +
+                                    'x2="' + (offsetX + layers[a].pos.x * scaleX) + '"' +
+                                    'y2="' + (offsetY + layers[a].pos.y * scaleY) + '"' +
+                                    'stroke="blue" stroke-width="1"></line>';
+                                break;
+                            }
+                        }
+                    });
+            });
+
+            var radius = 10 * scaleX;
+            if (radius < 2)
+                radius = 2;
+            layers.forEach(function (node) {
+                html += '<circle r="' + radius + '" ' +
+                    'cx="' + (offsetX + node.pos.x * scaleX) + '" ' +
+                    'cy="' + (offsetY + node.pos.y * scaleY) + '" ' +
+                    'style="fill:#ff0000;fill-opacity:1;stroke:blue;stroke-width:0.5;stroke-opacity:1"></circle>';
+            });
+        }
+
+        svg.innerHTML = html;
+        var XMLS = new XMLSerializer();
+		var xml = XMLS.serializeToString(svg);
+		var svg64 = btoa(xml);
+
+
+		var b64Start = 'data:image/svg+xml;base64,';
+		var image64 = b64Start + svg64;
+
+		return image64;
+    };
+
+    function loadNetworkByName(name, type) {
         return $http({
             method: "GET",
-            url: "/network/load/" + name
+            url: "/network/load/" + type + '/' + name
         })
     }
 
@@ -192,10 +274,10 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
         })
     }
 
-    function removeNetworkByName(name) {
+    function removeNetworkByName(name, type) {
         return $http({
             method: "GET",
-            url: "/network/remove/" + name
+            url: "/network/remove/"+ type + '/' + name
         })
     }
 }
