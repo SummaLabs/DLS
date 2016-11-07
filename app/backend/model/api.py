@@ -32,7 +32,8 @@ def load_all_models():
 @model.route('/uploadFile', methods=['POST'])
 def upload_file():
 
-    dest = app_flask.config['DLS_FILEMANAGER_BASE_PATH'] + '/inference_tmp'
+    tempDir = '/inference_tmp'
+    dest = app_flask.config['DLS_FILEMANAGER_BASE_PATH'] + tempDir
     print dest
     uploaded = []
     for file in request.files.values():
@@ -42,5 +43,5 @@ def upload_file():
             fullname = os.path.join(dest, filename)
             logger.info('uploading file to ' + fullname)
             file.save(fullname)
-            uploaded.append(fullname)
+            uploaded.append( os.path.join(tempDir, filename))
     return Response(json.dumps(uploaded), mimetype='application/json')

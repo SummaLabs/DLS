@@ -11,7 +11,7 @@
                     fileUrl: '<'
                 },
                 templateUrl: '/frontend/components/inference/classify-image/classify-image.html',
-                controller: function ($scope, $mdDialog, appConfig, Upload) {
+                controller: function ($scope, $mdDialog, appConfig, Upload, modelService, $window) {
                     var self = this;
 
                     const state = {
@@ -25,6 +25,7 @@
                         $scope.images = [];
                         $scope.fileUrl = '';
                     };
+                    
 
                     $scope.uploadFiles = function(file, errFiles) {
                         $scope.f = file;
@@ -39,20 +40,12 @@
                                 
                                     file.result = response.data;
                                     console.log(response.data);
+                                    $scope.state = state.LOADING;
+                                    $scope.images.length = 0;
+
                                     var future = modelService.inference(response.data, $scope.modelId);
-                                    future.then(function mySucces(response) {
-
-                                    showNClasses(response.data.data, 8);
-
-                                    //build reference to download
-                                    var csv = buildCSV(response.data.data);
-                                    var blob = new Blob([csv], {type: 'text/plain'});
-                                    var url = $window.URL || $window.webkitURL;
-                                    $scope.fileUrl = url.createObjectURL(blob);
-                                    $scope.state = state.LOADED;
-                                    }, function myError(response) {
-                                            console.log(response);
-                                    });
+                                    processInferenceResult(future);
+                                    
                                
                             }, function (response) {
                                 if (response.status > 0)
@@ -90,20 +83,7 @@
                                         $scope.images.length = 0;
 
                                         var future = modelService.inference(imagesPath, $scope.modelId);
-                                        future.then(function mySucces(response) {
-
-                                            showNClasses(response.data.data, 8);
-
-                                            //build reference to download
-                                            var csv = buildCSV(response.data.data);
-                                            var blob = new Blob([csv], {type: 'text/plain'});
-                                            var url = $window.URL || $window.webkitURL;
-                                            $scope.fileUrl = url.createObjectURL(blob);
-
-                                            $scope.state = state.LOADED;
-                                        }, function myError(response) {
-                                            console.log(response);
-                                        });
+                                         processInferenceResult(future);
                                     } else {
                                         choseImageAlert();
                                     }
@@ -180,6 +160,22 @@
                         });
 
                         return csv;
+                    }
+                    
+                    function processInferenceResult(future){
+                        future.then(function mySucces(response) {
+
+                                    showNClasses(response.data.data, 8);
+
+                                    //build reference to download
+                                    var csv = buildCSV(response.data.data);
+                                    var blob = new Blob([csv], {type: 'text/plain'});
+                                    var url = $window.URL || $window.webkitURL;
+                                    $scope.fileUrl = url.createObjectURL(blob);
+                                    $scope.state = state.LOADED;
+                                    }, function myError(response) {
+                                            console.log(response);
+                                    });
                     }
                 }
             }

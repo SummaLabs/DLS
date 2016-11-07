@@ -9,8 +9,8 @@ angular.module('graph', [])
             replace: true,
             scope: {
                 controlItem: '=',
-                svgWidth: '@',
-                svgHeight: '@',
+                svgWidth: '=',
+                svgHeight: '=',
                 svgColor: '@'
             },
             // templateNamespace: 'svg',

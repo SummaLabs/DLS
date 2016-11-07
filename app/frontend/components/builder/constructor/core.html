@@ -1,22 +1,4 @@
 <div class="constructor">
-    <div layout="row">
-        <md-button class="md-primary md-raised" ng-click="$ctrl.saveNetworkDialog($event)">
-            Save
-        </md-button>
-        <md-button class="md-warn md-raised" ng-click="$ctrl.checkModelJson($event)">
-            Check Model
-        </md-button>
-        <md-button class="md-warn md-raised" ng-click="$ctrl.calcModelShape($event)">
-            Calc Shapes
-        </md-button>
-        <!--<md-button ng-click="toggleRight()" class="md-raised">-->
-            <!--Toggle Right Menu-->
-        <!--</md-button>-->
-        <md-button class="md-warn md-raised" ng-click="$ctrl.trainModel($event)">
-            Train Model
-        </md-button>
-        <span class="md-headline">Network name: {{networkName}}</span>
-    </div>
     <div layout="row" class="unselectable">
         <palette style="overflow: auto;"></palette>
         <div flex layout="column" style="height:100%;">
@@ -29,8 +11,8 @@
                         <md-icon md-font-library="material-icons" class="md-18" aria-label="reset">{{toggleIcon}}</md-icon>
                     </md-button>
                 </div>
-                <svg-graph flex layout="column" control-item="$ctrl.svgControl" svg-width="{{$ctrl.svgWidth}}"
-                           svg-height="{{$ctrl.svgHeight}}" svg-color="#fff" pointer-events="all"
+                <svg-graph flex layout="column" control-item="$ctrl.svgControl" svg-width="$ctrl.svgWidth"
+                           svg-height="$ctrl.svgHeight" svg-color="#fff" pointer-events="all"
                            focusable="false"></svg-graph>
                 <viewport svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}"></viewport>
                 <div id="constructor-tools">

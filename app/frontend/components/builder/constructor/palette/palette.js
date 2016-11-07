@@ -67,7 +67,7 @@ function DraggableCtrl($scope, $element, $rootScope) {
 
 }
 
-function PaletteController(layerService) {
+function PaletteController(layerService, $scope) {
 
 	var self = this;
 	self.treeItems = [];
@@ -89,6 +89,15 @@ function PaletteController(layerService) {
 	console.log(section);
 		menu.toggleSelectSection(section);
 	}
+    
+    this.trainModel = function ($event) {
+        console.log("Train invoked");
+        $scope.$parent.$ctrl.trainModel($event)
+    }
+    
+    this.saveNetworkDialog = function ($event) {
+        $scope.$parent.$ctrl.saveNetworkDialog($event)
+    }
 }
 
 function createTree(categories, layers) {

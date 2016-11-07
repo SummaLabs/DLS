@@ -136,10 +136,10 @@ angular.module('dlsApp')
                 $rootScope.tabIndex = 5;
             }
         });
-    }).controller('mainCtrl', function($rootScope, $scope, $location) {
+    }).controller('mainCtrl', ['$rootScope', '$scope', '$location',  'layerService', function($rootScope, $scope, $location) {
         $rootScope.tabIndex = 0;
         $scope.selectedIndex = 0;
         $rootScope.$watch('tabIndex', function(newValue) {
             $scope.selectedIndex = newValue;
 		});
-    });
+    }]);
