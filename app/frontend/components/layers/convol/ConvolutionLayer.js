@@ -41,7 +41,7 @@ function ConvolutionLayer() {
     };
         
     this.getTemplatePath = function () {
-      return "frontend/components/layers/dense/layer_with_shapes_exp.svg";  
+      return "frontend/components/layers/convol/node-test-2.svg";  
     };
     
     this.getIconPath = function () {
