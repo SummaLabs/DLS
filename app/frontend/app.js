@@ -57,8 +57,8 @@ angular.module('dlsApp')
             markerShapeOut: 'shape_out',
             areaWidth: 5000,
             areaHeight: 5000,
-            scaleMin: 0.2,
-            scaleMax: 4.0,
+            scaleMin: 0.0001,
+            scaleMax: 10.0,
             scaleFactor: 1.2,
             gridStep: 25
         },

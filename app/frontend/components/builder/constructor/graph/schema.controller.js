@@ -18,7 +18,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         REMOVE_ITEMS: 'graph:removeItems',
         CHANGED_VIEWS: 'graph:changedViews',
         ACTIVATE_ITEM: 'graph:activateItem',
-        CHANGE_POSITION: 'graph:changePosition'
+        CHANGE_POSITION: 'graph:changePosition',
+        ADDED_LAYERS: 'graph:addedLayers'
     };
 
     var self = this;
@@ -101,6 +102,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 			}
 		}
 
+
 		initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element, $compile);
 
         addLinks = function () {
@@ -113,6 +115,9 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
             /*if (layers.length > 1)
                 $scope.controlItem.reset();*/
+
+			setScale(1.0001);
+            self.emitEvent(events.ADDED_LAYERS, {});
         };
 
         return true;
@@ -421,7 +426,6 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 			}
 		});
 
-
 		$element.on('wheel', function (event) {
 			var delta = (event.deltaY || event.detail || event.wheelDelta) / 8;
 			var scale = self.scale;
@@ -549,25 +553,28 @@ function initBackground(self, scope, step, element, $compile) {
     var viewGroup = angular.element(element[0].querySelector('#view'));
     while (viewGroup[0].firstChild) {
     	viewGroup[0].removeChild(viewGroup[0].firstChild);
-}
+	}
     var line = angular.element('<line>');
     line.attr('style', 'stroke:rgb(111,111,111);stroke-width:0.5');
     var html = '';
-    for (let a = 0; a < scope.svgWidth; a += step) {
+
+    let maxSize = scope.svgWidth > scope.svgHeight ? scope.svgWidth: scope.svgHeight
+    maxSize *= 3;
+    for (let a = 0; a < maxSize; a += step) {
         var curLine = line.clone();
         curLine.attr('x1', '' + a);
         curLine.attr('y1', '0');
         curLine.attr('x2', '' + a);
-        curLine.attr('y2', '' + scope.svgHeight);
+        curLine.attr('y2', '' + maxSize);
         html += curLine[0].outerHTML;
     }
 
-    for (let a = 0; a < scope.svgHeight; a += step) {
+    for (let a = 0; a < maxSize; a += step) {
         var curLine = line.clone();
 
         curLine.attr('x1', '0');
         curLine.attr('y1', '' + a);
-        curLine.attr('x2', '' + scope.svgWidth);
+        curLine.attr('x2', '' + maxSize);
         curLine.attr('y2', '' + a);
         html += curLine[0].outerHTML;
     }

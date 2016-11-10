@@ -391,7 +391,13 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
         });
 
         $scope.$on('graph:changedViews', function (event, data) {
-            // console.log('graph:changedViews');
+            data.eventType = 'move';
+            $scope.$broadcast('constructor:viewport', data);
+            event.stopPropagation();
+        });
+
+        $scope.$on('graph:addedLayers', function (event, data) {
+            data.eventType = 'update'
             $scope.$broadcast('constructor:viewport', data);
             event.stopPropagation();
         });
@@ -436,7 +442,6 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
 
         function setUpNetwork() {
             self.svgControl.setLayers(networkDataService.getLayers());
-
         }
     }
 

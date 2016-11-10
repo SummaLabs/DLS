@@ -74,8 +74,12 @@ angular.module('constructorCore')
 				}
 
                 scope.$on('constructor:viewport', function (event, data) {
-                    visibleEl.style.left = data.x * ratio + 'px';
-					visibleEl.style.top = data.y * ratio + 'px';
+                	if (data.eventType === 'move') {
+						visibleEl.style.left = data.x * ratio + 'px';
+						visibleEl.style.top = data.y * ratio + 'px';
+                	} else {
+                		update();
+                	}
                 });
 
 				scope.$watch(function () {
