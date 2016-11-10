@@ -1,7 +1,7 @@
-angular.module('convolutionLayer', [])
-    .service('convolutionLayer', [ConvolutionLayer]);
+angular.module('convolution3dLayer', [])
+    .service('convolution3dLayer', [Convolution3dLayer]);
 
-function ConvolutionLayer() {
+function Convolution3dLayer() {
     
     this.getActivationFunctions = function () {
         return [
@@ -18,24 +18,25 @@ function ConvolutionLayer() {
     this.getDefault = function () {
         return {
             "id": 0,
-            "name": "Convolution2D",
-            "layerType": 'Convolution2D',
-            "category": "layer",
+            "name":         "Convolution3D",
+            "layerType":    "convolution3d",
+            "category":     "basic: convolution",
             "params": {
-                "filtersCount": 64,
-                "filterWidth": 3,
+                "filtersCount": 16,
+                "filterWidth":  3,
                 "filterHeight": 3,
+                "filterDepth":  3,
                 "activationFunction": "linear",
-                "isTrainable": true
+                "isTrainable":  true
             }
         }
     };
         
     this.getTemplatePath = function () {
-      return "frontend/components/layers/basic/convolution2d/convolution2d.svg";
+      return "frontend/components/layers/basic/convolution3d/convolution3d.svg";
     };
     
     this.getIconPath = function () {
-        return "frontend/assets/img/palette/convol.gif"
+        return "frontend/assets/img/palette/basic/layer-convolution3d-v1.png"
     };
 }

@@ -1,18 +1,18 @@
 'use strict';
 
 angular
-.module('convolution2dEditor', ['ngMaterial'])
-.directive('convolution2dEditor', function () {
+.module('convolution3dEditor', ['ngMaterial'])
+.directive('convolution3dEditor', function () {
     return {
         scope: {
             layerId: '@',
             doOnSubmit: '&'
         },
-        templateUrl: "frontend/components/layers/basic/convolution2d/convolution2d-editor.html",
-        controller: function ($scope, networkDataService, convolution2dLayer) {
+        templateUrl: "frontend/components/layers/basic/convolution3d/convolution3d-editor.html",
+        controller: function ($scope, networkDataService, convolution3dLayer) {
             this.$onInit = function () {
                 setUpLayerParams($scope, networkDataService);
-                $scope.activationFunctionList = convolution2dLayer.getActivationFunctions();
+                $scope.activationFunctionList = convolution3dLayer.getActivationFunctions();
 
                 $scope.onSubmit = function () {
                     var layer = networkDataService.getLayerById($scope.layerId);
@@ -23,8 +23,9 @@ angular
 
                 function editLayer(layer) {
                     layer.params.filtersCount = $scope.filtersCount;
-                    layer.params.filterWidth = $scope.filterWidth;
+                    layer.params.filterWidth  = $scope.filterWidth;
                     layer.params.filterHeight = $scope.filterHeight;
+                    layer.params.filterDepth  = $scope.filterDepth;
                     layer.params.activationFunction = $scope.activationFunction;
                     layer.params.isTrainable = $scope.isTrainable;
                 }
@@ -32,8 +33,9 @@ angular
                 function setUpLayerParams($scope, networkDataService) {
                     var layerParams = networkDataService.getLayerById($scope.layerId).params;
                     $scope.filtersCount = layerParams.filtersCount;
-                    $scope.filterWidth = layerParams.filterWidth;
+                    $scope.filterWidth  = layerParams.filterWidth;
                     $scope.filterHeight = layerParams.filterHeight;
+                    $scope.filterDepth  = layerParams.filterDepth;
                     $scope.activationFunction = layerParams.activationFunction;
                     $scope.isTrainable = layerParams.isTrainable;
                 }
