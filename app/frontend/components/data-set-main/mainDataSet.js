@@ -24,15 +24,15 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService'])
             };
             //
             self.createDialogPreviewDB = function($event,dbId) {
-                console.log('DB-Id: ' + dbId);
+//                console.log('DB-Id: ' + dbId);
                 dbinfoService.getInfoStatWithHistsAboutDB(dbId).then(
                     function successCallback(response) {
                         self.currentDbInfo = response.data;
+                        var parentEl = angular.element(document.body);
                         $mdDialog.show({
                             controller: DialogControllerPreviewDB,
                             templateUrl: 'frontend/components/dialog/dialog-preview-dataset-image2d.html',
-                            parent: angular.element(document.body),
-                            targetEvent: event,
+                            parent: parentEl,
                             locals: {
                                 dbId:   dbId,
                                 dbInfo: response.data
@@ -131,7 +131,7 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService'])
     });
 
 function DialogControllerPreviewDB($scope, $mdDialog, dbId, dbInfo, dbinfoService) {
-    console.log('::DialogControllerPreviewDB() : ' + dbId);
+//    console.log('::DialogControllerPreviewDB() : ' + dbId);
     // console.log(dbInfo);
     // console.log('Labels: ' + dbInfo.hist.labels);
     var self = this;
