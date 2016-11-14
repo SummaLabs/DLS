@@ -18,7 +18,7 @@ function Pooling1dLayer() {
             "category": "basic: pooling",
             "params": {
                 "subsamplingType": "max_pooling",
-                "subsamplingSize": 2
+                "subsamplingSizeWidth": 2
             }
         }
     };

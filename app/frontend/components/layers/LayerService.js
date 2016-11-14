@@ -6,6 +6,9 @@ angular.module('layerService', [
     'pooling1dLayer',
     'pooling2dLayer',
     'pooling3dLayer',
+    'activationLayer',
+    'flattenLayer',
+    'mergeLayer',
     'denseLayer',
     'solverLayer'])
     .service('layerService', ['$rootScope', '$http', '$templateCache',
@@ -16,6 +19,9 @@ angular.module('layerService', [
         'pooling1dLayer',
         'pooling2dLayer',
         'pooling3dLayer',
+        'activationLayer',
+        'flattenLayer',
+        'mergeLayer',
         'denseLayer',
         'solverLayer', LayerService]);
 
@@ -27,6 +33,9 @@ function LayerService($rootScope, $http, $templateCache,
                       pooling1dLayer,
                       pooling2dLayer,
                       pooling3dLayer,
+                      activationLayer,
+                      flattenLayer,
+                      mergeLayer,
                       denseLayer,
                       solverLayer) {
 
@@ -37,7 +46,7 @@ function LayerService($rootScope, $http, $templateCache,
         REMOVE:     'layer:remove'
     };
 
-    const categories = ['input', 'basic: convolution', 'basic: pooling', 'complex', 'output'];
+    const categories = ['input', 'basic: convolution', 'basic: pooling', 'basic: dense', 'basic', 'complex', 'output'];
     
     const layerByType = {
         'data':             dataLayer,
@@ -47,6 +56,9 @@ function LayerService($rootScope, $http, $templateCache,
         'pooling1d':        pooling1dLayer,
         'pooling2d':        pooling2dLayer,
         'pooling3d':        pooling3dLayer,
+        'activation':       activationLayer,
+        'merge':            mergeLayer,
+        'flatten':          flattenLayer,
         'dense':            denseLayer,
         'solver':           solverLayer
     };
@@ -56,10 +68,12 @@ function LayerService($rootScope, $http, $templateCache,
         'convolution1d': '',
         'convolution2d': '',
         'convolution3d': '',
-
         'pooling1d': '',
         'pooling2d': '',
         'pooling3d': '',
+        'activation': '',
+        'flatten': '',
+        'merge': '',
         'dense': '',
         'solver': ''
     };
@@ -71,6 +85,10 @@ function LayerService($rootScope, $http, $templateCache,
     loadTemplate('pooling1d');
     loadTemplate('pooling2d');
     loadTemplate('pooling3d');
+    loadTemplate('pooling3d');
+    loadTemplate('activation');
+    loadTemplate('flatten');
+    loadTemplate('merge');
     loadTemplate('dense');
     loadTemplate('solver');
 
@@ -81,6 +99,9 @@ function LayerService($rootScope, $http, $templateCache,
         pooling1dLayer.getDefault(),
         pooling2dLayer.getDefault(),
         pooling3dLayer.getDefault(),
+        activationLayer.getDefault(),
+        flattenLayer.getDefault(),
+        mergeLayer.getDefault(),
         dataLayer.getDefault(),
         denseLayer.getDefault(),
         solverLayer.getDefault()

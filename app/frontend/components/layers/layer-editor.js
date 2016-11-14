@@ -14,6 +14,9 @@ angular
                 'pooling1d':        '<pooling1d-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></pooling1d-editor>',
                 'pooling2d':        '<pooling2d-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></pooling2d-editor>',
                 'pooling3d':        '<pooling3d-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></pooling3d-editor>',
+                'activation':       '<activation-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></activation-editor>',
+                'merge':            '<merge-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></merge-editor>',
+                'flatten':          '<flatten-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></flatten-editor>',
                 'dense':            '<dense-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></dense-editor>',
                 'solver':           '<solver-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></solver-editor>'
             };

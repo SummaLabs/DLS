@@ -18,7 +18,8 @@ function Pooling2dLayer() {
             "category": "basic: pooling",
             "params": {
                 "subsamplingType": "max_pooling",
-                "subsamplingSize": 2
+                "subsamplingSizeWidth":  2,
+                "subsamplingSizeHeight": 2
             }
         }
     };

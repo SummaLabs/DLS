@@ -23,13 +23,15 @@ angular
 
                 function editLayer(layer) {
                     layer.params.subsamplingType = $scope.subsamplingType;
-                    layer.params.subsamplingSize = $scope.subsamplingSize;
+                    layer.params.subsamplingSizeWidth  = $scope.subsamplingSizeWidth;
+                    layer.params.subsamplingSizeHeight = $scope.subsamplingSizeHeight;
                 }
 
                 function setUpLayerParams($scope, networkDataService) {
                     var layerParams = networkDataService.getLayerById($scope.layerId).params;
                     $scope.subsamplingType = layerParams.subsamplingType;
-                    $scope.subsamplingSize = layerParams.subsamplingSize;
+                    $scope.subsamplingSizeWidth = layerParams.subsamplingSizeWidth;
+                    $scope.subsamplingSizeHeight = layerParams.subsamplingSizeHeight;
                 }
             }
         }
