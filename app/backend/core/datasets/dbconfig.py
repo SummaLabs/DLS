@@ -252,7 +252,7 @@ class DBImage2DConfig:
     def getRelativeDirPath(self):
         tval = self.cfg['formFileImport']['fromTxt']['pathTorRelativeDir']
         if self.isUseFMRootDir:
-            ret = "%s/%s" % (self.pathRootDir, tval)
+            ret = "%s%s" % (self.pathRootDir, tval)
         else:
             ret = tval
         return ret

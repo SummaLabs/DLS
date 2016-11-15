@@ -95,18 +95,17 @@
                                     </div>
                                 </md-tab>
 
-                                <md-tab label="Use text files" layout="column">
+                                <md-tab label="Use CSV files" layout="column">
                                     <div ng-if="$ctrl.formFileImport.selectedTabIndex == 1">
                                         <div layout="row" style="padding-top: 24px;">
                                             <md-input-container flex>
-                                                <label>Path to Training-CSV</label>
+                                                <label>Path to training CSV file</label>
                                                 <input type="text" required name="trainingImagesTxt"
                                                        ng-model="$ctrl.formFileImport.fromTxt.pathToImagesTxt">
                                                 <div ng-messages="datasetCreateForm.trainingImagesTxt.$error" multiple
                                                      md-auto-hide="false" role="alert">
-                                                    <div ng-message="required">Please input a valid Path to
-                                                        CSV-formatted
-                                                        file
+                                                    <div ng-message="required">
+                                                        Please input a valid Path to CSV-formatted file
                                                     </div>
                                                 </div>
                                             </md-input-container>
@@ -118,7 +117,7 @@
                                         <div layout="row">
                                             <md-switch ng-model="$ctrl.formFileImport.fromTxt.isUseSeparateVal"
                                                        aria-label="Separate validation directory">
-                                                Use separate validation CSV-file
+                                                Use separate validation CSV file
                                             </md-switch>
                                         </div>
                                         <div ng-if="!$ctrl.formFileImport.fromTxt.isUseSeparateVal">
@@ -146,16 +145,14 @@
                                         <div ng-if="$ctrl.formFileImport.fromTxt.isUseSeparateVal">
                                             <div layout="row">
                                                 <md-input-container flex>
-                                                    <label>Path to Validation-CSV</label>
+                                                    <label>Path to validation CSV file</label>
                                                     <input type="text" required name="validationImagesTxt"
                                                            ng-model="$ctrl.formFileImport.fromTxt.pathToImagesTxtVal">
                                                     <div ng-messages="datasetCreateForm.validationImagesTxt.$error"
                                                          multiple
                                                          md-auto-hide="false" role="alert">
-                                                        <div ng-message="required">Please input a path to a valid CSV
-                                                            file
-                                                            with
-                                                            validation set of images
+                                                        <div ng-message="required">
+                                                            Please input a path to a valid CSV file with validation set of images
                                                         </div>
                                                     </div>
                                                 </md-input-container>
@@ -176,19 +173,18 @@
                                         <div ng-if="$ctrl.formFileImport.fromTxt.isUseRelativeDir">
                                             <div layout="row">
                                                 <md-input-container flex>
-                                                    <label>Path to directory with images (root for relative
-                                                        path)</label>
+                                                    <label>Set up path which is root for relative path in CSV)</label>
                                                     <input type="text" name="relativeDirPath"
                                                            ng-model="$ctrl.formFileImport.fromTxt.pathTorRelativeDir">
                                                     <div ng-messages="datasetCreateForm.relativeDirPath.$error" multiple
                                                          md-auto-hide="false" role="alert">
-                                                        <div ng-message="required">Please input a path to a directory
-                                                            with
-                                                            images
+                                                        <div ng-message="required">
+                                                            Please input a path to a directory with images
                                                         </div>
                                                     </div>
                                                 </md-input-container>
-                                                <md-button class="md-fab" layout="column" layout-align="center center">
+                                                <md-button class="md-fab" layout="column" layout-align="center center"
+                                                           ng-click="$ctrl.setTrainImagesDir('dir-rel', $event)">
                                                     <i class="material-icons">folder</i>
                                                 </md-button>
                                             </div>
