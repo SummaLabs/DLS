@@ -133,8 +133,8 @@
                                                     <div ng-messages="datasetCreateForm.percentValidation.$error"
                                                          multiple
                                                          md-auto-hide="false" role="alert">
-                                                        <div ng-message="required">Please input a number between 1 and
-                                                            100 %
+                                                        <div ng-message="required">
+                                                            Please input a number between 1 and 100 %
                                                         </div>
                                                         <div ng-message="min">Minimum number is 1%</div>
                                                         <div ng-message="max">Maximum number is 99%</div>
@@ -256,7 +256,9 @@
                                     <md-select ng-model="$ctrl.formDbBackend.dbBackendSelectedId"
                                                aria-label="dbBackendSelectedId">
                                         <md-option ng-value="db.id"
-                                                   ng-repeat="db in $ctrl.formDbBackend.dbBackends">{{ db.value }}
+                                                   ng-repeat="db in $ctrl.formDbBackend.dbBackends"
+                                                   ng-disabled="$index === 1">
+                                            {{ db.value }}
                                         </md-option>
                                     </md-select>
                                 </md-input-container>

@@ -34,7 +34,7 @@ angular.module('create2dImgDataset', ['ngMaterial','ngMessages', 'taskManagerSer
                     selectedTabIndex: 0,
                     fromDir: {
                         isUseSeparateValDir:false,
-                        percentForValidation: 25,
+                        percentForValidation: 26,
                         percentForTesting: 0,
                         pathToImageFolder:      "",
                         pathToImageFolderVal:   ""
@@ -42,7 +42,7 @@ angular.module('create2dImgDataset', ['ngMaterial','ngMessages', 'taskManagerSer
                     fromTxt: {
                         isUseSeparateVal: false,
                         isUseRelativeDir: false,
-                        percentForValidation: 25,
+                        percentForValidation: 26,
                         pathToImagesTxt: "",
                         pathToImagesTxtVal: "",
                         pathTorRelativeDir: ""
