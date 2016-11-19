@@ -14,7 +14,8 @@ from app.backend.core.models.flow_parser import DLSDesignerFlowsParser
 from app.backend.core.models.batcher_image2d import BatcherImage2DLMDB
 from app.backend.core.models.keras_trainer_v3 import KerasTrainer
 
-pathTestModel='../../../data-test/test-models-json/test_basic_cnn_network_v1.json'
+# pathTestModel='../../../data-test/test-models-json/test_basic_cnn_network_v1.json'
+pathTestModel='../../../data-test/test-models-json/test_basic_cnn_network_v1_with_train_params_v1.json'
 
 if __name__ == '__main__':
     dirData     = dlsutils.getPathForDatasetDir()
