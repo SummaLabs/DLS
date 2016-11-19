@@ -30,6 +30,7 @@
                                 });
                             });
                             self.selected = self.models[0];
+                            self.initChart(self.selected);
                         },
                         function errorCallback(response) {
                             console.log(response.data);
@@ -38,98 +39,52 @@
 
                 this.selectModel = function( model ) {
                     self.selected = angular.isNumber(model) ? $scope.models[model] : model;
+                    self.initChart(model);
                 };
                 
-                this.getChartData = function(model, type) {
-                    var chartPoints = createChartPoints(model.trainingData, type);
-                    var chartSettings = getDefaultChartSettings(type);
-                    chartSettings['data']['rows'] = chartPoints;
-                    return chartSettings;
-                };
-
-                function createChartPoints(trainingData, type) {
-                    var chartPoints = [];
-                    for (var i = 0; i < trainingData.iter.length; i++) {
-                        var columns = [];
-                        if (type == 'training') {
-                            columns.push({"v": trainingData.iter[i]});
-                            columns.push({"v": trainingData.lossTrain[i]});
-                            columns.push({"v": trainingData.accTrain[i]});
-                        }
-                        if (type == 'validation') {
-                            columns.push({"v": trainingData.iter[i]});
-                            columns.push({"v": trainingData.lossVal[i]});
-                            columns.push({"v": trainingData.accVal[i]});
-                        }
-                        chartPoints.push({
-                            "c": columns
-                        })
-                    }
-
-                    return chartPoints;
+                this.initChartTrace = function(xArray, yArray, name){
+                    return  {
+                                x: xArray,
+                                y: yArray,
+                                mode: 'lines',
+                                name: name
+                            };
                 }
-
-                function getDefaultChartSettings(type) {
-                    var chartSettings = {
-                        "lossFunctionId": "",
-                        "lossFunctionLabel": "",
-                        "accuracyId": "",
-                        "accuracyLabel": ""
-                    };
-                    if (type == 'training') {
-                        chartSettings.lossFunctionId = "lossFunctionTraining";
-                        chartSettings.lossFunctionLabel = "Loss Function";
-                        chartSettings.accuracyId = "accuracyTraining";
-                        chartSettings.accuracyLabel = "Accuracy";
-                        chartSettings.title = "Training Data Set";
-                    }
-                    if (type == 'validation') {
-                        chartSettings.lossFunctionId = "lossFunctionValidation";
-                        chartSettings.lossFunctionLabel = "Loss Function";
-                        chartSettings.accuracyId = "accuracyValidation";
-                        chartSettings.accuracyLabel = "Accuracy";
-                        chartSettings.title = "Validation Data Set";
-                    }
-
-
+                
+                this.initChartLayout = function(title){
                     return {
-                        "type": "AreaChart",
-                        "displayed": false,
-                        "data": {
-                            "cols": [
-                                {
-                                    "id": "Iteration",
-                                    "type": "number",
-                                    "p": {}
+                                title: title,
+                                height: 500,
+                                width: 600,
+                                xaxis: {
+                                    title: 'Iterations',
+                                    showline: false
                                 },
-                                {
-                                    "id": chartSettings.lossFunctionId,
-                                    "label": chartSettings.lossFunctionLabel,
-                                    "type": "number",
-                                    "p": {}
-                                },
-                                {
-                                    "id": chartSettings.accuracyId,
-                                    "label": chartSettings.accuracyLabel,
-                                    "type": "number",
-                                    "p": {}
+                                yaxis: {
+                                    title: 'Training Parameters',
+                                    showline: false
                                 }
-                            ],
-                            "rows": []
-                        },
-                        "options": {
-                            "title": chartSettings.title,
-                            "vAxis": {
-                                "title": "Training Parameters"
-                            },
-                            "hAxis": {
-                                "title": "Iterations"
-                            },
-                            height: 600
-                        },
-                        "formatters": {}
-                    };
+                            };
                 }
+                
+                this.initChart = function(model){
+                           
+                            var traceTrainAcc = this.initChartTrace(model.trainingData.iter, model.trainingData.accTrain, 'Accuracy');
+                            var tracetrainLoss = this.initChartTrace(model.trainingData.iter, model.trainingData.lossTrain, 'Loss Function');
+                            var dataTrain = [ traceTrainAcc, tracetrainLoss ];
+                            var layoutTrain = this.initChartLayout('Training Data Set');
+
+                            Plotly.newPlot('model-training-chart', dataTrain, layoutTrain);
+                    
+                            var traceValacc = this.initChartTrace(model.trainingData.iter, model.trainingData.accVal, 'Accuracy');
+                            var traceValLoss = this.initChartTrace(model.trainingData.iter, model.trainingData.lossVal, 'Loss Function');                    
+                            var dataVal = [ traceValacc, traceValLoss ];
+                            var layoutVal = this.initChartLayout('Validation Data Set');
+
+                            Plotly.newPlot('model-validation-chart', dataVal, layoutVal);
+                };
+                
+             
             }
         });
 })();
