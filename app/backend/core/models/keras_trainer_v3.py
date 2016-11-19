@@ -18,8 +18,10 @@ from keras import backend as K
 
 import keras
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten, Convolution2D, InputLayer, \
-                         AveragePooling2D, MaxPooling2D
+from keras.layers import Convolution1D, Convolution2D, Convolution3D,\
+    MaxPooling1D, MaxPooling2D, MaxPooling3D,\
+    AveragePooling1D,AveragePooling2D, AveragePooling3D,\
+    InputLayer, Flatten, Merge, Activation, Dense, Dropout
 # from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.optimizers import SGD
 from keras.models import model_from_json
@@ -80,6 +82,47 @@ def split_list_by_blocks(lst, psiz):
     tret = [lst[x:x + psiz] for x in xrange(0, len(lst), psiz)]
     return tret
 
+def findLayerFromEndByType(model, layerType):
+    for ii,ll in enumerate(model.layers[::-1]):
+        if isinstance(ll, layerType):
+            return (len(model.layers) - ii - 1)
+    return -1
+
+def cloneLayerFromLayer(pLayer):
+    if isinstance(pLayer, Convolution1D):
+        return Convolution1D.from_config(pLayer.get_config())
+    elif isinstance(pLayer, Convolution2D):
+        return Convolution2D.from_config(pLayer.get_config())
+    elif isinstance(pLayer, Convolution3D):
+        return Convolution3D.from_config(pLayer.get_config())
+    # Max-Pooling:
+    elif isinstance(pLayer, MaxPooling1D):
+        return MaxPooling2D.from_config(pLayer.get_config())
+    elif isinstance(pLayer, MaxPooling2D):
+        return MaxPooling2D.from_config(pLayer.get_config())
+    elif isinstance(pLayer, MaxPooling3D):
+        return MaxPooling3D.from_config(pLayer.get_config())
+    # Average-Pooling
+    elif isinstance(pLayer, AveragePooling1D):
+        return AveragePooling1D.from_config(pLayer.get_config())
+    elif isinstance(pLayer, AveragePooling2D):
+        return AveragePooling2D.from_config(pLayer.get_config())
+    elif isinstance(pLayer, AveragePooling3D):
+        return AveragePooling3D.from_config(pLayer.get_config())
+    #
+    elif isinstance(pLayer, Flatten):
+        return Flatten.from_config(pLayer.get_config())
+    elif isinstance(pLayer, Merge):
+        return Merge.from_config(pLayer.get_config())
+    elif isinstance(pLayer, Activation):
+        return Activation.from_config(pLayer.get_config())
+    elif isinstance(pLayer, Dropout):
+        return Dropout.from_config(pLayer.get_config())
+    #
+    elif isinstance(pLayer, Dense):
+        return Dense.from_config(pLayer.get_config())
+    return None
+
 #########################
 class KerasTrainer:
     extModelWeights = 'h5kerasmodel'
@@ -98,45 +141,58 @@ class KerasTrainer:
     currentIter=0
     currentEpoch=0
     printInterval=20
+    modelName="Unknown"
+    deviceType='cpu'
     def __init__(self):
         self.cleanResults()
     @staticmethod
     def adjustModelInputOutput2DBData(parModel, parLMDB, isFixOutputLayer = True):
+        # (1) check LMDB is object instance or path to DB
         if isinstance(parLMDB, BatcherImage2DLMDB):
             ptrLMDB = parLMDB
         elif (isinstance(parLMDB, str) or isinstance(parLMDB, unicode)):
             ptrLMDB = BatcherImage2DLMDB(parLMDB, 1)
         else:
             raise Exception("Unknown parLMDB instance")
-        #
+        # (2) Build Sequential model (currently only Sequential models supported)
         retModel = Sequential()
         tmpL0 = parModel.layers[0]
+        # (3) if InputLayer is present - skip it
         if isinstance(tmpL0, InputLayer):
             idxStart=1
         else:
             idxStart=0
+        # (4) Recreate new InputShape layer with DB input shape
         retModel.add(InputLayer(input_shape=ptrLMDB.shapeImg))
+        #FIXME: check this code, do you think, that implicit layer resizing is a good idea?
+        # (5) find output Dense layer to automaticaly adjust his output with DB-output
+        idxDense = -1
         if isFixOutputLayer:
-            listLayers = parModel.layers[idxStart:-1]
+            idxDense = findLayerFromEndByType(parModel, keras.layers.Dense)
+            if idxDense<0:
+                raise Exception('Model without Dense layer currently not supported!')
+            listLayers = parModel.layers[idxStart:idxDense]
         else:
             listLayers = parModel.layers[idxStart:]
+        # (6) Re-create model layers
         for ll in listLayers:
             ll.inbound_nodes = []
             # print ('\tadd [%s]' % (ll.__str__()))
-            if isinstance(ll, Convolution2D):
-                retModel.add(Convolution2D.from_config(ll.get_config()))
-            elif isinstance(ll, Dense):
-                retModel.add(Dense.from_config(ll.get_config()))
-            elif isinstance(ll, Flatten):
-                retModel.add(Flatten.from_config(ll.get_config()))
-            elif isinstance(ll, Activation):
-                retModel.add(Activation.from_config(ll.get_config()))
-            elif isinstance(ll, Dropout):
-                retModel.add(Dropout.from_config(ll.get_config()))
-            elif isinstance(ll, MaxPooling2D):
-                retModel.add(MaxPooling2D.from_config(ll.get_config()))
-            elif isinstance(ll, AveragePooling2D):
-                retModel.add(AveragePooling2D.from_config(ll.get_config()))
+            tmpLayer = cloneLayerFromLayer(ll)
+            retModel.add(tmpLayer)
+        # (7) fix output dimension
+        if isFixOutputLayer and idxDense>0:
+            #FIXME: hak for classification model-task
+            tmpLayer = parModel.layers[idxDense]
+            tmpLayer.inbound_nodes = []
+            tmpLayerConfig = tmpLayer.get_config()
+            #FIXME: check Keras 'output_dim' paremater
+            tmpLayerConfig['output_dim'] = ptrLMDB.numLbl
+            retModel.add(Dense.from_config(tmpLayerConfig))
+            for ll in parModel.layers[idxDense+1:]:
+                ll.inbound_nodes = []
+                tmpLayer = cloneLayerFromLayer(ll)
+                retModel.add(tmpLayer)
         #
         # tmpL0 = parModel.layers[0]
         # tmpL0cfg = tmpL0.get_config()
@@ -162,8 +218,8 @@ class KerasTrainer:
         # else:
         #     retModel = parModel
         # FIXME: check this point (automatic output layer size). SoftMax to config in feature
-        if isFixOutputLayer:
-            retModel.add(Dense(ptrLMDB.numLbl, activation='softmax'))
+        # if isFixOutputLayer:
+        #     retModel.add(Dense(ptrLMDB.numLbl, activation='softmax'))
         return retModel
     def buildModel(self, pathLMDBJob, pathModelConfig,
                  sizeBatch, numEpoch, intervalSaveModel=1, intervalValidation=1,
@@ -498,7 +554,9 @@ class KerasTrainer:
             'intervalSaveModel' : self.intervalSaveModel,
             'intervalValidation': self.intervalValidation,
             'printInterval'     : self.printInterval,
-            'modelPrefix'       : "%s" % self.modelPrefix
+            'modelPrefix'       : "%s" % self.modelPrefix,
+            'modelName'         : self.modelName,
+            'deviceType'        : self.deviceType
         }
         # FIXME: check the necesserity of the item [pathModelConfig]
         txtJsonSolverState = json.dumps(jsonSolverState, indent=4)
@@ -612,6 +670,10 @@ class KerasTrainer:
         self.currentIter        = configSolverState['currentIter']
         self.sizeBatch          = configSolverState['sizeBatch']
         self.modelPrefix        = configSolverState['modelPrefix']
+        if 'modelName' in configSolverState.keys():
+            self.modelName  = configSolverState['modelName']
+        if 'deviceType' in configSolverState.keys():
+            self.deviceType = configSolverState['deviceType']
         if isLoadLMDBReader:
             self.loadBatcherLMDB(configSolverState['dataset-id'], self.sizeBatch)
             self.numIterPerEpoch    = self.batcherLMDB.numTrain / self.sizeBatch

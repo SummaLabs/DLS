@@ -14,7 +14,7 @@ except:
 from skimage import io as skio
 from keras.models import Sequential
 from keras.layers import Convolution2D, Dense, \
-    MaxPooling2D, AveragePooling2D, Activation, Flatten, InputLayer
+    MaxPooling2D, AveragePooling2D, Activation, Flatten
 
 from keras.utils.visualize_util import plot as kplot
 import keras.utils.visualize_util as kervis
@@ -24,11 +24,6 @@ from compiler.ast import flatten
 from keras_trainer_v3 import KerasTrainer, getOptimizerJson2Keras
 from batcher_image2d import BatcherImage2DLMDB
 from cfg import CFG_MODEL_TRAIN, CFG_SOLVER, PREFIX_SNAPSHOT
-
-from flow_parser_helper import buildLayerConvolution1D,\
-    buildLayerConvolution2D, buildLayerConvolution3D,\
-    buildLayerPooling1D, buildLayerPooling2D, buildLayerPooling3D,\
-    buildLayerActivation, buildLayerFlatten, buildLayerDense
 
 ####################################
 class NodeF:
@@ -67,159 +62,36 @@ class NodeF:
         return self.toString()
 
 ####################################
+dictNonlinFunJson2Keras = {
+    'Sigmoid': 'sigmoid',
+    'Tanh': 'tanh',
+    'ReLU': 'relu',
+    'SoftMax': 'softmax'
+}
+
 # values: (is Available, is Correct but currently not available)
 dictAvailableConnectionsFromTo = {
     'data' : {
         'data'          : (False, None),
-        'convolution1d' : (True,  None),
-        'convolution2d' : (True,  None),
-        'convolution3d' : (True,  None),
-        'pooling1d'     : (True,  None),
-        'pooling2d'     : (True,  None),
-        'pooling3d'     : (True,  None),
-        'flatten'       : (True,  None),
-        'activation'    : (True,  None),
-        'merge'         : (True,  None),
+        'convolution'   : (True,  None),
         'dense'         : (True,  None),
         'solver'        : (False, None)
     },
-    'convolution1d' : {
+    'convolution' : {
         'data'          : (False, None),
-        'convolution1d' : (True,  None),
-        'convolution2d' : (False,  None),
-        'convolution3d' : (False,  None),
-        'pooling1d'     : (True,  None),
-        'pooling2d'     : (False,  None),
-        'pooling3d'     : (False,  None),
-        'flatten'       : (True,  None),
-        'activation'    : (True,  None),
-        'merge'         : (True,  None),
+        'convolution'   : (True,  None),
         'dense'         : (True,  None),
         'solver'        : (False, None)
-    },
-    'convolution2d': {
-        'data'          : (False, None),
-        'convolution1d' : (False, None),
-        'convolution2d' : (True, None),
-        'convolution3d' : (False, None),
-        'pooling1d'     : (False, None),
-        'pooling2d'     : (True, None),
-        'pooling3d'     : (False, None),
-        'flatten'       : (True, None),
-        'activation'    : (True, None),
-        'merge'         : (True, None),
-        'dense'         : (True, None),
-        'solver'        : (False, None)
-    },
-    'convolution3d': {
-        'data'          : (False, None),
-        'convolution1d' : (False, None),
-        'convolution2d' : (False, None),
-        'convolution3d' : (True, None),
-        'pooling1d'     : (False, None),
-        'pooling2d'     : (False, None),
-        'pooling3d'     : (True, None),
-        'flatten'       : (True, None),
-        'activation'    : (True, None),
-        'merge'         : (True, None),
-        'dense'         : (True, None),
-        'solver'        : (False, None)
-    },
-    'pooling1d': {
-        'data'          : (False, None),
-        'convolution1d' : (True, None),
-        'convolution2d' : (False, None),
-        'convolution3d' : (False, None),
-        'pooling1d'     : (True, None),
-        'pooling2d'     : (False, None),
-        'pooling3d'     : (False, None),
-        'flatten'       : (True, None),
-        'activation'    : (True, None),
-        'merge'         : (True, None),
-        'dense'         : (True, None),
-        'solver'        : (False, None)
-    },
-    'pooling2d': {
-        'data'          : (False, None),
-        'convolution1d' : (False, None),
-        'convolution2d' : (True, None),
-        'convolution3d' : (False, None),
-        'pooling1d'     : (False, None),
-        'pooling2d'     : (True, None),
-        'pooling3d'     : (False, None),
-        'flatten'       : (True, None),
-        'activation'    : (True, None),
-        'merge'         : (True, None),
-        'dense'         : (True, None),
-        'solver'        : (False, None)
-    },
-    'pooling3d': {
-        'data'          : (False, None),
-        'convolution1d' : (False, None),
-        'convolution2d' : (False, None),
-        'convolution3d' : (True, None),
-        'pooling1d'     : (False, None),
-        'pooling2d'     : (False, None),
-        'pooling3d'     : (True, None),
-        'flatten'       : (True, None),
-        'activation'    : (True, None),
-        'merge'         : (True, None),
-        'dense'         : (True, None),
-        'solver'        : (False, None)
-    },
-    'flatten': {
-        'data'          : (False, None),
-        'convolution1d' : (True, None),
-        'convolution2d' : (False, None),
-        'convolution3d' : (False, None),
-        'pooling1d'     : (True, None),
-        'pooling2d'     : (False, None),
-        'pooling3d'     : (False, None),
-        'flatten'       : (False, None),
-        'activation'    : (True, None),
-        'merge'         : (True, None),
-        'dense'         : (True, None),
-        'solver'        : (False, None)
-    },
-    'activation': {
-        'data'          : (False, None),
-        'convolution1d' : (True, None),
-        'convolution2d' : (True, None),
-        'convolution3d' : (True, None),
-        'pooling1d'     : (True, None),
-        'pooling2d'     : (True, None),
-        'pooling3d'     : (True, None),
-        'flatten'       : (True, None),
-        'activation'    : (False, None),
-        'merge'         : (True, None),
-        'dense'         : (True, None),
-        'solver'        : (True, None)
     },
     'dense' : {
         'data'          : (False, None),
-        'convolution1d' : (True, None),
-        'convolution2d' : (False, None),
-        'convolution3d' : (False, None),
-        'pooling1d'     : (True, None),
-        'pooling2d'     : (False, None),
-        'pooling3d'     : (False, None),
-        'flatten'       : (True, None),
-        'activation'    : (True, None),
-        'merge'         : (True, None),
+        'convolution'   : (False, None),
         'dense'         : (True,  None),
         'solver'        : (True,  None)
     },
     'solver' : {
         'data'          : (False, None),
-        'convolution1d' : (False, None),
-        'convolution2d' : (False, None),
-        'convolution3d' : (False, None),
-        'pooling1d'     : (False, None),
-        'pooling2d'     : (False, None),
-        'pooling3d'     : (False, None),
-        'flatten'       : (False, None),
-        'activation'    : (False, None),
-        'merge'         : (False, None),
+        'convolution'   : (False, None),
         'dense'         : (False, None),
         'solver'        : (False, None)
     }
@@ -227,15 +99,7 @@ dictAvailableConnectionsFromTo = {
 
 dictRequiredFields = {
     'data'          : ['datasetType', 'datasetId'],
-    'convolution1d' : ['filtersCount', 'filterWidth', 'activationFunction', 'isTrainable'],
-    'convolution2d' : ['filtersCount', 'filterWidth', 'filterHeight', 'activationFunction', 'isTrainable'],
-    'convolution3d' : ['filtersCount', 'filterWidth', 'filterHeight', 'filterDepth', 'activationFunction', 'isTrainable'],
-    'pooling1d'     : ['subsamplingSizeWidth', 'subsamplingType'],
-    'pooling2d'     : ['subsamplingSizeWidth', 'subsamplingSizeHeight', 'subsamplingType'],
-    'pooling3d'     : ['subsamplingSizeWidth', 'subsamplingSizeHeight', 'subsamplingSizeDepth', 'subsamplingType'],
-    'flatten'       : [],
-    'activation'    : ['activationFunction'],
-    'merge'         : ['mergeType', 'mergeAxis'],
+    'convolution'   : ['filtersCount', 'filterWidth', 'filterHeight', 'subsamplingSize', 'activationFunction', 'subsamplingType', 'isTrainable'],
     'dense'         : ['neuronsCount', 'activationFunction', 'isTrainable'],
     'solver'        : ['epochsCount', 'snapshotInterval', 'validationInterval', 'batchSize', 'learningRate', 'optimizer']
 }
@@ -250,6 +114,11 @@ def checkPreviousConnection(pNode):
         else:
             raise NotImplementedError('Incorrect or unsupproted connection (%s -> %s)' % (inpNodeType, pNodeType))
     return True
+
+def nonlinFunJson2Keras(strJson):
+    if strJson in dictNonlinFunJson2Keras.keys():
+        return dictNonlinFunJson2Keras[strJson]
+    return 'relu'
 
 def getSubsamplingJs2Keras(strSubsamplingJs, subSize = (2,2)):
     if strSubsamplingJs == 'max_pooling':
@@ -395,35 +264,16 @@ class DLSDesignerFlowsParser:
             if ttype == 'data':
                 datasetType = tcfg['datasetType']
                 datasetId   = tcfg['datasetId']
-        #FIXME: remove in feature SolverNode or not?
-        # Temporary SolverNode + TrainingParams back-compatibility
-        tcfgSolverParams=None
-        if 'trainingParams' in self.configFlowRaw.keys():
-            tcfgSolverParams = self.configFlowRaw['trainingParams']
-        else:
-            for idx, node in enumerate(sortedFlow):
-                tcfg = node.jsonParams
-                ttype = node.jsonCfg['layerType']
-                if ttype == 'solver':
-                    tcfgSolverParams = tcfg
-        if tcfgSolverParams is not None:
-            paramNumEpochs      = int(tcfgSolverParams['epochsCount'])
-            paramIntSnapshot    = int(tcfgSolverParams['snapshotInterval'])
-            paramIntValidation  = int(tcfgSolverParams['validationInterval'])
-            batchSize           = int(tcfgSolverParams['batchSize'])
-            paramLearningRate   = float(tcfgSolverParams['learningRate'])
-            paramOptimizerStr   = tcfgSolverParams['optimizer']
-            paramOptimizer      = getOptimizerJson2Keras(paramOptimizerStr, parLR=paramLearningRate)
-            paramLossFunction   = tcfgSolverParams['lossFunction']
-            if 'modelName' in tcfgSolverParams.keys():
-                paramModelName = tcfgSolverParams['modelName']
-            else:
-                paramModelName = "Unknown Model Name"
-            if 'deviceType' in tcfgSolverParams.keys():
-                paramDeviceType = tcfgSolverParams['deviceType']
-            else:
-                paramDeviceType = "cpu"
-            #
+            elif ttype == 'solver':
+                paramNumEpochs = int(tcfg['epochsCount'])
+                paramIntSnapshot = int(tcfg['snapshotInterval'])
+                paramIntValidation = int(tcfg['validationInterval'])
+                batchSize = int(tcfg['batchSize'])
+                paramLearningRate = float(tcfg['learningRate'])
+                paramOptimizerStr = tcfg['optimizer']
+                paramOptimizer = getOptimizerJson2Keras(paramOptimizerStr, parLR=paramLearningRate)
+                paramLossFunction = tcfg['lossFunction']
+        #
         cfgJsonOptimizer = {
             'name':         paramOptimizerStr,
             'lr':           paramLearningRate,
@@ -443,9 +293,7 @@ class DLSDesignerFlowsParser:
             'intervalSaveModel':    paramIntSnapshot,
             'intervalValidation':   paramIntValidation,
             'printInterval':        paramIntValidation,
-            'modelPrefix':          PREFIX_SNAPSHOT,
-            'modelName':            paramModelName,
-            'deviceType':           paramDeviceType
+            'modelPrefix':          PREFIX_SNAPSHOT
         }
         #
         if pathJobDir is not None:
@@ -454,46 +302,76 @@ class DLSDesignerFlowsParser:
             if not batcherLMDB.isOk():
                 raise Exception('Cant load LMDB Dataset from path [%s]' % pathLMDB)
         # Step 2: search Neural Layers:
-        if pathJobDir is None:
-            paramInputShape = (3, 128, 128)
-        else:
-            paramInputShape = batcherLMDB.shapeImg
-        model.add(InputLayer(input_shape=paramInputShape))
         dictLayers={}
         for idx, node in enumerate(sortedFlow):
             #TODO: append code after night talk
             # print ('[%d/%d] node-type: [%s]' % (idx, len(sortedFlow), node.jsonCfg['layerType']))
+            tcfg=node.jsonParams
             ttype=node.jsonCfg['layerType']
-            isGoodLayer = False
-            if ttype == 'convolution1d':
-                tmpLayer = buildLayerConvolution1D(node)
-                isGoodLayer = True
-            elif ttype == 'convolution2d':
-                tmpLayer = buildLayerConvolution2D(node)
-                isGoodLayer = True
-            elif ttype == 'convolution3d':
-                tmpLayer = buildLayerConvolution3D(node)
-                isGoodLayer = True
-            elif ttype == 'pooling1d':
-                tmpLayer = buildLayerPooling1D(node)
-                isGoodLayer = True
-            elif ttype == 'pooling2d':
-                tmpLayer = buildLayerPooling2D(node)
-                isGoodLayer = True
-            elif ttype == 'pooling3d':
-                tmpLayer = buildLayerPooling3D(node)
-                isGoodLayer = True
-            elif ttype == 'activation':
-                tmpLayer = buildLayerActivation(node)
-                isGoodLayer = True
-            elif ttype == 'flatten':
-                tmpLayer = buildLayerFlatten(node)
-                isGoodLayer = True
-            elif ttype == 'dense':
-                tmpLayer = buildLayerDense(node)
-                isGoodLayer = True
-            if isGoodLayer:
+            if ttype == 'convolution':
+                #FIXME: parameter-names may change
+                numberFilters   = int(tcfg['filtersCount']) if tcfg['filtersCount'] else 1
+                # paramStride     = int(tcfg['stride']) if tcfg['stride'] else 1
+                # paramStride     = (paramStride, paramStride)
+                paramStride     = (1,1)
+                filterSizeX     = int(tcfg['filterWidth']) if tcfg['filterHeight'] else 1
+                filterSizeY     = int(tcfg['filterWidth']) if tcfg['filterWidth'] else 1
+                strSubsampType  = tcfg['subsamplingType'] if tcfg['subsamplingType'] else 'max_pooling'
+                #FIXME: currently not used...
+                strNonLinFunc   = tcfg['activationFunction']
+                isTrainable     = tcfg['isTrainable'] if tcfg['isTrainable'] else True
+                # FIXME: check this point: separate X/Y subsampling selection currently not implemented in WEB-UI !!!
+                tmpSubsamplingSize = int(tcfg['subsamplingSize']) if tcfg['subsamplingSize'] else 2
+                sizeSubsampling = (tmpSubsamplingSize,tmpSubsamplingSize)
+                # FIXME: parameter selection currently not implemented in WEB-UI !!!
+                strBorderMode   = 'same'
+                #
+                # FIXME: check this point, this parameter only for model validation, real shape must be calculated from input 2D(3D) image size
+                if pathJobDir is None:
+                    paramInputShape = (3,128,128)
+                else:
+                    paramInputShape = batcherLMDB.shapeImg
+                if isFirstComputationLayer:
+                    tmpLayer = Convolution2D(numberFilters, filterSizeX, filterSizeY,
+                                             border_mode=strBorderMode,
+                                             subsample=paramStride,
+                                             input_shape=paramInputShape,
+                                             activation=nonlinFunJson2Keras(strNonLinFunc))
+                    isFirstComputationLayer = False
+                else:
+                    tmpLayer = Convolution2D(numberFilters, filterSizeX, filterSizeY,
+                                             subsample=paramStride,
+                                             border_mode=strBorderMode,
+                                             activation=nonlinFunJson2Keras(strNonLinFunc))
+                tmpLayer.trainable=isTrainable
                 model.add(tmpLayer)
+                # model.add(Activation())
+                model.add(getSubsamplingJs2Keras(strSubsampType, sizeSubsampling))
+                if isPrecalculateLayersDict:
+                    dictLayers[node.jsonCfg['id']] = model.layers[-1]
+            elif ttype == 'dense':
+                #FIXME: this parameter value only for valid Kearas model building, on step, when model prepared for calc this parameter resolved from data input
+                if pathJobDir is None:
+                    paramInputDim = 784
+                else:
+                    paramInputDim = np.prod(batcherLMDB.shapeImg)
+                strNonLinFunc = tcfg['activationFunction']
+                numberNeurons = int(tcfg['neuronsCount']) if tcfg['neuronsCount'] else 1
+                isTrainable   = tcfg['isTrainable'] if tcfg['isTrainable'] else True
+                if isFirstComputationLayer:
+                    tmpLayer = Dense(numberNeurons,
+                                     input_dim=paramInputDim,
+                                     activation=nonlinFunJson2Keras(strNonLinFunc))
+                    isFirstComputationLayer = False
+                else:
+                    tmpLayer = Dense(numberNeurons,
+                                     activation=nonlinFunJson2Keras(strNonLinFunc))
+                if node.inpNode is not None:
+                    if node.inpNode[0].jsonCfg['layerType'] == 'convolution':
+                        model.add(Flatten())
+                tmpLayer.trainable=isTrainable
+                model.add(tmpLayer)
+                # model.add(Activation(nonlinFunJson2Keras(strNonLinFunc)))
                 if isPrecalculateLayersDict:
                     dictLayers[node.jsonCfg['id']] = model.layers[-1]
         # (1) Prepare dataset:

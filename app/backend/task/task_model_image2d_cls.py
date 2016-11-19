@@ -47,6 +47,10 @@ class TaskModelTeainImage2DCls(Task, KerasTrainer):
             self.printError(strErr)
             raise Exception(strErr)
         self.logger.info('Start trainig')
+        #FIXME: i think, that this code is not working
+        if self.deviceType.startswith('gpu'):
+            import theano.sandbox.cuda
+            theano.sandbox.cuda.use(self.deviceType)
         self.progress = 0
         if self.numEpoch < 1:
             self.numEpoch = 1
