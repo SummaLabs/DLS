@@ -153,7 +153,7 @@ angular.module('create2dImgDataset', ['ngMaterial','ngMessages', 'taskManagerSer
             this.setTrainImagesDir = function (ptype, $event) {
                 var pref = ptype.split('-')[0];
                 if(pref=='dir'){
-                    appConfig.fileManager.pickFile = false;
+                    appConfig.fileManager.pickFile = true;
                     appConfig.fileManager.pickFolder = true;
                 } else {
                     appConfig.fileManager.pickFile = true;
