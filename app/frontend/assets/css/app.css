@@ -199,3 +199,13 @@ md-sidenav.md-closed-add.md-closed-add-active, md-sidenav.md-closed-remove.md-cl
 #network-view-toggle md-icon {
     font-size: 30px;
 }
+
+nav.navbar-inverse {
+    background-color: #337ab7;
+    border-color: #080808;
+}
+
+
+div.modal-header{
+    background: #337ab7 !important;
+}
