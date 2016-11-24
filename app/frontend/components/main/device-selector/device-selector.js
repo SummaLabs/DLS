@@ -1,12 +1,12 @@
 'use strict';
 
-angular.module('deviceSelector', ['ngMaterial'])
+angular.module('deviceSelector', ['ngMaterial', 'deviceService'])
     .directive('deviceSelector', function () {
         return {
             scope: {
                 selectedDevice:'=ngModel'
             },
-            templateUrl: '/frontend/components/device/device-selector.html',
+            templateUrl: '/frontend/components/main/device-selector/device-selector.html',
             controller: function ($scope, deviceService) {
                 this.$onInit = function () {
                     deviceService.getAvailableDevices().then(

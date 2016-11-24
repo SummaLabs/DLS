@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('rocAnalysis', ['ngMaterial'])
+    angular.module('rocAnalysis', ['ngMaterial', 'deviceSelector'])
         .directive('rocAnalysis', function () {
             return {
                 scope: {

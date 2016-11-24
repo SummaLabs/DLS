@@ -1,9 +1,9 @@
 (function () {
     'use strict';
-    angular.module('device', ['ngMaterial', "googlechart"])
-        .component('device', {
-            templateUrl: '/frontend/components/device/device.html',
-            controller: function ($mdDialog, $rootScope, deviceService, $scope) {
+    angular.module('hardware', ['ngMaterial', "googlechart"])
+        .component('hardware', {
+            templateUrl: '/frontend/components/main/hardware/hardware.html',
+            controller: function ($mdDialog, $rootScope, $scope) {
                 this.$onInit = function () {
 
                     var socket = io.connect('http://' + document.domain + ':' + location.port);

@@ -1,7 +1,7 @@
 (function () {
     'use strict';
     angular
-        .module('trainingParameters', ['ngMaterial', 'taskManagerService'])
+        .module('trainingParameters', ['ngMaterial', 'taskManagerService', 'deviceSelector'])
         .directive('trainingParameters', function (taskManagerService) {
             return {
                 scope: {
