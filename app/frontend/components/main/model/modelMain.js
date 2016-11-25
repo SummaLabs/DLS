@@ -1,9 +1,9 @@
 (function () {
     'use strict';
 
-    angular.module('modelMain', ['ngMaterial'])
+    angular.module('modelMain', ['ngMaterial', 'inference', 'validation'])
         .component('modelMain', {
-            templateUrl: '/frontend/components/models-main/models-main.html',
+            templateUrl: '/frontend/components/main/model/model-main.html',
             bindings: {
                 models: '<',
                 selected:'<'

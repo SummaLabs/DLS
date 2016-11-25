@@ -2,7 +2,6 @@
 
 angular.module('dlsApp', ['ngMaterial', "ui.router",
 
-    'mainMenu',
     'constructorCore',
     'networkMain',
     'modelMain',
@@ -27,8 +26,6 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'settings',
     'task',
     'modelService',
-    "inference",
-    "validation",
     'modelsService',
     'taskManagerService',
     'taskView',

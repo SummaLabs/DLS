@@ -2,7 +2,7 @@
 
 angular.module('mainDataSet', ['ngMaterial', 'dbinfoService'])
     .component('mainDataSet', {
-        templateUrl: '/frontend/components/data-set-main/main-data-set.html',
+        templateUrl: '/frontend/components/main/data-set/data-set.html',
         bindings: {
             models:         '<',
             items:          '<',
