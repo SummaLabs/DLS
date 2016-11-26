@@ -1,4 +1,7 @@
 <div class="constructor">
+    <div id="constructor-progress">
+        <div></div>
+    </div>
     <div layout="row" class="unselectable">
         <palette style="overflow: auto;"></palette>
         <div flex layout="column" style="height:100%;">
@@ -14,6 +17,7 @@
                 <svg-graph flex layout="column" control-item="$ctrl.svgControl" svg-width="$ctrl.svgWidth"
                            svg-height="$ctrl.svgHeight" svg-color="#fff" pointer-events="all"
                            focusable="false"></svg-graph>
+
                 <viewport svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}"></viewport>
                 <div id="constructor-tools">
                     <md-button ng-click="$ctrl.zoomOut($event)" class="md-icon-button" aria-label="More">
@@ -30,12 +34,13 @@
                     </md-button>
                 </div>
 
+
+
             </div>
         </div>
-          <md-sidenav class="md-sidenav-custom md-sidenav-right" md-component-id="right"
-                md-disable-backdrop md-whiteframe="4" md-is-open="true">
+        <md-sidenav class="md-sidenav-custom md-sidenav-right" md-component-id="right"
+            md-disable-backdrop md-whiteframe="4" md-is-open="true">
             <div id="layer-info">
-              
                 <md-content>
                     <md-tabs md-dynamic-height md-border-bottom>
                         <md-tab label="Settings">

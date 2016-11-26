@@ -30,6 +30,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
     self.$onInit = function() {
         self.counterNodesInit = 0;
         self.scale = 1.0;
+        coreService.param('scale', 1.0);
         self.viewWidth = 0;
         self.viewHeight = 0;
 		var divSvg = document.getElementById('workspace');
@@ -81,27 +82,29 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
     var addLinks = null;
 
+    let defaultCursor = document.body.style.cursor;
+
     $scope.controlItem.setLayers = function(layers) {
+        if (layers.length > 0) {
+            document.body.style.cursor = 'wait';
+        }
         self.counterNodesInit = 0;
         schema.clear();
-        for (let a = 0; a < layers.length; a ++) {
-            if(!$scope.controlItem.addLayer(layers[a])) {
-                console.log('addLayer:error');
-                return false;
-            }
+
+        layersSize = layers.length;
+        if (layers.length > 0) {
+            let index = 0;
+            let layersInterval = setInterval(() => {
+                $scope.$apply( function() {
+                    if (!$scope.controlItem.addLayer(layers[index])) {
+                        console.log('addLayer:error');
+                        return false;
+                    }
+                });
+                if (++index >= layers.length)
+                    clearInterval(layersInterval);
+            }, 0);
         }
-
-        let rectView = schema.rect();
-
-        if(rectView) {
-			if (rectView.right() > $scope.svgWidth) {
-				$scope.svgWidth = rectView.right() * 1.2;
-			}
-			if (rectView.bottom() > $scope.svgHeight) {
-				$scope.svgHeight = rectView.bottom() * 1.2;
-			}
-		}
-
 
 		initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element, $compile);
 
@@ -113,23 +116,58 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                     });
             }
 
-            /*if (layers.length > 1)
-                $scope.controlItem.reset();*/
+            let rectView = schema.rect();
 
-			setScale(1.0001);
+            if(rectView) {
+                if (rectView.right() > $scope.svgWidth) {
+                    $scope.svgWidth = rectView.right() * 1.2;
+                }
+                if (rectView.bottom() > $scope.svgHeight) {
+                    $scope.svgHeight = rectView.bottom() * 1.2;
+                }
+            }
+
+		    initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element, $compile);
+
+
+            if (layers.length > 1)
+                $scope.controlItem.reset();
             self.emitEvent(events.ADDED_LAYERS, {});
         };
 
         return true;
     };
 
-    $scope.$on('nodeInit', function (event, data) {
-        if(self.counterNodesInit > -1)
-            self.counterNodesInit ++;
 
-        if (self.counterNodesInit === self.nodes.length) {
+    var initProgress = function() {
+        let progress = document.getElementById('constructor-progress');
+        let cur_progress = progress.firstElementChild;
+        return function(val, max) {
+
+            let curr = val;
+            if (arguments.length > 1) {
+                curr = (val / max) * 100;
+            }
+
+            cur_progress.style.width = '' + curr + '%';
+        }
+    };
+
+    let progress = initProgress();
+
+    $scope.$on('nodeInit', function (event, data) {
+        if(self.counterNodesInit > -1) {
+
+            self.counterNodesInit++;
+            progress(self.counterNodesInit, layersSize);
+        }
+
+        if (self.counterNodesInit === layersSize) {
             self.counterNodesInit = -1;
+            progress(0);
             addLinks();
+            document.body.style.cursor = defaultCursor;
+
         }
     });
 

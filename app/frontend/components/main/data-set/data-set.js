@@ -46,6 +46,24 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService'])
                     });
 
             };
+
+            self.deleteDataset = function($event, dbId) {
+
+                dbinfoService.deleteDataset(dbId).then(
+                    function successCallback(response) {
+                        self.datasets = response.data;
+                        for (let a = 0;a < self.datasets.length; a++) {
+                            if (self.datasets.dbId === dbId) {
+                                self.savedNetworks.splice(a, 1);
+                                break;
+                            }
+                        }
+                    },
+                    function errorCallback(response) {
+                        console.log(response.data);
+                    }
+                );
+            };
             // self.getImagePreview = function (dbId) {
             //     return dbinfoService.getImagePreviewForDB(dbId);
             // };

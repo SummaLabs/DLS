@@ -82,7 +82,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 			$scope.nodeData.portOut = portOut;
 			textNode.text($scope.nodeData.name);
 			textNode.addClass('unselectable');
-			textNode.text(adaptText(rectNode, textNode ,$scope.nodeData.name));
+			textNode.text(adaptText(rectNode, textNode ,$scope.nodeData.name, coreService.param('scale')));
 
 			nodeWatcher($scope, rectNode);
 			nodeEventsHandler($scope, element, rectNode, idNode);
@@ -253,9 +253,9 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
         node.text('[' + text + ']');
     }
 
-    function adaptText(node, textNode, text) {
+    function adaptText(node, textNode, text, scale) {
         var textRect = node[0].getBoundingClientRect();
-        var textWidth = textNode[0].getComputedTextLength();
+        var textWidth = textNode[0].getComputedTextLength() * scale;
 
         if (textWidth < textRect.width)
             return text;
