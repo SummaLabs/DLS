@@ -3,7 +3,8 @@
 
 angular.module('constructorCore', [
     'palette',
-    'graph'
+    'graph',
+    'trainingParameters'
 ]);
 
 var editorDefinition = {
@@ -168,7 +169,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
             clickOutsideToClose: true,
             parent: angular.element(document.body),
             targetEvent: $event,
-            templateUrl: '/frontend/components/training-parameters/train-model-dialog.html',
+            templateUrl: '/frontend/components/main/training-parameters/train-model-dialog.html',
             controller: function ($scope) {
                 $scope.network = network;
                 $scope.closeDialog = function () {

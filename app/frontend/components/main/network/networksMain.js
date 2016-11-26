@@ -3,7 +3,7 @@
 
     angular.module('networkMain', ['ngMaterial'])
         .component('networkMain', {
-            templateUrl: '/frontend/components/networks-main/networks-main.html',
+            templateUrl: '/frontend/components/main/network/networks-main.html',
             bindings: {
                 networkTemplates: '<',
                 savedNetworks: '<'

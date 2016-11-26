@@ -34,7 +34,6 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'taskDataset',
     'testRocTask',
     'layerService',
-    'trainingParameters',
     'create2dImgDataset'
 ]);
 

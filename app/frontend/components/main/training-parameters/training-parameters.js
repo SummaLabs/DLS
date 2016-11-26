@@ -8,7 +8,7 @@
                     network: '@',
                     doOnSubmit: '&'
                 },
-                templateUrl: "/frontend/components/training-parameters/training-parameters.html",
+                templateUrl: "/frontend/components/main/training-parameters/training-parameters.html",
                 controller: function ($location, $scope) {
                     this.$onInit = function () {
 
