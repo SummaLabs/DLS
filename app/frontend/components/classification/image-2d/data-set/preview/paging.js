@@ -7,7 +7,7 @@
 angular.module('datasetImage2dPaging2', ['ngMaterial', 'cl.paging'])
 .component('datasetImage2dPaging2', {
     restrict: 'E',
-    templateUrl: '/frontend/components/preview/dataset-image2d-preview/dataset-image2d-paging2.html',
+    templateUrl: '/frontend/components/classification/image-2d/data-set/preview/paging.html',
      bindings: {
          paramDatabase:     '@',
          paramType:         '@',

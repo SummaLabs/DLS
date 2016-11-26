@@ -6,7 +6,7 @@
 
 angular.module('datasetImage2dPreview2', ['ngMaterial', 'datasetImage2dPaging2', 'cl.paging'])
 .component('datasetImage2dPreview2', {
-    templateUrl: '/frontend/components/preview/dataset-image2d-preview/dataset-image2d-preview2.html',
+    templateUrl: '/frontend/components/classification/image-2d/data-set/preview/preview.html',
     bindings: {
         databaseId:     '@',
         datasetType:    '@',
