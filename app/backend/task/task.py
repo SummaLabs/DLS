@@ -27,6 +27,8 @@ class Task:
 
         # Information parameters for tracking task on UI
         self.id = int(round(time.time() * 1000))
+        self.start_time = int(round(time.time() * 1000))
+        self.end_time = None
         self.progress = 0
         self.state = 'ready'
         self.text = 'base task'
@@ -47,6 +49,7 @@ class Task:
             self.logger.error("caught " + e.message, exc_info=True)
             self.state = 'failed'
             print "interrupted"
+        self.end_time = int(round(time.time() * 1000))
 
     @abstractmethod
     def perform(self):
@@ -61,6 +64,7 @@ class Task:
         self.alive = False
         self.state = 'killed'
         self.logger.info('task ' + str(self.id) + 'killed')
+        self.end_time = int(round(time.time() * 1000))
 
     def status(self):
         stt = {}
@@ -72,6 +76,8 @@ class Task:
         #stt['rows'] = self.rows
         stt['state'] = self.state
         stt['icon'] = self.icon
+        stt['start_time'] = self.start_time
+        stt['end_time'] = self.end_time
         return stt
 
     def detailed_status(self):

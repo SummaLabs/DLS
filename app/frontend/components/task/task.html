@@ -22,7 +22,7 @@
                     <md-list-item flex layout="row"
                                   class="secondary-button-padding"
                                   ng-click="$ctrl.doPrimaryAction($event,dat.id)"
-                                  ng-repeat="dat in $ctrl.listDats | filter:$ctrl.stateFilter | orderBy : 'id'">
+                                  ng-repeat="dat in $ctrl.listDats | filter:$ctrl.stateFilter | orderBy : 'start_time'">
                         <div >
                             <div >
                                 <img width="64px" height="64px" ng-src="{{ dat.icon }}" />
@@ -31,14 +31,21 @@
                         <div class="md-list-item-text" flex="80">
                             <div ng-show="dat.state=='finished'">
                                 <div layout="col" layout-align="center center">
-                                    <h3>{{dat.text}}</h3> ({{ dat.id }})
+                                    
+                                    <div><b>{{dat.text}}</b> 
+                                     ID: {{ dat.id }}  Start Time: {{dat.start_time | date:'yyyy-MM-dd HH:mm:ss Z' }}
                                 </div>
+                                </div>
+                                
+
                             </div>
                             <div ng-show="dat.state!='finished'">
                                 <div layout="row" layout-align="center center">
                                     <div flex="50">
                                         <div layout="column" layout-align="center center">
-                                            <h4>{{dat.text}}</h4> ({{ dat.id }})
+                                             <div><b>{{dat.text}}</b> 
+                                     ID: {{ dat.id }}  Start Time: {{dat.start_time | date:'yyyy-MM-dd HH:mm:ss Z' }}
+                                </div>
                                         </div>
                                     </div>
                                     <md-progress-linear value="{{dat.progress}}" flex="50"></md-progress-linear>
