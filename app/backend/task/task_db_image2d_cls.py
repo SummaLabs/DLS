@@ -34,13 +34,13 @@ class TaskDBImage2DBuilder(Task, DBImage2DBuilder):
         # (3) DBImage2DBuilder-constructor
         DBImage2DBuilder.__init__(self,pathCfgInp, pathDirOut)
         # self.initializeInfo()
-        self.text   = 'Image2D DB Builder'
         self.type   = 'db-image2d-cls'
         self.basetype = 'dataset'
         self.icon = "/frontend/assets/icon/img/img-dataset1.png"
     def perform(self):
         self.initializeInfo()
         if self.isInitialized():
+            self.text = self.cfg2D.cfg['datasetname']
             timgEncoding = self.cfg2D.getImageEncoding()
             cntProgressMax = self.imgReader2D.numTrainImages + self.imgReader2D.numValImages
             self.logger.info('Total images: %d' % cntProgressMax)
