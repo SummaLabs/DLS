@@ -8,7 +8,7 @@
                 scope: {
                     taskId: '@'
                 },
-                templateUrl: "frontend/components/task/task-dataset/task-dataset.html",
+                templateUrl: "/frontend/components/classification/image-2d/task/task-dataset.html",
                 controller: function ($scope, networkDataService, $http) {
                     this.$onInit = function () {
                         $http({

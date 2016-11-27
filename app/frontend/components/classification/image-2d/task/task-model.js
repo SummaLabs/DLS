@@ -2,16 +2,15 @@
     'use strict';
 
     angular
-        .module('taskTest', ['ngMaterial'])
-        .directive('taskTest', function () {
+        .module('taskModel', ['ngMaterial'])
+        .directive('taskModel', function () {
             return {
                 scope: {
                     taskId: '@',
-                    task: '@',
-                    plot: '@'
+                    rows: ''
                 },
-                templateUrl: "frontend/components/task/task-test/task-test.html",
-                controller: function ($scope, networkDataService, $http, $interval) {
+                templateUrl: "/frontend/components/classification/image-2d/task/task-model.html",
+                controller: function ($scope, networkDataService) {
                     this.$onInit = function () {
                         $scope.plot = this.getInitPlotData();
 
@@ -29,7 +28,7 @@
                         }, 1000);
                     };
 
-                    
+
 
 
                     this.getInitPlotData = function () {
