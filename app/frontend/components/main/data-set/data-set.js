@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('mainDataSet', ['ngMaterial', 'dbinfoService'])
+angular.module('mainDataSet', ['ngMaterial', 'dbinfoService', 'create2dImgDataset'])
     .component('mainDataSet', {
         templateUrl: '/frontend/components/main/data-set/data-set.html',
         bindings: {

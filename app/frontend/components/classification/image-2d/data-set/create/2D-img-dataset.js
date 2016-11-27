@@ -2,7 +2,7 @@
 
 angular.module('create2dImgDataset', ['ngMaterial','ngMessages', 'taskManagerService'])
     .component('create2dImgDataset', {
-        templateUrl: '/frontend/components/2d-img-dataset/create-2d-img-dataset.html',
+        templateUrl: '/frontend/components/classification/image-2d/data-set/create/2d-img-dataset.html',
         bindings: {
             formImage: "<",
             formFileImport: "<",
@@ -194,7 +194,7 @@ angular.module('create2dImgDataset', ['ngMaterial','ngMessages', 'taskManagerSer
                             $mdDialog.cancel();
                         };
                     },
-                    templateUrl: 'frontend/components/dialog/file-manager.html',
+                    templateUrl: '  /frontend/components/classification/image-2d/data-set/create/file-manager.html',
                     parent: angular.element(document.body),
                     targetEvent: $event,
                     clickOutsideToClose:false

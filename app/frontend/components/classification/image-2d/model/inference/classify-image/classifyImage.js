@@ -10,7 +10,7 @@
                     state: '<',
                     fileUrl: '<'
                 },
-                templateUrl: '/frontend/components/inference/classify-image/classify-image.html',
+                templateUrl: '/frontend/components/classification/image-2d/model/inference/classify-image/classify-image.html',
                 controller: function ($scope, $mdDialog, appConfig, Upload, modelService, $window) {
                     var self = this;
 

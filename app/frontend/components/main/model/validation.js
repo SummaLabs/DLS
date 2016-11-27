@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('validation', ['ngMaterial'])
+        .module('validation', ['ngMaterial', 'rocAnalysis'])
         .directive('validation', ['$compile', function ($compile) {
 
             function buildTemplate(modelType, modelId) {

@@ -7,7 +7,7 @@
                 scope: {
                     modelId: '@'
                 },
-                templateUrl: '/frontend/components/inference/roc-analysis/roc-analysis.html',
+                templateUrl: '/frontend/components/classification/image-2d/model/validation/roc-analysis/roc-analysis.html',
                 controller: function ($rootScope, $scope, $mdDialog, $mdToast, imageService, taskManagerService) {
                     var self = this;
 
@@ -104,7 +104,7 @@
                             clickOutsideToClose: true,
                             parent: angular.element(document.body),
                             targetEvent: $event,
-                            templateUrl: '/frontend/components/inference/roc-analysis/apply-roc-analysis.html',
+                            templateUrl: '/frontend/components/classification/image-2d/model/validation/roc-analysis/apply-roc-analysis.html',
                             controller: function ($scope, dbinfoService, taskManagerService) {
                                 var dataSetInfo = [];
                                 $scope.dataSetNames = [];

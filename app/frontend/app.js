@@ -13,10 +13,8 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'layerEditor',
     'networkDataService',
     'FileManagerApp',
-    'classifyImage',
     'imageService',
-    'googlechart', 
-    'rocAnalysis',
+    'googlechart',
     'datasetImage2dPreview2',
     'cl.paging',
     'dbinfoService',
@@ -26,8 +24,7 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'modelsService',
     'taskManagerService',
     'testRocTask',
-    'layerService',
-    'create2dImgDataset'
+    'layerService'
 ]);
 
 
@@ -104,7 +101,7 @@ angular.module('dlsApp')
             }
         }).state('data-file-manager', {
             url: "/data/file-manager",
-            templateUrl: "/frontend/components/2d-img-dataset/file-manager.html",
+            templateUrl: "/frontend/components/classification/image-2d/data-set/create/file-manager.html",
             controller: function ($rootScope) {
                 $rootScope.tabIndex = 3;
             }

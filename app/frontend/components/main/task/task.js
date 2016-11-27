@@ -1,6 +1,6 @@
 (function () {
     'use strict';
-    angular.module('task', ['ngMaterial', 'googlechart', 'taskView', 'taskModel', 'taskDataset', 'taskTest',])
+    angular.module('task', ['ngMaterial', 'googlechart', 'taskView', 'taskModel', 'taskDataset', 'taskTest'])
         .component('task', {
             templateUrl: '/frontend/components/main/task/task.html',
             controller: function ($mdDialog, $rootScope, $scope, $http) {

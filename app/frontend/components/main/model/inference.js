@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('inference', ['ngMaterial'])
+        .module('inference', ['ngMaterial', 'classifyImage'])
         .directive('inference', ['$compile', function ($compile) {
 
             function buildTemplate(modelType, modelId) {
