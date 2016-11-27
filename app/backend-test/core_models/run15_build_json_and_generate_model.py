@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 __author__ = 'ar'
 
-import app.backend.core.utils as dlsutils
 import json
+
+from compiler.ast import flatten
 
 import skimage.io as io
 import matplotlib.pyplot as plt
@@ -12,8 +13,8 @@ from keras.utils.visualize_util import plot as kplot
 ####################################
 # values: (is Available, is Correct but currently not available)
 dictAvailableConnectionsFromTo = {
-    'data' : {
-        'data'          : (False, None),
+    'datainput' : {
+        'datainput'     : (False, None),
         'convolution1d' : (True,  None),
         'convolution2d' : (True,  None),
         'convolution3d' : (True,  None),
@@ -24,10 +25,10 @@ dictAvailableConnectionsFromTo = {
         'activation'    : (True,  None),
         'merge'         : (True,  None),
         'dense'         : (True,  None),
-        'solver'        : (False, None)
+        'dataoutput'    : (False, None)
     },
     'convolution1d' : {
-        'data'          : (False, None),
+        'datainput'     : (False, None),
         'convolution1d' : (True,  None),
         'convolution2d' : (False,  None),
         'convolution3d' : (False,  None),
@@ -38,10 +39,10 @@ dictAvailableConnectionsFromTo = {
         'activation'    : (True,  None),
         'merge'         : (True,  None),
         'dense'         : (True,  None),
-        'solver'        : (False, None)
+        'dataoutput'    : (False, None)
     },
     'convolution2d': {
-        'data'          : (False, None),
+        'datainput'     : (False, None),
         'convolution1d' : (False, None),
         'convolution2d' : (True, None),
         'convolution3d' : (False, None),
@@ -52,10 +53,10 @@ dictAvailableConnectionsFromTo = {
         'activation'    : (True, None),
         'merge'         : (True, None),
         'dense'         : (True, None),
-        'solver'        : (False, None)
+        'dataoutput'    : (False, None)
     },
     'convolution3d': {
-        'data'          : (False, None),
+        'datainput'     : (False, None),
         'convolution1d' : (False, None),
         'convolution2d' : (False, None),
         'convolution3d' : (True, None),
@@ -66,10 +67,10 @@ dictAvailableConnectionsFromTo = {
         'activation'    : (True, None),
         'merge'         : (True, None),
         'dense'         : (True, None),
-        'solver'        : (False, None)
+        'dataoutput'    : (False, None)
     },
     'pooling1d': {
-        'data'          : (False, None),
+        'datainput'     : (False, None),
         'convolution1d' : (True, None),
         'convolution2d' : (False, None),
         'convolution3d' : (False, None),
@@ -80,10 +81,10 @@ dictAvailableConnectionsFromTo = {
         'activation'    : (True, None),
         'merge'         : (True, None),
         'dense'         : (True, None),
-        'solver'        : (False, None)
+        'dataoutput'    : (False, None)
     },
     'pooling2d': {
-        'data'          : (False, None),
+        'datainput'     : (False, None),
         'convolution1d' : (False, None),
         'convolution2d' : (True, None),
         'convolution3d' : (False, None),
@@ -94,10 +95,10 @@ dictAvailableConnectionsFromTo = {
         'activation'    : (True, None),
         'merge'         : (True, None),
         'dense'         : (True, None),
-        'solver'        : (False, None)
+        'dataoutput'    : (False, None)
     },
     'pooling3d': {
-        'data'          : (False, None),
+        'datainput'     : (False, None),
         'convolution1d' : (False, None),
         'convolution2d' : (False, None),
         'convolution3d' : (True, None),
@@ -108,10 +109,10 @@ dictAvailableConnectionsFromTo = {
         'activation'    : (True, None),
         'merge'         : (True, None),
         'dense'         : (True, None),
-        'solver'        : (False, None)
+        'dataoutput'    : (False, None)
     },
     'flatten': {
-        'data'          : (False, None),
+        'datainput'     : (False, None),
         'convolution1d' : (True, None),
         'convolution2d' : (False, None),
         'convolution3d' : (False, None),
@@ -122,10 +123,10 @@ dictAvailableConnectionsFromTo = {
         'activation'    : (True, None),
         'merge'         : (True, None),
         'dense'         : (True, None),
-        'solver'        : (False, None)
+        'dataoutput'    : (False, None)
     },
     'activation': {
-        'data'          : (False, None),
+        'datainput'     : (False, None),
         'convolution1d' : (True, None),
         'convolution2d' : (True, None),
         'convolution3d' : (True, None),
@@ -136,10 +137,10 @@ dictAvailableConnectionsFromTo = {
         'activation'    : (False, None),
         'merge'         : (True, None),
         'dense'         : (True, None),
-        'solver'        : (True, None)
+        'dataoutput'    : (True, None)
     },
     'dense' : {
-        'data'          : (False, None),
+        'datainput'     : (False, None),
         'convolution1d' : (True, None),
         'convolution2d' : (False, None),
         'convolution3d' : (False, None),
@@ -150,10 +151,10 @@ dictAvailableConnectionsFromTo = {
         'activation'    : (True, None),
         'merge'         : (True, None),
         'dense'         : (True,  None),
-        'solver'        : (True,  None)
+        'dataoutput'    : (True,  None)
     },
-    'solver' : {
-        'data'          : (False, None),
+    'dataoutput' : {
+        'datainput'     : (False, None),
         'convolution1d' : (False, None),
         'convolution2d' : (False, None),
         'convolution3d' : (False, None),
@@ -164,12 +165,12 @@ dictAvailableConnectionsFromTo = {
         'activation'    : (False, None),
         'merge'         : (False, None),
         'dense'         : (False, None),
-        'solver'        : (False, None)
+        'dataoutput'    : (False, None)
     }
 }
 
 dictRequiredFields = {
-    'data'          : ['datasetType', 'datasetId'],
+    'datainput'     : ['datasetType', 'datasetId'],
     'convolution1d' : ['filtersCount', 'filterWidth', 'activationFunction', 'isTrainable'],
     'convolution2d' : ['filtersCount', 'filterWidth', 'filterHeight', 'activationFunction', 'isTrainable'],
     'convolution3d' : ['filtersCount', 'filterWidth', 'filterHeight', 'filterDepth', 'activationFunction', 'isTrainable'],
@@ -180,7 +181,7 @@ dictRequiredFields = {
     'activation'    : ['activationFunction'],
     'merge'         : ['mergeType', 'mergeAxis'],
     'dense'         : ['neuronsCount', 'activationFunction', 'isTrainable'],
-    'solver'        : ['epochsCount', 'snapshotInterval', 'validationInterval', 'batchSize', 'learningRate', 'optimizer']
+    'dataoutput'    : ['lossFunction', 'datasetId']
 }
 
 ####################################
@@ -230,10 +231,160 @@ def checkPreviousConnection(pNode):
             raise NotImplementedError('Incorrect or unsupproted connection (%s -> %s)' % (inpNodeType, pNodeType))
     return True
 
+####################################
+class DLSDesignerFlowsParserV2:
+    configFlowRaw   = None
+    configFlow      = None
+    supportedNodes  = dictRequiredFields.keys()
+    reqiredNodes    = ['datainput', 'dataoutput']
+    def __init__(self, jsonFlow):
+        if isinstance(jsonFlow, basestring):
+            with open(jsonFlow, 'r') as f:
+                self.configFlowRaw = json.load(f)
+        elif isinstance(jsonFlow, dict):
+            self.configFlowRaw = jsonFlow
+        else:
+            raise Exception('Unknown type for Model flow [%s]' % type(jsonFlow))
+    def clear(self):
+        self.configFlow     = None
+        self.configFlowRaw  = None
+    def isOk(self):
+        return (self.configFlowRaw is not None)
+    def checkIsOk(self):
+        if not self.isOk():
+            raise Exception('class FlowsParsser is not properly configured')
+    def countNodeType(self, cfg, strType):
+        cnt = 0
+        for ii in cfg:
+            if ii['type'] == strType:
+                cnt+=1
+    def findNodeById(self, cfg, strId):
+        #FIXME: we requre, than each element have unique ID
+        for ii in cfg:
+            if ii['id'] == strId:
+                return ii
+    def removeNodeFromWires(self, cfg, elem):
+        tmpId=elem['id']
+        for ii in cfg:
+            if 'wires' in ii.keys():
+                if tmpId in ii['wires']:
+                    ii['wires'].remove(tmpId)
+    def checkNumberOfWires(self, cfg):
+        for ii in cfg:
+            if 'wires' in ii.keys():
+                # numWires = max([0]+[len(x) for x in ii['wires']])
+                numWires = max([0] + [len(ii['wires'])])
+                if numWires>1:
+                    raise NotImplementedError('Converter currently not supported multiple connections [%s]' % ii)
+    #FIXME: this code very inefficinet, but as ia think more understandable...
+    def findLinkedNodes(self, lstNodes, pNode):
+        # (1) find output-connections
+        if 'wires' in pNode.jsonCfg.keys():
+            tlstId = flatten(pNode.jsonCfg['wires'])
+            if len(tlstId)>0:
+                for ii in lstNodes:
+                    #FIXME: check this code for many connections
+                    if ii.jsonCfg['id'] in tlstId:
+                        if pNode.outNode is None:
+                            pNode.outNode = []
+                        pNode.outNode.append(ii)
+        # (2) find input-connections
+        pNodeId=pNode.jsonCfg['id']
+        for ii in lstNodes:
+            if 'wires' in ii.jsonCfg.keys():
+                tlstId = flatten(ii.jsonCfg['wires'])
+                if pNodeId in tlstId:
+                    if pNode.inpNode is None:
+                        pNode.inpNode = []
+                    pNode.inpNode.append(ii)
 
+    def getConnectedList(self, cfg, isCheckConnections=True):
+        # (1) generate non-linked list of Nodes
+        lstNodes=[]
+        for ii in cfg:
+            tmpNode = NodeF(ii)
+            lstNodes.append(tmpNode)
+        # (2) link nodes
+        for ii in lstNodes:
+            self.findLinkedNodes(lstNodes, ii)
+        # (3) find input nodes: in sequential model there is only one Input Node
+        tmpInputNodes=[]
+        for ii in lstNodes:
+            if ii.inpNode is None:
+                tmpInputNodes.append(ii)
+        if len(tmpInputNodes)>1:
+            raise NotImplementedError('Flow have more than one input nodes (currently not implemented) or not linked [%s]' % tmpInputNodes)
+        if len(tmpInputNodes)<1:
+            raise Exception('Unknown graph connection')
+        lstFlowNodes=[]
+        firstNode = tmpInputNodes[0]
+        lstFlowNodes.append(firstNode)
+        maxCnt=100
+        cnt=0
+        tmpNode = firstNode
+        while cnt<maxCnt:
+            if tmpNode.outNode is not None:
+                tmpNode = tmpNode.outNode[0] #FIXME: work only for sequential models
+                lstFlowNodes.append(tmpNode)
+            else:
+                break
+            cnt+=1
+        if isCheckConnections:
+            # (1) Validate node-fields
+            for nn in lstFlowNodes:
+                nn.validateFields()
+            # (2) Validate between-nodes connections
+            for idx,nn in enumerate(lstFlowNodes):
+                if not checkPreviousConnection(nn):
+                    raise Exception('Inkorrect node connection %d : [%s] -> [%s]' % (idx, nn.inpNode[0], nn))
+            # (3) Check required nodes:
+            lstNodeType = [ii.jsonCfg['layerType'] for ii in lstFlowNodes]
+            for ii in self.reqiredNodes:
+                if not ii in lstNodeType:
+                    raise Exception('In Neural Flow missing required node [%s]' % ii)
+        return lstFlowNodes
+    def getConnectedFlow(self, isCheckConnections=True):
+        return self.getConnectedList(self.configFlow, isCheckConnections)
+    def cleanAndValidate(self):
+        self.checkIsOk()
+        # numTabs = self.countNodeType(self.configFlowRaw, 'tab')
+        # if numTabs>1:
+        #     raise NotImplementedError('Currently FlowsParser support only one <tab> in config')
+        self.configFlow = []
+        tmpNodesForRemoving=[]
+        tmpCfg      = list(self.configFlowRaw['layers'])
+        tmpIdRemove = []
+        # (0) raise exception when in flow non-supported node types is presents
+        extSupportedNodes = ['tab'] + self.supportedNodes
+        for ii in tmpCfg:
+            if 'layerType' not in ii.keys():
+                raise Exception('Incorrect node config: <layerType> is absent! [%s]' % ii)
+            if ii['layerType'] not in extSupportedNodes:
+                raise Exception('Non-supported node type [%s], id=[%s]' % (ii['layerType'], ii['id']))
+        # (1) find nodes for remove from graph
+        for ii in tmpCfg:
+            if ii['layerType'] not in self.supportedNodes:
+                tmpNodesForRemoving.append(ii)
+        # (2) remove id from wires
+        for ii in tmpNodesForRemoving:
+            self.removeNodeFromWires(tmpCfg, ii)
+        # (3) remove nodes from graph
+        for ii in tmpNodesForRemoving:
+            tmpCfg.remove(ii)
+        # (4) check #wires
+        self.checkNumberOfWires(tmpCfg)
+        self.configFlow = tmpCfg
+    def exportConfig2Json(self, cfg, fout):
+        with open(fout, 'w') as f:
+            f.write(json.dumps(cfg, indent=4))
+    def exportConfigFlow(self, fout):
+        self.checkIsOk()
+        self.exportConfig2Json(self.configFlow, fout=fout)
 
-pathTestModel='../../../data-test/test-models-json/test_basic_cnn_network_v1_with_train_params_v1.json'
-
-
+####################################
 if __name__ == '__main__':
-    pass
+    fnFlowJson = '../../../data-test/test-models-json/testnet_multi_input_multi_output_v1.json'
+    flowParser = DLSDesignerFlowsParserV2(fnFlowJson)
+    flowParser.cleanAndValidate()
+    print (flowParser)
+
