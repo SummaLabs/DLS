@@ -56,14 +56,14 @@
                             });
                         }
                         console.log("uploading file");
-                    }
+                    };
                     
                     $scope.choseImages = function (event) {
                         appConfig.fileManager.pickFile = true;
                         appConfig.fileManager.pickFolder = false;
                         appConfig.fileManager.singleSelection = false;
                         $mdDialog.show({
-                            templateUrl: 'frontend/components/dialog/file-manager.html',
+                            templateUrl: '/frontend/components/main/dialog/file-manager.html',
                             parent: angular.element(document.body),
                             targetEvent: event,
                             clickOutsideToClose: false,

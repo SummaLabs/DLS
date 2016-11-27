@@ -267,7 +267,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
             clickOutsideToClose: true,
             parent: parentEl,
             targetEvent: $event,
-            templateUrl: '/frontend/components/dialog/save-network.html',
+            templateUrl: '/frontend/components/main/network/save-network.html',
             locals: {},
             controller: DialogController
         });

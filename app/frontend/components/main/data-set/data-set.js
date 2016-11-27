@@ -31,7 +31,7 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService', 'create2dImgDatase
                         var parentEl = angular.element(document.body);
                         $mdDialog.show({
                             controller: DialogControllerPreviewDB,
-                            templateUrl: 'frontend/components/dialog/dialog-preview-dataset-image2d.html',
+                            templateUrl: '/frontend/components/classification/image-2d/data-set/preview/preview-dialog.html',
                             parent: parentEl,
                             locals: {
                                 dbId:   dbId,
@@ -126,19 +126,6 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService', 'create2dImgDatase
                 { name: 'Data Set 3'},
                 { name: 'Data Set 4'}
             ];
-
-            this.createDialog = function(event) {
-                appConfig.fileManager.pickFile = true;
-                appConfig.fileManager.pickFolder = true;
-                appConfig.fileManager.singleSelection = true;
-                $mdDialog.show({
-                    controller: DialogControllerFS,
-                    templateUrl: 'frontend/components/dialog/file-manager.html',
-                    parent: angular.element(document.body),
-                    targetEvent: event,
-                    clickOutsideToClose:false
-                });
-            };
 
             var originatorEv;
             this.openMenu = function ($mdOpenMenu, ev) {
