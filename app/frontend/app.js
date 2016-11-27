@@ -23,7 +23,6 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'modelService',
     'modelsService',
     'taskManagerService',
-    'testRocTask',
     'layerService'
 ]);
 
