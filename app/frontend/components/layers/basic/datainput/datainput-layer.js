@@ -1,11 +1,11 @@
-angular.module('dataLayer', [])
-    .service('dataLayer', [DataLayer]);
+angular.module('datainputLayer', [])
+    .service('datainputLayer', [DataInputLayer]);
 
-function DataLayer() {
+function DataInputLayer() {
     
     this.getDataTypes = function () {
         return [
-            {value: "Image", text: "Image"},
+            {value: "Image2D", text: "Image2D"},
             {value: "CSV", text: "CSV"}
         ];
     };
@@ -13,8 +13,8 @@ function DataLayer() {
     this.getDefault = function () {
         return {
             "id": 0,
-            "name": "data",
-            "layerType": 'data',
+            "name": "DataInput",
+            "layerType": "datainput",
             "category": "input",
             "params": {
                 "datasetType": "",
@@ -24,10 +24,10 @@ function DataLayer() {
     };
             
     this.getTemplatePath = function () {
-      return "frontend/components/layers/data/node-test-2.svg";  
+      return "frontend/components/layers/basic/datainput/datainput-node.svg";
     };
     
     this.getIconPath = function () {
-        return "frontend/assets/img/palette/data.gif"
+        return "frontend/components/layers/basic/datainput/datainput-node.png"
     };
 }

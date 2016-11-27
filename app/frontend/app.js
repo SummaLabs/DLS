@@ -20,6 +20,8 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'inputDataEditor',
     'denseEditor',
     'solverEditor',
+    'datainputEditor',
+    'dataoutputEditor',
     //
     'layerEditor',
     'networkDataService',

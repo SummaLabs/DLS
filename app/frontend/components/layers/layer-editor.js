@@ -18,6 +18,8 @@ angular
                 'merge':            '<merge-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></merge-editor>',
                 'flatten':          '<flatten-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></flatten-editor>',
                 'dense':            '<dense-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></dense-editor>',
+                'datainput':        '<datainput-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></datainput-editor>',
+                'dataoutput':       '<dataoutput-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></dataoutput-editor>',
                 'solver':           '<solver-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></solver-editor>'
             };
             return layerDirectives[layerType];

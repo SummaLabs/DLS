@@ -10,6 +10,8 @@ angular.module('layerService', [
     'flattenLayer',
     'mergeLayer',
     'denseLayer',
+    'datainputLayer',
+    'dataoutputLayer',
     'solverLayer'])
     .service('layerService', ['$rootScope', '$http', '$templateCache',
         'dataLayer',
@@ -23,6 +25,8 @@ angular.module('layerService', [
         'flattenLayer',
         'mergeLayer',
         'denseLayer',
+        'datainputLayer',
+        'dataoutputLayer',
         'solverLayer', LayerService]);
 
 function LayerService($rootScope, $http, $templateCache,
@@ -37,6 +41,8 @@ function LayerService($rootScope, $http, $templateCache,
                       flattenLayer,
                       mergeLayer,
                       denseLayer,
+                      datainputLayer,
+                      dataoutputLayer,
                       solverLayer) {
 
     const networkLayerEvent = {
@@ -60,6 +66,8 @@ function LayerService($rootScope, $http, $templateCache,
         'merge':            mergeLayer,
         'flatten':          flattenLayer,
         'dense':            denseLayer,
+        'datainput':        datainputLayer,
+        'dataoutput':        dataoutputLayer,
         'solver':           solverLayer
     };
 
@@ -75,6 +83,8 @@ function LayerService($rootScope, $http, $templateCache,
         'flatten': '',
         'merge': '',
         'dense': '',
+        'datainput': '',
+        'dataoutput': '',
         'solver': ''
     };
     
@@ -90,6 +100,8 @@ function LayerService($rootScope, $http, $templateCache,
     loadTemplate('flatten');
     loadTemplate('merge');
     loadTemplate('dense');
+    loadTemplate('datainput');
+    loadTemplate('dataoutput');
     loadTemplate('solver');
 
     var layers = [
@@ -104,6 +116,8 @@ function LayerService($rootScope, $http, $templateCache,
         mergeLayer.getDefault(),
         dataLayer.getDefault(),
         denseLayer.getDefault(),
+        datainputLayer.getDefault(),
+        dataoutputLayer.getDefault(),
         solverLayer.getDefault()
     ];
 
