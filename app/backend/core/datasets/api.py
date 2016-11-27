@@ -91,6 +91,12 @@ def dataset_dbrangeinfo():
     #     tret.append(tmp[xx])
     return Response(json.dumps(tret), mimetype='application/json')
 
+@dbpreview.route('/delete/<path:id>')
+def delete(id):
+    datasetWatcher.delete(id)
+
+    return Response(json.dumps(''), mimetype='application/json')
+
 ###############################
 class DatasetForTests:
     wdir=None
