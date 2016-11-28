@@ -185,6 +185,20 @@ dictRequiredFields = {
 }
 
 ####################################
+class NodeFBuilder:
+    # Counter dict
+    nodeTypeCounter = None
+    def __init__(self):
+        self.nodeTypeCounter = {}
+    def toString(self):
+        return self.nodeTypeCounter
+    def __str__(self):
+        return self.toString()
+    def __repr__(self):
+        return self.toString()
+    def newNodeF(self, jsonNode):
+        pass
+
 class NodeF:
     inpNode = None
     outNode = None
@@ -372,7 +386,7 @@ class DLSDesignerFlowsParserV2:
         for ii in tmpNodesForRemoving:
             tmpCfg.remove(ii)
         # (4) check #wires
-        self.checkNumberOfWires(tmpCfg)
+        # self.checkNumberOfWires(tmpCfg)
         self.configFlow = tmpCfg
     def exportConfig2Json(self, cfg, fout):
         with open(fout, 'w') as f:
@@ -382,9 +396,43 @@ class DLSDesignerFlowsParserV2:
         self.exportConfig2Json(self.configFlow, fout=fout)
 
 ####################################
+class Test:
+    tmpDict={}
+    tstr = ''
+    def __init__(self, parStr):
+        self.tstr = parStr
+    def toString(self):
+        return 'Test(%s)' % self.tstr
+    def __str__(self):
+        return self.toString()
+    def __repr__(self):
+        return self.toString()
+    @staticmethod
+    def printTest():
+        print (Test.tmpDict)
+    @staticmethod
+    def newTest(parStr):
+        ret = Test(parStr=parStr)
+        if parStr in Test.tmpDict.keys():
+            Test.tmpDict[parStr] += 1
+        else:
+            Test.tmpDict[parStr]  = 1
+        return ret
+
+####################################
 if __name__ == '__main__':
+    t1 = Test.newTest('new1')
+    t2 = Test.newTest('new2')
+    t3 = Test.newTest('new1')
+    t4 = Test.newTest('new1')
+    print (t1)
+    print (t2)
+    print (t3)
+    print (t4)
+    Test.printTest()
     fnFlowJson = '../../../data-test/test-models-json/testnet_multi_input_multi_output_v1.json'
     flowParser = DLSDesignerFlowsParserV2(fnFlowJson)
     flowParser.cleanAndValidate()
-    print (flowParser)
+    tmpFlow = flowParser.getConnectedFlow()
+    print (tmpFlow)
 
