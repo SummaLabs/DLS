@@ -55,7 +55,7 @@
                     return {
                                 title: title,
                                 height: 500,
-                                width: 600,
+                                width: 850,
                                 xaxis: {
                                     title: 'Iterations',
                                     showline: false
