@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('mainDataSet', ['ngMaterial', 'dbinfoService', 'create2dImgDataset'])
-    .component('mainDataSet', {
-        templateUrl: '/frontend/components/main/data-set/data-set.html',
+angular.module('datasetMain', ['ngMaterial', 'dbinfoService', 'create2dImgDataset'])
+    .component('datasetMain', {
+        templateUrl: '/frontend/components/main/data-set/data-set-main.html',
         bindings: {
             models:         '<',
             items:          '<',
@@ -22,9 +22,8 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService', 'create2dImgDatase
                         console.log(response.data);
                     });
             };
-            //
+            
             self.createDialogPreviewDB = function($event,dbId) {
-//                console.log('DB-Id: ' + dbId);
                 dbinfoService.getInfoStatWithHistsAboutDB(dbId).then(
                     function successCallback(response) {
                         self.currentDbInfo = response.data;
@@ -48,7 +47,6 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService', 'create2dImgDatase
             };
 
             self.deleteDataset = function($event, dbId) {
-
                 dbinfoService.deleteDataset(dbId).then(
                     function successCallback(response) {
                         self.datasets = response.data;
@@ -64,16 +62,13 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService', 'create2dImgDatase
                     }
                 );
             };
-            // self.getImagePreview = function (dbId) {
-            //     return dbinfoService.getImagePreviewForDB(dbId);
-            // };
-            //
+
             self.items = {
                 'text':    {name: "Text Data", icon: "text_fields", direction: "bottom"},
                 'image3d': {name: "Image 3D", icon: "photo_library", direction: "top"},
                 'image2d': {name: "Image 2D", icon: "photo", direction: "bottom"}
             };
-            //
+            
             self.openDialogCreateDataset = function ($event, item) {
                 if(item.name=='Image 2D') {
                     $mdDialog.show({
@@ -95,7 +90,7 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService', 'create2dImgDatase
                 );
                 }
             };
-            //
+            
             self.hidden = false;
             self.isOpen = false;
             self.hover = false;
@@ -119,7 +114,7 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService', 'create2dImgDatase
                     $mdDialog.hide(answer);
                 };
             }
-            //
+            
             self.models = [
                 { name: 'Data Set 1'},
                 { name: 'Data Set 2'},
@@ -136,9 +131,6 @@ angular.module('mainDataSet', ['ngMaterial', 'dbinfoService', 'create2dImgDatase
     });
 
 function DialogControllerPreviewDB($scope, $mdDialog, dbId, dbInfo, dbinfoService) {
-//    console.log('::DialogControllerPreviewDB() : ' + dbId);
-    // console.log(dbInfo);
-    // console.log('Labels: ' + dbInfo.hist.labels);
     var self = this;
     $scope.dbid     = dbId;
     $scope.dbInfo   = dbInfo;

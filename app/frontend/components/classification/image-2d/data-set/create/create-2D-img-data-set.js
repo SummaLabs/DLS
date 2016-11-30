@@ -2,7 +2,7 @@
 
 angular.module('create2dImgDataset', ['ngMaterial','ngMessages', 'taskManagerService'])
     .component('create2dImgDataset', {
-        templateUrl: '/frontend/components/classification/image-2d/data-set/create/2d-img-dataset.html',
+        templateUrl: '/frontend/components/classification/image-2d/data-set/create/create-2D-img-data-set.html',
         bindings: {
             formImage: "<",
             formFileImport: "<",

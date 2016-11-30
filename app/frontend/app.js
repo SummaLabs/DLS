@@ -5,7 +5,7 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'constructorCore',
     'networkMain',
     'modelMain',
-    'mainDataSet',
+    'datasetMain',
     'convolEditor',
     'inputDataEditor',
     'denseEditor',
@@ -88,7 +88,7 @@ angular.module('dlsApp')
             }
         }).state('data', {
             url: "/data",
-            template: "<main-data-set></main-data-set>",
+            template: "<dataset-main></dataset-main>",
             controller: function ($rootScope) {
                 $rootScope.tabIndex = 3;
             }
@@ -100,7 +100,7 @@ angular.module('dlsApp')
             }
         }).state('data-file-manager', {
             url: "/data/file-manager",
-            templateUrl: "/frontend/components/classification/image-2d/data-set/create/file-manager.html",
+            templateUrl: "/frontend/components/main/data-set/file-manager.html",
             controller: function ($rootScope) {
                 $rootScope.tabIndex = 3;
             }

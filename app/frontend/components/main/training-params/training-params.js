@@ -1,14 +1,14 @@
 (function () {
     'use strict';
     angular
-        .module('trainingParameters', ['ngMaterial', 'taskManagerService', 'deviceSelector'])
-        .directive('trainingParameters', function (taskManagerService) {
+        .module('trainingParams', ['ngMaterial', 'taskManagerService', 'deviceSelector'])
+        .directive('trainingParams', function (taskManagerService) {
             return {
                 scope: {
                     network: '@',
                     doOnSubmit: '&'
                 },
-                templateUrl: "/frontend/components/main/training-parameters/training-parameters.html",
+                templateUrl: "/frontend/components/main/training-params/training-params.html",
                 controller: function ($location, $scope) {
                     this.$onInit = function () {
 
