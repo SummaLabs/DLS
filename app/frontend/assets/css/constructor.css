@@ -89,18 +89,26 @@
     border: 2px solid darkgray;
 }
 
+/*#constructor-progress {*/
+    /*position: relative;*/
+	/*height: 4px;*/
+    /*background: lightgray;*/
+/*}*/
+
+/*#constructor-progress div:first-child {*/
+    /*position: relative;*/
+	/*height: 4px;*/
+    /*width: 0%;*/
+    /*background: dodgerblue;*/
+/*}*/
+
 #constructor-progress {
-    position: relative;
-	height: 4px;
-    background: lightgray;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    visibility: hidden;
 }
 
-#constructor-progress div:first-child {
-    position: relative;
-	height: 4px;
-    width: 0%;
-    background: dodgerblue;
-}
 
 #viewport {
 	position: absolute;
@@ -184,4 +192,6 @@
 .palette-header{
     text-align: center;
 }
+
+
 

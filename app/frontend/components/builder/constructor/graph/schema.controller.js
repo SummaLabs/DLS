@@ -45,9 +45,13 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         };
         self.selRect = null;
         schemaEvents();
-        //initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element, $compile);
+
         self.emitEvent(events.INIT, {});
+        initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element, $compile);
 	};
+
+    let svgElement = $element[0].querySelector('#svg');
+    let progressElement = $element[0].querySelector('#constructor-progress');
 
 	$scope.controlItem.viewportPos = function(x, y) {
 		if (isNaN(x)  || isNaN(y))
@@ -81,6 +85,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
   	};
 
     var addLinks = null;
+    let layersSize = -1;
 
     let defaultCursor = document.body.style.cursor;
 
@@ -105,8 +110,6 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                     clearInterval(layersInterval);
             }, 0);
         }
-
-		initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element, $compile);
 
         addLinks = function () {
             for (let a = 0; a < layers.length; a ++) {
@@ -140,24 +143,42 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
 
     var initProgress = function() {
-        let progress = document.getElementById('constructor-progress');
-        let cur_progress = progress.firstElementChild;
+        // let progress = document.getElementById('constructor-progress');
+        // let cur_progress = progress.firstElementChild;
+
+        let active = false;
         return function(val, max) {
 
             let curr = val;
             if (arguments.length > 1) {
                 curr = (val / max) * 100;
             }
+            self.progressValue = curr;
+            if (curr > 0)
+                active = true;
+            else active = false;
 
-            cur_progress.style.width = '' + curr + '%';
+            if (active) {
+                svgElement.style.visibility = 'hidden';
+                progressElement.style.visibility = 'visible';
+            }
+            else {
+                svgElement.style.visibility = 'visible';
+                progressElement.style.visibility = 'hidden';
+            }
+
+
+            // cur_progress.style.width = '' + curr + '%';
         }
     };
 
     let progress = initProgress();
 
     $scope.$on('nodeInit', function (event, data) {
-        if(self.counterNodesInit > -1) {
 
+        if (layersSize < 1)
+            return;
+        if(self.counterNodesInit > -1) {
             self.counterNodesInit++;
             progress(self.counterNodesInit, layersSize);
         }
@@ -165,6 +186,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         if (self.counterNodesInit === layersSize) {
             self.counterNodesInit = -1;
             progress(0);
+            layersSize = -1;
             addLinks();
             document.body.style.cursor = defaultCursor;
 
@@ -560,7 +582,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
     	self.viewHeight = height;
 
         self.emitEvent(events.CHANGED_VIEWS, {x: viewX, y: viewY});
-        $element.attr('viewBox', viewX + ' ' + viewY + ' ' + self.viewWidth + ' ' + self.viewHeight);
+        svgElement.setAttribute('viewBox', viewX + ' ' + viewY + ' ' + self.viewWidth + ' ' + self.viewHeight);
     }
 
     function fitRectToRect(inner, outer) {
