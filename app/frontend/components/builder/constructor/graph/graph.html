@@ -1,22 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:ev="http://www.w3.org/2001/xml-events"
-    id = "svg"
-    ng-attr-width="{{svg.viewWidth}}"
-    ng-attr-height="{{svg.viewHeight}}"
-    pointer-events="all">
+<div>
+    <div id="constructor-progress">
+        <md-progress-circular md-mode="determinate" value="{{svg.progressValue}}"></md-progress-circular>
+        <span>Loading...</span>
+    </div>
+    <svg xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:ev="http://www.w3.org/2001/xml-events"
+        id = "svg"
+        ng-attr-width="{{svg.viewWidth}}"
+        ng-attr-height="{{svg.viewHeight}}"
+        pointer-events="all">
 
 
-    <g id = "view" ng-attr-transform="scale({{svg.scale}})">
+        <g id = "view" ng-attr-transform="scale({{svg.scale}})">
 
-    </g>
+        </g>
 
-    <g id = "view2" ng-attr-transform="scale({{svg.scale}})">
-        <nodelink ng-if="svg.activelink.nodes.length === 2" link-data="svg.activelink"/>
-        <nodelink ng-if="svg.idNodesInit" ng-repeat="link in svg.links" link-data="link"/>
-        <node ng-repeat="node in svg.nodes" node-data="node" ng-init="svg.idNodesInit = true" ></node>
-    </g>
+        <g id = "view2" ng-attr-transform="scale({{svg.scale}})">
+            <nodelink ng-if="svg.activelink.nodes.length === 2" link-data="svg.activelink"/>
+            <nodelink ng-if="svg.idNodesInit" ng-repeat="link in svg.links" link-data="link"/>
+            <node ng-repeat="node in svg.nodes" node-data="node" ng-init="svg.idNodesInit = true" ></node>
+        </g>
 
-    <rect id = "sel_rect" ng-if="svg.selRect.isShown" ng-attr-x="{{svg.selRect.x()}}" ng-attr-y="{{svg.selRect.y()}}"
-          ng-attr-width="{{svg.selRect.width()}}" ng-attr-height="{{svg.selRect.height()}}" />
-</svg>
+        <rect id = "sel_rect" ng-if="svg.selRect.isShown" ng-attr-x="{{svg.selRect.x()}}" ng-attr-y="{{svg.selRect.y()}}"
+              ng-attr-width="{{svg.selRect.width()}}" ng-attr-height="{{svg.selRect.height()}}" />
+    </svg>
+</div>

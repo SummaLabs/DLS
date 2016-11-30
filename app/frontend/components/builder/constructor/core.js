@@ -41,7 +41,7 @@ function CoreService(layerService, appConfig) {
 			template = layerService.getTemplateByType('data');
 
 		return template;
-	}
+	};
 
 	this.getNodeDefinition = function(layerType) {
 		if (!layerDefinition[layerType]) {
@@ -54,7 +54,7 @@ function CoreService(layerService, appConfig) {
 		}
 
 		return layerDefinition[layerType];
-	}
+	};
 
 
 	function calculateProportions(templateHtml, portInSign, portOutSign) {
@@ -206,7 +206,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
                     .position('top right');
                 $mdToast.show(toast).then(function (response) {
                     if (response == 'ok') {
-                        //todo
+
                     }
                 });
             },
@@ -245,7 +245,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
                     .textContent(retMessage)
                     .action('UNDO')
                     .highlightAction(true)
-                    .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
+                    .highlightClass('md-accent')
                     .position('top right');
                 $mdToast.show(toast).then(function (response) {
                     if (response == 'ok') {
@@ -322,9 +322,14 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
     function constructorListeners() {
 
         networkDataService.subNetworkUpdateEvent(setUpNetwork);
-
+        let bInit = false;
+        let bUpdate = false;
         $scope.$on('graph:init', function (event, node) {
-            setUpNetwork();
+            bInit = true;
+            // if (bUpdate)
+                setUpNetwork();
+            // console.log('init');
+            // // self.svgControl.setLayers(networkDataService.getLayers());
         });
 
         $scope.$on('graph:addNode', function (event, node) {
@@ -442,7 +447,9 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
         }
 
         function setUpNetwork() {
-            self.svgControl.setLayers(networkDataService.getLayers());
+            if (bInit)
+                self.svgControl.setLayers(networkDataService.getLayers());
+            else bUpdate = true;
         }
     }
 
