@@ -106,32 +106,30 @@
                             targetEvent: $event,
                             templateUrl: '/frontend/components/classification/image-2d/model/validation/roc-analysis/apply-roc-analysis.html',
                             controller: function ($scope, dbinfoService, taskManagerService) {
-                                var dataSetInfo = [];
-                                $scope.dataSetNames = [];
+                                $scope.dataSets = [];
                                 $scope.device = "";
+                                $scope.dataSetSelected = "";
 
                                 var future = dbinfoService.getDatasetsInfoStatList();
                                 future.then(function mySucces(response) {
                                     response.data.forEach(function (dataSet) {
-                                        dataSetInfo.push(dataSet);
-                                        $scope.dataSetNames.push(dataSet.name);
+                                        $scope.dataSets.push(dataSet);
                                     });
-                                    $scope.dataSetSelected = $scope.dataSetNames[0];
+                                    $scope.dataSetSelected = $scope.dataSets[0];
                                 }, function myError(response) {
                                 });
 
                                 $scope.submitROCAnalysisTask = function () {
-                                    var index = $scope.dataSetNames.indexOf($scope.dataSetSelected);
                                     var params = {
                                         'model-id': model_id,
-                                        'dataset-id': dataSetInfo[index].id,
+                                        'dataset-id': $scope.dataSetSelected.id,
                                         'deviceType': $scope.device.type
                                     };
                                     var futureTask = taskManagerService.startTask('roc-image2d-cls', params);
                                     futureTask.then(function mySucces(response) {
                                         var taskId = response.data.taskId;
                                         var runningTask = {
-                                            name: $scope.dataSetSelected,
+                                            name: $scope.dataSetSelected.name,
                                             inProgress: true,
                                             taskId : taskId
                                         };

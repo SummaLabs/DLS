@@ -9,7 +9,7 @@
             <md-input-container>
                 <label>Select Data Set</label>
                 <md-select placeholder="ROC Analysis" ng-model="dataSetSelected" class="md-no-underline">
-                    <md-option ng-value="dataSetName" ng-repeat="dataSetName in dataSetNames">{{dataSetName}}
+                    <md-option ng-value="dataSet" ng-repeat="dataSet in dataSets">{{dataSet.name}}
                     </md-option>
                 </md-select>
             </md-input-container>

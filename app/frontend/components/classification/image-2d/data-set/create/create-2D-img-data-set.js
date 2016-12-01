@@ -61,7 +61,7 @@ angular.module('create2dImgDataset', ['ngMaterial','ngMessages', 'taskManagerSer
                         {id: 'jpeg',    value: "JPEG (lossy, 90% quality)"}
                     ],
                     imageEncodingsSelectedId: 'jpeg',
-                    datasetname: "dataset-v1",
+                    datasetname: "New Data Set",
                     isUseThreading: false
                 }
 
@@ -194,7 +194,7 @@ angular.module('create2dImgDataset', ['ngMaterial','ngMessages', 'taskManagerSer
                             $mdDialog.cancel();
                         };
                     },
-                    templateUrl: '  /frontend/components/classification/image-2d/data-set/create/file-manager.html',
+                    templateUrl: '/frontend/components/main/dialog/file-manager.html',
                     parent: angular.element(document.body),
                     targetEvent: $event,
                     clickOutsideToClose:false
