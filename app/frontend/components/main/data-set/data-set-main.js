@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('datasetMain', ['ngMaterial', 'dbinfoService', 'create2dImgDataset'])
+angular.module('datasetMain', ['ngMaterial', 'dbinfoService', 'create2dImgDataset', 'image2dPreview'])
     .component('datasetMain', {
         templateUrl: '/frontend/components/main/data-set/data-set-main.html',
         bindings: {
@@ -30,7 +30,7 @@ angular.module('datasetMain', ['ngMaterial', 'dbinfoService', 'create2dImgDatase
                         var parentEl = angular.element(document.body);
                         $mdDialog.show({
                             controller: DialogControllerPreviewDB,
-                            templateUrl: '/frontend/components/classification/image-2d/data-set/preview/preview-dialog.html',
+                            templateUrl: '/frontend/components/classification/image-2d/data-set/preview/img-2D-preview-dialog.html',
                             parent: parentEl,
                             locals: {
                                 dbId:   dbId,

@@ -4,10 +4,10 @@
 
 'use strict';
 
-angular.module('datasetImage2dPaging2', ['ngMaterial', 'cl.paging'])
-.component('datasetImage2dPaging2', {
+angular.module('image2dPaging', ['ngMaterial', 'cl.paging'])
+.component('image2dPaging', {
     restrict: 'E',
-    templateUrl: '/frontend/components/classification/image-2d/data-set/preview/paging.html',
+    templateUrl: '/frontend/components/classification/image-2d/data-set/preview/img-2D-paging.html',
      bindings: {
          paramDatabase:     '@',
          paramType:         '@',

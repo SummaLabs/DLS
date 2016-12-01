@@ -4,9 +4,9 @@
 
 'use strict';
 
-angular.module('datasetImage2dPreview2', ['ngMaterial', 'datasetImage2dPaging2', 'cl.paging'])
-.component('datasetImage2dPreview2', {
-    templateUrl: '/frontend/components/classification/image-2d/data-set/preview/preview.html',
+angular.module('image2dPreview', ['ngMaterial', 'image2dPaging', 'cl.paging'])
+.component('image2dPreview', {
+    templateUrl: '/frontend/components/classification/image-2d/data-set/preview/img-2D-preview.html',
     bindings: {
         databaseId:     '@',
         datasetType:    '@',
