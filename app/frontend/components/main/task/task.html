@@ -1,0 +1,104 @@
+<md-list>
+    <div layout="row" layout-align="end center">
+        <md-checkbox aria-label="CheckBox" ng-click="$ctrl.includeState('running')" class="md-secondary">Running</md-checkbox>
+        <md-checkbox aria-label="CheckBox" ng-click="$ctrl.includeState('ready')" class="md-secondary">Waiting</md-checkbox>
+        <md-checkbox aria-label="CheckBox" ng-click="$ctrl.includeState('killed')" class="md-secondary">Killed</md-checkbox>
+        <md-checkbox aria-label="CheckBox" ng-click="$ctrl.includeState('finished')" class="md-secondary">Finished</md-checkbox>
+    </div>
+        <md-divider></md-divider>
+        <div layout="row">
+            <div layout="column" flex="{{$ctrl.isChecked? 40 : 60}}" flex-offset="{{$ctrl.isChecked?0:15}}">
+                <md-list>
+                    <md-list-item flex layout="row"
+                                  class="secondary-button-padding"
+                                  ng-click="$ctrl.doPrimaryAction($event,dat.id)"
+                                  ng-repeat="dat in $ctrl.listDats | filter:$ctrl.stateFilter | orderBy : 'start_time'">
+                        <div >
+                            <div >
+                                <img width="64px" height="64px" ng-src="{{ dat.icon }}" />
+                            </div>
+                        </div>
+                        <div class="md-list-item-text" flex="80">
+                            <div ng-show="dat.state=='finished'">
+                                <div layout="col" layout-align="center center">
+                                    
+                                    <div><b>{{dat.text}}</b> 
+                                     ID: {{ dat.id }}  Start Time: {{dat.start_time | date:'yyyy-MM-dd HH:mm:ss Z' }}
+                                </div>
+                                </div>
+                                
+
+                            </div>
+                            <div ng-show="dat.state!='finished'">
+                                <div layout="row" layout-align="center center">
+                                    <div flex="50">
+                                        <div layout="column" layout-align="center center">
+                                             <div><b>{{dat.text}}</b> 
+                                     ID: {{ dat.id }}  Start Time: {{dat.start_time | date:'yyyy-MM-dd HH:mm:ss Z' }}
+                                </div>
+                                        </div>
+                                    </div>
+                                    <md-progress-linear value="{{dat.progress}}" flex="50"></md-progress-linear>
+                                </div>
+                            </div>
+                        </div>
+                        <div flex="20" layout="row" layout-align="center center">
+                            <div ng-if="dat.state=='finished'">
+                                <md-button ng-disabled="true" class="md-primary">Finished</md-button>
+                            </div>
+                            <div ng-show="dat.state=='running'">
+                                <md-button class="md-raised md-warn md-hue-2" ng-click="$ctrl.doItemDelete(dat.id)">Cancel</md-button>
+                            </div>
+                            <div ng-if="dat.state=='killed'">
+                                <md-button ng-disabled="true" class="md-primary">Killed</md-button>
+                            </div>
+                            <div ng-if="dat.state=='ready'">
+                                <md-button ng-disabled="true" class="md-primary">Waiting</md-button>
+                            </div>
+                            <div ng-if="dat.state=='failed'">
+                                <md-button ng-disabled="true" class="md-primary">Failed</md-button>
+                            </div>
+                        </div>
+                        <md-divider></md-divider>
+                    </md-list-item>
+                </md-list>
+            </div>
+
+            <div class="animate-if md-padding" ng-show="$ctrl.isChecked && $ctrl.selectedIndex>-1" layout="column" flex="60" layout-align="start">
+                <md-whiteframe class="md-whiteframe-2dp md-padding" layout="row" flex layout-align="center start">
+                    <md-list flex>
+                        <md-list-item layout="row" layout-align="center center">
+                            <div flex="100" layout="column" layout-align="center center">
+                                <h3>Current Item: {{$ctrl.curr().text}}</h3> ({{ $ctrl.curr().id }})
+                            </div>
+                            <md-button 
+                                       class="md-raised md-primary"
+                                       ng-click="$ctrl.showLogDialog($ctrl.curr().id)">Show Log</md-button>
+                            <md-button class="md-raised md-primary md-warn"
+                                       ng-click="$ctrl.isChecked=!$ctrl.isChecked"> <md-icon md-font-library="material-icons" aria-label="delete">clear</md-icon></md-button>
+                        </md-list-item>
+                        <md-divider></md-divider>
+                        <md-list-item layout="row" layout-align="center">
+                                <div >
+                                    <img width="140px" height="140px"  ng-src="{{$ctrl.curr().icon}}" />
+                                </div>
+                        </md-list-item>
+                        <md-divider></md-divider>
+                        <!--<md-list-item layout="row" layout-align="center center">-->
+                            <!--<h2>-->
+                                <!--{{ctrl.curr()}}-->
+                            <!--</h2>-->
+                        <!--</md-list-item>-->
+                         
+                        <md-list-item layout="row">
+                            <!--<div flex="100" ng-cloak>-->
+                              <task-view task-type="{{$ctrl.curr().type}}" task-id="{{$ctrl.selectedIndex}}" style="width: 100%"></task-view> 
+                            <!--</div>-->
+                        </md-list-item>
+                        <md-divider></md-divider>
+                    </md-list>
+                </md-whiteframe>
+            </div>
+        </div>
+  
+</md-list>

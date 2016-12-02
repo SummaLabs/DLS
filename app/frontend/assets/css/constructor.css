@@ -75,13 +75,11 @@
 	max-width: 100%;
     position: relative;
 }
-.constructor div:first-child {
-	max-width: 100%;
-}
+
 
 .constructor div:last-child {
 	max-width: 100%;
-    height: calc(100% - 48px);
+    height: calc(100% - 4px);
 }
 
 #workspace {
@@ -90,6 +88,27 @@
 	height:100%;
     border: 2px solid darkgray;
 }
+
+/*#constructor-progress {*/
+    /*position: relative;*/
+	/*height: 4px;*/
+    /*background: lightgray;*/
+/*}*/
+
+/*#constructor-progress div:first-child {*/
+    /*position: relative;*/
+	/*height: 4px;*/
+    /*width: 0%;*/
+    /*background: dodgerblue;*/
+/*}*/
+
+#constructor-progress {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    visibility: hidden;
+}
+
 
 #viewport {
 	position: absolute;
@@ -173,4 +192,6 @@
 .palette-header{
     text-align: center;
 }
+
+
 

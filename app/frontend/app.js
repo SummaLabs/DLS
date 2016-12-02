@@ -2,11 +2,9 @@
 
 angular.module('dlsApp', ['ngMaterial', "ui.router",
 
-    'mainMenu',
     'constructorCore',
     'networkMain',
     'modelMain',
-    'mainDataSet',
     // Layers
     'convolution1dEditor',
     'convolution2dEditor',
@@ -17,6 +15,7 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'activationEditor',
     'flattenEditor',
     'mergeEditor',
+    'datasetMain',
     'inputDataEditor',
     'denseEditor',
     'solverEditor',
@@ -25,36 +24,16 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     //
     'layerEditor',
     'networkDataService',
-    'createImgDataset',
-    'datasetBuilder',
     'FileManagerApp',
-    'classifyImage',
     'imageService',
-    'googlechart', 
-    'rocAnalysis',
-    // 'datasetImage2dPreview',
-    'datasetImage2dPreview2',
-    'cl.paging',
+    'googlechart',
     'dbinfoService',
     'settings',
-    'device',
-    'deviceSelector',
-    'deviceService',
     'task',
     'modelService',
-    "inference",
-    "validation",
     'modelsService',
     'taskManagerService',
-    'env',
-    'taskView',
-    'taskTest',
-    'taskModel',
-    'taskDataset',
-    'testRocTask',
-    'layerService',
-    'trainingParameters',
-    'create2dImgDataset'
+    'layerService'
 ]);
 
 
@@ -69,8 +48,8 @@ angular.module('dlsApp')
             markerShapeOut: 'shape_out',
             areaWidth: 5000,
             areaHeight: 5000,
-            scaleMin: 0.2,
-            scaleMax: 4.0,
+            scaleMin: 0.0001,
+            scaleMax: 10.0,
             scaleFactor: 1.2,
             gridStep: 25
         },
@@ -119,7 +98,7 @@ angular.module('dlsApp')
             }
         }).state('data', {
             url: "/data",
-            template: "<main-data-set></main-data-set>",
+            template: "<dataset-main></dataset-main>",
             controller: function ($rootScope) {
                 $rootScope.tabIndex = 3;
             }
@@ -131,7 +110,7 @@ angular.module('dlsApp')
             }
         }).state('data-file-manager', {
             url: "/data/file-manager",
-            templateUrl: "/frontend/components/2d-img-dataset/file-manager.html",
+            templateUrl: "/frontend/components/main/data-set/file-manager.html",
             controller: function ($rootScope) {
                 $rootScope.tabIndex = 3;
             }

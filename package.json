@@ -22,7 +22,8 @@
     "bootswatch": "3.3.6+1",
     "ng-file-upload": "^12.0.1",
     "angular-google-chart": "^0.1.0",
-    "socket.io": ">= 1.4.5"
+    "socket.io": ">= 1.4.5",
+    "plotly.js": "1.19.1"
 
   },
   "devDependencies": {

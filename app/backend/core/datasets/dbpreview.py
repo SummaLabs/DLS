@@ -275,6 +275,12 @@ class DatasetsWatcher:
         if self.dictDbInfo.has_key(dbId):
             return self.dictDbInfo[dbId].getDbRangeInfo(ptype, labelIdx, idxFrom, idxTo)
 
+    def delete(self, dbId):
+        if self.dictDbInfo.has_key(dbId):
+            print(self.dictDbInfo[dbId])
+
+            return
+
 ###############################
 if __name__ == '__main__':
     pass

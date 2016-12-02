@@ -83,5 +83,13 @@ function DBInfoService($http) {
                 dbid:   dbId
             }
         });
-    }
+    };
+
+    self.deleteDataset = function (dbId){
+        console.log(dbId);
+        return $http({
+            method: "GET",
+            url: "/dbpreview/delete/"+ dbId
+        })
+    };
 }

@@ -23,9 +23,7 @@
 </head>
 
 <body ng-app="dlsApp" ng-controller="mainCtrl" layout="column">
-
 <md-toolbar layout="row">
-    <main-menu></main-menu>
     <h3>Deep Learning Studio</h3>
 </md-toolbar>
 
@@ -78,26 +76,22 @@
 <script src="/frontend/lib/angular-ui-router.min.js"></script>
 <script src="/frontend/lib/ng-google-chart.js"></script>
 <script src="/frontend/lib/socket.io.js"></script>
+<script src="/frontend/lib/plotly.min.js"></script>
 
 <script src="/frontend/app.js"></script>
-<script src="/frontend/components/main-menu/MainMenu.js"></script>
 
 <script src="/frontend/components/builder/constructor/core.js"></script>
 <script src="/frontend/components/builder/constructor/viewport.js"></script>
 <script src="/frontend/components/builder/constructor/palette/palette.js"></script>
 <script src="/frontend/components/builder/constructor/palette/layersPanel.js"></script>
-<script src="/frontend/components/builder/constructor/graph/type.js"></script>
+<script src="/frontend/components/builder/constructor/graph/types.js"></script>
 <script src="/frontend/components/builder/constructor/graph/schema.controller.js"></script>
 <script src="/frontend/components/builder/constructor/graph/schema.module.js"></script>
 <script src="/frontend/components/builder/constructor/graph/node.js"></script>
 <script src="/frontend/components/builder/constructor/graph/link.js"></script>
 
-<script src="/frontend/components/networks-main/networksMain.js"></script>
-<script src="/frontend/components/models-main/modelsMain.js"></script>
-<script src="/frontend/components/models-main/inference.js"></script>
-<script src="/frontend/components/models-main/validation.js"></script>
 <script src="/frontend/components/service/modelService.js"></script>
-<script src="/frontend/components/data-set-main/mainDataSet.js"></script>
+<!--script src="/frontend/components/data-set-main/mainDataSet.js"></script-->
 
 <!-- BEGIN * Layers-Editors -->
 <!--<script src="/frontend/components/layers/convol/convol-editor.js"></script>-->
@@ -145,19 +139,7 @@
 <!-- END * LAYERS -->
 
 <script src="/frontend/components/service/networkDataService.js"></script>
-<script src="/frontend/components/data-set-create-image2d/CreateImgDataset.js"></script>
-<script src="/frontend/components/builder/dataset/DatasetBuilder.js"></script>
-<script src="/frontend/components/inference/classify-image/classifyImage.js"></script>
 <script src="/frontend/components/service/imageService.js"></script>
-<script src="/frontend/components/inference/roc-analysis/rocAnalysis.js"></script>
-<script src="/frontend/lib/material-angular-paging.js"></script>
-<!--<script src="/frontend/components/preview/dataset-image2d-preview/dataset-image2d-paging.js"></script>-->
-<script src="/frontend/components/preview/dataset-image2d-preview/dataset-image2d-paging2.js"></script>
-<!--<script src="/frontend/components/preview/dataset-image2d-preview/dataset-image2d-preview.js"></script>-->
-<script src="/frontend/components/preview/dataset-image2d-preview/dataset-image2d-preview2.js"></script>
-<script src="frontend/components/settings/settings.js"></script>
-<script src="/frontend/components/training-parameters/training-parameters.js"></script>
-<script src="/frontend/components/2d-img-dataset/Create2DImgDataset.js"></script>
 
 <!-- Services: BEGIN-->
 <script src="/frontend/components/service/dbinfoService.js"></script>
@@ -170,36 +152,54 @@
 <script src="/frontend/lib/jquery.min.js"></script>
 <script src="/frontend/lib/bootstrap.min.js"></script>
 
-<script src="frontend/components/file-manager/js/app.js"></script>
-<script src="frontend/components/file-manager/js/directives/directives.js"></script>
-<script src="frontend/components/file-manager/js/filters/filters.js"></script>
-<script src="frontend/components/file-manager/js/providers/config.js"></script>
-<script src="frontend/components/file-manager/js/entities/chmod.js"></script>
-<script src="frontend/components/file-manager/js/entities/item.js"></script>
-<script src="frontend/components/file-manager/js/services/apihandler.js"></script>
-<script src="frontend/components/file-manager/js/services/apimiddleware.js"></script>
-<script src="frontend/components/file-manager/js/services/filenavigator.js"></script>
-<script src="frontend/components/file-manager/js/providers/translations.js"></script>
-<script src="frontend/components/file-manager/js/controllers/main.js"></script>
-<script src="frontend/components/file-manager/js/controllers/selector-controller.js"></script>
+<script src="frontend/components/main/file-manager/js/app.js"></script>
+<script src="frontend/components/main/file-manager/js/directives/directives.js"></script>
+<script src="frontend/components/main/file-manager/js/filters/filters.js"></script>
+<script src="frontend/components/main/file-manager/js/providers/config.js"></script>
+<script src="frontend/components/main/file-manager/js/entities/chmod.js"></script>
+<script src="frontend/components/main/file-manager/js/entities/item.js"></script>
+<script src="frontend/components/main/file-manager/js/services/apihandler.js"></script>
+<script src="frontend/components/main/file-manager/js/services/apimiddleware.js"></script>
+<script src="frontend/components/main/file-manager/js/services/filenavigator.js"></script>
+<script src="frontend/components/main/file-manager/js/providers/translations.js"></script>
+<script src="frontend/components/main/file-manager/js/controllers/main.js"></script>
+<script src="frontend/components/main/file-manager/js/controllers/selector-controller.js"></script>
 <!-- END -->
 
-<script src="frontend/components/device/device.js"></script>
-<script src="frontend/components/device/device-selector.js"></script>
-<script src="frontend/components/service/deviceService.js"></script>
 <script src="frontend/components/service/modelsService.js"></script>
-<script src="frontend/components/task/task.js"></script>
-    
-<script src="frontend/components/task/task-view.js"></script>
-<script src="frontend/components/task/task-dataset/task-dataset.js"></script>
-<script src="frontend/components/task/task-model/task-model.js"></script>
-<script src="frontend/components/task/task-test/task-test.js"></script>
 
-<!-- BEGIN: TEST COMPONENTS -->
-<script src="frontend/components/test-ui/test-roc-task.js"></script>
-<!-- END: TEST COMPONENTS -->
-    
-<script src="frontend/components/device/env.js"></script>
+<!-- LAYERS -->
+<script src="/frontend/components/layers/LayerService.js"></script>
+<script src="/frontend/components/layers/convol/ConvolutionLayer.js"></script>
+<script src="/frontend/components/layers/data/DataLayer.js"></script>
+<script src="/frontend/components/layers/dense/DenseLayer.js"></script>
+<script src="/frontend/components/layers/solver/SolverLayer.js"></script>
+
+<!-- Main part of UI: BEGIN-->
+<script src="/frontend/components/main/settings/settings.js"></script>
+<script src="/frontend/components/main/device-selector/device-selector.js"></script>
+<script src="/frontend/components/main/device-selector/device-service.js"></script>
+<script src="/frontend/components/main/hardware/hardware.js"></script>
+<script src="/frontend/components/main/environment/environment.js"></script>
+<script src="/frontend/components/main/model/model-main.js"></script>
+<script src="/frontend/components/main/model/inference.js"></script>
+<script src="/frontend/components/main/model/validation.js"></script>
+<script src="/frontend/components/main/data-set/data-set-main.js"></script>
+<script src="/frontend/components/main/network/network-main.js"></script>
+<script src="/frontend/components/main/training-params/training-params.js"></script>
+<script src="/frontend/components/main/task/task.js"></script>
+<script src="/frontend/components/main/task/task-view.js"></script>
+<script src="/frontend/components/main/task/task-test.js"></script>
+<!-- Main part of UI: END-->
+
+<script src="/frontend/lib/material-angular-paging.js"></script>
+<script src="/frontend/components/classification/image-2d/data-set/preview/img-2D-paging.js"></script>
+<script src="/frontend/components/classification/image-2d/data-set/preview/img-2D-preview.js"></script>
+<script src="/frontend/components/classification/image-2d/task/task-dataset.js"></script>
+<script src="/frontend/components/classification/image-2d/task/task-model.js"></script>
+<script src="/frontend/components/classification/image-2d/data-set/create/create-2D-img-data-set.js"></script>
+<script src="/frontend/components/classification/image-2d/model/inference/classify-image/classify-image.js"></script>
+<script src="/frontend/components/classification/image-2d/model/validation/roc-analysis/roc-analysis.js"></script>
 
 </body>
 </html>

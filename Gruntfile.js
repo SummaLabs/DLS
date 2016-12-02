@@ -121,6 +121,13 @@ module.exports = function (grunt) {
                         flatten: true,
                         src: '<%= globalConfig.node_modules_path %>/socket.io-client/socket.io.js',
                         dest: outPathExt
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: '<%= globalConfig.node_modules_path %>/plotly.js/dist/plotly.min.js',
+                        dest: '<%= globalConfig.lib %>/',
+                        filter: 'isFile'
                     }
                 ]
             }
