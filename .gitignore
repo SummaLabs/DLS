@@ -1,7 +1,6 @@
 /node_modules/
 /.idea/
 /logs/
-/data/
 *.pyc
 *.coverage
 /cuda_temp/
