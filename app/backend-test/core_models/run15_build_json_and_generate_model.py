@@ -6,6 +6,8 @@ import json
 
 from compiler.ast import flatten
 
+import warnings as warn
+
 import skimage.io as io
 import matplotlib.pyplot as plt
 from keras.utils.visualize_util import plot as kplot
@@ -139,6 +141,20 @@ dictAvailableConnectionsFromTo = {
         'dense'         : (True, None),
         'dataoutput'    : (True, None)
     },
+    'merge': {
+        'datainput'     : (False, None),
+        'convolution1d' : (True, None),
+        'convolution2d' : (False, None),
+        'convolution3d' : (False, None),
+        'pooling1d'     : (True, None),
+        'pooling2d'     : (False, None),
+        'pooling3d'     : (False, None),
+        'flatten'       : (True, None),
+        'activation'    : (True, None),
+        'merge'         : (True, None),
+        'dense'         : (True, None),
+        'dataoutput'    : (True, None)
+    },
     'dense' : {
         'datainput'     : (False, None),
         'convolution1d' : (True, None),
@@ -189,7 +205,7 @@ class NodeFBuilder:
     # Counter dict
     nodeTypeCounter = None
     def __init__(self):
-        self.nodeTypeCounter = {}
+        self.nodeTypeCounter = { kk: 0 for kk in dictAvailableConnectionsFromTo.keys() }
     def toString(self):
         return self.nodeTypeCounter
     def __str__(self):
@@ -197,27 +213,43 @@ class NodeFBuilder:
     def __repr__(self):
         return self.toString()
     def newNodeF(self, jsonNode):
-        pass
+        strType = jsonNode['layerType']
+        if strType not in self.nodeTypeCounter.keys():
+            raise Exception('Unknown node type [%s]' % strType)
+        self.nodeTypeCounter[strType]+=1
+        strNodeName = '%s_%d' % (strType, self.nodeTypeCounter[strType])
+        return NodeF(jsonNode, goodName=strNodeName)
 
+####################################
 class NodeF:
+    goodName = None
     inpNode = None
     outNode = None
     jsonCfg = None
-    def __init__(self, jsonNode, inpNode=None, outNode=None):
+    def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
+        self.goodName   = goodName
         self.jsonCfg    = jsonNode
         self.jsonParams = jsonNode['params']
         self.inpNode    = inpNode
         self.outNode    = outNode
+    def getName(self):
+        if self.jsonCfg is not None:
+            if self.goodName is None:
+                return self.jsonCfg['layerType']
+            else:
+                return self.goodName
+        else:
+            return 'Unknown-Type'
     def toString(self):
         strInp = 'NULL'
         if self.inpNode is not None:
-            strInp = '%s(%s)' % (self.inpNode[0].jsonCfg['id'],self.inpNode[0].jsonCfg['layerType'])
+            strInp = '%s(%s)' % (self.inpNode[0].jsonCfg['id'],self.inpNode[0].getName())
         strOut = 'NULL'
         if self.outNode is not None:
-            strOut = '%s(%s)' % (self.outNode[0].jsonCfg['id'], self.outNode[0].jsonCfg['layerType'])
+            strOut = '%s(%s)' % (self.outNode[0].jsonCfg['id'], self.outNode[0].getName())
         strCfg = 'NULL'
         if self.jsonCfg is not None:
-            strCfg = '%s(%s)' % (self.jsonCfg['id'], self.jsonCfg['layerType'])
+            strCfg = '%s(%s)' % (self.jsonCfg['id'], self.getName())
         ret = '{obj->[%s],  in:%s, out:%s}' % (strCfg, strInp, strOut)
         return ret
     def validateFields(self):
@@ -315,8 +347,9 @@ class DLSDesignerFlowsParserV2:
     def getConnectedList(self, cfg, isCheckConnections=True):
         # (1) generate non-linked list of Nodes
         lstNodes=[]
+        nodeBuilder = NodeFBuilder()
         for ii in cfg:
-            tmpNode = NodeF(ii)
+            tmpNode = nodeBuilder.newNodeF(ii) #NodeF(ii)
             lstNodes.append(tmpNode)
         # (2) link nodes
         for ii in lstNodes:
@@ -327,22 +360,26 @@ class DLSDesignerFlowsParserV2:
             if ii.inpNode is None:
                 tmpInputNodes.append(ii)
         if len(tmpInputNodes)>1:
-            raise NotImplementedError('Flow have more than one input nodes (currently not implemented) or not linked [%s]' % tmpInputNodes)
+            warn.warn('Flow have more than one input nodes (currently not implemented) or not linked [%s]' % tmpInputNodes, FutureWarning)
+            # raise NotImplementedError('Flow have more than one input nodes (currently not implemented) or not linked [%s]' % tmpInputNodes)
         if len(tmpInputNodes)<1:
             raise Exception('Unknown graph connection')
-        lstFlowNodes=[]
-        firstNode = tmpInputNodes[0]
-        lstFlowNodes.append(firstNode)
-        maxCnt=100
-        cnt=0
-        tmpNode = firstNode
-        while cnt<maxCnt:
-            if tmpNode.outNode is not None:
-                tmpNode = tmpNode.outNode[0] #FIXME: work only for sequential models
-                lstFlowNodes.append(tmpNode)
-            else:
-                break
-            cnt+=1
+        #FIXME: for backward-compatibility
+        lstFlowNodes = lstNodes
+        # Old-code:
+        # lstFlowNodes = []
+        # firstNode = tmpInputNodes[0]
+        # lstFlowNodes.append(firstNode)
+        # maxCnt=5000
+        # cnt=0
+        # tmpNode = firstNode
+        # while cnt<maxCnt:
+        #     if tmpNode.outNode is not None:
+        #         tmpNode = tmpNode.outNode[0] #FIXME: work only for sequential models
+        #         lstFlowNodes.append(tmpNode)
+        #     else:
+        #         break
+        #     cnt+=1
         if isCheckConnections:
             # (1) Validate node-fields
             for nn in lstFlowNodes:
