@@ -416,8 +416,20 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
 		    } else if (self.mouseMode === state.MOVING && event.buttons === 1) {
 				let curMousePos = getOffsetPos($element, event);
-                editedNode.move((curMousePos.x - prevMousePos.x) / self.scale, (curMousePos.y - prevMousePos.y) / self.scale);
+				let offsetX = (curMousePos.x - prevMousePos.x) / self.scale;
+				let offsetY = (curMousePos.y - prevMousePos.y) / self.scale;
+
+				editedNode.move(offsetX, offsetY);
                 $scope.$broadcast('node:move_' + editedNode.id, editedNode);
+
+                if (editedNode.isActive) {
+                    schema.getNodes().forEach(function (item) {
+                        if (item.isActive && editedNode !== item) {
+                            item.move(offsetX, offsetY);
+                            $scope.$broadcast('node:move_' + item.id, item);
+                        }
+                    });
+                }
 
 				prevMousePos = curMousePos;
 			} else if (self.mouseMode === state.JOINING  && event.buttons === 1) {
