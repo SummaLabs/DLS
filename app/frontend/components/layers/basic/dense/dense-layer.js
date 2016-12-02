@@ -35,6 +35,6 @@ function DenseLayer() {
     };
     
     this.getIconPath = function () {
-        return "frontend/assets/img/palette/basic/layer-dense-v1.png"
+        return "frontend/components/layers/basic/dense/dense-node.png"
     };
 }
