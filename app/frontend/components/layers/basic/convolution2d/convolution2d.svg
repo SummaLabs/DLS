@@ -1,0 +1,90 @@
+  <g
+     transform="translate(-10.15625,17.8125)"
+     id="g3909">
+    <rect
+       width="212.65898"
+       height="78.661896"
+       ry="6.1854515"
+       x="12.169054"
+       y="2.1562364"
+       id="border"
+       style="fill:#32cd32;fill-opacity:1;stroke:#000000;stroke-width:4;stroke-miterlimit:4;stroke-opacity:1" />
+    <rect
+       width="36.383923"
+       height="36.383923"
+       rx="18.191961"
+       ry="18.191961"
+       x="100.30658"
+       y="-15.800077"
+       id="in"
+       style="fill:#80e5ff;fill-opacity:1;stroke:#000000;stroke-width:4;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <rect
+       width="34.146603"
+       height="34.146599"
+       rx="17.073301"
+       ry="17.073299"
+       x="101.42525"
+       y="62.794464"
+       id="out"
+       style="fill:#55ddff;fill-opacity:1;stroke:#000000;stroke-width:4;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <text
+       x="118.5398"
+       y="44.543579"
+       id="tspan3852"
+       xml:space="preserve"
+       style="font-size:22px;text-align:center;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><tspan
+         x="118.5398"
+         y="44.543579"
+         id="text"
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Comic Sans MS;-inkscape-font-specification:Comic Sans MS Bold">Layer name</tspan></text>
+    <text
+       x="22.196978"
+       y="73.120033"
+       id="shape_in"
+       xml:space="preserve"
+       style="font-size:22px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><tspan
+         x="22.196978"
+         y="73.120033"
+         id="tspan3852-1-3"
+         style="font-size:13px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Comic Sans MS;-inkscape-font-specification:Comic Sans MS Bold"><tspan
+           id="tspan3897-9"
+           style="font-size:11px"><tspan
+             id="tspan3899-1"
+             style="font-size:10px"><tspan
+               id="tspan4046"
+               style="font-size:8px"><tspan
+                 id="tspan4048"
+                 style="font-size:6px"><tspan
+                   id="tspan4056"
+                   style="font-size:8px"><tspan
+                     id="tspan4058"
+                     style="font-size:6px"><tspan
+                       id="tspan4064"
+                       style="font-style:italic;-inkscape-font-specification:Comic Sans MS Bold Italic"><tspan
+                         id="tspan4066"
+                         style="font-style:normal;-inkscape-font-specification:Comic Sans MS Bold"><tspan
+                           id="tspan4072"
+                           style="font-size:11px"><tspan
+                             id="tspan4074"
+                             style="font-size:10px"><tspan
+                               id="tspan4076"
+                               style="font-size:8px">[*,32,32,128] </tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></text>
+    <text
+       x="163.87387"
+       y="73.120033"
+       id="shape_out"
+       xml:space="preserve"
+       style="font-size:22px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><tspan
+         x="163.87387"
+         y="73.120033"
+         id="tspan3852-1-1-9"
+         style="font-size:13px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Comic Sans MS;-inkscape-font-specification:Comic Sans MS Bold"><tspan
+           id="tspan3897-0-3"
+           style="font-size:11px"><tspan
+             id="tspan3899-3-3"
+             style="font-size:10px"><tspan
+               id="tspan4050"
+               style="font-size:6px"><tspan
+                 id="tspan4078"
+                 style="font-size:8px">[*,16,16,256] </tspan></tspan></tspan></tspan></tspan></text>
+  </g>

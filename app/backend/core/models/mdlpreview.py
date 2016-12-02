@@ -11,7 +11,7 @@ from functools import wraps
 
 from app.backend.core import utils as dlsutils
 from app.backend.core.models.cfg import CFG_MODEL, CFG_SOLVER, CFG_MODEL_TRAIN, CFG_PROGRESS, \
-    PREFIX_SNAPSHOT, EXT_MODEL_WEIGHTS, PREFIX_TASKS_DIR, CFG_EVAL_ROC, PREFIX_EVAL_ROC_DIR
+    PREFIX_SNAPSHOT, EXT_MODEL_WEIGHTS, PREFIX_TASKS_DIR, CFG_EVAL_ROC, PREFIX_EVAL_ROC_DIR, CFG_MODEL_NETWORK
 
 from flow_parser import DLSDesignerFlowsParser
 from batcher_image2d import BatcherImage2DLMDB
@@ -42,9 +42,12 @@ class ModelTaskDirBuilder:
         dlsutils.makeDirIfNotExists(dirTaskOut)
         #
         modelAdjusted = modelTrainer.adjustModelInputOutput2DBData(modelTrainer.model, dirDataset)
-        foutConfigModel  = os.path.join(dirTaskOut, CFG_MODEL_TRAIN)
-        foutConfigSolver = os.path.join(dirTaskOut, CFG_SOLVER)
-        foutConfig       = os.path.join(dirTaskOut, CFG_MODEL)
+        foutConfigModel   = os.path.join(dirTaskOut, CFG_MODEL_TRAIN)
+        foutConfigNetwork = os.path.join(dirTaskOut, CFG_MODEL_NETWORK)
+        foutConfigSolver  = os.path.join(dirTaskOut, CFG_SOLVER)
+        foutConfig        = os.path.join(dirTaskOut, CFG_MODEL)
+        with open(foutConfigNetwork, 'w') as f:
+            f.write(json.dumps(cfgModel, indent=4))
         with open(foutConfigModel, 'w') as f:
             f.write(modelAdjusted.to_json(sort_keys=True, indent=4, separators=(',', ': ')))
         with open(foutConfigSolver, 'w') as f:

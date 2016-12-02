@@ -15,10 +15,10 @@
                         var defaultParams = {
                             "modelName": "New model",
                             "lossFunction": "categorical_crossentropy",
-                            "epochsCount": 2048,
-                            "snapshotInterval": 100,
-                            "validationInterval": 100,
-                            "batchSize": 1024,
+                            "epochsCount": 10,
+                            "snapshotInterval": 1,
+                            "validationInterval": 1,
+                            "batchSize": 64,
                             "learningRate": 0.01,
                             "optimizer": "SGD",
                             "deviceType": 'gpu'

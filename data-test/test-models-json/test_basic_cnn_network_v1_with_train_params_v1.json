@@ -1,0 +1,323 @@
+{
+    "layers": [
+        {
+            "category": "input", 
+            "wires": [
+                "node_fc37"
+            ], 
+            "name": "data", 
+            "pos": {
+                "y": 25, 
+                "x": 75
+            }, 
+            "params": {
+                "datasetType": "", 
+                "datasetId": "dbset-20160922-220218-011462"
+            }, 
+            "layerType": "data", 
+            "id": "node_3c5b"
+        }, 
+        {
+            "category": "basic: convolution", 
+            "wires": [
+                "node_62cb"
+            ], 
+            "name": "Convolution2D", 
+            "pos": {
+                "y": 100, 
+                "x": 425
+            }, 
+            "params": {
+                "filterWidth": 3, 
+                "filtersCount": 16, 
+                "isTrainable": true, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution2d", 
+            "id": "node_fc37"
+        }, 
+        {
+            "category": "basic: convolution", 
+            "wires": [
+                "node_76a3"
+            ], 
+            "name": "Convolution2D", 
+            "pos": {
+                "y": 500, 
+                "x": 425
+            }, 
+            "params": {
+                "filterWidth": 3, 
+                "filtersCount": 16, 
+                "isTrainable": true, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution2d", 
+            "id": "node_2258"
+        }, 
+        {
+            "category": "basic", 
+            "wires": [
+                "node_3790"
+            ], 
+            "name": "Activation", 
+            "pos": {
+                "y": 225, 
+                "x": 425
+            }, 
+            "params": {
+                "activationFunction": "relu"
+            }, 
+            "layerType": "activation", 
+            "id": "node_62cb"
+        }, 
+        {
+            "category": "basic: pooling", 
+            "wires": [
+                "node_2258"
+            ], 
+            "name": "Pooling2D", 
+            "pos": {
+                "y": 350, 
+                "x": 425
+            }, 
+            "params": {
+                "subsamplingSize": 2, 
+                "subsamplingSizeHeight": 2, 
+                "subsamplingSizeWidth": 2, 
+                "subsamplingType": "max_pooling"
+            }, 
+            "layerType": "pooling2d", 
+            "id": "node_3790"
+        }, 
+        {
+            "category": "basic", 
+            "wires": [
+                "node_7954"
+            ], 
+            "name": "Activation", 
+            "pos": {
+                "y": 625, 
+                "x": 425
+            }, 
+            "params": {
+                "activationFunction": "relu"
+            }, 
+            "layerType": "activation", 
+            "id": "node_76a3"
+        }, 
+        {
+            "category": "basic: pooling", 
+            "wires": [
+                "node_21ab"
+            ], 
+            "name": "Pooling2D", 
+            "pos": {
+                "y": 750, 
+                "x": 425
+            }, 
+            "params": {
+                "subsamplingSize": 2, 
+                "subsamplingSizeHeight": 2, 
+                "subsamplingSizeWidth": 2, 
+                "subsamplingType": "max_pooling"
+            }, 
+            "layerType": "pooling2d", 
+            "id": "node_7954"
+        }, 
+        {
+            "category": "basic: convolution", 
+            "wires": [
+                "node_7ec3"
+            ], 
+            "name": "Convolution2D", 
+            "pos": {
+                "y": 900, 
+                "x": 425
+            }, 
+            "params": {
+                "filterWidth": 3, 
+                "filtersCount": 16, 
+                "isTrainable": true, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution2d", 
+            "id": "node_21ab"
+        }, 
+        {
+            "category": "basic", 
+            "wires": [
+                "node_a5c"
+            ], 
+            "name": "Activation", 
+            "pos": {
+                "y": 1025, 
+                "x": 425
+            }, 
+            "params": {
+                "activationFunction": "relu"
+            }, 
+            "layerType": "activation", 
+            "id": "node_7ec3"
+        }, 
+        {
+            "category": "basic: pooling", 
+            "wires": [
+                "node_b91a"
+            ], 
+            "name": "Pooling2D", 
+            "pos": {
+                "y": 1150, 
+                "x": 425
+            }, 
+            "params": {
+                "subsamplingSize": 2, 
+                "subsamplingSizeHeight": 2, 
+                "subsamplingSizeWidth": 2, 
+                "subsamplingType": "max_pooling"
+            }, 
+            "layerType": "pooling2d", 
+            "id": "node_a5c"
+        }, 
+        {
+            "category": "basic: convolution", 
+            "wires": [
+                "node_6d52"
+            ], 
+            "name": "Convolution2D", 
+            "pos": {
+                "y": 1300, 
+                "x": 425
+            }, 
+            "params": {
+                "filterWidth": 3, 
+                "filtersCount": 16, 
+                "isTrainable": true, 
+                "activationFunction": "linear", 
+                "filterHeight": 3
+            }, 
+            "layerType": "convolution2d", 
+            "id": "node_b91a"
+        }, 
+        {
+            "category": "basic", 
+            "wires": [
+                "node_20b"
+            ], 
+            "name": "Activation", 
+            "pos": {
+                "y": 1425, 
+                "x": 425
+            }, 
+            "params": {
+                "activationFunction": "relu"
+            }, 
+            "layerType": "activation", 
+            "id": "node_6d52"
+        }, 
+        {
+            "category": "basic: pooling", 
+            "wires": [
+                "node_cb73"
+            ], 
+            "name": "Pooling2D", 
+            "pos": {
+                "y": 1550, 
+                "x": 425
+            }, 
+            "params": {
+                "subsamplingSize": 2, 
+                "subsamplingSizeHeight": 2, 
+                "subsamplingSizeWidth": 2, 
+                "subsamplingType": "max_pooling"
+            }, 
+            "layerType": "pooling2d", 
+            "id": "node_20b"
+        }, 
+        {
+            "category": "basic", 
+            "wires": [
+                "node_a28b"
+            ], 
+            "name": "Flatten", 
+            "pos": {
+                "y": 1725, 
+                "x": 425
+            }, 
+            "params": {}, 
+            "layerType": "flatten", 
+            "id": "node_cb73"
+        }, 
+        {
+            "category": "basic: dense", 
+            "wires": [
+                "node_ff16"
+            ], 
+            "name": "Dense", 
+            "pos": {
+                "y": 1850, 
+                "x": 425
+            }, 
+            "params": {
+                "isTrainable": true, 
+                "activationFunction": "linear", 
+                "neuronsCount": 128
+            }, 
+            "layerType": "dense", 
+            "id": "node_a28b"
+        }, 
+        {
+            "category": "basic", 
+            "wires": [
+                "node_5fcb"
+            ], 
+            "name": "Activation", 
+            "pos": {
+                "y": 2000, 
+                "x": 425
+            }, 
+            "params": {
+                "activationFunction": "softmax"
+            }, 
+            "layerType": "activation", 
+            "id": "node_ff16"
+        }, 
+        {
+            "category": "output", 
+            "name": "solver", 
+            "pos": {
+                "y": 2225, 
+                "x": 525
+            }, 
+            "params": {
+                "optimizer": "SGD", 
+                "snapshotInterval": 5, 
+                "epochsCount": 10, 
+                "batchSize": 32, 
+                "learningRate": 0.01, 
+                "lossFunction": "categorical_crossentropy", 
+                "validationInterval": 1
+            }, 
+            "layerType": "solver", 
+            "id": "node_5fcb"
+        }
+    ], 
+    "name": "test_basic_cnn_network_v1", 
+    "source": "custom", 
+    "trainingParams": {
+        "modelName": "New model", 
+        "optimizer": "SGD", 
+        "snapshotInterval": 1, 
+        "epochsCount": 10, 
+        "batchSize": 64, 
+        "deviceType": "cpu", 
+        "learningRate": 0.01, 
+        "lossFunction": "categorical_crossentropy", 
+        "validationInterval": 1
+    }, 
+    "preview": "", 
+    "description": ""
+}

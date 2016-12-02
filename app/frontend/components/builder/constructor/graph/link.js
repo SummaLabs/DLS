@@ -120,7 +120,7 @@ function link() {
 	}
 
 	function updatePos(element, from, to){
-		var path = calculatePath(from, to);
+		var path = calculatePath(from, to, 'vertical');
 		element.attr('d', path);
 	}
 

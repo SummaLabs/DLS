@@ -24,7 +24,7 @@ function DataLayer() {
     };
             
     this.getTemplatePath = function () {
-      return "frontend/components/layers/dense/layer_with_shapes_exp.svg";  
+      return "frontend/components/layers/data/node-test-2.svg";  
     };
     
     this.getIconPath = function () {

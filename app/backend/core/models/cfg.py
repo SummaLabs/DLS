@@ -4,6 +4,7 @@ __author__ = 'ar'
 
 CFG_PROGRESS = 'progress.json'
 CFG_MODEL= 'model.json'
+CFG_MODEL_NETWORK='network.json'
 CFG_MODEL_TRAIN= 'train_val_keras.json'
 CFG_SOLVER='solver_keras.json'
 CFG_EVAL_ROC='cfg.json'
