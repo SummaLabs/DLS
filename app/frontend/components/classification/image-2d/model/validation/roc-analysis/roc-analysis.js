@@ -8,7 +8,7 @@
                     modelId: '@'
                 },
                 templateUrl: '/frontend/components/classification/image-2d/model/validation/roc-analysis/roc-analysis.html',
-                controller: function ($rootScope, $scope, $mdDialog, $mdToast, imageService, taskManagerService) {
+                controller: function ($rootScope, $scope, $mdDialog, $mdToast, modelService, taskManagerService) {
                     var self = this;
 
                     const ROCAnalysis = {
@@ -23,7 +23,7 @@
                         $scope.rocsIds = [];
                         $scope.dsTypes = [];
                         $scope.classNames = [];
-                        var future = imageService.loadModelROCsData($scope.modelId);
+                        var future = modelService.loadModelROCsData($scope.modelId);
                         future.then(function mySucces(response) {
                             setModelROCsHistoryData(response.data);
                         }, function myError(response) {
@@ -79,7 +79,7 @@
                                 }
                             });
                             if (reloadRocData) {
-                                var future = imageService.loadModelROCsData($scope.modelId);
+                                var future = modelService.loadModelROCsData($scope.modelId);
                                 future.then(function mySucces(response) {
                                     updateModelROCsHistoryData(response.data);
                                     self.showToast('ROC Analysis task is completed!');

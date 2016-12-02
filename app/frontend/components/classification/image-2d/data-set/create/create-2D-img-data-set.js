@@ -194,7 +194,7 @@ angular.module('create2dImgDataset', ['ngMaterial','ngMessages', 'taskManagerSer
                             $mdDialog.cancel();
                         };
                     },
-                    templateUrl: '/frontend/components/main/dialog/file-manager.html',
+                    templateUrl: '/frontend/components/main/file-manager/file-manager.html',
                     parent: angular.element(document.body),
                     targetEvent: $event,
                     clickOutsideToClose:false

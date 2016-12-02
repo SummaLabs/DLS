@@ -8,13 +8,13 @@
                 models: '<',
                 selected:'<'
             },
-            controller: function (modelService, modelsService) {
+            controller: function (modelService) {
 
                 var self = this;
                 this.$onInit = function () {
                     self.models = [];
 
-                    modelsService.listInfo().then(
+                    modelService.listInfo().then(
                         function successCallback(response) {
                             response.data.forEach(function (model) {
                                 var info = model.info;

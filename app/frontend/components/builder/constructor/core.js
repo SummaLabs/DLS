@@ -111,7 +111,7 @@ function CoreService(layerService, appConfig) {
 
 }
 
-function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scope, $rootScope, taskManagerService, networkDataService, modelsService, coreService, appConfig, layerService) {
+function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkDataService, modelService,  appConfig, layerService) {
     var self = this;
 
     self.svgWidth = appConfig.svgDefinitions.areaWidth;
@@ -139,7 +139,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
     this.trainModel = function ($event) {
         doUpdateNetwork();
         var dataNetwork = networkDataService.getNetwork();
-        modelsService.checkNetworkFast(dataNetwork).then(
+        modelService.checkNetworkFast(dataNetwork).then(
             function successCallback(response) {
                 var ret = response.data;
                 if ((ret.length < 1) || (ret[0] != 'ok')) {
@@ -182,7 +182,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
     this.checkModelJson = function ($event) {
         doUpdateNetwork();
         var dataNetwork = networkDataService.getNetwork();
-        modelsService.checkNetworkFast(dataNetwork).then(
+        modelService.checkNetworkFast(dataNetwork).then(
             function successCallback(response) {
                 var ret = response.data;
                 var isError = true;
@@ -218,7 +218,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $location, $scop
     this.calcModelShape = function ($event) {
         doUpdateNetwork();
         var dataNetwork = networkDataService.getNetwork();
-        modelsService.calcModelShape(dataNetwork).then(
+        modelService.calcModelShape(dataNetwork).then(
             function successCallback(response) {
                 var ret = response.data;
                 var isError = true;
