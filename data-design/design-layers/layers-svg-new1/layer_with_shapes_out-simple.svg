@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   width="195.28125"
+   height="117.4375"
+   id="svg2">
+  <defs
+     id="defs4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-9.8125,6)"
+     id="g3806">
+    <rect
+       width="34.146603"
+       height="34.146599"
+       rx="17.073301"
+       ry="17.073299"
+       x="91.268997"
+       y="70.606964"
+       id="out"
+       style="fill:#55ddff;fill-opacity:1;stroke:#000000;stroke-width:4;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <rect
+       width="191.106"
+       height="95.481483"
+       rx="49.005486"
+       ry="47.740742"
+       x="11.887922"
+       y="13.876752"
+       id="rect"
+       style="fill:#ff3838;fill-opacity:1;stroke:#000000;stroke-width:4.1776557;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <text
+       x="131"
+       y="79.75"
+       id="shpout-9"
+       xml:space="preserve"
+       style="font-size:22px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><title
+         id="title3858-8-1-6">label1</title><tspan
+         x="131"
+         y="79.75"
+         id="tspan3852-1-1-9"
+         style="font-size:13px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Comic Sans MS;-inkscape-font-specification:Comic Sans MS Bold"><tspan
+           id="tspan3897-0-3"
+           style="font-size:11px"><tspan
+             id="tspan3899-3-3"
+             style="font-size:10px"><tspan
+               id="tspan4050"
+               style="font-size:6px"><tspan
+                 id="tspan4078"
+                 style="font-size:8px">[*,16,16,256] </tspan></tspan></tspan></tspan></tspan></text>
+    <rect
+       width="36.383923"
+       height="36.383923"
+       rx="18.191961"
+       ry="18.191961"
+       x="89.248962"
+       y="-3.9875774"
+       id="in"
+       style="fill:#80e5ff;fill-opacity:1;stroke:#000000;stroke-width:4;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <text
+       x="108.38355"
+       y="62.356079"
+       id="text3850"
+       xml:space="preserve"
+       style="font-size:22px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><title
+         id="title3858">label1</title><tspan
+         x="108.38355"
+         y="62.356079"
+         id="tspan3852"
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Comic Sans MS;-inkscape-font-specification:Comic Sans MS Bold">Layer name</tspan></text>
+    <text
+       x="31"
+       y="79.75"
+       id="shpin-4"
+       xml:space="preserve"
+       style="font-size:22px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><title
+         id="title3858-8-0">label1</title><tspan
+         x="31"
+         y="79.75"
+         id="tspan3852-1-3"
+         style="font-size:13px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Comic Sans MS;-inkscape-font-specification:Comic Sans MS Bold"><tspan
+           id="tspan3897-9"
+           style="font-size:11px"><tspan
+             id="tspan3899-1"
+             style="font-size:10px"><tspan
+               id="tspan4046"
+               style="font-size:8px"><tspan
+                 id="tspan4048"
+                 style="font-size:6px"><tspan
+                   id="tspan4056"
+                   style="font-size:8px"><tspan
+                     id="tspan4058"
+                     style="font-size:6px"><tspan
+                       id="tspan4064"
+                       style="font-style:italic;-inkscape-font-specification:Comic Sans MS Bold Italic"><tspan
+                         id="tspan4066"
+                         style="font-style:normal;-inkscape-font-specification:Comic Sans MS Bold"><tspan
+                           id="tspan4072"
+                           style="font-size:11px"><tspan
+                             id="tspan4074"
+                             style="font-size:10px"><tspan
+                               id="tspan4076"
+                               style="font-size:8px">[*,32,32,128] </tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></text>
+  </g>
+</svg>
