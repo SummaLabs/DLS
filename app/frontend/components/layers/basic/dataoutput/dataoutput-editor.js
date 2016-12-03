@@ -8,14 +8,14 @@ angular
             doOnSubmit: '&'
         },
         templateUrl: "frontend/components/layers/basic/dataoutput/dataoutput-editor.html",
-        controller: function ($scope, networkDataService, layerService, dbinfoService, dataoutputLayer) {
+        controller: function ($scope, networkDataService, layerService, datasetService, dataoutputLayer) {
             this.$onInit = function () {
                 setUpLayerParams($scope, networkDataService, layerService);
                 $scope.lossFunctionList = dataoutputLayer.getLossFunctions();
                 $scope.selectedDB = null;
                 $scope.datasetIdList = null;
 
-                dbinfoService.getDatasetsInfoStatList().then(
+                datasetService.getDatasetsInfoStatList().then(
                     function successCallback(response) {
                         var tinfo = response.data;
                         var tlist = [];

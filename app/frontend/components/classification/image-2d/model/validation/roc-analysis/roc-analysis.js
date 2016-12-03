@@ -105,12 +105,12 @@
                             parent: angular.element(document.body),
                             targetEvent: $event,
                             templateUrl: '/frontend/components/classification/image-2d/model/validation/roc-analysis/apply-roc-analysis.html',
-                            controller: function ($scope, dbinfoService, taskManagerService) {
+                            controller: function ($scope, datasetService, taskManagerService) {
                                 $scope.dataSets = [];
                                 $scope.device = "";
                                 $scope.dataSetSelected = "";
 
-                                var future = dbinfoService.getDatasetsInfoStatList();
+                                var future = datasetService.getDatasetsInfoStatList();
                                 future.then(function mySucces(response) {
                                     response.data.forEach(function (dataSet) {
                                         $scope.dataSets.push(dataSet);

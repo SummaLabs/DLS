@@ -14,7 +14,7 @@ angular.module('image2dPaging', ['ngMaterial', 'cl.paging'])
          paramClassIdx:     '@',
          paramClassType:    '@'
      },
-    controller: function ($scope, $http, dbinfoService) {
+    controller: function ($scope, $http, datasetService) {
         var self        = this;
         self.$onInit = function () {
             $scope.currentPage = 0;
@@ -27,7 +27,7 @@ angular.module('image2dPaging', ['ngMaterial', 'cl.paging'])
             };
             //
             self.numPerPage = 24;
-            dbinfoService.getInfoStatWithHistsAboutDB(self.paramDatabase).then(function successCallback(response) {
+            datasetService.getInfoStatWithHistsAboutDB(self.paramDatabase).then(function successCallback(response) {
                 var tdata       = response.data;
 
                 var tdataHist   = null;
@@ -85,7 +85,7 @@ angular.module('image2dPaging', ['ngMaterial', 'cl.paging'])
                 // self.currentListIdx = tmp;
                 // console.log(self.currentListIdx);
                 //
-                dbinfoService.getDatasetRangeInfo(
+                datasetService.getDatasetRangeInfo(
                     self.paramDatabase,
                     self.paramType,
                     self.paramClassIdx,

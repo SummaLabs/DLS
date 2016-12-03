@@ -8,12 +8,12 @@ angular
             doOnSubmit: '&'
         },
         templateUrl: "frontend/components/layers/data/input-data-editor.html",
-        controller: function ($scope, networkDataService, layerService, dbinfoService) {
+        controller: function ($scope, networkDataService, layerService, datasetService) {
             this.$onInit = function () {
                 $scope.selectedDB = null;
                 $scope.datasetIdList = null;
 
-                dbinfoService.getDatasetsInfoStatList().then(
+                datasetService.getDatasetsInfoStatList().then(
                     function successCallback(response) {
                         var tinfo = response.data;
                         var tlist = [];

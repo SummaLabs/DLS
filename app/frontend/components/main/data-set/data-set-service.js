@@ -2,8 +2,8 @@
  * Created by ar on 12.09.16.
  */
 
-angular.module('dbinfoService', [])
-    .service('dbinfoService', ['$http', DBInfoService]);
+angular.module('datasetService', [])
+    .service('datasetService', ['$http', DBInfoService]);
 
 function DBInfoService($http) {
     var self = this;

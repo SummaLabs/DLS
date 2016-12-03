@@ -26,10 +26,8 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'networkDataService',
     'FileManagerApp',
     'googlechart',
-    'dbinfoService',
     'settings',
     'task',
-    'modelService',
     'taskManagerService',
     'layerService'
 ]);

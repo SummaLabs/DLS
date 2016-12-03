@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('datasetMain', ['ngMaterial', 'dbinfoService', 'create2dImgDataset', 'image2dPreview'])
+angular.module('datasetMain', ['ngMaterial', 'datasetService', 'create2dImgDataset', 'image2dPreview'])
     .component('datasetMain', {
         templateUrl: '/frontend/components/main/data-set/data-set-main.html',
         bindings: {
@@ -10,11 +10,11 @@ angular.module('datasetMain', ['ngMaterial', 'dbinfoService', 'create2dImgDatase
             selectedDbId:   '@',
             currentDbInfo:  '<'
         },
-        controller: function ($scope, $rootScope, $mdDialog, $mdPanel, $timeout, $location, appConfig, dbinfoService) {
+        controller: function ($scope, $rootScope, $mdDialog, $mdPanel, $timeout, $location, appConfig, datasetService) {
             this._mdPanel = $mdPanel;
             var self = this;
             self.$onInit = function () {
-                dbinfoService.getDatasetsInfoStatList().then(
+                datasetService.getDatasetsInfoStatList().then(
                     function successCallback(response) {
                         self.datasets = response.data;
                     },
@@ -24,7 +24,7 @@ angular.module('datasetMain', ['ngMaterial', 'dbinfoService', 'create2dImgDatase
             };
             
             self.createDialogPreviewDB = function($event,dbId) {
-                dbinfoService.getInfoStatWithHistsAboutDB(dbId).then(
+                datasetService.getInfoStatWithHistsAboutDB(dbId).then(
                     function successCallback(response) {
                         self.currentDbInfo = response.data;
                         var parentEl = angular.element(document.body);
@@ -47,7 +47,7 @@ angular.module('datasetMain', ['ngMaterial', 'dbinfoService', 'create2dImgDatase
             };
 
             self.deleteDataset = function($event, dbId) {
-                dbinfoService.deleteDataset(dbId).then(
+                datasetService.deleteDataset(dbId).then(
                     function successCallback(response) {
                         self.datasets = response.data;
                         for (let a = 0;a < self.datasets.length; a++) {
@@ -130,7 +130,7 @@ angular.module('datasetMain', ['ngMaterial', 'dbinfoService', 'create2dImgDatase
         }
     });
 
-function DialogControllerPreviewDB($scope, $mdDialog, dbId, dbInfo, dbinfoService) {
+function DialogControllerPreviewDB($scope, $mdDialog, dbId, dbInfo, datasetService) {
     var self = this;
     $scope.dbid     = dbId;
     $scope.dbInfo   = dbInfo;
@@ -184,7 +184,7 @@ function DialogControllerPreviewDB($scope, $mdDialog, dbId, dbInfo, dbinfoServic
     };
 
     $scope.getMeanImage = function () {
-        dbinfoService.getImageMeanForDB().then(
+        datasetService.getImageMeanForDB().then(
             function successCallback(response) {
                 return response.data;
             },

@@ -8,14 +8,14 @@ angular
             doOnSubmit: '&'
         },
         templateUrl: "frontend/components/layers/basic/datainput/datainput-editor.html",
-        controller: function ($scope, networkDataService, layerService, dbinfoService, datainputLayer) {
+        controller: function ($scope, networkDataService, layerService, datasetService, datainputLayer) {
             this.$onInit = function () {
                 setUpLayerParams($scope, networkDataService, layerService);
                 $scope.datasetTypeList = datainputLayer.getDataTypes();
                 $scope.selectedDB = null;
                 $scope.datasetIdList = null;
 
-                dbinfoService.getDatasetsInfoStatList().then(
+                datasetService.getDatasetsInfoStatList().then(
                     function successCallback(response) {
                         var tinfo = response.data;
                         var tlist = [];

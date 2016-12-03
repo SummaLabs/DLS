@@ -12,12 +12,12 @@ angular.module('image2dPreview', ['ngMaterial', 'image2dPaging', 'cl.paging'])
         datasetType:    '@',
         listClasses:    '<'
     },
-    controller: function ($scope, $http, dbinfoService) {
+    controller: function ($scope, $http, datasetService) {
         var self = this;
         self.listClasses = [];
         self.$onInit = function () {
             self.listClasses = [];
-            dbinfoService.getInfoStatWithHistsAboutDB(self.databaseId).then(
+            datasetService.getInfoStatWithHistsAboutDB(self.databaseId).then(
                 function successCallback(response) {
                     var tdataHist   = response.data.hist.histTrain;
                     var numAll      = response.data.info.numTrain;
