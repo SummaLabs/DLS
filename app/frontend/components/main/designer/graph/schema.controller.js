@@ -51,7 +51,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 	};
 
     let svgElement = $element[0].querySelector('#svg');
-    let progressElement = $element[0].querySelector('#constructor-progress');
+    let progressElement = $element[0].querySelector('#designer-progress');
 
 	$scope.controlItem.viewportPos = function(x, y) {
 		if (isNaN(x)  || isNaN(y))
@@ -143,8 +143,6 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
 
     var initProgress = function() {
-        // let progress = document.getElementById('constructor-progress');
-        // let cur_progress = progress.firstElementChild;
 
         let active = false;
         return function(val, max) {

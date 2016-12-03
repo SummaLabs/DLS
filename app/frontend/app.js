@@ -2,7 +2,7 @@
 
 angular.module('dlsApp', ['ngMaterial', "ui.router",
 
-    'constructorCore',
+    'designerCore',
     'networkMain',
     'modelMain',
     // Layers
@@ -28,7 +28,6 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'googlechart',
     'settings',
     'task',
-    'taskManagerService',
     'layerService'
 ]);
 
@@ -70,7 +69,7 @@ angular.module('dlsApp')
             }
         }).state('designer', {
             url: "/designer",
-            template: "<constructor  style='height:100%;'></constructor>",
+            template: "<designer  style='height:100%;'></designer>",
             controller: function ($rootScope) {
                 $rootScope.tabIndex = 1;
             }

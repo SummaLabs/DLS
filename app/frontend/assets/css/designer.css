@@ -70,14 +70,14 @@
     width: 300px;
 }
 
-.constructor {
+.designer {
 	height:100%;
 	max-width: 100%;
     position: relative;
 }
 
 
-.constructor div:last-child {
+.designer div:last-child {
 	max-width: 100%;
     height: calc(100% - 4px);
 }
@@ -89,20 +89,8 @@
     border: 2px solid darkgray;
 }
 
-/*#constructor-progress {*/
-    /*position: relative;*/
-	/*height: 4px;*/
-    /*background: lightgray;*/
-/*}*/
 
-/*#constructor-progress div:first-child {*/
-    /*position: relative;*/
-	/*height: 4px;*/
-    /*width: 0%;*/
-    /*background: dodgerblue;*/
-/*}*/
-
-#constructor-progress {
+#designer-progress {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -127,7 +115,7 @@
     width:50px;
 }
 
-#constructor-network-name {
+#designer-network-name {
     position: absolute;
     margin-left: 5px;
     left: 50%;
@@ -138,29 +126,29 @@
     font-style: italic;
     ext-transform: uppercase;
 }
-#constructor-network-name span {
+#designer-network-name span {
     position: relative;
     left: -50%;
 }
 
-#constructor-info-panel-toggle {
+#designer-info-panel-toggle {
     position: absolute;
     top: 0px;
     right: 0px;
 }
 
-#constructor-info-panel-toggle md-icon {
+#designer-info-panel-toggle md-icon {
     font-size: 38px;
 }
 
-#constructor-tools {
+#designer-tools {
     position: absolute;
     bottom: 0px;
     height:60px;
     width:260px;
     opacity: 0.7;
 }
-#constructor-tools md-icon {
+#designer-tools md-icon {
     font-size: 35px;
 }
 

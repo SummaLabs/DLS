@@ -1,15 +1,12 @@
-<div class="constructor">
-    <!--<div id="constructor-progress1">-->
-        <!--<div></div>-->
-    <!--</div>-->
+<div class="designer">
     <div layout="row" class="unselectable">
         <palette style="overflow: auto;"></palette>
         <div flex layout="column" style="height:100%;">
             <div id="workspace" tabindex="1">
-                <div id="constructor-network-name">
+                <div id="designer-network-name">
                     <span>{{networkName}}</span>
                 </div>
-                <div id="constructor-info-panel-toggle">
+                <div id="designer-info-panel-toggle">
                     <md-button ng-click="toggleRight()" class="md-icon-button" aria-label="More">
                         <md-icon md-font-library="material-icons" class="md-18" aria-label="reset">{{toggleIcon}}</md-icon>
                     </md-button>
@@ -19,7 +16,7 @@
                            focusable="false"></svg-graph>
 
                 <viewport svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}"></viewport>
-                <div id="constructor-tools">
+                <div id="designer">
                     <md-button ng-click="$ctrl.zoomOut($event)" class="md-icon-button" aria-label="More">
                         <md-icon md-font-library="material-icons" aria-label="zoom_out">zoom_out</md-icon>
                     </md-button>

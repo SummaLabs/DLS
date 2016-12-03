@@ -5,7 +5,7 @@ angular.module('palette')
 			scope: {
 				section: '='
 			},
-			templateUrl: 'frontend/components/builder/constructor/palette/layersPanel.html',
+			templateUrl: '/frontend/components/main/designer/palette/layers-panel.html',
 			link: function($scope, $element) {
 				var state = false;
 

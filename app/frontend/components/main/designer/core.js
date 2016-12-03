@@ -1,21 +1,21 @@
 'use strict';
 
 
-angular.module('constructorCore', [
+angular.module('designerCore', [
     'palette',
     'graph',
     'trainingParams'
 ]);
 
 var editorDefinition = {
-    templateUrl: 'frontend/components/builder/constructor/core.html',
+    templateUrl: '/frontend/components/main/designer/core.html',
     controller: ConstructorController,
     replace: true,
     bindings: {}
 };
 
-angular.module('constructorCore')
-    .component('constructor', editorDefinition)
+angular.module('designerCore')
+    .component('designer', editorDefinition)
     .service('coreService', CoreService);
 
 

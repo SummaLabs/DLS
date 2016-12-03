@@ -1,5 +1,5 @@
 
-angular.module('constructorCore')
+angular.module('designerCore')
 	.directive('viewport', ['coreService', function(coreService) {
         return {
             restrict: 'E',

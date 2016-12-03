@@ -5,7 +5,7 @@ angular.module('palette', [
 ]);
 
 var paletteDefinition = {
-	templateUrl: 'frontend/components/builder/constructor/palette/palette.html',
+	templateUrl: '/frontend/components/main/designer/palette/palette.html',
 	controller: PaletteController,
 	controllerAs: 'palette',
 	bindings: {
