@@ -142,7 +142,7 @@ if __name__ == '__main__':
 
     foutModelConfig = 'model_config.json'
     with open(foutModelConfig, 'w') as f:
-    	f.write(strJson)
+        f.write(strJson)
     fimgModel = 'model.jpg'
     kplot(model, fimgModel, show_shapes=True)
     plt.imshow(skio.imread(fimgModel))

@@ -12,6 +12,12 @@ import skimage.io as io
 import matplotlib.pyplot as plt
 from keras.utils.visualize_util import plot as kplot
 
+from keras.layers import Layer, \
+    Convolution1D, Convolution2D, Convolution3D, \
+    MaxPooling1D, MaxPooling2D, MaxPooling3D, \
+    AveragePooling1D, AveragePooling2D, AveragePooling3D, \
+    InputLayer, Activation, Flatten, Merge, Dense
+
 ####################################
 # values: (is Available, is Correct but currently not available)
 dictAvailableConnectionsFromTo = {
@@ -265,6 +271,57 @@ class NodeF:
         return self.toString()
     def __repr__(self):
         return self.toString()
+    def getConfig(self):
+        tmpLayerCfg = Layer().get_config()
+        tmpLayerCfg['name'] = self.getName()
+        return {
+            'class_name': 'Layer',
+            'name': self.getName(),
+            'config': tmpLayerCfg
+        }
+    def getInboundNodesCfg(self):
+        ret = []
+        for nn in self.inpNode:
+            ret.append([
+                nn.getName(),
+                0,
+                0
+            ])
+        return ret
+
+####################################
+class NodeDataInput(NodeF):
+    def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
+        NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
+    def getConfig(self):
+        #FIXME: setup input shape from Dataset Info
+        tmpLayerCfg = InputLayer(input_shape=(3,128,128)).get_config()
+        tmpLayerCfg['name'] = self.getName()
+        tmp = {
+            'class_name': 'InputLayer',
+            'name': self.getName(),
+            'config': tmpLayerCfg,
+            'inbound_nodes': self.getInboundNodesCfg()
+        }
+        return tmp
+
+class NodeConvolution1D(NodeF):
+    def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
+        NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
+    def getConfig(self):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayerCfg = Convolution1D(nb_filter=tmpCfg['filtersCount'],
+                                    filter_length=tmpCfg['filterWidth'],
+                                    activation=tmpCfg['activationFunction'],
+                                    trainable=tmpCfg['isTrainable']).get_config()
+        tmpLayerCfg['name'] = self.getName()
+        tmp = {
+            'class_name': 'InputLayer',
+            'name': self.getName(),
+            'config': tmpLayerCfg,
+            'inbound_nodes': self.getInboundNodesCfg()
+        }
+        return tmp
 
 ####################################
 def checkPreviousConnection(pNode):
