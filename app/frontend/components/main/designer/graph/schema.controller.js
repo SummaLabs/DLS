@@ -25,7 +25,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
     var self = this;
     var viewX = 0;
     var viewY = 0;
-    var schema = new Schema();
+    var schema = new Schema(self, 10);
 
     self.$onInit = function() {
         self.counterNodesInit = 0;
@@ -37,8 +37,6 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         viewBox(viewX, viewY, divSvg.offsetWidth, divSvg.offsetHeight);
 
         self.mouseMode = state.DEFAULT;
-        self.links = schema.getLinks();
-        self.nodes = schema.getNodes();
 
         self.activelink = {
             nodes: []
@@ -208,6 +206,13 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         $scope.$broadcast('node:set_shapes_' + nodeId, {shapes: shapes, type: type});
     };
 
+    $scope.controlItem.undo = function() {
+        schema.undo();
+    };
+    $scope.controlItem.redo = function() {
+        schema.redo();
+    };
+
     function addNode(name, layerType, category, template, pos) {
         var node = schema.addNode(name, layerType, category, template);
         if (!node)
@@ -215,6 +220,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
         node.position(pos.x, pos.y, appConfig.svgDefinitions.gridStep);
         self.emitEvent(events.ADD_NODE, node);
+
+        console.log(self.nodes);
         return true;
     }
 
@@ -368,8 +375,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
 			    // if (!self.isItemClicked) {
                     $scope.$apply( function() {
-                        selectItems (self.nodes, false);
-                        selectItems (self.links, false);
+                        selectItems (schema.getNodes(), false);
+                        selectItems (schema.getLinks(), false);
                     });
                     activeItem.isActive = false;
                     activeItem = -1;

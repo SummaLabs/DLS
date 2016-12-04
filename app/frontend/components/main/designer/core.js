@@ -427,6 +427,15 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
             event.stopPropagation();
         });
 
+        $scope.toggleUndo = function () {
+            self.svgControl.undo();
+        };
+
+        $scope.toggleRedo = function () {
+            self.svgControl.redo();
+        };
+
+
         $scope.toggleIcon = 'keyboard_tab';
         $scope.toggleLeft = buildToggler('left');
         $scope.toggleRight = buildToggler('right');
