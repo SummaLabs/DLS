@@ -12,6 +12,8 @@ import skimage.io as skio
 import matplotlib.pyplot as plt
 from keras.utils.visualize_util import plot as kplot
 
+import toposort
+
 import keras
 from keras.layers import Layer, \
     Convolution1D, Convolution2D, Convolution3D, \
@@ -324,7 +326,7 @@ class NodeDataInput(NodeF):
         NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
     def getConfig(self):
         #FIXME: setup input shape from Dataset Info
-        tmpLayerCfg = InputLayer(input_shape=(3,128,128)).get_config()
+        tmpLayerCfg = InputLayer(input_shape=(3,256,256)).get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
             'class_name': self.nodeClass,
@@ -509,7 +511,7 @@ class NodeMerge(NodeF):
     def getConfig(self):
         tmpCfg = self.jsonCfg['params']
         tmpLayerCfg = Merge(mode=tmpCfg['mergeType'],
-                            concat_axis=tmpCfg['mergeAxis']).get_config()
+                            concat_axis=int(tmpCfg['mergeAxis'])).get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
             'class_name': self.nodeClass,
@@ -553,6 +555,7 @@ class DLSDesignerFlowsParserV2:
     configFlowRaw    = None
     configFlow       = None
     configFlowLinked = None
+    configFlowLinkedSorted = None
     supportedNodes   = dictRequiredFields.keys()
     reqiredNodes     = ['datainput', 'dataoutput']
     def __init__(self, jsonFlow):
@@ -710,6 +713,20 @@ class DLSDesignerFlowsParserV2:
         self.checkIsOk()
         if self.configFlowLinked is None:
             raise Exception('Node-linked Flow is not prepared, please call ::buildConnectedFlow() before!')
+        # (0) Prepare topological sorted model flow
+        tmpIdxDict = {}
+        for ii,ll in enumerate(self.configFlowLinked):
+            tmpIdxDict[ll] = ii
+        tmpTopoDict = {}
+        for ii, ll in enumerate(self.configFlowLinked):
+            tmpIdxSet = set({})
+            if ll.outNode is not None:
+                for kk in ll.outNode:
+                    tmpIdxSet.add(tmpIdxDict[kk])
+            tmpTopoDict[ii] = tmpIdxSet
+        # sortedFlowIdx  = list(toposort.toposort(tmpTopoDict))[::-1]
+        sortedFlowIdx = list(toposort.toposort_flatten(tmpTopoDict))[::-1]
+        self.configFlowLinkedSorted = [self.configFlowLinked[idx] for idx in sortedFlowIdx]
         #FIXME: this is a temporary solution
         tmpExcludeNodes={'dataoutput'}
         # (1) Basic model json-template
@@ -725,7 +742,7 @@ class DLSDesignerFlowsParserV2:
         }
         # (2) Generate layers configs
         tmpLayersCfg = []
-        for ii,nn in enumerate(self.configFlowLinked):
+        for ii,nn in enumerate(self.configFlowLinkedSorted):
             if nn.type() in tmpExcludeNodes:
                 continue
             tmpCfg = nn.getConfig()
@@ -746,7 +763,7 @@ class DLSDesignerFlowsParserV2:
         modelTemplate['config']['layers'] = tmpLayersCfg
         # (3) Generate input model info
         tmpInputLayers = []
-        for ii, nn in enumerate(self.configFlowLinked):
+        for ii, nn in enumerate(self.configFlowLinkedSorted):
             if isinstance(nn, NodeDataInput):
                 tmpInputLayers.append([
                     nn.getName(),
@@ -755,7 +772,7 @@ class DLSDesignerFlowsParserV2:
                 ])
         # (4) Generate output model info
         tmpOutputLayers = []
-        for ii, nn in enumerate(self.configFlowLinked):
+        for ii, nn in enumerate(self.configFlowLinkedSorted):
             if nn.type() == 'dataoutput':
                 tmpOutputLayers.append([
                     nn.inpNode[0].getName(),
@@ -808,14 +825,20 @@ if __name__ == '__main__':
     fnFlowJson = '../../../data-test/test-models-json/testnet_multi_input_multi_output_v1.json'
     flowParser = DLSDesignerFlowsParserV2(fnFlowJson)
     flowParser.cleanAndValidate()
+    # (1) Build connected and validated Model Node-flow (DLS-model-representation)
     flowParser.buildConnectedFlow()
+    # (2) Generate dict-based Json Kearas model (from DLS model representation)
     modelJson = flowParser.generateModelKerasConfigJson()
+    # (3) Export generated json model to file
     with open(foutJson, 'w') as f:
         f.write(json.dumps(modelJson, indent=4))
+    # (4) Try to load generated Keras model from json-file
     with open(foutJson, 'r') as f:
         model = keras.models.model_from_json(f.read())
+    # (5) Visualize & summary of the model: check connections!
     fimgModel = '%s-figure.jpg' % foutJson
     kplot(model, fimgModel, show_shapes=True)
     plt.imshow(skio.imread(fimgModel))
+    plt.grid(True)
     plt.show()
     model.summary()
