@@ -8,10 +8,13 @@ from compiler.ast import flatten
 
 import warnings as warn
 
-import skimage.io as io
+import skimage.io as skio
 import matplotlib.pyplot as plt
 from keras.utils.visualize_util import plot as kplot
 
+import toposort
+
+import keras
 from keras.layers import Layer, \
     Convolution1D, Convolution2D, Convolution3D, \
     MaxPooling1D, MaxPooling2D, MaxPooling3D, \
@@ -224,10 +227,34 @@ class NodeFBuilder:
             raise Exception('Unknown node type [%s]' % strType)
         self.nodeTypeCounter[strType]+=1
         strNodeName = '%s_%d' % (strType, self.nodeTypeCounter[strType])
-        return NodeF(jsonNode, goodName=strNodeName)
+        if strType=='datainput':
+            return NodeDataInput(jsonNode, goodName=strNodeName)
+        elif strType=='convolution1d':
+            return NodeConvolution1D(jsonNode, goodName=strNodeName)
+        elif strType == 'convolution2d':
+            return NodeConvolution2D(jsonNode, goodName=strNodeName)
+        elif strType == 'convolution3d':
+            return NodeConvolution3D(jsonNode, goodName=strNodeName)
+        elif strType == 'pooling1d':
+            return NodePooling1D(jsonNode, goodName=strNodeName)
+        elif strType == 'pooling2d':
+            return NodePooling2D(jsonNode, goodName=strNodeName)
+        elif strType == 'pooling3d':
+            return NodePooling3D(jsonNode, goodName=strNodeName)
+        elif strType == 'flatten':
+            return NodeFlatten(jsonNode, goodName=strNodeName)
+        elif strType == 'activation':
+            return NodeActivation(jsonNode, goodName=strNodeName)
+        elif strType == 'merge':
+            return NodeMerge(jsonNode, goodName=strNodeName)
+        elif strType == 'dense':
+            return NodeDense(jsonNode, goodName=strNodeName)
+        else:
+            return NodeF(jsonNode, goodName=strNodeName)
 
 ####################################
 class NodeF:
+    nodeClass = 'Layer'
     goodName = None
     inpNode = None
     outNode = None
@@ -246,6 +273,8 @@ class NodeF:
                 return self.goodName
         else:
             return 'Unknown-Type'
+    def type(self):
+        return self.jsonCfg['layerType']
     def toString(self):
         strInp = 'NULL'
         if self.inpNode is not None:
@@ -281,24 +310,26 @@ class NodeF:
         }
     def getInboundNodesCfg(self):
         ret = []
-        for nn in self.inpNode:
-            ret.append([
-                nn.getName(),
-                0,
-                0
-            ])
+        if self.inpNode is not None:
+            for nn in self.inpNode:
+                ret.append([
+                    nn.getName(),
+                    0,
+                    0
+                ])
         return ret
 
 ####################################
 class NodeDataInput(NodeF):
+    nodeClass = 'InputLayer'
     def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
         NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
     def getConfig(self):
         #FIXME: setup input shape from Dataset Info
-        tmpLayerCfg = InputLayer(input_shape=(3,128,128)).get_config()
+        tmpLayerCfg = InputLayer(input_shape=(3,256,256)).get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
-            'class_name': 'InputLayer',
+            'class_name': self.nodeClass,
             'name': self.getName(),
             'config': tmpLayerCfg,
             'inbound_nodes': self.getInboundNodesCfg()
@@ -306,6 +337,7 @@ class NodeDataInput(NodeF):
         return tmp
 
 class NodeConvolution1D(NodeF):
+    nodeClass = 'Convolution1D'
     def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
         NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
     def getConfig(self):
@@ -316,7 +348,191 @@ class NodeConvolution1D(NodeF):
                                     trainable=tmpCfg['isTrainable']).get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
-            'class_name': 'InputLayer',
+            'class_name': self.nodeClass,
+            'name': self.getName(),
+            'config': tmpLayerCfg,
+            'inbound_nodes': self.getInboundNodesCfg()
+        }
+        return tmp
+
+class NodeConvolution2D(NodeF):
+    nodeClass = 'Convolution2D'
+    def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
+        NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
+    def getConfig(self):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayerCfg = Convolution2D(nb_filter=tmpCfg['filtersCount'],
+                                    nb_col=tmpCfg['filterWidth'],
+                                    nb_row=tmpCfg['filterHeight'],
+                                    activation=tmpCfg['activationFunction'],
+                                    trainable=tmpCfg['isTrainable']).get_config()
+        tmpLayerCfg['name'] = self.getName()
+        tmp = {
+            'class_name': self.nodeClass,
+            'name': self.getName(),
+            'config': tmpLayerCfg,
+            'inbound_nodes': self.getInboundNodesCfg()
+        }
+        return tmp
+
+class NodeConvolution3D(NodeF):
+    nodeClass = 'Convolution3D'
+    def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
+        NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
+    def getConfig(self):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayerCfg = Convolution3D(nb_filter=tmpCfg['filtersCount'],
+                                    kernel_dim1=tmpCfg['filterWidth'],
+                                    kernel_dim2=tmpCfg['filterHeight'],
+                                    kernel_dim3=tmpCfg['filterDepth'],
+                                    activation=tmpCfg['activationFunction'],
+                                    trainable=tmpCfg['isTrainable']).get_config()
+        tmpLayerCfg['name'] = self.getName()
+        tmp = {
+            'class_name': self.nodeClass,
+            'name': self.getName(),
+            'config': tmpLayerCfg,
+            'inbound_nodes': self.getInboundNodesCfg()
+        }
+        return tmp
+
+class NodePooling1D(NodeF):
+    nodeClass = 'MaxPooling1D'
+    def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
+        NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
+        if self.jsonCfg['subsamplingType'] == 'max_pooling':
+            self.nodeClass = 'MaxPooling1D'
+        else:
+            self.nodeClass = 'AveragePooling1D'
+    def getConfig(self):
+        tmpCfg = self.jsonCfg['params']
+        if self.nodeClass=='MaxPooling1D':
+            tmpLayerCfg = MaxPooling1D(pool_length=tmpCfg['subsamplingSizeWidth']).get_config()
+        else:
+            tmpLayerCfg = AveragePooling1D(pool_length=tmpCfg['subsamplingSizeWidth']).get_config()
+        tmpLayerCfg['name'] = self.getName()
+        tmp = {
+            'class_name': self.nodeClass,
+            'name': self.getName(),
+            'config': tmpLayerCfg,
+            'inbound_nodes': self.getInboundNodesCfg()
+        }
+        return tmp
+
+class NodePooling2D(NodeF):
+    nodeClass = 'MaxPooling2D'
+    def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
+        NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
+        if self.jsonParams['subsamplingType'] == 'max_pooling':
+            self.nodeClass = 'MaxPooling2D'
+        else:
+            self.nodeClass = 'AveragePooling2D'
+    def getConfig(self):
+        tmpCfg = self.jsonCfg['params']
+        if self.nodeClass == 'MaxPooling2D':
+            tmpLayerCfg = MaxPooling2D(
+                pool_size=(tmpCfg['subsamplingSizeWidth'], tmpCfg['subsamplingSizeHeight'])).get_config()
+        else:
+            tmpLayerCfg = AveragePooling2D(
+                pool_size=(tmpCfg['subsamplingSizeWidth'], tmpCfg['subsamplingSizeHeight'])).get_config()
+        tmpLayerCfg['name'] = self.getName()
+        tmp = {
+            'class_name': self.nodeClass,
+            'name': self.getName(),
+            'config': tmpLayerCfg,
+            'inbound_nodes': self.getInboundNodesCfg()
+        }
+        return tmp
+
+class NodePooling3D(NodeF):
+    nodeClass = 'MaxPooling3D'
+    def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
+        NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
+        if self.jsonCfg['subsamplingType'] == 'max_pooling':
+            self.nodeClass = 'MaxPooling3D'
+        else:
+            self.nodeClass = 'AveragePooling3D'
+    def getConfig(self):
+        tmpCfg = self.jsonCfg['params']
+        if self.nodeClass == 'MaxPooling3D':
+            tmpLayerCfg = MaxPooling3D(
+                pool_size=(tmpCfg['subsamplingSizeWidth'],
+                           tmpCfg['subsamplingSizeHeight'],
+                           tmpCfg['subsamplingSizeDepth'])).get_config()
+        else:
+            tmpLayerCfg = AveragePooling3D(
+                pool_size=(tmpCfg['subsamplingSizeWidth'],
+                           tmpCfg['subsamplingSizeHeight'],
+                           tmpCfg['subsamplingSizeDepth'])).get_config()
+        tmpLayerCfg['name'] = self.getName()
+        tmp = {
+            'class_name': self.nodeClass,
+            'name': self.getName(),
+            'config': tmpLayerCfg,
+            'inbound_nodes': self.getInboundNodesCfg()
+        }
+        return tmp
+
+class NodeActivation(NodeF):
+    nodeClass = 'Activation'
+    def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
+        NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
+    def getConfig(self):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayerCfg = Activation(activation=tmpCfg['activationFunction']).get_config()
+        tmpLayerCfg['name'] = self.getName()
+        tmp = {
+            'class_name': self.nodeClass,
+            'name': self.getName(),
+            'config': tmpLayerCfg,
+            'inbound_nodes': self.getInboundNodesCfg()
+        }
+        return tmp
+
+class NodeFlatten(NodeF):
+    nodeClass = 'Flatten'
+    def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
+        NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
+    def getConfig(self):
+        tmpLayerCfg = Flatten().get_config()
+        tmpLayerCfg['name'] = self.getName()
+        tmp = {
+            'class_name': self.nodeClass,
+            'name': self.getName(),
+            'config': tmpLayerCfg,
+            'inbound_nodes': self.getInboundNodesCfg()
+        }
+        return tmp
+
+class NodeMerge(NodeF):
+    nodeClass = 'Merge'
+    def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
+        NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
+    def getConfig(self):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayerCfg = Merge(mode=tmpCfg['mergeType'],
+                            concat_axis=int(tmpCfg['mergeAxis'])).get_config()
+        tmpLayerCfg['name'] = self.getName()
+        tmp = {
+            'class_name': self.nodeClass,
+            'name': self.getName(),
+            'config': tmpLayerCfg,
+            'inbound_nodes': self.getInboundNodesCfg()
+        }
+        return tmp
+
+class NodeDense(NodeF):
+    nodeClass = 'Dense'
+    def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
+        NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
+    def getConfig(self):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayerCfg = Dense(output_dim=tmpCfg['neuronsCount'],
+                            activation=tmpCfg['activationFunction'],
+                            trainable=tmpCfg['isTrainable']).get_config()
+        tmpLayerCfg['name'] = self.getName()
+        tmp = {
+            'class_name': self.nodeClass,
             'name': self.getName(),
             'config': tmpLayerCfg,
             'inbound_nodes': self.getInboundNodesCfg()
@@ -336,10 +552,12 @@ def checkPreviousConnection(pNode):
 
 ####################################
 class DLSDesignerFlowsParserV2:
-    configFlowRaw   = None
-    configFlow      = None
-    supportedNodes  = dictRequiredFields.keys()
-    reqiredNodes    = ['datainput', 'dataoutput']
+    configFlowRaw    = None
+    configFlow       = None
+    configFlowLinked = None
+    configFlowLinkedSorted = None
+    supportedNodes   = dictRequiredFields.keys()
+    reqiredNodes     = ['datainput', 'dataoutput']
     def __init__(self, jsonFlow):
         if isinstance(jsonFlow, basestring):
             with open(jsonFlow, 'r') as f:
@@ -349,8 +567,9 @@ class DLSDesignerFlowsParserV2:
         else:
             raise Exception('Unknown type for Model flow [%s]' % type(jsonFlow))
     def clear(self):
-        self.configFlow     = None
-        self.configFlowRaw  = None
+        self.configFlow       = None
+        self.configFlowRaw    = None
+        self.configFlowLinked = None
     def isOk(self):
         return (self.configFlowRaw is not None)
     def checkIsOk(self):
@@ -453,6 +672,8 @@ class DLSDesignerFlowsParserV2:
         return lstFlowNodes
     def getConnectedFlow(self, isCheckConnections=True):
         return self.getConnectedList(self.configFlow, isCheckConnections)
+    def buildConnectedFlow(self, isCheckConnections=True):
+        self.configFlowLinked = self.getConnectedFlow(isCheckConnections=isCheckConnections)
     def cleanAndValidate(self):
         self.checkIsOk()
         # numTabs = self.countNodeType(self.configFlowRaw, 'tab')
@@ -488,6 +709,79 @@ class DLSDesignerFlowsParserV2:
     def exportConfigFlow(self, fout):
         self.checkIsOk()
         self.exportConfig2Json(self.configFlow, fout=fout)
+    def generateModelKerasConfigJson(self, modelName='model_1'):
+        self.checkIsOk()
+        if self.configFlowLinked is None:
+            raise Exception('Node-linked Flow is not prepared, please call ::buildConnectedFlow() before!')
+        # (0) Prepare topological sorted model flow
+        tmpIdxDict = {}
+        for ii,ll in enumerate(self.configFlowLinked):
+            tmpIdxDict[ll] = ii
+        tmpTopoDict = {}
+        for ii, ll in enumerate(self.configFlowLinked):
+            tmpIdxSet = set({})
+            if ll.outNode is not None:
+                for kk in ll.outNode:
+                    tmpIdxSet.add(tmpIdxDict[kk])
+            tmpTopoDict[ii] = tmpIdxSet
+        # sortedFlowIdx  = list(toposort.toposort(tmpTopoDict))[::-1]
+        sortedFlowIdx = list(toposort.toposort_flatten(tmpTopoDict))[::-1]
+        self.configFlowLinkedSorted = [self.configFlowLinked[idx] for idx in sortedFlowIdx]
+        #FIXME: this is a temporary solution
+        tmpExcludeNodes={'dataoutput'}
+        # (1) Basic model json-template
+        modelTemplate = {
+            "class_name":   "Model",
+            "keras_version": keras.__version__,
+            "config": {
+                "name": "%s" % modelName,
+                "layers" : [],
+                "input_layers": [],
+                "output_layers": [],
+            }
+        }
+        # (2) Generate layers configs
+        tmpLayersCfg = []
+        for ii,nn in enumerate(self.configFlowLinkedSorted):
+            if nn.type() in tmpExcludeNodes:
+                continue
+            tmpCfg = nn.getConfig()
+            inboundNodes = []
+            if nn.inpNode is not None:
+                for kk in nn.inpNode:
+                    if kk.type() not in tmpExcludeNodes:
+                        inboundNodes.append([
+                            kk.getName(),
+                            0,
+                            0
+                        ])
+            if len(inboundNodes)>0:
+                tmpCfg['inbound_nodes'] = [inboundNodes]
+            else:
+                tmpCfg['inbound_nodes'] = []
+            tmpLayersCfg.append(tmpCfg)
+        modelTemplate['config']['layers'] = tmpLayersCfg
+        # (3) Generate input model info
+        tmpInputLayers = []
+        for ii, nn in enumerate(self.configFlowLinkedSorted):
+            if isinstance(nn, NodeDataInput):
+                tmpInputLayers.append([
+                    nn.getName(),
+                    0,
+                    0
+                ])
+        # (4) Generate output model info
+        tmpOutputLayers = []
+        for ii, nn in enumerate(self.configFlowLinkedSorted):
+            if nn.type() == 'dataoutput':
+                tmpOutputLayers.append([
+                    nn.inpNode[0].getName(),
+                    0,
+                    0
+                ])
+        modelTemplate['config']['input_layers'] = tmpInputLayers
+        modelTemplate['config']['output_layers'] = tmpOutputLayers
+        return modelTemplate
 
 ####################################
 class Test:
@@ -513,8 +807,7 @@ class Test:
             Test.tmpDict[parStr]  = 1
         return ret
 
-####################################
-if __name__ == '__main__':
+def test_Test():
     t1 = Test.newTest('new1')
     t2 = Test.newTest('new2')
     t3 = Test.newTest('new1')
@@ -524,9 +817,28 @@ if __name__ == '__main__':
     print (t3)
     print (t4)
     Test.printTest()
+
+
+####################################
+if __name__ == '__main__':
+    foutJson = 'keras-model-generated.json'
     fnFlowJson = '../../../data-test/test-models-json/testnet_multi_input_multi_output_v1.json'
     flowParser = DLSDesignerFlowsParserV2(fnFlowJson)
     flowParser.cleanAndValidate()
-    tmpFlow = flowParser.getConnectedFlow()
-    print (tmpFlow)
-
+    # (1) Build connected and validated Model Node-flow (DLS-model-representation)
+    flowParser.buildConnectedFlow()
+    # (2) Generate dict-based Json Kearas model (from DLS model representation)
+    modelJson = flowParser.generateModelKerasConfigJson()
+    # (3) Export generated json model to file
+    with open(foutJson, 'w') as f:
+        f.write(json.dumps(modelJson, indent=4))
+    # (4) Try to load generated Keras model from json-file
+    with open(foutJson, 'r') as f:
+        model = keras.models.model_from_json(f.read())
+    # (5) Visualize & summary of the model: check connections!
+    fimgModel = '%s-figure.jpg' % foutJson
+    kplot(model, fimgModel, show_shapes=True)
+    plt.imshow(skio.imread(fimgModel))
+    plt.grid(True)
+    plt.show()
+    model.summary()

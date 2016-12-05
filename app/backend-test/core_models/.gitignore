@@ -1,1 +1,5 @@
 /logs/
+/keras-model-generated.json
+/keras-model-generated-db.json
+/keras-model-generated-db.json-figure.jpg
+/keras-model-generated.json-figure.jpg
