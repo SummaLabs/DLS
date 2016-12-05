@@ -802,42 +802,6 @@ class DLSDesignerFlowsParserV2:
         return modelTemplate
 
 ####################################
-class Test:
-    tmpDict={}
-    tstr = ''
-    def __init__(self, parStr):
-        self.tstr = parStr
-    def toString(self):
-        return 'Test(%s)' % self.tstr
-    def __str__(self):
-        return self.toString()
-    def __repr__(self):
-        return self.toString()
-    @staticmethod
-    def printTest():
-        print (Test.tmpDict)
-    @staticmethod
-    def newTest(parStr):
-        ret = Test(parStr=parStr)
-        if parStr in Test.tmpDict.keys():
-            Test.tmpDict[parStr] += 1
-        else:
-            Test.tmpDict[parStr]  = 1
-        return ret
-
-def test_Test():
-    t1 = Test.newTest('new1')
-    t2 = Test.newTest('new2')
-    t3 = Test.newTest('new1')
-    t4 = Test.newTest('new1')
-    print (t1)
-    print (t2)
-    print (t3)
-    print (t4)
-    Test.printTest()
-
-
-####################################
 if __name__ == '__main__':
     dirData = dlsutils.getPathForDatasetDir()
     dbWatcher = DatasetsWatcher(dirData)
