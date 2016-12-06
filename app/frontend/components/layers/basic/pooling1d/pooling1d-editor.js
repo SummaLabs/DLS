@@ -5,31 +5,28 @@ angular
 .directive('pooling1dEditor', function () {
     return {
         scope: {
-            layerId: '@',
-            doOnSubmit: '&'
+            layerId: '@'
         },
         templateUrl: "frontend/components/layers/basic/pooling1d/pooling1d-editor.html",
         controller: function ($scope, networkDataService, pooling1dLayer) {
             this.$onInit = function () {
-                setUpLayerParams($scope, networkDataService);
+                setUpLayerParams(networkDataService.getLayerById($scope.layerId).params);
                 $scope.subsamplingTypeList = pooling1dLayer.getSubSamplingTypes();
+                
 
-                $scope.onSubmit = function () {
+                $scope.$watch('params', function (params) {
                     var layer = networkDataService.getLayerById($scope.layerId);
-                    editLayer(layer);
-                    networkDataService.pubNetworkUpdateEvent();
-                    $scope.doOnSubmit();
-                };
+                    updateLayer(layer, params);
+                }, true);
 
-                function editLayer(layer) {
-                    layer.params.subsamplingType = $scope.subsamplingType;
-                    layer.params.subsamplingSizeWidth = $scope.subsamplingSizeWidth;
+                function updateLayer(layer, params) {
+                    layer.params.subsamplingType = params.subsamplingType;
+                    layer.params.subsamplingSizeWidth = params.subsamplingSizeWidth;
                 }
 
-                function setUpLayerParams($scope, networkDataService) {
-                    var layerParams = networkDataService.getLayerById($scope.layerId).params;
-                    $scope.subsamplingType = layerParams.subsamplingType;
-                    $scope.subsamplingSizeWidth = layerParams.subsamplingSizeWidth;
+                function setUpLayerParams(params) {
+                    $scope.params.subsamplingType = params.subsamplingType;
+                    $scope.params.subsamplingSizeWidth = params.subsamplingSizeWidth;
                 }
             }
         }

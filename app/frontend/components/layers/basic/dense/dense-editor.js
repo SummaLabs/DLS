@@ -5,33 +5,30 @@ angular
 .directive('denseEditor', function () {
     return {
         scope: {
-            layerId: '@',
-            doOnSubmit: '&'
+            layerId: '@'
         },
         templateUrl: "frontend/components/layers/basic/dense/dense-editor.html",
         controller: function ($scope, networkDataService, denseLayer) {
             this.$onInit = function () {
-                setUpLayerParams($scope, networkDataService);
+                setUpLayerParams(networkDataService.getLayerById($scope.layerId).params);
                 $scope.activationFunctionList = denseLayer.getActivationFunctions();
 
-                $scope.onSubmit = function () {
-                    var layer = networkDataService.getLayerById($scope.layerId);
-                    editLayer(layer);
-                    networkDataService.pubNetworkUpdateEvent();
-                    $scope.doOnSubmit();
-                };
 
-                function editLayer(layer) {
-                    layer.params.neuronsCount = $scope.neuronsCount;
-                    layer.params.activationFunction = $scope.activationFunction;
-                    layer.params.isTrainable = $scope.isTrainable;
+                $scope.$watch('params', function (params) {
+                    var layer = networkDataService.getLayerById($scope.layerId);
+                    updateLayer(layer, params);
+                }, true);
+
+                function updateLayer(layer, params) {
+                    layer.params.neuronsCount = params.neuronsCount;
+                    layer.params.activationFunction = params.activationFunction;
+                    layer.params.isTrainable = params.isTrainable;
                 }
 
-                function setUpLayerParams($scope, networkDataService) {
-                    var layerParams = networkDataService.getLayerById($scope.layerId).params;
-                    $scope.neuronsCount = layerParams.neuronsCount;
-                    $scope.activationFunction = layerParams.activationFunction;
-                    $scope.isTrainable = layerParams.isTrainable;
+                function setUpLayerParams(params) {
+                    $scope.params.neuronsCount = params.neuronsCount;
+                    $scope.params.activationFunction = params.activationFunction;
+                    $scope.params.isTrainable = params.isTrainable;
                 }
             }
         }

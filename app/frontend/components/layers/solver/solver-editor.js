@@ -5,43 +5,39 @@
         .directive('solverEditor', function () {
             return {
                 scope: {
-                    layerId: '@',
-                    doOnSubmit: '&'
+                    layerId: '@'
                 },
                 templateUrl: "frontend/components/layers/solver/solver-editor.html",
                 controller: function ($scope, networkDataService, solverLayer) {
                     this.$onInit = function () {
-                        setUpLayerParams($scope, networkDataService);
+                        setUpLayerParams(networkDataService.getLayerById($scope.layerId).params);
                         $scope.lossFunctionList = solverLayer.getLossFunctions();
-
                         $scope.optimizers = solverLayer.getOptimizers();
 
-                        $scope.onSubmit = function () {
+                        $scope.$watch('params', function (params) {
                             var layer = networkDataService.getLayerById($scope.layerId);
-                            editLayer(layer);
-                            networkDataService.pubNetworkUpdateEvent();
-                            $scope.doOnSubmit();
-                        };
+                            updateLayer(layer, params);
+                        }, true);
 
-                        function editLayer(layer) {
-                            layer.params.lossFunction = $scope.lossFunction;
-                            layer.params.epochsCount = $scope.epochsCount;
-                            layer.params.snapshotInterval = $scope.snapshotInterval;
-                            layer.params.validationInterval = $scope.validationInterval;
-                            layer.params.batchSize = $scope.batchSize;
-                            layer.params.learningRate = $scope.learningRate;
-                            layer.params.optimizer = $scope.optimizer;
+                        function updateLayer(layer, params) {
+                            layer.params.lossFunction = params.lossFunction;
+                            layer.params.epochsCount = params.epochsCount;
+                            layer.params.snapshotInterval = params.snapshotInterval;
+                            layer.params.validationInterval = params.validationInterval;
+                            layer.params.batchSize = params.batchSize;
+                            layer.params.learningRate = params.learningRate;
+                            layer.params.optimizer = params.optimizer;
                         }
 
-                        function setUpLayerParams($scope, networkDataService) {
-                            var layerParams = networkDataService.getLayerById($scope.layerId).params;
-                            $scope.lossFunction = layerParams.lossFunction;
-                            $scope.epochsCount = layerParams.epochsCount;
-                            $scope.snapshotInterval = layerParams.snapshotInterval;
-                            $scope.validationInterval = layerParams.validationInterval;
-                            $scope.batchSize = layerParams.batchSize;
-                            $scope.learningRate = layerParams.learningRate;
-                            $scope.optimizer = layerParams.optimizer;
+                        function setUpLayerParams(params) {
+                            $scope.params = {};
+                            $scope.params.lossFunction = params.lossFunction;
+                            $scope.params.epochsCount = params.epochsCount;
+                            $scope.params.snapshotInterval = params.snapshotInterval;
+                            $scope.params.validationInterval = params.validationInterval;
+                            $scope.params.batchSize = params.batchSize;
+                            $scope.params.learningRate = params.learningRate;
+                            $scope.params.optimizer = params.optimizer;
                         }
                     }
                 }

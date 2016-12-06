@@ -4,72 +4,65 @@ angular
 .directive('dataoutputEditor', function () {
     return {
         scope: {
-            layerId: '@',
-            doOnSubmit: '&'
+            layerId: '@'
         },
         templateUrl: "frontend/components/layers/basic/dataoutput/dataoutput-editor.html",
         controller: function ($scope, networkDataService, layerService, datasetService, dataoutputLayer) {
             this.$onInit = function () {
-                setUpLayerParams($scope, networkDataService, layerService);
-                $scope.lossFunctionList = dataoutputLayer.getLossFunctions();
-                $scope.selectedDB = null;
-                $scope.datasetIdList = null;
-
                 datasetService.getDatasetsInfoStatList().then(
                     function successCallback(response) {
-                        var tinfo = response.data;
-                        var tlist = [];
-                        for(var ii=0; ii<tinfo.length; ii++) {
-                            var tmp = {
-                                id:         tinfo[ii].id,
-                                text:       tinfo[ii].name + ' (' + tinfo[ii].id + ')',
-                                shape:      tinfo[ii].shapestr,
-                                numLabels:  tinfo[ii].info.numLabels
+                        var loadedDataSets = response.data;
+                        var dataSets = [];
+                        for (var ii = 0; ii < loadedDataSets.length; ii++) {
+                            var info = {
+                                id: loadedDataSets[ii].id,
+                                text: loadedDataSets[ii].name + ' (' + loadedDataSets[ii].id + ')',
+                                shape: loadedDataSets[ii].shapestr,
+                                numLabels: loadedDataSets[ii].info.numLabels
                             };
-                            tlist.push(tmp);
+                            dataSets.push(info);
                         }
-                        $scope.datasetIdList = tlist;
-                        if($scope.datasetIdList.length>0) {
-                            $scope.selectedDB = $scope.datasetIdList[0];
-                        }
+                        setUpLayerParams(dataSets);
                     },
                     function errorCallback(response) {
                         console.log(response.data);
                     });
 
-                // $scope.optimizers = dataoutputLayer.getOptimizers();
-
-                $scope.onSubmit = function () {
+                $scope.$watch('lossFunction', function (lossFunction) {
                     var layer = networkDataService.getLayerById($scope.layerId);
-                    editLayer(layer);
-                    networkDataService.pubNetworkUpdateEvent();
-                    $scope.doOnSubmit();
-                };
-
-                function editLayer(layer) {
                     layer.params.lossFunction = $scope.lossFunction;
-                    if ($scope.selectedDB) {
-                        layer.params.datasetId = $scope.selectedDB.id;
-                    }
-                    // layer.params.optimizer = $scope.optimizer;
-                }
+                });
 
-                function setUpLayerParams($scope, networkDataService, layerService) {
+                $scope.$watch('selectedDataSet', function (selectedDataSet) {
+                    var layer = networkDataService.getLayerById($scope.layerId);
+                    if (selectedDataSet != null)
+                        layer.params.datasetId = selectedDataSet.id;
+                });
+
+                function setUpLayerParams(dataSets) {
+                    $scope.lossFunctionList = dataoutputLayer.getLossFunctions();
+                    $scope.lossFunction = $scope.lossFunctionList[0];
+                    $scope.dataSets = dataSets;
                     var currentLayer = networkDataService.getLayerById($scope.layerId);
-                    // var layerParams = networkDataService.getLayerById($scope.layerId).params;
                     var savedParams = currentLayer.params;
-                    $scope.lossFunction = savedParams.lossFunction;
-                    var defaultParams = layerService.getLayerByType(currentLayer.layerType).params;
-                    setUpParam($scope, savedParams, defaultParams, 'datasetType');
-                    setUpParam($scope, savedParams, defaultParams, 'datasetId');
-                    // $scope.optimizer = layerParams.optimizer;
-                }
 
-                function setUpParam($scope, savedParams, defaultParams, param) {
-                    if (savedParams[param] == "") {
-                        $scope[param] = defaultParams[param];
+                    if (savedParams.lossFunction) {
+                        $scope.lossFunction = savedParams.lossFunction;
+                    }
+
+                    var savedDataSetIndex = -1;
+                    for (var i = 0; i < dataSets.length; i++) {
+                        if (savedParams['datasetId'] == dataSets[i].id) {
+                            savedDataSetIndex = i;
+                        }
+                    }
+                    if (savedDataSetIndex > -1) {
+                        $scope.selectedDataSet = dataSets[savedDataSetIndex];
                     } else {
-                        $scope[param] = savedParams[param];
+                        if (dataSets.length > 0) {
+                            $scope.selectedDataSet = dataSets[0];
+                        }
+                        currentLayer.params = layerService.getLayerByType(currentLayer.layerType).params;
                     }
                 }
             }

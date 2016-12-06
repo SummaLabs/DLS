@@ -1,9 +1,8 @@
-<form ng-submit="onSubmit()">
     <div layout-margin>
         <div layout="column">
             <md-input-container>
                 <label>Subsampling Type</label>
-                <md-select ng-model="subsamplingType" ng-model-options="{trackBy: '$value'}" required>
+                <md-select ng-model="params.subsamplingType" ng-model-options="{trackBy: '$value'}" required>
                     <md-option ng-repeat="option in subsamplingTypeList" ng-value="option.value">
                         {{option.text}}
                     </md-option>
@@ -11,17 +10,15 @@
             </md-input-container>
             <md-input-container>
                 <label>Subsampling Size Width</label>
-                <input ng-model="subsamplingSizeWidth" type="number" min="1" required>
+                <input ng-model="params.subsamplingSizeWidth" type="number" min="1" required>
             </md-input-container>
             <md-input-container>
                 <label>Subsampling Size Height</label>
-                <input ng-model="subsamplingSizeHeight" type="number" min="1" required>
+                <input ng-model="params.subsamplingSizeHeight" type="number" min="1" required>
             </md-input-container>
             <md-input-container>
                 <label>Subsampling Size Depth</label>
-                <input ng-model="subsamplingSizeDepth" type="number" min="1" required>
+                <input ng-model="params.subsamplingSizeDepth" type="number" min="1" required>
             </md-input-container>
         </div>
-        <md-button type="submit" class="md-warn md-raised md-hue-2">Submit</md-button>
     </div>
-</form>

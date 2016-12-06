@@ -1,39 +1,36 @@
-<form ng-submit="onSubmit()">
-    <div layout-margin>
-        <div layout="column">
-            <md-input-container>
-                <label>Loss Function</label>
-                <md-select ng-model="lossFunction" ng-model-options="{trackBy: '$value'}" required>
-                    <md-option ng-repeat="option in lossFunctionList" ng-value="option.value">
-                        {{option.text}}
-                    </md-option>
-                </md-select>
-            </md-input-container>
+<div layout-margin>
+    <div layout="column">
+        <md-input-container>
+            <label>Loss Function</label>
+            <md-select ng-model="lossFunction" ng-model-options="{trackBy: '$value'}" required>
+                <md-option ng-repeat="option in lossFunctionList" ng-value="option.value">
+                    {{option.text}}
+                </md-option>
+            </md-select>
+        </md-input-container>
 
-            <hr>
-            <md-input-container>
-                <label>Select Data Output</label>
-                <md-select ng-model="selectedDB" required>
-                    <md-option ng-repeat="selectedDB in datasetIdList" ng-value="selectedDB">
-                        {{selectedDB.text}}
-                    </md-option>
-                </md-select>
-            </md-input-container>
-            <md-input-container class="md-block" flex-gt-xs>
-                <label>Dataset ID:</label>
-                <input value="{{selectedDB.id}}" disabled>
-            </md-input-container>
+        <hr>
+        <md-input-container>
+            <label>Select Data Set</label>
+            <md-select ng-model="selectedDataSet" required>
+                <md-option ng-repeat="dataSet in dataSets" ng-value="dataSet">
+                    {{dataSet.text}}
+                </md-option>
+            </md-select>
+        </md-input-container>
+        <hr>
+        <md-input-container class="md-block" flex-gt-xs>
+            <label>Data-shape:</label>
+            <input value="{{selectedDataSet.shape}}" disabled>
+        </md-input-container>
+        <md-input-container class="md-block" flex-gt-xs>
+            <label>Dataset ID:</label>
+            <input value="{{selectedDataSet.id}}" disabled>
+        </md-input-container>
 
-            <md-input-container class="md-block" flex-gt-xs>
-                <label>Data Input Shape:</label>
-                <input value="{{selectedDB.shape}}" disabled>
-            </md-input-container>
-
-            <md-input-container class="md-block" flex-gt-xs>
-                <label>Data Output Slots:</label>
-                <input value="{{selectedDB.numLabels}}" disabled>
-            </md-input-container>
-        </div>
-        <md-button type="submit" class="md-warn md-raised md-hue-2">Submit</md-button>
+        <md-input-container class="md-block" flex-gt-xs>
+            <label>Data Output Slots:</label>
+            <input value="{{dataSet.numLabels}}" disabled>
+        </md-input-container>
     </div>
-</form>
+</div>

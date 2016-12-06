@@ -5,34 +5,31 @@ angular
 .directive('mergeEditor', function () {
     return {
         scope: {
-            layerId: '@',
-            doOnSubmit: '&'
+            layerId: '@'
         },
         templateUrl: "frontend/components/layers/basic/merge/merge-editor.html",
         controller: function ($scope, networkDataService, mergeLayer) {
             this.$onInit = function () {
-                setUpLayerParams($scope, networkDataService);
+                setUpLayerParams(networkDataService.getLayerById($scope.layerId).params);
                 $scope.mergeTypesList = mergeLayer.getMergeTypes();
                 $scope.mergeAxisList = mergeLayer.getMergeAxis();
+                
 
-                $scope.onSubmit = function () {
+                $scope.$watch('params', function (params) {
                     var layer = networkDataService.getLayerById($scope.layerId);
-                    editLayer(layer);
-                    networkDataService.pubNetworkUpdateEvent();
-                    $scope.doOnSubmit();
-                };
+                    updateLayer(layer, params);
+                }, true);
 
-                function editLayer(layer) {
-                    layer.params.mergeType = $scope.mergeType;
-                    layer.params.mergeAxis = $scope.mergeAxis;
-                    layer.params.isTrainable = $scope.isTrainable;
+                function updateLayer(layer, params) {
+                    layer.params.mergeType = params.mergeType;
+                    layer.params.mergeAxis = params.mergeAxis;
+                    layer.params.isTrainable = params.isTrainable;
                 }
 
-                function setUpLayerParams($scope, networkDataService) {
-                    var layerParams = networkDataService.getLayerById($scope.layerId).params;
-                    $scope.mergeType = layerParams.mergeType;
-                    $scope.mergeAxis = layerParams.mergeAxis;
-                    $scope.isTrainable = layerParams.isTrainable;
+                function setUpLayerParams(params) {
+                    $scope.params.mergeType = params.mergeType;
+                    $scope.params.mergeAxis = params.mergeAxis;
+                    $scope.params.isTrainable = params.isTrainable;
                 }
             }
         }

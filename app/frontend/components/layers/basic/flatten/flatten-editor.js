@@ -5,8 +5,7 @@ angular
 .directive('flattenEditor', function () {
     return {
         scope: {
-            layerId: '@',
-            doOnSubmit: '&'
+            layerId: '@'
         },
         templateUrl: "frontend/components/layers/basic/flatten/flatten-editor.html",
         controller: function ($scope, networkDataService, flattenLayer) {

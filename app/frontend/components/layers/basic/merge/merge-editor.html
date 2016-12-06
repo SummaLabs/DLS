@@ -1,22 +1,20 @@
-<form ng-submit="onSubmit()">
-    <div layout-margin>
-        <div layout="column">
-            <md-input-container>
-                <label>Merge Type</label>
-                <md-select ng-model="mergeType" ng-model-options="{trackBy: '$value'}" required>
-                    <md-option ng-repeat="option in mergeTypesList" ng-value="option.value">
-                        {{option.text}}
-                    </md-option>
-                </md-select>
-            </md-input-container>
-            <md-input-container>
-                <label>Merge Axis</label>
-                <md-select ng-model="mergeAxis" required>
-                    <md-option ng-repeat="option in mergeAxisList" ng-value="option">
-                        {{option}}
-                    </md-option>
-                </md-select>
-            </md-input-container>
-        <md-button type="submit" class="md-warn md-raised md-hue-2">Submit</md-button>
+<div layout-margin>
+    <div layout="column">
+        <md-input-container>
+            <label>Merge Type</label>
+            <md-select ng-model="params.mergeType" ng-model-options="{trackBy: '$value'}" required>
+                <md-option ng-repeat="option in mergeTypesList" ng-value="option.value">
+                    {{option.text}}
+                </md-option>
+            </md-select>
+        </md-input-container>
+        <md-input-container>
+            <label>Merge Axis</label>
+            <md-select ng-model="params.mergeAxis" required>
+                <md-option ng-repeat="option in mergeAxisList" ng-value="option">
+                    {{option}}
+                </md-option>
+            </md-select>
+        </md-input-container>
     </div>
-</form>
+</div>

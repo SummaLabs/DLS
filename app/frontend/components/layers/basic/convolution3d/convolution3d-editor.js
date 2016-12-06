@@ -11,33 +11,31 @@ angular
         templateUrl: "frontend/components/layers/basic/convolution3d/convolution3d-editor.html",
         controller: function ($scope, networkDataService, convolution3dLayer) {
             this.$onInit = function () {
-                setUpLayerParams($scope, networkDataService);
+                setUpLayerParams(networkDataService.getLayerById($scope.layerId).params);
                 $scope.activationFunctionList = convolution3dLayer.getActivationFunctions();
 
-                $scope.onSubmit = function () {
+                $scope.$watch('params', function (params) {
                     var layer = networkDataService.getLayerById($scope.layerId);
-                    editLayer(layer);
-                    networkDataService.pubNetworkUpdateEvent();
-                    $scope.doOnSubmit();
-                };
+                    updateLayer(layer, params);
+                }, true);
 
-                function editLayer(layer) {
-                    layer.params.filtersCount = $scope.filtersCount;
-                    layer.params.filterWidth  = $scope.filterWidth;
-                    layer.params.filterHeight = $scope.filterHeight;
-                    layer.params.filterDepth  = $scope.filterDepth;
-                    layer.params.activationFunction = $scope.activationFunction;
-                    layer.params.isTrainable = $scope.isTrainable;
+                function updateLayer(layer, params) {
+                    layer.params.filtersCount = params.filtersCount;
+                    layer.params.filterWidth  = params.filterWidth;
+                    layer.params.filterHeight = params.filterHeight;
+                    layer.params.filterDepth  = params.filterDepth;
+                    layer.params.activationFunction = params.activationFunction;
+                    layer.params.isTrainable = params.isTrainable;
                 }
 
-                function setUpLayerParams($scope, networkDataService) {
-                    var layerParams = networkDataService.getLayerById($scope.layerId).params;
-                    $scope.filtersCount = layerParams.filtersCount;
-                    $scope.filterWidth  = layerParams.filterWidth;
-                    $scope.filterHeight = layerParams.filterHeight;
-                    $scope.filterDepth  = layerParams.filterDepth;
-                    $scope.activationFunction = layerParams.activationFunction;
-                    $scope.isTrainable = layerParams.isTrainable;
+                function setUpLayerParams(params) {
+                    $scope.params = {};
+                    $scope.params.filtersCount = params.filtersCount;
+                    $scope.params.filterWidth  = params.filterWidth;
+                    $scope.params.filterHeight = params.filterHeight;
+                    $scope.params.filterDepth  = params.filterDepth;
+                    $scope.params.activationFunction = params.activationFunction;
+                    $scope.params.isTrainable = params.isTrainable;
                 }
             }
         }
