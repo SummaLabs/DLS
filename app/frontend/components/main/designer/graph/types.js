@@ -1,3 +1,5 @@
+'use strict';
+
 function Position(x, y, step) {
     if (!step)
         step = 1;
@@ -85,13 +87,13 @@ function Rect(x1, y1, x2, y2) {
     rc.height(Math.abs(y1 - y2));
 
     return rc;
-}
+};
 
 function Item(type) {
     this.id = null;
     this.type = type;
     this.isActive = false;
-}
+};
 
 function Node() {
     Item.call(this, 'node');
@@ -101,7 +103,7 @@ function Node() {
     this.template = null;
     this.category = null;
     this.pos = new Position(0, 0);
-}
+};
 
 Node.prototype = Object.create(Item.prototype);
 Node.prototype.constructor = Node;
@@ -208,7 +210,7 @@ function Schema(viewContext, maxStorageSize) {
     };
 
     this.redo = function () {
-        let state = storage.undo();
+        let state = storage.redo();
         if (state) {
             viewContext.nodes = state.nodes;
             viewContext.links = state.links;
@@ -289,6 +291,7 @@ function Schema(viewContext, maxStorageSize) {
     };
 
     this.addLink = function(from, to) {
+        this.saveState();
         if (this.getLinkById(from.id + '_' + to.id))
             return;
 
@@ -310,6 +313,7 @@ function Schema(viewContext, maxStorageSize) {
     };
 
     this.removeLink = function(id) {
+        this.saveState();
         let links = this.currentState().links;
         links.forEach(function(link, index){
             if (link.id === id) {
@@ -332,6 +336,7 @@ function Schema(viewContext, maxStorageSize) {
     };
 
     this.removeItem = function(id, type) {
+        this.saveState();
         if (type) {
             if (type === 'node') {
                 this.removeNode(id);
@@ -353,6 +358,7 @@ function Schema(viewContext, maxStorageSize) {
             nodes: [],
             links: []
         };
+        this.saveState();
         let links = this.currentState().links;
         let nodes = this.currentState().nodes;
 
@@ -472,20 +478,16 @@ function Schema(viewContext, maxStorageSize) {
 function copyArray(array) {
     let newArray = [];
     for (let item of array) {
-        console.log(item);
         newArray.push(copyObject(item));
     }
-
     return newArray;
 }
 
 function copyObject(obj) {
-    console.log(obj);
-    var copy = obj.constructor();
-    console.log(copy);
+    var copy = new obj.constructor();
     for (var attr in obj) {
         if (obj.hasOwnProperty(attr))
-            if (obj[attr] !== null && typeof obj[attr] === 'object') {
+            if (obj[attr] !== null && typeof obj[attr] === 'object' && !(obj[attr] instanceof Element)) {
                 copy[attr] = copyObject(obj[attr]);
             } else {
                 copy[attr] = obj[attr];
@@ -498,4 +500,4 @@ if (!Array.prototype.last){
     Array.prototype.last = function(){
         return this[this.length - 1];
     };
-};
+}

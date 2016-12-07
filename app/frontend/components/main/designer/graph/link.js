@@ -49,26 +49,6 @@ function link() {
 				element.attr('stroke-dasharray', '');
 			}
 		});
-
-		/*scope.$watch('linkData.nodes[0].pos.x', function(newValue, oldValue) {
-			scope.from.x += newValue - oldValue;
-			updatePos(element, scope.from, scope.to);
-		});
-
-		scope.$watch('linkData.nodes[0].pos.y', function(newValue, oldValue) {
-			scope.from.y += newValue - oldValue;
-			updatePos(element, scope.from, scope.to);
-		});
-
-		scope.$watch('linkData.nodes[1].pos.x', function(newValue, oldValue) {
-		    scope.to.x += newValue - oldValue;
-			updatePos(element, scope.from, scope.to);
-		});
-
-		scope.$watch('linkData.nodes[1].pos.y', function(newValue, oldValue) {
-		    scope.to.y += newValue - oldValue;
-			updatePos(element, scope.from, scope.to);
-		});*/
 	}
 
 	function eventsHandler(scope, element) {
@@ -99,6 +79,7 @@ function link() {
         var prev_from_x = scope.linkData.nodes[0].pos.x;
         var prev_from_y = scope.linkData.nodes[0].pos.y;
         scope.$on('node:move_' + scope.linkData.nodes[0].id, function (event, data) {
+            console.log(data);
             scope.from.x += scope.linkData.nodes[0].pos.x - prev_from_x;
             scope.from.y += scope.linkData.nodes[0].pos.y - prev_from_y;
             prev_from_x = scope.linkData.nodes[0].pos.x;
@@ -110,6 +91,7 @@ function link() {
         var prev_to_y = scope.linkData.nodes[1].pos.y;
 
         scope.$on('node:move_' + scope.linkData.nodes[1].id, function (event, data) {
+            console.log(data);
             scope.to.x += scope.linkData.nodes[1].pos.x - prev_to_x;
             scope.to.y += scope.linkData.nodes[1].pos.y - prev_to_y;
             prev_to_x = scope.linkData.nodes[1].pos.x;

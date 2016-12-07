@@ -319,6 +319,22 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         networkDataService.clearLayers();
     };
 
+    function createLayer(node) {
+        let layers = networkDataService.getLayers();
+        let layer = layerService.getLayerByType(node.layerType);
+        layers.push(layer);
+        layer.id = node.id;
+        layer.name = node.name;
+        layer.layerType = node.layerType;
+        layer.category = node.category;
+        layer.pos = {
+            x: node.pos.x,
+            y: node.pos.y
+        };
+        layer.wires = node.wires;
+        return layer;
+    }
+
     function constructorListeners() {
 
         networkDataService.subNetworkUpdateEvent(setUpNetwork);
@@ -334,16 +350,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
 
         $scope.$on('graph:addNode', function (event, node) {
             console.log('graph:addNode');
-            var layers = networkDataService.getLayers();
-            var layer = layerService.getLayerByType(node.layerType);
-            layers.push(layer);
-            layer.id = node.id;
-            layer.name = node.name;
-            layer.layerType = node.layerType;
-            layer.category = node.category;
-            layer.pos = node.pos;
-            layer.wires = node.wires;
-
+            createLayer(node);
             networkDataService.setChangesSaved(false);
             event.stopPropagation();
         });
@@ -361,6 +368,8 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
             console.log('graph:addLink');
 
             let layer = networkDataService.getLayerById(link.nodes[0].id);
+            if (!layer)
+                layer = createLayer(link.nodes[0]);
             if (!layer.wires)
                 layer.wires = [];
             layer.wires.push(link.nodes[1].id);
@@ -422,6 +431,8 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
 
         $scope.$on('graph:changePosition', function (event, node) {
             let layer = networkDataService.getLayerById(node.id);
+            if (!layer)
+                layer = createLayer(node);
             layer.pos.x = node.pos.x;
             layer.pos.y = node.pos.y;
             event.stopPropagation();
