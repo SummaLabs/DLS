@@ -69,19 +69,21 @@
                 
                 this.initChart = function(model){
                            
-                            var traceTrainAcc = this.initChartTrace(model.trainingData.iter, model.trainingData.accTrain, 'Accuracy');
-                            var tracetrainLoss = this.initChartTrace(model.trainingData.iter, model.trainingData.lossTrain, 'Loss Function');
-                            var dataTrain = [ traceTrainAcc, tracetrainLoss ];
-                            var layoutTrain = this.initChartLayout('Training Data Set');
-
-                            Plotly.newPlot('model-training-chart', dataTrain, layoutTrain);
+                            var traceTrainAcc = this.initChartTrace(model.trainingData.iter, model.trainingData.accTrain, 'Training');
+                            var tracetrainLoss = this.initChartTrace(model.trainingData.iter, model.trainingData.lossTrain, 'Traininggs');
+                            var traceValacc = this.initChartTrace(model.trainingData.iter, model.trainingData.accVal, 'Validation');
+                            var traceValLoss = this.initChartTrace(model.trainingData.iter, model.trainingData.lossVal, 'Validation');
                     
-                            var traceValacc = this.initChartTrace(model.trainingData.iter, model.trainingData.accVal, 'Accuracy');
-                            var traceValLoss = this.initChartTrace(model.trainingData.iter, model.trainingData.lossVal, 'Loss Function');                    
-                            var dataVal = [ traceValacc, traceValLoss ];
-                            var layoutVal = this.initChartLayout('Validation Data Set');
+                            var dataAcc = [ traceTrainAcc, traceValacc ];
+                            var layoutAcc = this.initChartLayout('Accuracy');
 
-                            Plotly.newPlot('model-validation-chart', dataVal, layoutVal);
+                            Plotly.newPlot('model-training-chart', dataAcc, layoutAcc);
+                    
+                              
+                            var dataLoss = [ tracetrainLoss, traceValLoss ];
+                            var layoutLoss = this.initChartLayout('Loss Function');
+
+                            Plotly.newPlot('model-validation-chart', dataLoss, layoutLoss);
                 };
                 
              
