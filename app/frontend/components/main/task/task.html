@@ -8,6 +8,9 @@
         <md-divider></md-divider>
         <div layout="row">
             <div layout="column" flex="{{$ctrl.isChecked? 40 : 60}}" flex-offset="{{$ctrl.isChecked?0:15}}">
+                <h3 ng-show="$ctrl.listDats.length == 0">
+                    No Tasks
+                </h3>
                 <md-list>
                     <md-list-item flex layout="row"
                                   class="secondary-button-padding"
