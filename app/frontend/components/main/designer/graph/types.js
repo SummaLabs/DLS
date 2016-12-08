@@ -159,7 +159,7 @@ SchemaStorage.prototype.saveState = function() {
     let state = this.createState();
     state.nodes = copyArray(this.schemaStorage[this.schemaStorage.length - 2].nodes);
     state.links = copyArray(this.schemaStorage[this.schemaStorage.length - 2].links);
-    // state.idList = copyArray(this.schemaStorage[this.schemaStorage.length - 2].idList);
+    state.idList = copyArray(this.schemaStorage[this.schemaStorage.length - 2].idList);
     return state;
 };
 
@@ -188,6 +188,7 @@ function Schema(viewContext, maxStorageSize) {
 
     this.saveState = function () {
         let state = storage.saveState();
+        this.updateLinks();
         return state;
     };
 
@@ -201,6 +202,7 @@ function Schema(viewContext, maxStorageSize) {
 
     this.undo = function () {
         let state = storage.undo();
+        this.updateLinks();
         if (state) {
             viewContext.nodes = state.nodes;
             viewContext.links = state.links;
@@ -211,6 +213,7 @@ function Schema(viewContext, maxStorageSize) {
 
     this.redo = function () {
         let state = storage.redo();
+        this.updateLinks();
         if (state) {
             viewContext.nodes = state.nodes;
             viewContext.links = state.links;
@@ -225,7 +228,7 @@ function Schema(viewContext, maxStorageSize) {
     	let links = this.currentState().links;
 
     	nodes.forEach(function(node){
-    		var layer = Object.create(null);
+    		let layer = Object.create(null);
     		layer.id = node.id;
 			layer.name = node.name;
             layer.layerType = node.layerType;
@@ -244,8 +247,7 @@ function Schema(viewContext, maxStorageSize) {
     };
 
     this.addNode = function(name, layerType,  category, template, id) {
-        this.saveState();
-        var node = new Node();
+        let node = new Node();
         let nodes = this.currentState().nodes;
         if (id && checkIdForUnique(id)) {
             node.id = id;
@@ -291,17 +293,26 @@ function Schema(viewContext, maxStorageSize) {
     };
 
     this.addLink = function(from, to) {
-        this.saveState();
         if (this.getLinkById(from.id + '_' + to.id))
             return;
 
         let links = this.currentState().links;
-        var link = new Link();
+        let link = new Link();
         link.id = from.id + '_' + to.id;
 
         link.nodes = [from, to];
         links.push(link);
         return link;
+    };
+
+    this.updateLinks = function () {
+        let links = this.currentState().links;
+        for (let a = 0; a < links.length; a ++) {
+            if (links[a].nodes && links[a].nodes.length === 2) {
+                links[a].nodes[0] = this.getNodeById(links[a].nodes[0].id);
+                links[a].nodes[1] = this.getNodeById(links[a].nodes[1].id);
+            }
+        }
     };
 
     this.getLinkById = function(id) {
@@ -313,7 +324,6 @@ function Schema(viewContext, maxStorageSize) {
     };
 
     this.removeLink = function(id) {
-        this.saveState();
         let links = this.currentState().links;
         links.forEach(function(link, index){
             if (link.id === id) {
@@ -336,7 +346,6 @@ function Schema(viewContext, maxStorageSize) {
     };
 
     this.removeItem = function(id, type) {
-        this.saveState();
         if (type) {
             if (type === 'node') {
                 this.removeNode(id);
@@ -358,7 +367,7 @@ function Schema(viewContext, maxStorageSize) {
             nodes: [],
             links: []
         };
-        this.saveState();
+
         let links = this.currentState().links;
         let nodes = this.currentState().nodes;
 

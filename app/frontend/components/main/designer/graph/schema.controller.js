@@ -141,8 +141,6 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
 
     var initProgress = function() {
-
-        let active = false;
         return function(val, max) {
 
             let curr = val;
@@ -150,11 +148,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                 curr = (val / max) * 100;
             }
             self.progressValue = curr;
-            if (curr > 0)
-                active = true;
-            else active = false;
 
-            if (active) {
+            if (curr > 0) {
                 svgElement.style.visibility = 'hidden';
                 progressElement.style.visibility = 'visible';
             }
@@ -163,8 +158,6 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                 progressElement.style.visibility = 'hidden';
             }
 
-
-            // cur_progress.style.width = '' + curr + '%';
         }
     };
 
@@ -221,7 +214,6 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         node.position(pos.x, pos.y, appConfig.svgDefinitions.gridStep);
         self.emitEvent(events.ADD_NODE, node);
 
-        console.log(self.nodes);
         return true;
     }
 
@@ -373,15 +365,13 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 		$element.on('mousedown', function (event) {
 			if (self.mouseMode === state.DEFAULT) {
 
-			    // if (!self.isItemClicked) {
                     $scope.$apply( function() {
                         selectItems (schema.getNodes(), false);
                         selectItems (schema.getLinks(), false);
                     });
                     activeItem.isActive = false;
                     activeItem = -1;
-                // }
-                // self.isItemClicked = false;
+
 
                 if (event.buttons === 1 && event.ctrlKey) {
 
@@ -486,6 +476,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 			if (event.keyCode === 46) {
 				$scope.$apply( function() {
 					if (activeItem && activeItem.isActive) {
+					    schema.saveState();
 					    if (schema.removeItem(activeItem.id, activeItem.type)) {
                             if (activeItem.type === 'node') {
                                 self.emitEvent(events.REMOVE_NODE, activeItem);
@@ -495,7 +486,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 					    }
 						activeItem = -1;
 					} else {
-                        var rem = schema.removeSelectedItems();
+					    schema.saveState();
+                        let rem = schema.removeSelectedItems();
 						if (rem)
                 			self.emitEvent(events.REMOVE_ITEMS, rem);
                 	}

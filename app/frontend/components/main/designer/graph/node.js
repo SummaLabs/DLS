@@ -44,8 +44,8 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 			var shapeIn = angular.element(element[0].querySelector('#' + patternDefinitions.markerShapeIn));
 			var shapeOut = angular.element(element[0].querySelector('#' + patternDefinitions.markerShapeOut));
 
-			$scope.nodeData.displayData.portIn.element = portIn;
-			$scope.nodeData.displayData.portOut.element = portOut;
+			// $scope.nodeData.displayData.portIn.element = portIn;
+			// $scope.nodeData.displayData.portOut.element = portOut;
 
 			portInit(portIn, patternDefinitions.markerPortIn, idNode);
 			portInit(portOut, patternDefinitions.markerPortOut, idNode);
@@ -77,9 +77,9 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 			}
 
 			element.attr('id', 'id_' + idNode);
-
-			$scope.nodeData.portIn = portIn;
-			$scope.nodeData.portOut = portOut;
+            //
+			// $scope.nodeData.portIn = portIn;
+			// $scope.nodeData.portOut = portOut;
 			textNode.text($scope.nodeData.name);
 			textNode.addClass('unselectable');
 			textNode.text(adaptText(rectNode, textNode ,$scope.nodeData.name, coreService.param('scale')));

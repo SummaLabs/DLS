@@ -76,8 +76,7 @@ function CoreService(layerService, appConfig) {
         var elementRect = rect[0].getBoundingClientRect();
 
         displayData.portIn = {
-            element: null,
-            offsetCenter: {
+            centerOffset: {
                 x: portInRect.left + (portInRect.right - portInRect.left) / 2,
                 y: portInRect.top  + (portInRect.bottom - portInRect.top) / 2 + 1000
             },
@@ -86,8 +85,7 @@ function CoreService(layerService, appConfig) {
         };
 
         displayData.portOut = {
-            element: null,
-            offsetCenter: {
+            centerOffset: {
                 x: portOutRect.left + (portOutRect.right - portOutRect.left) / 2,
                 y: portOutRect.top  + (portOutRect.bottom - portOutRect.top) / 2 + 1000
             },
@@ -340,12 +338,10 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         networkDataService.subNetworkUpdateEvent(setUpNetwork);
         let bInit = false;
         let bUpdate = false;
+
         $scope.$on('graph:init', function (event, node) {
             bInit = true;
-            // if (bUpdate)
-                setUpNetwork();
-            // console.log('init');
-            // // self.svgControl.setLayers(networkDataService.getLayers());
+            setUpNetwork();
         });
 
         $scope.$on('graph:addNode', function (event, node) {
@@ -412,14 +408,8 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         });
 
         $scope.$on('graph:addedLayers', function (event, data) {
-            data.eventType = 'update'
+            data.eventType = 'update';
             $scope.$broadcast('constructor:viewport', data);
-            event.stopPropagation();
-        });
-
-        $scope.$on('viewport:changed', function (event, data) {
-            if (self.svgControl.viewportPos)
-                self.svgControl.viewportPos(data.x, data.y);
             event.stopPropagation();
         });
 
@@ -435,6 +425,12 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
                 layer = createLayer(node);
             layer.pos.x = node.pos.x;
             layer.pos.y = node.pos.y;
+            event.stopPropagation();
+        });
+
+        $scope.$on('viewport:changed', function (event, data) {
+            if (self.svgControl.viewportPos)
+                self.svgControl.viewportPos(data.x, data.y);
             event.stopPropagation();
         });
 

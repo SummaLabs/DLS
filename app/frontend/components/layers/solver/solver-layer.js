@@ -51,7 +51,7 @@ function SolverLayer() {
     };
     
     this.getTemplatePath = function () {
-      return "frontend/components/layers/dense/layer_with_shapes_exp.svg";  
+      return "frontend/components/layers/basic/dense/dense.svg";
     };
     
     this.getIconPath = function () {

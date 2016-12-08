@@ -19,8 +19,8 @@ function link() {
 		link: function($scope, element, attrs) {
 
 			$scope.from = {
-			    x: $scope.linkData.nodes[0].pos.x + $scope.linkData.nodes[0].displayData.portOut.offsetCenter.x,
-			    y: $scope.linkData.nodes[0].pos.y + $scope.linkData.nodes[0].displayData.portOut.offsetCenter.y
+			    x: $scope.linkData.nodes[0].pos.x + $scope.linkData.nodes[0].displayData.portOut.centerOffset.x,
+			    y: $scope.linkData.nodes[0].pos.y + $scope.linkData.nodes[0].displayData.portOut.centerOffset.y
 			};
 
 			if($scope.linkData.nodes[1].id === 'activePoint') {
@@ -28,8 +28,8 @@ function link() {
 			} else {
 
 				$scope.to = {
-                    x: $scope.linkData.nodes[1].pos.x + $scope.linkData.nodes[1].displayData.portIn.offsetCenter.x,
-                    y: $scope.linkData.nodes[1].pos.y + $scope.linkData.nodes[1].displayData.portIn.offsetCenter.y
+                    x: $scope.linkData.nodes[1].pos.x + $scope.linkData.nodes[1].displayData.portIn.centerOffset.x,
+                    y: $scope.linkData.nodes[1].pos.y + $scope.linkData.nodes[1].displayData.portIn.centerOffset.y
                 }
 			}
 
@@ -78,8 +78,8 @@ function link() {
 
         var prev_from_x = scope.linkData.nodes[0].pos.x;
         var prev_from_y = scope.linkData.nodes[0].pos.y;
+
         scope.$on('node:move_' + scope.linkData.nodes[0].id, function (event, data) {
-            console.log(data);
             scope.from.x += scope.linkData.nodes[0].pos.x - prev_from_x;
             scope.from.y += scope.linkData.nodes[0].pos.y - prev_from_y;
             prev_from_x = scope.linkData.nodes[0].pos.x;
@@ -91,7 +91,6 @@ function link() {
         var prev_to_y = scope.linkData.nodes[1].pos.y;
 
         scope.$on('node:move_' + scope.linkData.nodes[1].id, function (event, data) {
-            console.log(data);
             scope.to.x += scope.linkData.nodes[1].pos.x - prev_to_x;
             scope.to.y += scope.linkData.nodes[1].pos.y - prev_to_y;
             prev_to_x = scope.linkData.nodes[1].pos.x;
