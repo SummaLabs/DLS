@@ -96,7 +96,11 @@ function PaletteController(layerService, $scope) {
     }
     
     this.saveNetworkDialog = function ($event) {
-        $scope.$parent.$ctrl.saveNetworkDialog($event)
+        $scope.$parent.$ctrl.saveOrCreateNetworkDialog($event, true)
+    }
+	
+	this.createNewNetwork = function ($event) {
+        $scope.$parent.$ctrl.createNewNetwork($event)
     }
 }
 

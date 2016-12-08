@@ -155,6 +155,17 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         console.log();
     };
 
+    this.createNewNetwork = function ($event) {
+        var createNewNetworkFunc = function () {
+            self.saveOrCreateNetworkDialog($event, false);
+        };
+        if (!networkDataService.isChangesSaved()) {
+            self.saveOrCreateNetworkDialog($event, true, createNewNetworkFunc);
+        } else {
+            createNewNetworkFunc.call();
+        }
+    };
+
     function showToast(message) {
         $mdToast.show(
             $mdToast.simple()
@@ -260,7 +271,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
     };
 
 
-    this.saveNetworkDialog = function ($event) {
+    this.saveOrCreateNetworkDialog = function ($event, doSave, callbackFunc) {
         doUpdateNetwork();
         var parentEl = angular.element(document.body);
         $mdDialog.show({
@@ -273,23 +284,42 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         });
 
         function DialogController($scope, $mdDialog) {
+            if (doSave) {
+                $scope.title = "Save Current Network";
+            } else {
+                $scope.title = "Create New Network";
+            }
 
-            $scope.network =
-            {
-                name: networkDataService.getNetwork().name,
-                description: networkDataService.getNetwork().description
-            };
+            $scope.network = {};
+            if (doSave) {
+                $scope.network.name = networkDataService.getNetwork().name;
+                $scope.network.description = networkDataService.getNetwork().description;
+            } else {
+                $scope.network.name = "New Network";
+                $scope.network.description = "";
+            }
 
             $scope.saveNetwork = function () {
-
-                var image = networkDataService.buildPreviewImage(networkDataService.getNetwork().layers, 150, 150, 20);
-                networkDataService.getNetwork().preview = image;
-                networkDataService.saveNetwork($scope.network.name, $scope.network.description);
+                if (doSave) {
+                    var image = networkDataService.buildPreviewImage(networkDataService.getNetwork().layers, 150, 150, 20);
+                    networkDataService.getNetwork().preview = image;
+                    networkDataService.saveNetwork($scope.network.name, $scope.network.description);
+                } else {
+                    self.clear();
+                    networkDataService.createNewNetwork($scope.network.name, $scope.network.description);
+                    networkDataService.pubNetworkUpdateEvent();
+                }
                 $mdDialog.hide();
+                if (callbackFunc) {
+                    callbackFunc.call();
+                }
             };
 
             $scope.closeDialog = function () {
                 $mdDialog.hide();
+                if (callbackFunc) {
+                    callbackFunc.call();
+                }
             }
         }
     };

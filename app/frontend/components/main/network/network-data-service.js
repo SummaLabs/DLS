@@ -164,6 +164,14 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
     this.clearLayers = function () {
         network.layers.length = 0;
     };
+    
+    this.createNewNetwork = function (name, description) {
+        network.name = name;
+        network.description = description;
+        network.preview = '';
+        this.clearLayers();
+        this.saveNetwork(name, description);
+    };    
 
     this.removeLayerById = function(id) {
         var index = -1;
