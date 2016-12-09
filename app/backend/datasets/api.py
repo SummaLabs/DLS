@@ -14,7 +14,7 @@ from flask import send_from_directory
 dbpreview = Blueprint(__name__, __name__)
 
 from app.backend.file_manager.api import getRealPathFromFMUrlPath, validateSeverPathFromUrlPath
-from app.backend.core.datasets.dbpreview import DatasetsWatcher, DatasetImage2dInfo
+from app.backend.core.datasets.dbwatcher import DatasetsWatcher
 from app.backend.core.datasets.dbbuilder import DBImage2DConfig
 
 ###############################

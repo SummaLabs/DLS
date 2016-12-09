@@ -9,7 +9,7 @@ import skimage.io as io
 import matplotlib.pyplot as plt
 from keras.utils.visualize_util import plot as kplot
 
-from app.backend.core.datasets.dbpreview import DatasetsWatcher, DatasetImage2dInfo
+from app.backend.core.datasets.dbwatcher import DatasetsWatcher
 from app.backend.core.models.flow_parser import DLSDesignerFlowsParser
 from app.backend.core.models.batcher_image2d import BatcherImage2DLMDB
 from app.backend.core.models.keras_trainer_v3 import KerasTrainer

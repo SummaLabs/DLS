@@ -4,7 +4,7 @@ __author__ = 'ar'
 
 import json
 
-from app.backend.core.datasets.dbpreview import DatasetsWatcher
+from app.backend.core.datasets.dbwatcher import DatasetsWatcher
 from app.backend.core.models.mdlpreview import ModelTaskDirBuilder
 
 pathWithDatasets='../../../data/datasets'

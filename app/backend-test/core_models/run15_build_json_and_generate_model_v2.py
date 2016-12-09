@@ -22,7 +22,7 @@ from keras.layers import Layer, \
     InputLayer, Activation, Flatten, Merge, Dense
 
 import app.backend.core.utils as dlsutils
-from app.backend.core.datasets.dbpreview import DatasetsWatcher, DatasetImage2dInfo
+from app.backend.core.datasets.dbwatcher import DatasetsWatcher
 
 ####################################
 # values: (is Available, is Correct but currently not available)
