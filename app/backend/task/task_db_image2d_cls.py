@@ -2,21 +2,22 @@
 # -*- coding: utf-8 -*-
 __author__ = 'ar'
 
-import os
-import json
-import shutil
-
-import skimage.io as skio
-import numpy as np
-from datetime import datetime
 import copy
+import json
+import os
+import random
+import shutil
+from datetime import datetime
 
-from app.backend.core.datasets.api import datasetWatcher
+import numpy as np
+import skimage.io as skio
+
 from app.backend.core import utils as dlsutils
 from app.backend.core.datasets.dbbuilder import DBImage2DBuilder, Progressor
 from app.backend.core.datasets.imgproc2d import ImageTransformer2D
+from app.backend.datasets.api import datasetWatcher
 from task import Task
-import random
+
 
 class TaskDBImage2DBuilder(Task, DBImage2DBuilder):
     prefixDataset = 'dbset'
