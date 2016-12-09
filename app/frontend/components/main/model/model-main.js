@@ -46,7 +46,7 @@
                     return  {
                                 x: xArray,
                                 y: yArray,
-                                mode: 'lines',
+                                mode: 'lines+markers',
                                 name: name
                             };
                 }
@@ -54,8 +54,9 @@
                 this.initChartLayout = function(title){
                     return {
                                 title: title,
+                                //autosize: true,
                                 height: 500,
-                                width: 850,
+                                width: 1000,
                                 xaxis: {
                                     title: 'Iterations',
                                     showline: false
