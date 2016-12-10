@@ -7,7 +7,6 @@ angular
         function buildTemplate(layerId, layerType) {
             var layerDirectives =
             {
-                'data':             '<input-data-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></input-data-editor>',
                 'convolution1d':    '<convolution1d-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></convolution1d-editor>',
                 'convolution2d':    '<convolution2d-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></convolution2d-editor>',
                 'convolution3d':    '<convolution3d-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></convolution3d-editor>',
@@ -19,8 +18,7 @@ angular
                 'flatten':          '<flatten-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></flatten-editor>',
                 'dense':            '<dense-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></dense-editor>',
                 'datainput':        '<datainput-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></datainput-editor>',
-                'dataoutput':       '<dataoutput-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></dataoutput-editor>',
-                'solver':           '<solver-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></solver-editor>'
+                'dataoutput':       '<dataoutput-editor layer-id="' + layerId + '" do-on-submit="doOnSubmit()"></dataoutput-editor>'
             };
             return layerDirectives[layerType];
         }

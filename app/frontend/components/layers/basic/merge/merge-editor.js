@@ -27,6 +27,7 @@ angular
                 }
 
                 function setUpLayerParams(params) {
+                    $scope.params = {};
                     $scope.params.mergeType = params.mergeType;
                     $scope.params.mergeAxis = params.mergeAxis;
                     $scope.params.isTrainable = params.isTrainable;

@@ -1,5 +1,4 @@
 angular.module('layerService', [
-    'dataLayer',
     'convolution1dLayer',
     'convolution2dLayer',
     'convolution3dLayer',
@@ -11,10 +10,8 @@ angular.module('layerService', [
     'mergeLayer',
     'denseLayer',
     'datainputLayer',
-    'dataoutputLayer',
-    'solverLayer'])
+    'dataoutputLayer'])
     .service('layerService', ['$rootScope', '$http', '$templateCache',
-        'dataLayer',
         'convolution1dLayer',
         'convolution2dLayer',
         'convolution3dLayer',
@@ -26,11 +23,9 @@ angular.module('layerService', [
         'mergeLayer',
         'denseLayer',
         'datainputLayer',
-        'dataoutputLayer',
-        'solverLayer', LayerService]);
+        'dataoutputLayer', LayerService]);
 
 function LayerService($rootScope, $http, $templateCache,
-                      dataLayer,
                       convolution1dLayer,
                       convolution2dLayer,
                       convolution3dLayer,
@@ -42,8 +37,7 @@ function LayerService($rootScope, $http, $templateCache,
                       mergeLayer,
                       denseLayer,
                       datainputLayer,
-                      dataoutputLayer,
-                      solverLayer) {
+                      dataoutputLayer) {
 
     const networkLayerEvent = {
         UPDATE:     'layer:update',
@@ -52,10 +46,9 @@ function LayerService($rootScope, $http, $templateCache,
         REMOVE:     'layer:remove'
     };
 
-    const categories = ['input', 'basic: convolution', 'basic: pooling', 'basic: dense', 'basic', 'complex', 'output'];
+    const categories = ['input/output', 'basic: convolution', 'basic: pooling', 'basic: dense', 'basic', 'complex'];
     
     const layerByType = {
-        'data':             dataLayer,
         'convolution1d':    convolution1dLayer,
         'convolution2d':    convolution2dLayer,
         'convolution3d':    convolution3dLayer,
@@ -67,12 +60,10 @@ function LayerService($rootScope, $http, $templateCache,
         'flatten':          flattenLayer,
         'dense':            denseLayer,
         'datainput':        datainputLayer,
-        'dataoutput':        dataoutputLayer,
-        'solver':           solverLayer
+        'dataoutput':        dataoutputLayer
     };
 
     const templatesByType = {
-        'data': '',
         'convolution1d': '',
         'convolution2d': '',
         'convolution3d': '',
@@ -84,11 +75,9 @@ function LayerService($rootScope, $http, $templateCache,
         'merge': '',
         'dense': '',
         'datainput': '',
-        'dataoutput': '',
-        'solver': ''
+        'dataoutput': ''
     };
     
-    loadTemplate('data');
     loadTemplate('convolution1d');
     loadTemplate('convolution2d');
     loadTemplate('convolution3d');
@@ -102,7 +91,6 @@ function LayerService($rootScope, $http, $templateCache,
     loadTemplate('dense');
     loadTemplate('datainput');
     loadTemplate('dataoutput');
-    loadTemplate('solver');
 
     var layers = [
         convolution1dLayer.getDefault(),
@@ -114,11 +102,9 @@ function LayerService($rootScope, $http, $templateCache,
         activationLayer.getDefault(),
         flattenLayer.getDefault(),
         mergeLayer.getDefault(),
-        dataLayer.getDefault(),
         denseLayer.getDefault(),
         datainputLayer.getDefault(),
-        dataoutputLayer.getDefault(),
-        solverLayer.getDefault()
+        dataoutputLayer.getDefault()
     ];
 
     this.pubLayersUpdateEvent = function() {

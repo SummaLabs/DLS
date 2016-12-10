@@ -36,7 +36,7 @@ function DraggableCtrl($scope, $element, $rootScope) {
 
     var elemOffset;
 	var dragIcon = document.createElement('img');
-	dragIcon.src = 'frontend/components/layers/data/node-test-2.png';
+	dragIcon.src = '/frontend/components/layers/basic/datainput/datainput-node.png';
 
 
     $element.on('dragstart', function (event) {

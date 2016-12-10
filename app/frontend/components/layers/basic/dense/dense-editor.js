@@ -26,6 +26,7 @@ angular
                 }
 
                 function setUpLayerParams(params) {
+                    $scope.params = {};
                     $scope.params.neuronsCount = params.neuronsCount;
                     $scope.params.activationFunction = params.activationFunction;
                     $scope.params.isTrainable = params.isTrainable;

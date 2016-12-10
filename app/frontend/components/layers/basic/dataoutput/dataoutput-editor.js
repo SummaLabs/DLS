@@ -30,7 +30,9 @@ angular
 
                 $scope.$watch('lossFunction', function (lossFunction) {
                     var layer = networkDataService.getLayerById($scope.layerId);
-                    layer.params.lossFunction = $scope.lossFunction;
+                    if (lossFunction != null) {
+                        layer.params.lossFunction = lossFunction;
+                    }
                 });
 
                 $scope.$watch('selectedDataSet', function (selectedDataSet) {
@@ -41,7 +43,7 @@ angular
 
                 function setUpLayerParams(dataSets) {
                     $scope.lossFunctionList = dataoutputLayer.getLossFunctions();
-                    $scope.lossFunction = $scope.lossFunctionList[0];
+                    $scope.lossFunction = $scope.lossFunctionList[0].value;
                     $scope.dataSets = dataSets;
                     var currentLayer = networkDataService.getLayerById($scope.layerId);
                     var savedParams = currentLayer.params;

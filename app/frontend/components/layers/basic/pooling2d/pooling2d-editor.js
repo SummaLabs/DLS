@@ -25,6 +25,7 @@ angular
                 }
 
                 function setUpLayerParams(params) {
+                    $scope.params = {};
                     $scope.params.subsamplingType = params.subsamplingType;
                     $scope.params.subsamplingSizeWidth = params.subsamplingSizeWidth;
                     $scope.params.subsamplingSizeHeight = params.subsamplingSizeHeight;

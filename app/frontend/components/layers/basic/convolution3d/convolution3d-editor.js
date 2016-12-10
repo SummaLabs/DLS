@@ -5,8 +5,7 @@ angular
 .directive('convolution3dEditor', function () {
     return {
         scope: {
-            layerId: '@',
-            doOnSubmit: '&'
+            layerId: '@'
         },
         templateUrl: "frontend/components/layers/basic/convolution3d/convolution3d-editor.html",
         controller: function ($scope, networkDataService, convolution3dLayer) {

@@ -26,7 +26,7 @@ function DataOutputLayer() {
             "id": 0,
             "name": "DataOutput",
             "layerType": 'dataoutput',
-            "category": "input",
+            "category": "input/output",
             "params": {
                 "lossFunction": "categorical_crossentropy",
                 "datasetId": ""
