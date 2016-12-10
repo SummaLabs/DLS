@@ -271,7 +271,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
     };
 
 
-    this.saveOrCreateNetworkDialog = function ($event, doSave, callbackFunc) {
+    this.saveOrCreateNetworkDialog = function ($event, doSave, createNewNetworkFunc) {
         doUpdateNetwork();
         var parentEl = angular.element(document.body);
         $mdDialog.show({
@@ -310,15 +310,15 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
                     networkDataService.pubNetworkUpdateEvent();
                 }
                 $mdDialog.hide();
-                if (callbackFunc) {
-                    callbackFunc.call();
+                if (createNewNetworkFunc) {
+                    createNewNetworkFunc.call();
                 }
             };
 
             $scope.closeDialog = function () {
                 $mdDialog.hide();
-                if (callbackFunc) {
-                    callbackFunc.call();
+                if (createNewNetworkFunc) {
+                    createNewNetworkFunc.call();
                 }
             }
         }
