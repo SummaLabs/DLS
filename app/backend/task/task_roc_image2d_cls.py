@@ -14,11 +14,16 @@ from sklearn.metrics import roc_auc_score
 
 from app.backend.core import utils as dlsutils
 from app.backend.core.models.api import modelsWatcher
-from app.backend.core.models.cfg import PREFIX_EVAL_ROC_DIR, CFG_EVAL_ROC, PREFIX_EVAL_ROC_TABLE
-from app.backend.core.models.keras_trainer_v3 import KerasTrainer as ModelProcessor
-from app.backend.datasets.api import datasetWatcher
+
+#from app.backend.core.models.cfg import PREFIX_EVAL_ROC_DIR, CFG_EVAL_ROC, PREFIX_EVAL_ROC_TABLE
+#from app.backend.core.models.keras_trainer_v3 import KerasTrainer as ModelProcessor
+#from app.backend.datasets.api import datasetWatcher
 from task import Task
 
+from app.backend.datasets.api import datasetWatcher
+from app.backend.core.models.keras_trainer_v4 import KerasTrainer as ModelProcessor
+from app.backend.core.models.cfg import PREFIX_EVAL_ROC_DIR, CFG_EVAL_ROC, PREFIX_EVAL_ROC_TABLE, PREFIX_EVAL_ROC_ROC
+from app.backend.core import utils as dlsutils
 
 class TaskROCImage2DCls(Task):
     modelId=None

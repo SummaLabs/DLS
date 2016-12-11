@@ -9,6 +9,9 @@ import pprint
 import matplotlib.pyplot as plt
 import skimage.io as skio
 
+from app.backend.core.models.keras_trainer_v4 import KerasTrainer
+from app.backend.core.datasets.api import datasetWatcher
+
 from app.backend.core.models.api import modelsWatcher
 from app.backend.core.models.keras_trainer_v3 import KerasTrainer
 
