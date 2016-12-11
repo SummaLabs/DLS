@@ -1,32 +1,17 @@
 'use strict';
 
 angular.module('dlsApp', ['ngMaterial', "ui.router",
-
-    'designerCore',
     'networkMain',
-    'modelMain',
-    // Layers
-    'convolution1dEditor',
-    'convolution2dEditor',
-    'convolution3dEditor',
-    'pooling1dEditor',
-    'pooling2dEditor',
-    'pooling3dEditor',
-    'activationEditor',
-    'flattenEditor',
-    'mergeEditor',
-    'datasetMain',
-    'denseEditor',
-    'datainputEditor',
-    'dataoutputEditor',
-    //
-    'layerEditor',
     'networkDataService',
-    'FileManagerApp',
-    'googlechart',
-    'settings',
+    'designerCore',
+    'modelMain',
+    'datasetMain',
     'task',
-    'layerService'
+    'settings',
+    'layerEditor',
+    'layerService',
+    'googlechart',
+    'FileManagerApp'
 ]);
 
 
