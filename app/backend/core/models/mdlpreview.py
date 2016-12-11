@@ -41,7 +41,8 @@ class ModelTaskDirBuilder:
         dirDataset = os.path.join(dirWithDatasets, datasetId)
         dlsutils.makeDirIfNotExists(dirTaskOut)
         #
-        modelAdjusted = modelTrainer.adjustModelInputOutput2DBData(modelTrainer.model, dirDataset)
+        # modelAdjusted = modelTrainer.adjustModelInputOutput2DBData(modelTrainer.model, dirDataset)
+        modelAdjusted = modelTrainer.model
         foutConfigModel   = os.path.join(dirTaskOut, CFG_MODEL_TRAIN)
         foutConfigNetwork = os.path.join(dirTaskOut, CFG_MODEL_NETWORK)
         foutConfigSolver  = os.path.join(dirTaskOut, CFG_SOLVER)

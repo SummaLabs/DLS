@@ -21,7 +21,7 @@ import keras.utils.visualize_util as kervis
 
 from compiler.ast import flatten
 
-from keras_trainer_v3 import KerasTrainer, getOptimizerJson2Keras
+from keras_trainer_v4 import KerasTrainer, getOptimizerJson2Keras
 from batcher_image2d import BatcherImage2DLMDB
 from cfg import CFG_MODEL_TRAIN, CFG_SOLVER, PREFIX_SNAPSHOT
 

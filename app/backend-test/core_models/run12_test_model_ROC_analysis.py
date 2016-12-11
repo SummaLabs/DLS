@@ -16,7 +16,7 @@ import numpy as np
 import sklearn
 from sklearn.metrics import roc_curve, auc, roc_auc_score
 
-from app.backend.core.models.keras_trainer_v3 import KerasTrainer as ModelProcessor
+from app.backend.core.models.keras_trainer_v4 import KerasTrainer as ModelProcessor
 from app.backend.core.datasets.api import datasetWatcher
 from app.backend.core.models.api import modelsWatcher
 import app.backend.core.utils as dlsutils
