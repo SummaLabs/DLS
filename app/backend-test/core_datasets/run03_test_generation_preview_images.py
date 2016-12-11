@@ -7,7 +7,7 @@ import glob
 
 import matplotlib.pyplot as plt
 
-from app.backend.core.datasets.dbpreview import DatasetImage2dInfo
+from app.backend.core.datasets.dbimageinfo import DatasetImage2dInfo
 from app.backend.core.datasets.imgproc2d import ImageTransformer2D
 
 pathWithDatasets='../../../data/datasets'

@@ -2,25 +2,21 @@
 # -*- coding: utf-8 -*-
 __author__ = 'ar'
 
-import os
-import glob
-import pprint
 import json
-
+import os
 from datetime import datetime
 
-import pandas as pd
 import matplotlib.pyplot as plt
-import skimage.io as skio
 import numpy as np
+import pandas as pd
 import sklearn
-from sklearn.metrics import roc_curve, auc, roc_auc_score
+from sklearn.metrics import roc_auc_score
 
-from app.backend.core.models.keras_trainer_v3 import KerasTrainer as ModelProcessor
-from app.backend.core.datasets.api import datasetWatcher
-from app.backend.core.models.api import modelsWatcher
 import app.backend.core.utils as dlsutils
-from app.backend.core.models.cfg import PREFIX_EVAL_ROC_DIR, CFG_EVAL_ROC, PREFIX_EVAL_ROC_TABLE, PREFIX_EVAL_ROC_ROC
+from app.backend.core.models.api import modelsWatcher
+from app.backend.core.models.cfg import PREFIX_EVAL_ROC_DIR, CFG_EVAL_ROC, PREFIX_EVAL_ROC_TABLE
+from app.backend.core.models.keras_trainer_v3 import KerasTrainer as ModelProcessor
+from app.backend.datasets.api import datasetWatcher
 
 dirWithImages='../../../data-test/test-inference'
 

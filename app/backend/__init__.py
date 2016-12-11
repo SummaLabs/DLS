@@ -1,11 +1,12 @@
-from flask import Flask
-from flask import Flask, render_template
-from flask_socketio import SocketIO
+import errno
 import logging
 import logging.handlers
-from config import DevelopmentConfig
 import os
-import errno
+
+from flask import Flask
+from flask_socketio import SocketIO
+
+from config import DevelopmentConfig
 
 
 def mkdir_p(path):
@@ -47,7 +48,7 @@ socketio = SocketIO(app_flask, async_mode=async_mode)
 
 from app.backend import api
 from app.backend.core import datasets
-from app.backend.core.datasets import api
+from app.backend.datasets import api
 from app.backend.core import models
 from app.backend.core.models import api
 from app.backend.device import sockets

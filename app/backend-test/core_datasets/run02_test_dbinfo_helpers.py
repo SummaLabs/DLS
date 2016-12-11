@@ -4,7 +4,7 @@ __author__ = 'ar'
 
 import json
 
-from app.backend.core.datasets.dbpreview import DatasetImage2dInfo
+from app.backend.core.datasets.dbimageinfo import DatasetImage2dInfo
 
 pathDB='/home/ar/gitlab.com/DLS.ai/DLS.git/data/datasets/dbset-20160916-105254-938547'
 

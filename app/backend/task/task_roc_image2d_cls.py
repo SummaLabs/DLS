@@ -2,25 +2,23 @@
 # -*- coding: utf-8 -*-
 __author__ = 'ar'
 
-import os
 import json
-import time
-
-from task import Task
-
+import os
+import shutil
 from datetime import datetime
 
-import shutil
 import numpy as np
 import pandas as pd
 import sklearn
-from sklearn.metrics import roc_curve, auc, roc_auc_score
+from sklearn.metrics import roc_auc_score
 
-from app.backend.core.models.api import modelsWatcher
-from app.backend.core.datasets.api import datasetWatcher
-from app.backend.core.models.keras_trainer_v3 import KerasTrainer as ModelProcessor
-from app.backend.core.models.cfg import PREFIX_EVAL_ROC_DIR, CFG_EVAL_ROC, PREFIX_EVAL_ROC_TABLE, PREFIX_EVAL_ROC_ROC
 from app.backend.core import utils as dlsutils
+from app.backend.core.models.api import modelsWatcher
+from app.backend.core.models.cfg import PREFIX_EVAL_ROC_DIR, CFG_EVAL_ROC, PREFIX_EVAL_ROC_TABLE
+from app.backend.core.models.keras_trainer_v3 import KerasTrainer as ModelProcessor
+from app.backend.datasets.api import datasetWatcher
+from task import Task
+
 
 class TaskROCImage2DCls(Task):
     modelId=None

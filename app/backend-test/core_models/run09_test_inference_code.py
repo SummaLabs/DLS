@@ -2,17 +2,15 @@
 # -*- coding: utf-8 -*-
 __author__ = 'ar'
 
-import os
 import glob
+import os
 import pprint
 
 import matplotlib.pyplot as plt
 import skimage.io as skio
-import numpy as np
 
-from app.backend.core.models.keras_trainer_v3 import KerasTrainer
-from app.backend.core.datasets.api import datasetWatcher
 from app.backend.core.models.api import modelsWatcher
+from app.backend.core.models.keras_trainer_v3 import KerasTrainer
 
 dirWithImages='../../../data-test/test-inference'
 
