@@ -10,7 +10,7 @@ angular
         templateUrl: "frontend/components/layers/basic/dataoutput/dataoutput-editor.html",
         controller: function ($scope, networkDataService, layerService, datasetService, dataoutputLayer) {
             this.$onInit = function () {
-                setUpLayerParams($scope, networkDataService, layerService);
+                // setUpLayerParams($scope, networkDataService, layerService);
                 $scope.lossFunctionList = dataoutputLayer.getLossFunctions();
                 $scope.selectedDB = null;
                 $scope.datasetIdList = null;
@@ -32,6 +32,7 @@ angular
                         if($scope.datasetIdList.length>0) {
                             $scope.selectedDB = $scope.datasetIdList[0];
                         }
+                        setUpLayerParams($scope, tlist, networkDataService, layerService);
                     },
                     function errorCallback(response) {
                         console.log(response.data);
@@ -54,24 +55,43 @@ angular
                     // layer.params.optimizer = $scope.optimizer;
                 }
 
-                function setUpLayerParams($scope, networkDataService, layerService) {
+                function setUpLayerParams($scope, dataSetList, networkDataService, layerService) {
                     var currentLayer = networkDataService.getLayerById($scope.layerId);
                     // var layerParams = networkDataService.getLayerById($scope.layerId).params;
                     var savedParams = currentLayer.params;
                     $scope.lossFunction = savedParams.lossFunction;
-                    var defaultParams = layerService.getLayerByType(currentLayer.layerType).params;
-                    setUpParam($scope, savedParams, defaultParams, 'datasetType');
-                    setUpParam($scope, savedParams, defaultParams, 'datasetId');
+                    var savedDataSetIndex = -1;
+                    for (var i = 0; i < dataSetList.length; i++) {
+                        if (savedParams['datasetId'] == dataSetList[i].id) {
+                            savedDataSetIndex = i;
+                        }
+                    }
+                    if (savedDataSetIndex > -1) {
+                        $scope.selectedDB = $scope.datasetIdList[savedDataSetIndex];
+                    } else {
+                        if(dataSetList.length > 0) {
+                            $scope.selectedDB = dataSetList[0];
+                        }
+                        currentLayer.params = layerService.getLayerByType(currentLayer.layerType).params;
+                    }
+
+
+
+
+
+                    // var defaultParams = layerService.getLayerByType(currentLayer.layerType).params;
+                    // setUpParam($scope, savedParams, defaultParams, 'datasetType');
+                    // setUpParam($scope, savedParams, defaultParams, 'datasetId');
                     // $scope.optimizer = layerParams.optimizer;
                 }
 
-                function setUpParam($scope, savedParams, defaultParams, param) {
-                    if (savedParams[param] == "") {
-                        $scope[param] = defaultParams[param];
-                    } else {
-                        $scope[param] = savedParams[param];
-                    }
-                }
+                // function setUpParam($scope, savedParams, defaultParams, param) {
+                //     if (savedParams[param] == "") {
+                //         $scope[param] = defaultParams[param];
+                //     } else {
+                //         $scope[param] = savedParams[param];
+                //     }
+                // }
             }
         }
     }
