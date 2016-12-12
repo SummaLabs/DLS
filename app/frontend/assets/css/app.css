@@ -18,8 +18,13 @@ md-toolbar div md-icon {
   width: 48px;
 }
 
+#main-tab {
+    min-height: 48px;
+}
+
 #content {
-    height: calc(100% - 48px - 65px);
+    position: relative;
+    top:0px;
 }
 
 md-list div.selected {

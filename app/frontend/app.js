@@ -69,7 +69,7 @@ angular.module('dlsApp')
             }
         }).state('designer', {
             url: "/designer",
-            template: "<designer  style='height:100%;'></designer>",
+            template: "<div  style='height: 0px;'></div>",
             controller: function ($rootScope) {
                 $rootScope.tabIndex = 1;
             }

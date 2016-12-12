@@ -73,7 +73,7 @@
 .designer {
 	height:100%;
 	max-width: 100%;
-    position: relative;
+    /*position: relative;*/
 }
 
 
@@ -165,6 +165,7 @@
 
 #svg {
 	overflow: visible;
+    height: 100%;
 }
 
 .layer-section-header{
@@ -190,6 +191,17 @@
 }
 .palette-header{
     text-align: center;
+}
+
+#main-tab  #tab-content-1 {
+	overflow: hidden;
+}
+#main-tab  #tab-content-1 > div:first-child {
+	 height: 100%;
+}
+
+#main-tab  #tab-content-2 {
+	 display: none;
 }
 
 
