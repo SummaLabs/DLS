@@ -18,14 +18,14 @@ md-toolbar div md-icon {
   width: 48px;
 }
 
-#main-tab {
-    min-height: 48px;
-}
+/*#main-tab {*/
+    /*min-height: 48px;*/
+/*}*/
 
-#content {
-    position: relative;
-    top:0px;
-}
+/*#content {*/
+    /*position: relative;*/
+    /*top:0px;*/
+/*}*/
 
 md-list div.selected {
   color: #03a9f4;

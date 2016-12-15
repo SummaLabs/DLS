@@ -1,63 +1,61 @@
-<div class="designer">
-    <div layout="row" class="unselectable" style="height:100%;">
-        <palette style="overflow: auto;"></palette>
-        <div flex id="workspace" tabindex="1">
-            <div id="designer-network-name">
-                <span>{{networkName}}</span>
-            </div>
-
-            <div id="designer-undo-redo-panel">
-                <md-button ng-click="toggleUndo()" class="md-icon-button" aria-label="More">
-                    <md-icon md-font-library="material-icons" class="md-18" aria-label="undo">undo</md-icon>
-                </md-button>
-                <md-button ng-click="toggleRedo()" class="md-icon-button" aria-label="More">
-                    <md-icon md-font-library="material-icons" class="md-18" aria-label="redo">redo</md-icon>
-                </md-button>
-            </div>
-
-            <div id="designer-info-panel-toggle">
-                <md-button ng-click="toggleRight()" class="md-icon-button" aria-label="More">
-                    <md-icon md-font-library="material-icons" class="md-18" aria-label="reset">{{toggleIcon}}</md-icon>
-                </md-button>
-            </div>
-            <svg-graph flex layout="column" control-item="$ctrl.svgControl" svg-width="$ctrl.svgWidth"
-                       svg-height="$ctrl.svgHeight" svg-color="#fff" pointer-events="all"
-                       focusable="false"></svg-graph>
-
-            <viewport svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}"></viewport>
-            <div id="designer-tools">
-                <md-button ng-click="$ctrl.zoomOut($event)" class="md-icon-button" aria-label="More">
-                    <md-icon md-font-library="material-icons" aria-label="zoom_out">zoom_out</md-icon>
-                </md-button>
-                <md-button ng-click="$ctrl.zoomIn($event)" class="md-icon-button" aria-label="More">
-                    <md-icon md-font-library="material-icons" aria-label="zoom_in">zoom_in</md-icon>
-                </md-button>
-                <md-button ng-click="$ctrl.resetView($event)" class="md-icon-button" aria-label="More">
-                    <md-icon md-font-library="material-icons" class="md-18" aria-label="reset">youtube_searched_for</md-icon>
-                </md-button>
-                <md-button ng-click="$ctrl.clear($event)" class="md-icon-button" aria-label="More">
-                    <md-icon md-font-library="material-icons" class="md-18" aria-label="clear">clear</md-icon>
-                </md-button>
-            </div>
+<div layout="row" class="unselectable" style="height:100%;">
+    <palette style="overflow: auto;"></palette>
+    <div flex id="workspace" tabindex="1">
+        <div id="designer-network-name">
+            <span>{{networkName}}</span>
         </div>
-        <md-sidenav class="md-sidenav-custom md-sidenav-right" md-component-id="right"
-            md-disable-backdrop md-whiteframe="4" md-is-open="true">
-            <div id="layer-info">
-                <md-content>
-                    <md-tabs md-dynamic-height md-border-bottom>
-                        <md-tab label="Settings">
-                            <md-content class="md-padding">
-                                <layer-editor layer-id="{{$ctrl.layerId}}" layer-type="{{$ctrl.layerType}}"></layer-editor>
-                            </md-content>
-                        </md-tab>
-                        <md-tab label="Info">
-                            <md-content class="md-padding">
-                            </md-content>
-                        </md-tab>
-                </md-tabs>
-                </md-content>
-            </div>
 
-       </md-sidenav>
+        <div id="designer-undo-redo-panel">
+            <md-button ng-click="toggleUndo()" class="md-icon-button" aria-label="More">
+                <md-icon md-font-library="material-icons" class="md-18" aria-label="undo">undo</md-icon>
+            </md-button>
+            <md-button ng-click="toggleRedo()" class="md-icon-button" aria-label="More">
+                <md-icon md-font-library="material-icons" class="md-18" aria-label="redo">redo</md-icon>
+            </md-button>
+        </div>
+
+        <div id="designer-info-panel-toggle">
+            <md-button ng-click="toggleRight()" class="md-icon-button" aria-label="More">
+                <md-icon md-font-library="material-icons" class="md-18" aria-label="reset">{{toggleIcon}}</md-icon>
+            </md-button>
+        </div>
+        <svg-graph flex layout="column" control-item="$ctrl.svgControl" svg-width="$ctrl.svgWidth"
+                   svg-height="$ctrl.svgHeight" svg-color="#fff" pointer-events="all"
+                   focusable="false"></svg-graph>
+
+        <viewport svg-width="{{$ctrl.svgWidth}}" svg-height="{{$ctrl.svgHeight}}"></viewport>
+        <div id="designer-tools">
+            <md-button ng-click="$ctrl.zoomOut($event)" class="md-icon-button" aria-label="More">
+                <md-icon md-font-library="material-icons" aria-label="zoom_out">zoom_out</md-icon>
+            </md-button>
+            <md-button ng-click="$ctrl.zoomIn($event)" class="md-icon-button" aria-label="More">
+                <md-icon md-font-library="material-icons" aria-label="zoom_in">zoom_in</md-icon>
+            </md-button>
+            <md-button ng-click="$ctrl.resetView($event)" class="md-icon-button" aria-label="More">
+                <md-icon md-font-library="material-icons" class="md-18" aria-label="reset">youtube_searched_for</md-icon>
+            </md-button>
+            <md-button ng-click="$ctrl.clear($event)" class="md-icon-button" aria-label="More">
+                <md-icon md-font-library="material-icons" class="md-18" aria-label="clear">clear</md-icon>
+            </md-button>
+        </div>
     </div>
+    <md-sidenav class="md-sidenav-custom md-sidenav-right" md-component-id="right"
+        md-disable-backdrop md-whiteframe="4" md-is-open="true">
+        <div id="layer-info">
+            <md-content>
+                <md-tabs md-dynamic-height md-border-bottom>
+                    <md-tab label="Settings">
+                        <md-content class="md-padding">
+                            <layer-editor layer-id="{{$ctrl.layerId}}" layer-type="{{$ctrl.layerType}}"></layer-editor>
+                        </md-content>
+                    </md-tab>
+                    <md-tab label="Info">
+                        <md-content class="md-padding">
+                        </md-content>
+                    </md-tab>
+            </md-tabs>
+            </md-content>
+        </div>
+
+   </md-sidenav>
 </div>
