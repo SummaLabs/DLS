@@ -7,7 +7,7 @@ angular.module('designerCore', [
     'trainingParams'
 ]);
 
-var editorDefinition = {
+let editorDefinition = {
     templateUrl: '/frontend/components/main/designer/core.html',
     controller: ConstructorController,
     replace: true,
@@ -20,7 +20,7 @@ angular.module('designerCore')
 
 
 function CoreService(layerService, appConfig) {
-    var store = {};
+    let store = {};
     store.scale = 1;
     let counter = 0;
 
@@ -58,22 +58,22 @@ function CoreService(layerService, appConfig) {
 
 
 	function calculateProportions(templateHtml, portInSign, portOutSign) {
-	    var displayData = {};
+	    let displayData = {};
 
-        var svg = document.createElement('div');
+        let svg = document.createElement('div');
         svg.style.position = 'absolute';
         svg.style.top = '-1000px';
         svg.innerHTML = '<svg>' + templateHtml + '</svg>';
         document.body.appendChild(svg);
 
-        var portIn = angular.element(svg.querySelector('#' + portInSign));
+        let portIn = angular.element(svg.querySelector('#' + portInSign));
         if (!portIn[0])
         	console.log(portIn, portInSign, templateHtml);
-        var portInRect = portIn[0].getBoundingClientRect();
-        var portOut = angular.element(svg.querySelector('#' + portOutSign));
-        var portOutRect = portOut[0].getBoundingClientRect();
-        var rect = angular.element(svg.firstElementChild.firstElementChild);
-        var elementRect = rect[0].getBoundingClientRect();
+        let portInRect = portIn[0].getBoundingClientRect();
+        let portOut = angular.element(svg.querySelector('#' + portOutSign));
+        let portOutRect = portOut[0].getBoundingClientRect();
+        let rect = angular.element(svg.firstElementChild.firstElementChild);
+        let elementRect = rect[0].getBoundingClientRect();
 
         displayData.portIn = {
             centerOffset: {
@@ -110,7 +110,7 @@ function CoreService(layerService, appConfig) {
 }
 
 function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkDataService, modelService,  appConfig, layerService) {
-    var self = this;
+    let self = this;
 
     self.svgWidth = appConfig.svgDefinitions.areaWidth;
     self.svgHeight = appConfig.svgDefinitions.areaHeight;
@@ -118,10 +118,10 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
     constructorListeners();
 
     function doUpdateNetwork() {
-        var nodes = self.svgControl.getNodes();
-        var layers = networkDataService.getLayers();
+        let nodes = self.svgControl.getNodes();
+        // let layers = networkDataService.getLayers();
         nodes.forEach(function (node) {
-            var layer = networkDataService.getLayerById(node.id);
+            let layer = networkDataService.getLayerById(node.id);
             layer.pos = node.pos;
         });
     }
@@ -280,7 +280,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
 
             $scope.saveNetwork = function () {
 
-                var image = networkDataService.buildPreviewImage(networkDataService.getNetwork().layers, 150, 150, 20);
+                let image = networkDataService.buildPreviewImage(networkDataService.getNetwork().layers, 150, 150, 20);
                 networkDataService.getNetwork().preview = image;
                 networkDataService.saveNetwork($scope.network.name, $scope.network.description);
                 $mdDialog.hide();
@@ -293,7 +293,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
     };
 
     this.zoomOut = function (event) {
-        var scale = self.svgControl.getScale();
+        let scale = self.svgControl.getScale();
         scale /= appConfig.svgDefinitions.scaleFactor;
         if (scale > appConfig.svgDefinitions.scaleMin) {
             self.svgControl.scale(scale);
@@ -301,7 +301,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
     };
 
     this.zoomIn = function (event) {
-        var scale = self.svgControl.getScale();
+        let scale = self.svgControl.getScale();
         scale *= appConfig.svgDefinitions.scaleFactor;
         if (scale < appConfig.svgDefinitions.scaleMax) {
             self.svgControl.scale(scale);
@@ -414,8 +414,10 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         });
 
         $scope.$on('graph:activateItem', function (event, item) {
-            self.layerId = item.id;
-            self.layerType = item.layerType;
+            $scope.$apply( function() {
+                self.layerId = item.id;
+                self.layerType = item.layerType;
+            });
             event.stopPropagation();
         });
 
@@ -469,7 +471,6 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         }
     }
 
-    "use strict";
     function adaptNetworkPositions(layers, maxWidth, maxHeight) {
         iteration();
         function iteration() {

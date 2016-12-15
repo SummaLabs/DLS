@@ -38,6 +38,7 @@ angular
                     var id = attrs.layerId;
                     var type = attrs.layerType;
                     var template = buildTemplate(id, type);
+
                     element.html(template);
                     $compile(element.contents())(scope);
 
