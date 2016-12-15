@@ -1,0 +1,17 @@
+<div class='md-padding' layout="column" layout-align="center center" layout-padding layout-fill style="padding-bottom: 32px;">
+    <md-card ng-repeat="layer in $ctrl.layers" class="md-whiteframe-8dp md-padding">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-headline">Layer Name:&ensp;<strong>{{layer.name}}</strong></span>
+                <div layout="row" layout-align="space-between center">
+                    <span class="md-subhead">Type:&ensp;<strong>{{layer.type}}</strong>, Shape:&ensp;<strong>{{layer.shape}}</strong></span>
+                    <md-button class="" ng-click="$ctrl.zoomFilterImage($event, layer.previewPath)">
+                        ZOOM
+                        <md-icon md-font-library="material-icons" aria-label="show">visibility</md-icon>
+                    </md-button>
+                </div>
+            </md-card-title-text>
+        </md-card-title>
+        <img ng-src="{{layer.previewPath}}" class="md-card-image md-whiteframe-2dp" alt="Filters">
+    </md-card>
+</div>

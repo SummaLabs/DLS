@@ -1,0 +1,19 @@
+<md-dialog aria-label="Zoom Filters" flex="100">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Zoom Filters</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+     <md-card class="md-whiteframe-8dp md-padding">
+        <img ng-src="{{filterImagePath}}" class="md-card-image md-whiteframe-2dp" alt="Filters">
+    </md-card>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button ng-click="closeDialog()">
+            Cancel
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>
