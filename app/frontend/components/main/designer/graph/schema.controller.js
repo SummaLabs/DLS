@@ -275,14 +275,14 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 		$scope.$on('nodeMouseDown', function (event, data) {
 		    self.mouseMode = state.MOVING;
 			editedNode = schema.getNodeById(data.id);
-			prevMousePos = getOffsetPos($element, data.event);
+			prevMousePos = getOffsetPos(svgElement, data.event);
 		});
 
 		$scope.$on('nodeMouseUp', function (event, data) {
 
 			if (self.mouseMode === state.MOVING) {
 
-				let curMousePos = getOffsetPos($element, data);
+				let curMousePos = getOffsetPos(svgElement, data);
 
                 editedNode.move(
                     (curMousePos.x - prevMousePos.x) / self.scale,
@@ -305,7 +305,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 			self.mouseMode = state.JOINING;
 			self.activelink.nodes.length = 0;
 
-            let curMousePos = getOffsetPos($element, data.event);
+            let curMousePos = getOffsetPos(svgElement, data.event);
             curMousePos.x =  (viewX + curMousePos.x) / self.scale;
             curMousePos.y =  (viewY + curMousePos.y) / self.scale;
             $scope.$apply( function() {
@@ -385,7 +385,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                 if (divSvg)
                     viewBox(viewX, viewY, divSvg.offsetWidth, divSvg.offsetHeight);
             });
-            
+
 
 		});
 
@@ -404,7 +404,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
                 if (event.buttons === 1 && event.ctrlKey) {
 
-					prevMousePos = getOffsetPos($element, event);
+					prevMousePos = getOffsetPos(svgElement, event);
                     prevMousePos.x += viewX;
                     prevMousePos.y += viewY;
 
@@ -414,7 +414,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 					});
 					self.mouseMode = state.SELECTION;
 				} else if (event.buttons === 1) {
-					prevMousePos = getOffsetPos($element, event);
+					prevMousePos = getOffsetPos(svgElement, event);
 					self.mouseMode = state.SHIFT;
 				}
 		    }
@@ -422,7 +422,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
 		$element.on('mousemove', function (event) {
             if (self.mouseMode === state.SELECTION) {
-			    let curMousePos = getOffsetPos($element, event);
+			    let curMousePos = getOffsetPos(svgElement, event);
 			    $scope.$apply( function() {
                     curMousePos.x += viewX;
                     curMousePos.y += viewY;
@@ -431,7 +431,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                 });
 
 		    } else if (self.mouseMode === state.SHIFT) {
-		    	let curMousePos = getOffsetPos($element, event);
+		    	let curMousePos = getOffsetPos(svgElement, event);
 		    	let left = viewX -(curMousePos.x - prevMousePos.x);
 		    	let top = viewY - (curMousePos.y - prevMousePos.y);
 
@@ -439,7 +439,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 		    	prevMousePos = curMousePos;
 
 		    } else if (self.mouseMode === state.MOVING && event.buttons === 1) {
-				let curMousePos = getOffsetPos($element, event);
+				let curMousePos = getOffsetPos(svgElement, event);
 				let offsetX = (curMousePos.x - prevMousePos.x) / self.scale;
 				let offsetY = (curMousePos.y - prevMousePos.y) / self.scale;
 
@@ -457,7 +457,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
 				prevMousePos = curMousePos;
 			} else if (self.mouseMode === state.JOINING  && event.buttons === 1) {
-				let curMousePos = getOffsetPos($element, event);
+				let curMousePos = getOffsetPos(svgElement, event);
 				curMousePos.x =  (viewX + curMousePos.x) / self.scale;
 				curMousePos.y =  (viewY + curMousePos.y) / self.scale;
                 if (self.activelink.nodes.length === 2) {
@@ -544,7 +544,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 				}
       		}
       		$scope.$apply( function() {
-				let mousePos = getOffsetPos($element, event);
+				let mousePos = getOffsetPos(svgElement, event);
       			let sc = scaleToPoint(scale, mousePos);
                 coreService.param('scale', sc);
                 self.scale = sc;
@@ -686,7 +686,7 @@ function initBackground(self, scope, step, element, $compile) {
 }
 
 function getOffsetPos(element, event) {
-    let elementRect = element[0].getBoundingClientRect();
+    let elementRect = element.getBoundingClientRect();
     return {x: event.clientX - elementRect.left, y: event.clientY - elementRect.top};
 }
 
