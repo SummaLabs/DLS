@@ -9,7 +9,7 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-from app.backend.core.datasets.dbpreview import DatasetsWatcher, DatasetImage2dInfo
+from app.backend.core.datasets.dbwatcher import DatasetsWatcher
 from app.backend.core.models.batcher_image2d import BatcherImage2DLMDB
 
 pathWithDatasets='../../../data/datasets'

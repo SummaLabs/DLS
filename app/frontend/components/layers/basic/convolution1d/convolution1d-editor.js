@@ -5,35 +5,32 @@ angular
 .directive('convolution1dEditor', function () {
     return {
         scope: {
-            layerId: '@',
-            doOnSubmit: '&'
+            layerId: '@'
         },
         templateUrl: "frontend/components/layers/basic/convolution1d/convolution1d-editor.html",
         controller: function ($scope, networkDataService, convolution1dLayer) {
             this.$onInit = function () {
-                setUpLayerParams($scope, networkDataService);
+                setUpLayerParams(networkDataService.getLayerById($scope.layerId).params);
                 $scope.activationFunctionList = convolution1dLayer.getActivationFunctions();
 
-                $scope.onSubmit = function () {
+                $scope.$watch('params', function (params) {
                     var layer = networkDataService.getLayerById($scope.layerId);
-                    editLayer(layer);
-                    networkDataService.pubNetworkUpdateEvent();
-                    $scope.doOnSubmit();
-                };
+                    updateLayer(layer, params);
+                }, true);
 
-                function editLayer(layer) {
-                    layer.params.filtersCount = $scope.filtersCount;
-                    layer.params.filterWidth = $scope.filterWidth;
-                    layer.params.activationFunction = $scope.activationFunction;
-                    layer.params.isTrainable = $scope.isTrainable;
+                function updateLayer(layer, params) {
+                    layer.params.filtersCount = params.filtersCount;
+                    layer.params.filterWidth = params.filterWidth;
+                    layer.params.activationFunction = params.activationFunction;
+                    layer.params.isTrainable = params.isTrainable;
                 }
 
-                function setUpLayerParams($scope, networkDataService) {
-                    var layerParams = networkDataService.getLayerById($scope.layerId).params;
-                    $scope.filtersCount = layerParams.filtersCount;
-                    $scope.filterWidth = layerParams.filterWidth;
-                    $scope.activationFunction = layerParams.activationFunction;
-                    $scope.isTrainable = layerParams.isTrainable;
+                function setUpLayerParams(params) {
+                    $scope.params = {};
+                    $scope.params.filtersCount = params.filtersCount;
+                    $scope.params.filterWidth = params.filterWidth;
+                    $scope.params.activationFunction = params.activationFunction;
+                    $scope.params.isTrainable = params.isTrainable;
                 }
             }
         }

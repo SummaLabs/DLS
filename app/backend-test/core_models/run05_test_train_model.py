@@ -6,7 +6,7 @@ __author__ = 'ar'
 import os
 import glob
 import app.backend.core.utils as dlsutils
-from app.backend.core.models.keras_trainer_v3 import KerasTrainer
+from app.backend.core.models.keras_trainer_v4 import KerasTrainer
 
 pathWithModels='../../../data/models'
 

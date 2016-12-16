@@ -1,21 +1,19 @@
-<form ng-submit="onSubmit()">
-    <div layout-margin>
-        <div layout="column">
-            <md-input-container>
-                <label>Neurons Count</label>
-                <input ng-model="neuronsCount" type="number" min="1" required>
-            </md-input-container>
-            <md-input-container>
-                <label>Acivation Function</label>
-                <md-select ng-model="activationFunction" ng-model-options="{trackBy: '$value'}" required>
-                    <md-option ng-repeat="option in activationFunctionList" ng-value="option.value">
-                        {{option.text}}
-                    </md-option>
-                </md-select>
-            </md-input-container>
-            <md-checkbox ng-model="isTrainable">
-                Trainable
-            </md-checkbox>
-        <md-button type="submit" class="md-warn md-raised md-hue-2">Submit</md-button>
+<div layout-margin>
+    <div layout="column">
+        <md-input-container>
+            <label>Neurons Count</label>
+            <input ng-model="params.neuronsCount" type="number" min="1" required>
+        </md-input-container>
+        <md-input-container>
+            <label>Acivation Function</label>
+            <md-select ng-model="params.activationFunction" ng-model-options="{trackBy: '$value'}" required>
+                <md-option ng-repeat="option in activationFunctionList" ng-value="option.value">
+                    {{option.text}}
+                </md-option>
+            </md-select>
+        </md-input-container>
+        <md-checkbox ng-model="params.isTrainable">
+            Trainable
+        </md-checkbox>
     </div>
-</form>
+</div>

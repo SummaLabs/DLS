@@ -1,20 +1,19 @@
-from flask import render_template, request
-from flask import send_from_directory
-from app.backend import app_flask
-
 import os
 from os.path import dirname
 
+from flask import render_template, request
+from flask import send_from_directory
 from flask_sockets import Sockets
-from app.backend.network.api import network
+
+from app.backend import app_flask
+from app.backend.core.models.api import models
+from app.backend.datasets.api import dbpreview
+from app.backend.device.api import device
 from app.backend.file_manager.api import file_manager
 from app.backend.images.api import images
-from app.backend.core.datasets.api import dbpreview
-from app.backend.device.api import device
-from app.backend.task.api import task
-
 from app.backend.model.api import model
-from app.backend.core.models.api import models
+from app.backend.network.api import network
+from app.backend.task.api import task
 
 sockets = Sockets(app=app_flask)
 

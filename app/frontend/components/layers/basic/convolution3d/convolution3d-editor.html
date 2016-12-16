@@ -1,36 +1,33 @@
-<form ng-submit="onSubmit()">
-    <div layout-margin>
-        <div layout="column">
-            <md-input-container>
-                <label>Filters Count</label>
-                <input ng-model="filtersCount" type="number" min="1" required>
+<div layout-margin>
+    <div layout="column">
+        <md-input-container>
+            <label>Filters Count</label>
+            <input ng-model="params.filtersCount" type="number" min="1" required>
+        </md-input-container>
+        <div layout="row">
+            <md-input-container layout-fill>
+                <label>Filter Width </label>
+                <input ng-model="params.filterWidth" type="number" min="1" required>
             </md-input-container>
-            <div layout="row">
-                <md-input-container layout-fill>
-                    <label>Filter Width </label>
-                    <input ng-model="filterWidth" type="number" min="1" required>
-                </md-input-container>
-                <md-input-container layout-fill>
-                    <label>Filter Height </label>
-                    <input ng-model="filterHeight" type="number" min="1" required>
-                </md-input-container>
-                <md-input-container layout-fill>
-                    <label>Filter Depth </label>
-                    <input ng-model="filterDepth" type="number" min="1" required>
-                </md-input-container>
-            </div>
-            <md-input-container>
-                <label>Acivation Function</label>
-                <md-select ng-model="activationFunction" ng-model-options="{trackBy: '$value'}" required>
-                    <md-option ng-repeat="option in activationFunctionList" ng-value="option.value">
-                        {{option.text}}
-                    </md-option>
-                </md-select>
+            <md-input-container layout-fill>
+                <label>Filter Height </label>
+                <input ng-model="params.filterHeight" type="number" min="1" required>
             </md-input-container>
-            <md-checkbox ng-model="isTrainable">
-                Trainable
-            </md-checkbox>
+            <md-input-container layout-fill>
+                <label>Filter Depth </label>
+                <input ng-model="params.filterDepth" type="number" min="1" required>
+            </md-input-container>
         </div>
-        <md-button type="submit" class="md-warn md-raised md-hue-2">Submit</md-button>
+        <md-input-container>
+            <label>Acivation Function</label>
+            <md-select ng-model="params.activationFunction" ng-model-options="{trackBy: '$value'}" required>
+                <md-option ng-repeat="option in activationFunctionList" ng-value="option.value">
+                    {{option.text}}
+                </md-option>
+            </md-select>
+        </md-input-container>
+        <md-checkbox ng-model="params.isTrainable">
+            Trainable
+        </md-checkbox>
     </div>
-</form>
+</div>

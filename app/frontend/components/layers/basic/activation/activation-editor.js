@@ -5,31 +5,26 @@ angular
 .directive('activationEditor', function () {
     return {
         scope: {
-            layerId: '@',
-            doOnSubmit: '&'
+            layerId: '@'
         },
         templateUrl: "frontend/components/layers/basic/activation/activation-editor.html",
         controller: function ($scope, networkDataService, activationLayer) {
             this.$onInit = function () {
-                setUpLayerParams($scope, networkDataService);
+                setUpLayerParams(networkDataService.getLayerById($scope.layerId).params);
                 $scope.activationFunctionList = activationLayer.getActivationFunctions();
 
-                $scope.onSubmit = function () {
+                $scope.$watch('params', function (params) {
                     var layer = networkDataService.getLayerById($scope.layerId);
-                    editLayer(layer);
-                    networkDataService.pubNetworkUpdateEvent();
-                    $scope.doOnSubmit();
-                };
+                    updateLayer(layer, params);
+                }, true);
 
-                function editLayer(layer) {
-                    layer.params.activationFunction = $scope.activationFunction;
-                    layer.params.isTrainable = $scope.isTrainable;
+                function updateLayer(layer, params) {
+                    layer.params.activationFunction = params.activationFunction;
                 }
 
-                function setUpLayerParams($scope, networkDataService) {
-                    var layerParams = networkDataService.getLayerById($scope.layerId).params;
-                    $scope.activationFunction = layerParams.activationFunction;
-                    $scope.isTrainable = layerParams.isTrainable;
+                function setUpLayerParams(params) {
+                    $scope.params = {};
+                    $scope.params.activationFunction = params.activationFunction;
                 }
             }
         }

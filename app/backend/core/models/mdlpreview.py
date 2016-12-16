@@ -2,23 +2,18 @@
 # -*- coding: utf-8 -*-
 __author__ = 'ar'
 
-import os
-import json
 import glob
-
-from datetime import datetime
+import json
+import os
 from functools import wraps
 
 from app.backend.core import utils as dlsutils
 from app.backend.core.models.cfg import CFG_MODEL, CFG_SOLVER, CFG_MODEL_TRAIN, CFG_PROGRESS, \
     PREFIX_SNAPSHOT, EXT_MODEL_WEIGHTS, PREFIX_TASKS_DIR, CFG_EVAL_ROC, PREFIX_EVAL_ROC_DIR, CFG_MODEL_NETWORK
-
+from app.backend.datasets import api as dbapi
 from flow_parser import DLSDesignerFlowsParser
-from batcher_image2d import BatcherImage2DLMDB
-
-from app.backend.core.datasets import api as dbapi
-
 from ..utils import getDateTimeForConfig
+
 
 ####################################
 class ModelTaskDirBuilder:
@@ -41,7 +36,8 @@ class ModelTaskDirBuilder:
         dirDataset = os.path.join(dirWithDatasets, datasetId)
         dlsutils.makeDirIfNotExists(dirTaskOut)
         #
-        modelAdjusted = modelTrainer.adjustModelInputOutput2DBData(modelTrainer.model, dirDataset)
+        # modelAdjusted = modelTrainer.adjustModelInputOutput2DBData(modelTrainer.model, dirDataset)
+        modelAdjusted = modelTrainer.model
         foutConfigModel   = os.path.join(dirTaskOut, CFG_MODEL_TRAIN)
         foutConfigNetwork = os.path.join(dirTaskOut, CFG_MODEL_NETWORK)
         foutConfigSolver  = os.path.join(dirTaskOut, CFG_SOLVER)

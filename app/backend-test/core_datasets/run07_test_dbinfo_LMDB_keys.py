@@ -6,7 +6,9 @@ import json
 
 import lmdb
 
-from app.backend.core.datasets.dbpreview import DatasetsWatcher, DatasetImage2dInfo
+from app.backend.core.datasets.dbwatcher import DatasetsWatcher
+from app.backend.core.datasets.dbimageinfo import DatasetImage2dInfo
+
 
 pathWithDatasets='../../../data/datasets'
 

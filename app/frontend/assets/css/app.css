@@ -214,3 +214,8 @@ nav.navbar-inverse {
 div.modal-header{
     background: #337ab7 !important;
 }
+
+h2.task_header{
+    margin: 0 auto;
+    margin-top: 60px;
+}

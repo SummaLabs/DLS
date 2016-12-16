@@ -15,7 +15,7 @@ function DataInputLayer() {
             "id": 0,
             "name": "DataInput",
             "layerType": "datainput",
-            "category": "input",
+            "category": "input/output",
             "params": {
                 "datasetType": "",
                 "datasetId": ""
