@@ -23,7 +23,8 @@ angular.module('layerService', [
         'mergeLayer',
         'denseLayer',
         'datainputLayer',
-        'dataoutputLayer', LayerService]);
+        'dataoutputLayer',
+        'complex', LayerService]);
 
 function LayerService($rootScope, $http, $templateCache,
                       convolution1dLayer,
@@ -37,7 +38,8 @@ function LayerService($rootScope, $http, $templateCache,
                       mergeLayer,
                       denseLayer,
                       datainputLayer,
-                      dataoutputLayer) {
+                      dataoutputLayer,
+                      complex) {
 
     const networkLayerEvent = {
         UPDATE:     'layer:update',
@@ -104,7 +106,8 @@ function LayerService($rootScope, $http, $templateCache,
         mergeLayer.getDefault(),
         denseLayer.getDefault(),
         datainputLayer.getDefault(),
-        dataoutputLayer.getDefault()
+        dataoutputLayer.getDefault(),
+        complex
     ];
 
     this.pubLayersUpdateEvent = function() {
