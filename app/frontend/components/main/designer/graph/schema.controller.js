@@ -103,7 +103,6 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         self.counterNodesInit = 0;
 
         if (clear) {
-
             schema.clear();
         }
 
@@ -160,6 +159,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
             if (layers.length > 1 && clear)
                 $scope.controlItem.reset();
+
             self.emitEvent(events.ADDED_LAYERS, {});
         };
 
@@ -215,7 +215,6 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
     $scope.controlItem.reset = function() {
         let rect = schema.rect();
-        console.log(rect.toString());
         if (rect && self.viewWidth > 0 && self.viewHeight > 0) {
             var sc = Math.min(self.viewWidth / rect.width(), self.viewHeight / rect.height());
             setScale(sc);
@@ -284,14 +283,16 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 				if (correctPos.x > 0 && correctPos.y > 0) {
 					$scope.$apply( function() {
                         if (data.node.category === 'complex') {
-                            let layers = normalizeLayersPosition(data.node.structure.layers, getMinPosition(data.node.structure.layers), correctPos);
+                            let layers = copyArray(data.node.structure.layers);
+                            layers = normalizeLayersPosition(layers, getMinPosition(layers), correctPos);
                             let complexPosition = placeComplexLayer(schema.getNodes(), layers);
-                            // console.log(complexPosition);
+                            schema.saveState();
                             $scope.controlItem.setLayers(layers, false);
-                            // self.emitEvent(events.UPDATE, layers);
                         } else {
+                            schema.saveState();
+
                             let templatePath = layerService.getTemplatePathByType(data.node.layerType);
-						    addNode(data.node.name, data.node.layerType, data.node.category, templatePath, correctPos)
+						    addNode(data.node.name, data.node.layerType, data.node.category, templatePath, correctPos);
                         }
 
 					});

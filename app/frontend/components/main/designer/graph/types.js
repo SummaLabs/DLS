@@ -147,11 +147,12 @@ SchemaStorage.prototype.createState = function() {
         idList: []
     };
 
-    if (this.schemaStorage.length === this.maxSize)
+    if (this.schemaStorage.length === this.maxSize) {
         this.schemaStorage.shift();
+    }
     this.schemaStorage.splice(this.storageIndex + 1, this.schemaStorage.length - this.storageIndex - 1);
-    this.storageIndex = this.schemaStorage.push(state) - 1;
 
+    this.storageIndex = this.schemaStorage.push(state) - 1;
     return state;
 };
 
@@ -168,14 +169,16 @@ SchemaStorage.prototype.currentState = function() {
 };
 
 SchemaStorage.prototype.undo = function() {
-    if (this.storageIndex > 0)
+    if (this.storageIndex > 0) {
         return this.schemaStorage[--this.storageIndex];
+    }
     return null;
 };
 
 SchemaStorage.prototype.redo = function() {
-    if (this.storageIndex < this.schemaStorage.length -1)
+    if (this.storageIndex < this.schemaStorage.length -1) {
         return this.schemaStorage[++this.storageIndex];
+    }
     return null;
 };
 
@@ -252,7 +255,7 @@ function Schema(viewContext, maxStorageSize) {
 
         if (id && checkIdForUnique(id)) {
             node.id = id;
-            this.currentState().idList.push(id);
+            this.currentState().idList.push('' + node.id);
         } else {
             node.id = generateId();
         }
@@ -497,8 +500,11 @@ function copyArray(array) {
 }
 
 function copyObject(obj) {
-    var copy = new obj.constructor();
-    for (var attr in obj) {
+    if (typeof obj === 'string')
+        return '' + obj;
+    let copy = new obj.constructor();
+
+    for (let attr in obj) {
         if (obj.hasOwnProperty(attr))
             if (obj[attr] !== null && typeof obj[attr] === 'object' && !(obj[attr] instanceof Element)) {
                 copy[attr] = copyObject(obj[attr]);
