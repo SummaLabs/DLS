@@ -11,8 +11,7 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'layerEditor',
     'layerService',
     'googlechart',
-    'FileManagerApp',
-    "convFilters"
+    'FileManagerApp'
 ]);
 
 
