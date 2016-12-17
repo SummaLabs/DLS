@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    angular.module('rocAnalysis', ['ngMaterial', 'deviceSelector', 'taskManagerService'])
-        .component('rocAnalysis', function () {
+    angular.module('featureSpace', ['ngMaterial', 'deviceSelector', 'taskManagerService'])
+        .directive('featureSpace', function () {
             return {
                 scope: {
                     modelId: '@'
@@ -23,14 +23,14 @@
                         $scope.rocsIds = [];
                         $scope.dsTypes = [];
                         $scope.classNames = [];
-                        //var future = modelService.loadModelROCsData($scope.modelId);
-                       /* future.then(function mySucces(response) {
+                        var future = modelService.loadModelROCsData($scope.modelId);
+                        future.then(function mySucces(response) {
                             setModelROCsHistoryData(response.data);
                         }, function myError(response) {
                             console.log();
-                        });*/
+                        });
                         
-                        /*$scope.$watch('rocHistorySelected', function (newValue, oldValue) {
+                        $scope.$watch('rocHistorySelected', function (newValue, oldValue) {
                             if (oldValue != null) {
                                 var index = 0;
                                 $scope.rocsIds.forEach(function (rocId) {
@@ -66,7 +66,7 @@
                             event.stopPropagation();
                             var reloadRocData = false;
                             tasks.forEach(function (task) {
-                                if (task.type = 'roc-image2d-cls') {
+                                if (task.type = 'fspace-image2d') {
                                     for (var i = 0; i < $scope.rocsIds.length; i++) {
                                         var rocId = $scope.rocsIds[i];
                                         if (rocId.hasOwnProperty('taskId')
@@ -86,7 +86,8 @@
                                 }, function myError(response) {
                                 });
                             }
-                        });*/
+                        });
+                        initChart();
                     };
 
                     this.showToast = function (message) {
@@ -106,7 +107,7 @@
                             clickOutsideToClose: true,
                             parent: angular.element(document.body),
                             targetEvent: $event,
-                            templateUrl: '/frontend/components/classification/image-2d/model/validation/roc-analysis/apply-feature-space.html',
+                            templateUrl: '/frontend/components/classification/image-2d/model/validation/feature-space/apply-feature-space.html',
                             controller: function ($scope, datasetService, taskManagerService) {
                                 $scope.dataSets = [];
                                 $scope.device = "";
@@ -268,6 +269,43 @@
                             "formatters": {}
                         };
                     }
+                    
+                    function initChart(){
+                        var trace1 = {
+  x: [1, 2, 3, 4, 5],
+  y: [1, 6, 3, 6, 1],
+  mode: 'markers',
+  type: 'scatter',
+  name: 'Team A',
+  text: ['A-1', 'A-2', 'A-3', 'A-4', 'A-5'],
+  marker: { size: 12 }
+};
+
+var trace2 = {
+  x: [1.5, 2.5, 3.5, 4.5, 5.5],
+  y: [4, 1, 7, 1, 4],
+  mode: 'markers',
+  type: 'scatter',
+  name: 'Team B',
+  text: ['B-a', 'B-b', 'B-c', 'B-d', 'B-e'],
+  marker: { size: 12 }
+};
+
+var data = [ trace1, trace2 ];
+
+var layout = {
+  xaxis: {
+    range: [ 0.75, 5.25 ]
+  },
+  yaxis: {
+    range: [0, 8]
+  },
+  title:'Data Labels Hover'
+};
+
+Plotly.newPlot('feature-space-chart', data, layout);
+                    }
+                    
                     
                 }
             }
