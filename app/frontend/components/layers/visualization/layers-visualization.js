@@ -1,45 +1,53 @@
 'use strict';
-
-angular.module('visualizeFilters', ['ngMaterial'])
-    .component('visualizeFilters', {
-        templateUrl: '/frontend/components/classification/image-2d/model/visualization/visualize-filters.html',
+angular.module('layersVisualization', ['ngMaterial'])
+    .component('layersVisualization', {
+        templateUrl: '/frontend/components/layers/visualization/layers-visualization.html',
         bindings: {
             layers: "<"
         },
-        controller: function ($mdDialog) {
+        controller: function ($mdDialog, modelService) {
+            var self = this;
             this.$onInit = function () {
-                this.layers = [
+                self.layers = [
                     {
                         name: "DataInput_1",
                         type: "datainput",
                         shape: "3x256x256",
-                        previewPath: "/frontend/components/classification/image-2d/model/visualization/filter.jpg"
+                        previewPath: "/frontend/components/layers/visualization/filter.jpg"
                     },
                     {
                         name: "Convolution2D_1",
                         type: "convolution2D",
                         shape: "3x256x256",
-                        previewPath: "/frontend/components/classification/image-2d/model/visualization/filter.jpg"
+                        previewPath: "/frontend/components/layers/visualization/filter.jpg"
                     },
                     {
                         name: "Convolution2D_3",
                         type: "convolution2D",
                         shape: "3x256x256",
-                        previewPath: "/frontend/components/classification/image-2d/model/visualization/filter.jpg"
+                        previewPath: "/frontend/components/layers/visualization/filter.jpg"
                     },
                     {
                         name: "Convolution2D_4",
                         type: "convolution2D",
                         shape: "3x256x256",
-                        previewPath: "/frontend/components/classification/image-2d/model/visualization/filter.jpg"
+                        previewPath: "/frontend/components/layers/visualization/filter.jpg"
                     }
-                ]
+                ];
+
+                modelService.loadLayersVisualization().then(
+                    function successCallback(response) {
+                        self.layers = response.data;
+                    },
+                    function errorCallback(response) {
+                        console.log(response.data);
+                    })
             };
             
             this.zoomFilterImage = function($event, filterImagePath) {
                 var parentEl = angular.element(document.body);
                 $mdDialog.show({
-                    templateUrl: '/frontend/components/classification/image-2d/model/visualization/zoom-filters-dialog.html',
+                    templateUrl: '/frontend/components/layers/visualization/layers-visualization-dialog.html',
                     parent: parentEl,
                     locals: {
                     },
