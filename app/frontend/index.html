@@ -27,18 +27,21 @@
     <h3>Deep Learning Studio</h3>
 </md-toolbar>
 
-<md-tabs md-selected="selectedIndex" md-border-bottom md-dynamic-height>
+<md-tabs id="main-tab" md-selected="selectedIndex" md-border-bottom  md-dynamic-height>
     <md-tab ui-sref="networks" class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="networks">apps</md-icon>
             Networks
         </md-tab-label>
     </md-tab>
-    <md-tab ui-sref="designer" class="unselectable">
+    <md-tab ui-sref="designer" class="unselectable" layout-fill>
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="builder">build</md-icon>
             Designer
         </md-tab-label>
+        <!--<md-tab-body>-->
+            <!--<designer style="height: 100%;"></designer>-->
+        <!--</md-tab-body>-->
     </md-tab>
     <md-tab ui-sref="models" class="unselectable">
         <md-tab-label>
@@ -66,6 +69,7 @@
     </md-tab>
 </md-tabs>
 
+<designer id="designer"></designer>
 <div id="content" ui-view> </div>
 
 <script src="/frontend/lib/angular.js"></script>

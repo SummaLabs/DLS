@@ -195,17 +195,17 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
 
     this.buildPreviewImage = function(layers, wh, ht, margin) {
 
-        var x_min = Number.MAX_VALUE;
-        var x_max = Number.MIN_VALUE;
-        var y_min = Number.MAX_VALUE;
-        var y_max = Number.MIN_VALUE;
+        let x_min = Number.MAX_VALUE;
+        let x_max = Number.MIN_VALUE;
+        let y_min = Number.MAX_VALUE;
+        let y_max = Number.MIN_VALUE;
 
-        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        let svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('width', wh);
         svg.setAttribute('height', ht);
         svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
-        var html = '';
+        let html = '';
 
         if (layers.length > 1) {
             layers.forEach(function (node) {
@@ -215,17 +215,17 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
                 y_max = Math.max(y_max, node.pos.y);
             });
 
-            var width = x_max - x_min;
-            var height = y_max - y_min;
-            if (width < 10)
-                width = 10;
-            if (height < 10)
-                height = 10;
+            let width = x_max - x_min;
+            let height = y_max - y_min;
+            if (width < 1000)
+                width = 1000;
+            if (height < 1000)
+                height = 1000;
 
-            var scaleX = (wh - (margin * 2)) / width;
-            var scaleY = (ht - (margin * 2)) / height;
-            var offsetX = margin - x_min * scaleX;
-            var offsetY = margin - y_min * scaleY;
+            let scaleX = (wh - (margin * 2)) / width;
+            let scaleY = (ht - (margin * 2)) / height;
+            let offsetX = margin - x_min * scaleX;
+            let offsetY = margin - y_min * scaleY;
 
             layers.forEach(function (layer_from) {
                 if (layer_from.wires)
@@ -243,7 +243,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
                     });
             });
 
-            var radius = 10 * scaleX;
+            let radius = 10 * scaleX;
             if (radius < 2)
                 radius = 2;
             layers.forEach(function (node) {
@@ -255,13 +255,13 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
         }
 
         svg.innerHTML = html;
-        var XMLS = new XMLSerializer();
-		var xml = XMLS.serializeToString(svg);
-		var svg64 = btoa(xml);
+        let XMLS = new XMLSerializer();
+		let xml = XMLS.serializeToString(svg);
+		let svg64 = btoa(xml);
 
 
-		var b64Start = 'data:image/svg+xml;base64,';
-		var image64 = b64Start + svg64;
+		let b64Start = 'data:image/svg+xml;base64,';
+		let image64 = b64Start + svg64;
 
 		return image64;
     };

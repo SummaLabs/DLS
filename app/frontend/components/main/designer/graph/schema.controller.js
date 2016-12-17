@@ -23,23 +23,29 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         UPDATE: 'graph:update'
     };
 
-    var self = this;
-    var viewX = 0;
-    var viewY = 0;
-    var schema = new Schema();
+    let self = this;
+    let viewX = 0;
+    let viewY = 0;
+    let schema = new Schema(self, 10);
 
     self.$onInit = function() {
+        let divSvg = document.getElementById('workspace');
+
         self.counterNodesInit = 0;
         self.scale = 1.0;
         coreService.param('scale', 1.0);
-        self.viewWidth = 0;
-        self.viewHeight = 0;
-		var divSvg = document.getElementById('workspace');
-        viewBox(viewX, viewY, divSvg.offsetWidth, divSvg.offsetHeight);
+        self.viewWidth = divSvg.offsetWidth;
+        self.viewHeight = divSvg.offsetHeight;
+
+        if (self.viewWidth < 100 || self.viewHeight < 100) {
+            self.viewWidth = 100;
+            self.viewHeight = 100;
+        }
+
+        viewBox(viewX, viewY, self.viewWidth, self.viewHeight);
+
 
         self.mouseMode = state.DEFAULT;
-        self.links = schema.getLinks();
-        self.nodes = schema.getNodes();
 
         self.activelink = {
             nodes: []
@@ -148,7 +154,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                 }
             }
 
-		    initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element, $compile);
+
+            initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element, $compile);
 
 
             if (layers.length > 1 && clear)
@@ -161,8 +168,6 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
 
     var initProgress = function() {
-
-        let active = false;
         return function(val, max) {
 
             let curr = val;
@@ -170,11 +175,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                 curr = (val / max) * 100;
             }
             self.progressValue = curr;
-            if (curr > 0)
-                active = true;
-            else active = false;
 
-            if (active) {
+            if (curr > 0) {
                 svgElement.style.visibility = 'hidden';
                 progressElement.style.visibility = 'visible';
             }
@@ -183,8 +185,6 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                 progressElement.style.visibility = 'hidden';
             }
 
-
-            // cur_progress.style.width = '' + curr + '%';
         }
     };
 
@@ -214,8 +214,9 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
     };
 
     $scope.controlItem.reset = function() {
-        var rect = schema.rect();
-        if (rect) {
+        let rect = schema.rect();
+        console.log(rect.toString());
+        if (rect && self.viewWidth > 0 && self.viewHeight > 0) {
             var sc = Math.min(self.viewWidth / rect.width(), self.viewHeight / rect.height());
             setScale(sc);
             viewBox(rect.x() * sc, rect.y() * sc, self.viewWidth, self.viewHeight);
@@ -226,6 +227,13 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         $scope.$broadcast('node:set_shapes_' + nodeId, {shapes: shapes, type: type});
     };
 
+    $scope.controlItem.undo = function() {
+        schema.undo();
+    };
+    $scope.controlItem.redo = function() {
+        schema.redo();
+    };
+
     function addNode(name, layerType, category, template, pos) {
         var node = schema.addNode(name, layerType, category, template);
         if (!node)
@@ -233,6 +241,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
         node.position(pos.x, pos.y, appConfig.svgDefinitions.gridStep);
         self.emitEvent(events.ADD_NODE, node);
+
         return true;
     }
 
@@ -253,12 +262,13 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
     function schemaEvents() {
         self.isItemClicked = false;
 
-		var prevMousePos = [0,0];
-		var editedNode = {};
-		var parentNode = angular.element($element[0].parentNode);
+		let prevMousePos = [0,0];
+		let editedNode = {};
+		let parentNode = angular.element($element[0].parentNode);
 
-		var positionDrag = {x:0, y: 0};
-		var activeItem = {};
+		let positionDrag = {x:0, y: 0};
+		let activeItem = {};
+		let multipleSelected = false;
 
         // Custom events:
 
@@ -268,15 +278,15 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
 		$rootScope.$on('palette_drag_end', function (event, data) {
 			if (self.mouseMode === state.DRAGGING && positionDrag) {
-				var pos = convertCoordinateFromClienToSvg($element, parentNode, positionDrag);
+				let pos = convertCoordinateFromClienToSvg($element, parentNode, positionDrag);
 				positionDrag = false;
-				var correctPos = { x: (pos.x + (viewX ) - data.offset.x) / self.scale, y: (pos.y + (viewY) - data.offset.y) / self.scale};
+				let correctPos = { x: (pos.x + (viewX ) - data.offset.x) / self.scale, y: (pos.y + (viewY) - data.offset.y) / self.scale};
 				if (correctPos.x > 0 && correctPos.y > 0) {
 					$scope.$apply( function() {
                         if (data.node.category === 'complex') {
                             let layers = normalizeLayersPosition(data.node.structure.layers, getMinPosition(data.node.structure.layers), correctPos);
                             let complexPosition = placeComplexLayer(schema.getNodes(), layers);
-                            console.log(complexPosition);
+                            // console.log(complexPosition);
                             $scope.controlItem.setLayers(layers, false);
                             // self.emitEvent(events.UPDATE, layers);
                         } else {
@@ -292,14 +302,14 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 		$scope.$on('nodeMouseDown', function (event, data) {
 		    self.mouseMode = state.MOVING;
 			editedNode = schema.getNodeById(data.id);
-			prevMousePos = getOffsetPos($element, data.event);
+			prevMousePos = getOffsetPos(svgElement, data.event);
 		});
 
 		$scope.$on('nodeMouseUp', function (event, data) {
 
 			if (self.mouseMode === state.MOVING) {
 
-				var curMousePos = getOffsetPos($element, data);
+				let curMousePos = getOffsetPos(svgElement, data);
 
                 editedNode.move(
                     (curMousePos.x - prevMousePos.x) / self.scale,
@@ -318,11 +328,11 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 		});
 
 		$scope.$on('portOutMouseDown', function (event, data) {
-			var node = schema.getNodeById(data.id);
+			let node = schema.getNodeById(data.id);
 			self.mouseMode = state.JOINING;
 			self.activelink.nodes.length = 0;
 
-            let curMousePos = getOffsetPos($element, data.event);
+            let curMousePos = getOffsetPos(svgElement, data.event);
             curMousePos.x =  (viewX + curMousePos.x) / self.scale;
             curMousePos.y =  (viewY + curMousePos.y) / self.scale;
             $scope.$apply( function() {
@@ -340,8 +350,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
 		$scope.$on('portInMouseUp', function (event, data) {
 			if (self.mouseMode === state.JOINING) {
-				var nodeFrom = schema.getNodeById(self.activelink.nodes[0].id);
-				var nodeTo = schema.getNodeById(data.id);
+				let nodeFrom = schema.getNodeById(self.activelink.nodes[0].id);
+				let nodeTo = schema.getNodeById(data.id);
 
                 $scope.$apply( function() {
                     addLink(nodeFrom, nodeTo);
@@ -353,18 +363,34 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
 		$scope.$on('selectedItem', function (event, data) {
 			self.isItemClicked = true;
-			$scope.$apply( function() {
-                if (activeItem && activeItem.id === data.id) {
-                    activeItem.isActive = !activeItem.isActive;
-                    if (activeItem.isActive)
-                        self.emitEvent(events.ACTIVATE_ITEM, activeItem);
-                } else {
-                    activeItem.isActive = false;
-                    activeItem = schema.getItemById(data.id, data.type);
-                    activeItem.isActive = true;
-                    self.emitEvent(events.ACTIVATE_ITEM, activeItem);
+			let item = schema.getItemById(data.id, data.type);
+            if (!multipleSelected) {
+                if (data.ctrlKeyPressed) {
+                    $scope.$apply( function() {
+                         item.isActive = !item.isActive;
+                     });
+                } else if (data.id !== activeItem.id && !data.selected) {
+                    $scope.$apply( function() {
+                        selectItems (schema.getNodes(), false);
+                        activeItem = -1;
+                        item.isActive = true;
+                    });
                 }
-            });
+
+            } else {
+                if (data.ctrlKeyPressed) {
+                     $scope.$apply( function() {
+                         item.isActive = !item.isActive;
+                     });
+                } else if (!data.selected) {
+                    $scope.$apply( function() {
+                        selectItems (schema.getNodes(), false);
+                        item.isActive = true;
+                    });
+                }
+            }
+			activeItem = item;
+			self.emitEvent(events.ACTIVATE_ITEM, activeItem);
 		});
 
 		//Mouse events:
@@ -382,30 +408,30 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 		angular.element(window).on('resize', function () {
 
             $scope.$apply( function() {
-                var divSvg = document.getElementById('workspace');
+                let divSvg = document.getElementById('workspace');
                 if (divSvg)
                     viewBox(viewX, viewY, divSvg.offsetWidth, divSvg.offsetHeight);
             });
-            
+
 
 		});
 
 		$element.on('mousedown', function (event) {
 			if (self.mouseMode === state.DEFAULT) {
 
-			    // if (!self.isItemClicked) {
-                    $scope.$apply( function() {
-                        selectItems (self.nodes, false);
-                        selectItems (self.links, false);
-                    });
-                    activeItem.isActive = false;
-                    activeItem = -1;
-                // }
-                // self.isItemClicked = false;
+                $scope.$apply( function() {
+                    selectItems (schema.getNodes(), false);
+                    selectItems (schema.getLinks(), false);
+                });
+
+                activeItem.isActive = false;
+                activeItem = -1;
+                multipleSelected = false;
+
 
                 if (event.buttons === 1 && event.ctrlKey) {
 
-					prevMousePos = getOffsetPos($element, event);
+					prevMousePos = getOffsetPos(svgElement, event);
                     prevMousePos.x += viewX;
                     prevMousePos.y += viewY;
 
@@ -415,7 +441,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 					});
 					self.mouseMode = state.SELECTION;
 				} else if (event.buttons === 1) {
-					prevMousePos = getOffsetPos($element, event);
+					prevMousePos = getOffsetPos(svgElement, event);
 					self.mouseMode = state.SHIFT;
 				}
 		    }
@@ -423,7 +449,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
 		$element.on('mousemove', function (event) {
             if (self.mouseMode === state.SELECTION) {
-			    let curMousePos = getOffsetPos($element, event);
+			    let curMousePos = getOffsetPos(svgElement, event);
 			    $scope.$apply( function() {
                     curMousePos.x += viewX;
                     curMousePos.y += viewY;
@@ -432,15 +458,15 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                 });
 
 		    } else if (self.mouseMode === state.SHIFT) {
-		    	let curMousePos = getOffsetPos($element, event);
-		    	var left = viewX -(curMousePos.x - prevMousePos.x);
-		    	var top = viewY - (curMousePos.y - prevMousePos.y);
+		    	let curMousePos = getOffsetPos(svgElement, event);
+		    	let left = viewX -(curMousePos.x - prevMousePos.x);
+		    	let top = viewY - (curMousePos.y - prevMousePos.y);
 
 		    	viewBox(left, top, self.viewWidth, self.viewHeight);
 		    	prevMousePos = curMousePos;
 
 		    } else if (self.mouseMode === state.MOVING && event.buttons === 1) {
-				let curMousePos = getOffsetPos($element, event);
+				let curMousePos = getOffsetPos(svgElement, event);
 				let offsetX = (curMousePos.x - prevMousePos.x) / self.scale;
 				let offsetY = (curMousePos.y - prevMousePos.y) / self.scale;
 
@@ -458,7 +484,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
 				prevMousePos = curMousePos;
 			} else if (self.mouseMode === state.JOINING  && event.buttons === 1) {
-				let curMousePos = getOffsetPos($element, event);
+				let curMousePos = getOffsetPos(svgElement, event);
 				curMousePos.x =  (viewX + curMousePos.x) / self.scale;
 				curMousePos.y =  (viewY + curMousePos.y) / self.scale;
                 if (self.activelink.nodes.length === 2) {
@@ -471,7 +497,11 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 		$element.on('mouseup', function () {
 		    if (self.mouseMode === state.SELECTION) {
 			    $scope.$apply( function() {
-                    schema.selectNodesInsideRect(self.selRect.scale(1 / self.scale));
+
+			        let selectedItems = schema.selectNodesInsideRect(self.selRect.scale(1 / self.scale));
+			        if (selectedItems.length > 1) {
+			            multipleSelected = true;
+                    }
                     self.selRect = Rect(0,0,0,0);
                     self.selRect.isShown = false;
                 });
@@ -505,27 +535,29 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 		parentNode.on('keydown', function (event) {
 			if (event.keyCode === 46) {
 				$scope.$apply( function() {
-					if (activeItem && activeItem.isActive) {
-					    if (schema.removeItem(activeItem.id, activeItem.type)) {
-                            if (activeItem.type === 'node') {
-                                self.emitEvent(events.REMOVE_NODE, activeItem);
-                            } else if (activeItem.type === 'link') {
-                                self.emitEvent(events.REMOVE_LINK, activeItem);
-                            }
-					    }
-						activeItem = -1;
-					} else {
-                        var rem = schema.removeSelectedItems();
+					// if (activeItem && activeItem.isActive) {
+					//     schema.saveState();
+					//     if (schema.removeItem(activeItem.id, activeItem.type)) {
+                     //        if (activeItem.type === 'node') {
+                     //            self.emitEvent(events.REMOVE_NODE, activeItem);
+                     //        } else if (activeItem.type === 'link') {
+                     //            self.emitEvent(events.REMOVE_LINK, activeItem);
+                     //        }
+					//     }
+					// 	activeItem = -1;
+					// } else {
+					    schema.saveState();
+                        let rem = schema.removeSelectedItems();
 						if (rem)
                 			self.emitEvent(events.REMOVE_ITEMS, rem);
-                	}
+                	// }
            		});
 			}
 		});
 
 		$element.on('wheel', function (event) {
-			var delta = (event.deltaY || event.detail || event.wheelDelta) / 8;
-			var scale = self.scale;
+			let delta = (event.deltaY || event.detail || event.wheelDelta) / 8;
+			let scale = self.scale;
 			if (delta > 0) {
 				scale /= appConfig.svgDefinitions.scaleFactor;
 				if (scale > appConfig.svgDefinitions.scaleMax) {
@@ -539,8 +571,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 				}
       		}
       		$scope.$apply( function() {
-				var mousePos = getOffsetPos($element, event);
-      			var sc = scaleToPoint(scale, mousePos);
+				let mousePos = getOffsetPos(svgElement, event);
+      			let sc = scaleToPoint(scale, mousePos);
                 coreService.param('scale', sc);
                 self.scale = sc;
       		});
@@ -569,10 +601,10 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
     }
 
     function scaleToPoint(scale, point) {
-    	var divSvg = document.getElementById('workspace');
-		var sceneWidth = scale * $scope.svgWidth;
-		var sceneHeight = scale * $scope.svgHeight;
-        var view = Rect(0, 0, sceneWidth, sceneHeight);
+    	let divSvg = document.getElementById('workspace');
+		let sceneWidth = scale * $scope.svgWidth;
+		let sceneHeight = scale * $scope.svgHeight;
+        let view = Rect(0, 0, sceneWidth, sceneHeight);
 
         if (arguments.length < 2) {
             point = {};
@@ -587,13 +619,13 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
         scale = view.width() / $scope.svgWidth;
 
-		var scalePrev = self.scale;
+		let scalePrev = self.scale;
 
-		var XPrev = (viewX + point.x) / scalePrev;
-		var YPrev = (viewY + point.y) / scalePrev;
+		let XPrev = (viewX + point.x) / scalePrev;
+		let YPrev = (viewY + point.y) / scalePrev;
 
-		var left = (XPrev - point.x / scale) * scale;
-		var top =  (YPrev - point.y / scale) * scale;
+		let left = (XPrev - point.x / scale) * scale;
+		let top =  (YPrev - point.y / scale) * scale;
 
 		viewBox(left, top, divSvg.offsetWidth, divSvg.offsetHeight);
         return scale;
@@ -629,8 +661,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 			inner.y(outer.y());
 
 		if (inner.right() < outer.width() && inner.bottom() < outer.height()) {
-            var ratioInner = inner.width() / inner.height();
-            var ratioOuter = outer.width() / outer.height();
+            let ratioInner = inner.width() / inner.height();
+            let ratioOuter = outer.width() / outer.height();
             if (ratioInner > ratioOuter) {
                 inner.right(outer.width());
                 inner.bottom(outer.width() / ratioInner);
@@ -647,18 +679,18 @@ function initBackground(self, scope, step, element, $compile) {
     self.grid = {};
     self.grid.vertical = [];
     self.grid.horizontal = [];
-    var viewGroup = angular.element(element[0].querySelector('#view'));
+    let viewGroup = angular.element(element[0].querySelector('#view'));
     while (viewGroup[0].firstChild) {
     	viewGroup[0].removeChild(viewGroup[0].firstChild);
 	}
-    var line = angular.element('<line>');
+    let line = angular.element('<line>');
     line.attr('style', 'stroke:rgb(111,111,111);stroke-width:0.5');
-    var html = '';
+    let html = '';
 
     let maxSize = scope.svgWidth > scope.svgHeight ? scope.svgWidth: scope.svgHeight
     maxSize *= 3;
     for (let a = 0; a < maxSize; a += step) {
-        var curLine = line.clone();
+        let curLine = line.clone();
         curLine.attr('x1', '' + a);
         curLine.attr('y1', '0');
         curLine.attr('x2', '' + a);
@@ -667,7 +699,7 @@ function initBackground(self, scope, step, element, $compile) {
     }
 
     for (let a = 0; a < maxSize; a += step) {
-        var curLine = line.clone();
+        let curLine = line.clone();
 
         curLine.attr('x1', '0');
         curLine.attr('y1', '' + a);
@@ -681,17 +713,17 @@ function initBackground(self, scope, step, element, $compile) {
 }
 
 function getOffsetPos(element, event) {
-    var elementRect = element[0].getBoundingClientRect();
+    let elementRect = element.getBoundingClientRect();
     return {x: event.clientX - elementRect.left, y: event.clientY - elementRect.top};
 }
 
 function convertCoordinateFromClienToSvg($element, parentNode, clientCoord) {
-	var parentScrollPos = {
+	let parentScrollPos = {
 		x: parentNode.scrollLeft ? parentNode.scrollLeft: 0,
 		y: parentNode.scrollTop ? parentNode.scrollTop: 0
 	};
 
-	var svgRect = $element[0].getBoundingClientRect();
+	let svgRect = $element[0].getBoundingClientRect();
 
 	return {
 		x: clientCoord.x - svgRect.left +  parentScrollPos.x,
@@ -744,7 +776,7 @@ function placeComplexLayer(network, complexLayer) {
     let networkCenter = getNetworkCenter(network);
     let complexLayerCenter = getNetworkCenter(complexLayer);
 
-    console.log(networkCenter, complexLayerCenter);
+    // console.log(networkCenter, complexLayerCenter);
 
     return complexLayerPosition;
 }

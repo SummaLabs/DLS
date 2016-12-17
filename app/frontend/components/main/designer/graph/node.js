@@ -27,7 +27,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
 
 		link: function($scope, element, attrs) {
-			var idNode = $scope.nodeData.id;
+			let idNode = $scope.nodeData.id;
 			$scope.nodeData.displayData = coreService.getNodeDefinition($scope.nodeData.layerType);
 
 			element.html(coreService.getNodeTemplate($scope.nodeData.layerType));
@@ -35,17 +35,17 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
 			$scope.isPort = false;
 
-			var rectNode = angular.element(element[0].querySelector('#' + patternDefinitions.markerRect));
-			var textNode = angular.element(element[0].querySelector('#' + patternDefinitions.markerText));
+			let rectNode = angular.element(element[0].querySelector('#' + patternDefinitions.markerRect));
+			let textNode = angular.element(element[0].querySelector('#' + patternDefinitions.markerText));
 
-			var portIn = angular.element(element[0].querySelector('#' + patternDefinitions.markerPortIn));
-			var portOut = angular.element(element[0].querySelector('#' + patternDefinitions.markerPortOut));
+			let portIn = angular.element(element[0].querySelector('#' + patternDefinitions.markerPortIn));
+			let portOut = angular.element(element[0].querySelector('#' + patternDefinitions.markerPortOut));
 
-			var shapeIn = angular.element(element[0].querySelector('#' + patternDefinitions.markerShapeIn));
-			var shapeOut = angular.element(element[0].querySelector('#' + patternDefinitions.markerShapeOut));
+			let shapeIn = angular.element(element[0].querySelector('#' + patternDefinitions.markerShapeIn));
+			let shapeOut = angular.element(element[0].querySelector('#' + patternDefinitions.markerShapeOut));
 
-			$scope.nodeData.displayData.portIn.element = portIn;
-			$scope.nodeData.displayData.portOut.element = portOut;
+			// $scope.nodeData.displayData.portIn.element = portIn;
+			// $scope.nodeData.displayData.portOut.element = portOut;
 
 			portInit(portIn, patternDefinitions.markerPortIn, idNode);
 			portInit(portOut, patternDefinitions.markerPortOut, idNode);
@@ -78,11 +78,14 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
 			element.attr('id', 'id_' + idNode);
 
-			$scope.nodeData.portIn = portIn;
-			$scope.nodeData.portOut = portOut;
 			textNode.text($scope.nodeData.name);
-			textNode.addClass('unselectable');
 			textNode.text(adaptText(rectNode, textNode ,$scope.nodeData.name, coreService.param('scale')));
+
+			element.css('cursor', 'move');
+			textNode.css('cursor', 'move');
+			portIn.css('cursor', 'crosshair');
+			portOut.css('cursor', 'crosshair');
+			textNode.addClass('unselectable');
 
 			nodeWatcher($scope, rectNode);
 			nodeEventsHandler($scope, element, rectNode, idNode);
@@ -107,7 +110,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 		if (!port[0])
 			return null;
 
-		var id = marker + '_' + nodeId;
+		let id = marker + '_' + nodeId;
 		port.attr('id', id);
 	}
 
@@ -124,6 +127,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 	function nodeEventsHandler(scope, element, rectNode, idNode) {
 
 		element.on('mousedown', function (event) {
+		    event.stopPropagation();
 			if (scope.isPort || event.ctrlKey || event.button !== 0)
 				return;
 			scope.$emit('nodeMouseDown', {
@@ -141,24 +145,20 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 		});
 
 		function doClickAction(event, scope) {
+            if (scope.isPort)
+                return;
 
-            if (!scope.isPort && event.ctrlKey) {
-				scope.$apply( function() {
-					scope.nodeData.isActive = !scope.nodeData.isActive;
-				});
-
-				scope.$emit('selectedItem', {
-					id: idNode,
-					type: 'node',
-					selected: scope.nodeData.isActive
-				});
-			} else if (!scope.isPort) {
-				scope.$emit('selectedItem', {
-					id: idNode,
-					type: 'node',
-					selected: scope.nodeData.isActive
-				});
+		    let ctrlKeyPressed = false;
+            if (event.ctrlKey) {
+                ctrlKeyPressed = true;
 			}
+
+			scope.$emit('selectedItem', {
+                id: idNode,
+                type: 'node',
+                selected: scope.nodeData.isActive,
+                ctrlKeyPressed: ctrlKeyPressed
+            });
 
         }
 
@@ -167,9 +167,10 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 		});
 
 		element.on('mouseup', function (event) {
+
 			if (event.ctrlKey)
 				return;
-			rectNode.removeClass("node_selected");
+			// rectNode.removeClass("node_selected");
 			scope.$emit('nodeMouseUp', event);
 		});
 
