@@ -160,11 +160,12 @@ function Schema() {
     };
 
     this.addNode = function(name, layerType,  category, template, id) {
-        var node = new Node();
+        let node = new Node();
         if (id && checkIdForUnique(id)) {
             node.id = id;
+            idList.push(id);
         } else {
-            node.id = 'node_' + generateId();
+            node.id = generateId();
         }
 
         node.name = name;
@@ -334,8 +335,8 @@ function Schema() {
         var y_max = Number.MIN_VALUE;
 
         nodes.forEach(function (node) {
-            var width = 0;
-            var height = 0;
+            let width = 0;
+            let height = 0;
             if (node.displayData) {
                 width = node.displayData.node.width;
                 height = node.displayData.node.height;
@@ -351,9 +352,10 @@ function Schema() {
     };
 
     function generateId() {
-        var id;
+        let id;
         while (true) {
             id = Math.floor(Math.random() * 0x10000).toString(16);
+            id = 'node_' + id;
             if (checkIdForUnique(id)) {
                 idList.push(id);
                 return id;
@@ -366,7 +368,7 @@ function Schema() {
     }
 
     function getItemById(array, id) {
-        for (var i = 0; i < array.length ; i ++) {
+        for (let i = 0; i < array.length ; i ++) {
             if (array[i].id === id) {
                 return array[i];
             }

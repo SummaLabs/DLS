@@ -10,7 +10,8 @@ angular.module('layerService', [
     'mergeLayer',
     'denseLayer',
     'datainputLayer',
-    'dataoutputLayer'])
+    'dataoutputLayer',
+    'complex'])
     .service('layerService', ['$rootScope', '$http', '$templateCache',
         'convolution1dLayer',
         'convolution2dLayer',
@@ -62,7 +63,8 @@ function LayerService($rootScope, $http, $templateCache,
         'flatten':          flattenLayer,
         'dense':            denseLayer,
         'datainput':        datainputLayer,
-        'dataoutput':        dataoutputLayer
+        'dataoutput':       dataoutputLayer,
+        'complex':          complex
     };
 
     const templatesByType = {
@@ -107,7 +109,7 @@ function LayerService($rootScope, $http, $templateCache,
         denseLayer.getDefault(),
         datainputLayer.getDefault(),
         dataoutputLayer.getDefault(),
-        complex
+        complex.getDefault()
     ];
 
     this.pubLayersUpdateEvent = function() {

@@ -66,8 +66,8 @@ def load_network(type, filename):
             return Response(json.dumps(data), mimetype='application/json')
 
 
-@network.route('/load/complex/<path:filename>')
-def load_network(filename):
+@network.route('/complex/<path:filename>')
+def load_complex_network(filename):
     saved_path = os.path.join(root_path, "complex", filename + ".json")
     print(saved_path)
     if request.method == 'GET':

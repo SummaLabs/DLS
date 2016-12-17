@@ -1,9 +1,9 @@
 angular.module('complex', [])
-    .service('complex', [Complex]);
+    .service('complex', ['$http', Complex]);
 
-function Complex() {
+function Complex($http) {
 
-    let structurePath = "frontend/components/layers/basic/compex/complex.json";
+    // let structurePath = "frontend/components/layers/basic/compex/complex.json";
     let data = {
         "complex": 0,
         "name": "Complex",
@@ -12,9 +12,10 @@ function Complex() {
         "structure": "",
     };
 
-    let future = loadStructure(name);
+    let future = loadStructure('complex');
     future.then(function succes(response) {
-       data.structure = response.structure;
+       data.structure = response.data;
+
     }, function error(response) {
 
     });
@@ -27,14 +28,14 @@ function Complex() {
         return "frontend/assets/img/palette/basic/layer-convolution2d-v1.png"
     };
 
-    this.getStructurePath = function () {
-        return structurePath;
-    }
+    // this.getStructurePath = function () {
+    //     return structurePath;
+    // }
     
     function loadStructure(name) {
         return $http({
             method: "GET",
-            url: "/network/complex/" + name
+                url: "/network/complex/" + name
         })
     }
 }

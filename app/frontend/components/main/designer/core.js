@@ -121,7 +121,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
 
     function doUpdateNetwork() {
         var nodes = self.svgControl.getNodes();
-        var layers = networkDataService.getLayers();
+        // var layers = networkDataService.getLayers();
         nodes.forEach(function (node) {
             var layer = networkDataService.getLayerById(node.id);
             layer.pos = node.pos;
@@ -141,7 +141,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         var dataNetwork = networkDataService.getNetwork();
         modelService.checkNetworkFast(dataNetwork).then(
             function successCallback(response) {
-                var ret = response.data;
+                let ret = response.data;
                 if ((ret.length < 1) || (ret[0] != 'ok')) {
                     showToast(response.data) ;
                 } else {
@@ -452,8 +452,39 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
 
         $scope.$on('graph:changePosition', function (event, node) {
             let layer = networkDataService.getLayerById(node.id);
+            // console.log(layer);
+
             layer.pos.x = node.pos.x;
             layer.pos.y = node.pos.y;
+            event.stopPropagation();
+        });
+
+        $scope.$on('graph:update', function (event, layers) {
+            let existLayers = networkDataService.getLayers();
+            layers.forEach(function (layer) {
+                let existLayer = networkDataService.getLayerById(layer.id);
+                if (existLayer) {
+                    existLayer.pos = layer.pos;
+                    if (layer.wires)
+                        existLayer.wires = layer.wires;
+                    if (layer.params) {
+                         existLayer.parems = layer.params;
+                    }
+                } else {
+                    let layerTemp = layerService.getLayerByType(layer.layerType);
+
+                    layerTemp.id = layer.id;
+                    layerTemp.name = layer.name;
+                    layerTemp.layerType = layer.layerType;
+                    layerTemp.category = layer.category;
+                    layerTemp.pos = layer.pos;
+                    layerTemp.wires = layer.wires;
+                    existLayers.push(layerTemp);
+                }
+
+
+            });
+
             event.stopPropagation();
         });
 
