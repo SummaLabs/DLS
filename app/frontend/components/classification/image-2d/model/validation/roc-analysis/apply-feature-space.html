@@ -1,0 +1,64 @@
+<md-dialog aria-label="Save Network" flex="25" ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Choose Dataset For Analysis</h2>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div layout="column" layout-align="center start" layout-padding>
+            <md-input-container>
+                <label>Select Data Set</label>
+                <md-select placeholder="ROC Analysis" ng-model="dataSetSelected" class="md-no-underline">
+                    <md-option ng-value="dataSet" ng-repeat="dataSet in dataSets">{{dataSet.name}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container>
+                <label>Select Device</label>
+                <device-selector ng-model="device"></device-selector>
+            </md-input-container>
+        </div>
+        
+    <div layout="column" layout-align="left start" layout-padding>
+      <md-input-container>
+        <label class="md-title">Pick a layer below</label>
+         <md-select ng-model="selectedLayers"
+                   md-on-close="clearSearchTerm()"
+                   data-md-container-class="selectdemoSelectHeader"
+                   multiple>
+          <md-select-header class="demo-select-header">
+          <input ng-model="searchTerm"
+                   type="search"
+                   placeholder="Search for a layers.."
+                   class="demo-header-searchbox md-text">
+          </md-select-header>
+          <md-optgroup label="layers">
+            <md-option ng-value="layer" ng-repeat="layer in layers |
+              filter:searchTerm">{{layer}}</md-option>
+          </md-optgroup>
+        </md-select>
+      </md-input-container>
+        <div flex-gt-sm="50">
+          <md-checkbox ng-model="isPca" aria-label="Apply Pca">
+            Apply PSA
+          </md-checkbox>
+           <md-checkbox ng-model="isTsne" aria-label="Apply Tsne">
+            Apply TSNE
+          </md-checkbox>
+        </div>
+        <md-input-container class="md-block" flex-gt-sm>
+            <label>Samples</label>
+            <input ng-model="samples">
+          </md-input-container>
+    </div>
+        
+    </md-dialog-content>
+    <md-dialog-actions>
+        <md-button ng-click="closeDialog()" class="md-raised">
+            Cancel
+        </md-button>
+        <md-button ng-click="submitROCAnalysisTask()" class="md-primary md-raised">
+            Apply ROC Analysis
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

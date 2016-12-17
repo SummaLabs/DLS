@@ -150,6 +150,84 @@
 
 
                     };
+                    
+                    $scope.applyFeatureSpace = function ($event) {
+                        var model_id = $scope.modelId;
+                        $mdDialog.show({
+                            clickOutsideToClose: true,
+                            parent: angular.element(document.body),
+                            targetEvent: $event,
+                            templateUrl: '/frontend/components/classification/image-2d/model/validation/roc-analysis/apply-feature-space.html',
+                            controller: function ($scope, datasetService, taskManagerService) {
+                                $scope.dataSets = [];
+                                $scope.device = "";
+                                $scope.dataSetSelected = "";
+                                $scope.layers = [
+    'convolution1dLayer',
+    'convolution2dLayer',
+    'convolution3dLayer',
+    'pooling1dLayer',
+    'pooling2dLayer',
+    'pooling3dLayer',
+    'activationLayer',
+    'flattenLayer',
+    'mergeLayer',
+    'denseLayer',
+    'datainputLayer',
+    'dataoutputLayer'];
+                                $scope.isPca = false;
+                                $scope.isTsne = false;
+                                $scope.samples = 100;
+                                $scope.searchTerm;
+                                $scope.clearSearchTerm = function() {
+                                    $scope.searchTerm = '';
+                                };
+                                $scope.selectedLayers = [];
+
+                                var future = datasetService.getDatasetsInfoStatList();
+                                future.then(function mySucces(response) {
+                                    response.data.forEach(function (dataSet) {
+                                        $scope.dataSets.push(dataSet);
+                                    });
+                                    $scope.dataSetSelected = $scope.dataSets[0];
+                                }, function myError(response) {
+                                });
+
+                                $scope.submitROCAnalysisTask = function () {
+                                    var params = {
+                                        'model-id': model_id,
+                                        'dataset-id': $scope.dataSetSelected.id,
+                                        'deviceType': $scope.device.type,
+                                        'is-pca': $scope.isPca,
+                                        'is-tsne': $scope.isTsne,
+                                        layers: $scope.selectedLayers, 
+                                        samples: $scope.samples
+                                    };
+                                    var futureTask = taskManagerService.startTask('fspace-image2d', params);
+                                    futureTask.then(function mySucces(response) {
+                                        var taskId = response.data.taskId;
+                                        var runningTask = {
+                                            name: $scope.dataSetSelected.name,
+                                            inProgress: true,
+                                            taskId : taskId
+                                        };
+                                        $rootScope.$emit(ROCAnalysis.RUN, runningTask);
+                                        self.showToast('Feature Space Analysis task is running. Task id: ' + taskId);
+                                    }, function myError(response) {
+                                    });
+                                    
+
+                                    $mdDialog.hide();
+                                };
+
+                                $scope.closeDialog = function () {
+                                    $mdDialog.hide();
+                                }
+                            }
+                        });
+
+
+                    };
 
                     function updateModelROCsHistoryData(rocsHistoryData) {
                         $scope.rocsIds.length = 0;
