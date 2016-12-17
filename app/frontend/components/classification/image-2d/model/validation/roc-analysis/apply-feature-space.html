@@ -40,16 +40,21 @@
       </md-input-container>
         <div flex-gt-sm="50">
           <md-checkbox ng-model="isPca" aria-label="Apply Pca">
-            Apply PSA
+            Apply PCA
           </md-checkbox>
            <md-checkbox ng-model="isTsne" aria-label="Apply Tsne">
             Apply TSNE
           </md-checkbox>
         </div>
-        <md-input-container class="md-block" flex-gt-sm>
-            <label>Samples</label>
-            <input ng-model="samples">
-          </md-input-container>
+        <md-input-container>
+          <label>Samples</label>
+          <md-select ng-model="samples">
+            <!--md-option><em>1000</em></md-option-->
+            <md-option ng-repeat="samp in samps"  value="{{samp}}">
+              {{samp}}
+            </md-option>
+          </md-select>
+        </md-input-container>
     </div>
         
     </md-dialog-content>

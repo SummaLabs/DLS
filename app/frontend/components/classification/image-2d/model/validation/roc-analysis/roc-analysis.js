@@ -162,27 +162,28 @@
                                 $scope.dataSets = [];
                                 $scope.device = "";
                                 $scope.dataSetSelected = "";
+                                $scope.samps = [500, 1000, 1500];
                                 $scope.layers = [
-    'convolution1dLayer',
-    'convolution2dLayer',
-    'convolution3dLayer',
-    'pooling1dLayer',
-    'pooling2dLayer',
-    'pooling3dLayer',
-    'activationLayer',
-    'flattenLayer',
-    'mergeLayer',
-    'denseLayer',
-    'datainputLayer',
-    'dataoutputLayer'];
+    'convolution1d',
+    'convolution2d',
+    'convolution3d',
+    'pooling1d',
+    'pooling2d',
+    'pooling3d',
+    'activation',
+    'flatten',
+    'merge',
+    'dense',
+    'datainput',
+    'dataoutput'];
                                 $scope.isPca = false;
                                 $scope.isTsne = false;
-                                $scope.samples = 100;
+                                $scope.samples = 1000;
                                 $scope.searchTerm;
                                 $scope.clearSearchTerm = function() {
                                     $scope.searchTerm = '';
                                 };
-                                $scope.selectedLayers = [];
+                                $scope.selectedLayers;
 
                                 var future = datasetService.getDatasetsInfoStatList();
                                 future.then(function mySucces(response) {
@@ -200,7 +201,7 @@
                                         'deviceType': $scope.device.type,
                                         'is-pca': $scope.isPca,
                                         'is-tsne': $scope.isTsne,
-                                        layers: $scope.selectedLayers, 
+                                        layers: $scope.sele, 
                                         samples: $scope.samples
                                     };
                                     var futureTask = taskManagerService.startTask('fspace-image2d', params);
