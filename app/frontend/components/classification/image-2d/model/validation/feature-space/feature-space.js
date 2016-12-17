@@ -2,12 +2,12 @@
     'use strict';
 
     angular.module('rocAnalysis', ['ngMaterial', 'deviceSelector', 'taskManagerService'])
-        .directive('rocAnalysis', function () {
+        .component('rocAnalysis', function () {
             return {
                 scope: {
                     modelId: '@'
                 },
-                templateUrl: '/frontend/components/classification/image-2d/model/validation/roc-analysis/roc-analysis.html',
+                templateUrl: '/frontend/components/classification/image-2d/model/validation/feature-space/feature-space.html',
                 controller: function ($rootScope, $scope, $mdDialog, $mdToast, modelService, taskManagerService) {
                     var self = this;
 
@@ -23,14 +23,14 @@
                         $scope.rocsIds = [];
                         $scope.dsTypes = [];
                         $scope.classNames = [];
-                        var future = modelService.loadModelROCsData($scope.modelId);
-                        future.then(function mySucces(response) {
+                        //var future = modelService.loadModelROCsData($scope.modelId);
+                       /* future.then(function mySucces(response) {
                             setModelROCsHistoryData(response.data);
                         }, function myError(response) {
                             console.log();
-                        });
+                        });*/
                         
-                        $scope.$watch('rocHistorySelected', function (newValue, oldValue) {
+                        /*$scope.$watch('rocHistorySelected', function (newValue, oldValue) {
                             if (oldValue != null) {
                                 var index = 0;
                                 $scope.rocsIds.forEach(function (rocId) {
@@ -86,7 +86,7 @@
                                 }, function myError(response) {
                                 });
                             }
-                        });
+                        });*/
                     };
 
                     this.showToast = function (message) {
@@ -98,58 +98,7 @@
                         );
                     };
 
-                    $scope.applyROCAnalysis = function ($event) {
-                        var model_id = $scope.modelId;
-                        $mdDialog.show({
-                            clickOutsideToClose: true,
-                            parent: angular.element(document.body),
-                            targetEvent: $event,
-                            templateUrl: '/frontend/components/classification/image-2d/model/validation/roc-analysis/apply-roc-analysis.html',
-                            controller: function ($scope, datasetService, taskManagerService) {
-                                $scope.dataSets = [];
-                                $scope.device = "";
-                                $scope.dataSetSelected = "";
-
-                                var future = datasetService.getDatasetsInfoStatList();
-                                future.then(function mySucces(response) {
-                                    response.data.forEach(function (dataSet) {
-                                        $scope.dataSets.push(dataSet);
-                                    });
-                                    $scope.dataSetSelected = $scope.dataSets[0];
-                                }, function myError(response) {
-                                });
-
-                                $scope.submitROCAnalysisTask = function () {
-                                    var params = {
-                                        'model-id': model_id,
-                                        'dataset-id': $scope.dataSetSelected.id,
-                                        'deviceType': $scope.device.type
-                                    };
-                                    var futureTask = taskManagerService.startTask('roc-image2d-cls', params);
-                                    futureTask.then(function mySucces(response) {
-                                        var taskId = response.data.taskId;
-                                        var runningTask = {
-                                            name: $scope.dataSetSelected.name,
-                                            inProgress: true,
-                                            taskId : taskId
-                                        };
-                                        $rootScope.$emit(ROCAnalysis.RUN, runningTask);
-                                        self.showToast('ROC Analysis task is running. Task id: ' + taskId);
-                                    }, function myError(response) {
-                                    });
-                                    
-
-                                    $mdDialog.hide();
-                                };
-
-                                $scope.closeDialog = function () {
-                                    $mdDialog.hide();
-                                }
-                            }
-                        });
-
-
-                    };
+                
                     
                     $scope.applyFeatureSpace = function ($event) {
                         var model_id = $scope.modelId;

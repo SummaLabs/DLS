@@ -1,0 +1,38 @@
+<md-card>
+    <md-card-content>
+
+        <div layout="row" layout-align="space-between center">
+            <div>
+               <md-button  class="md-raised md-primary" ng-click="applyROCAnalysis($event)">Apply ROC Analysis</md-button>
+                <md-button  class="md-raised md-primary" ng-click="applyFeatureSpace($event)">Feature Space Analysis</md-button>
+            </div>
+            <div ng-show="rocsIds.length > 0"  layout="column" layout-align="center start">
+                <strong>Analysis History:</strong>
+                <md-select placeholder="Analysis History" ng-model="rocHistorySelected" class="md-no-underline">
+                    <md-option ng-value="rocId.name" ng-repeat="rocId in rocsIds" ng-disabled="rocId.inProgress">
+                        <span>{{rocId.name}}</span>
+                        <span ng-show="rocId.inProgress"> - In Progress</span>
+                    </md-option>
+                </md-select>
+            </div>
+            <div ng-show="dsTypes.length > 0"  layout="column" layout-align="center start">
+                <strong>Data Set Type:</strong>
+                <md-select placeholder="Data Set Type" ng-model="dsTypeSelected" class="md-no-underline">
+                    <md-option ng-value="dsType" ng-repeat="dsType in dsTypes">{{dsType}}</md-option>
+                </md-select>
+            </div>
+            <div ng-show="classNames.length > 0"  layout="column" layout-align="center start">
+                <strong>Class VS All:</strong>
+                <md-select placeholder="Class VS All" ng-model="classNameSelected" class="md-no-underline">
+                    <md-option ng-value="className" ng-repeat="className in classNames">{{className}}</md-option>
+                </md-select>
+            </div>
+        </div>
+        <div layout-padding layout="row" layout-fill>
+            <div flex ng-cloak google-chart chart="rocData" class="md-item-text md-whiteframe-z1"
+                 style="height: 600px"></div>
+        </div>
+    </md-card-content>
+</md-card>
+
+
