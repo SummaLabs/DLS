@@ -52,4 +52,11 @@ function ModelService($http) {
             url: "/images/rocs/load/" + modelId
         })
     };
+    
+    this.loadLayersVisualization = function (modelId) {
+        return $http({
+            method: 'GET',
+            url: '/models/layers/visualization/' + modelId
+        });
+    };
 }

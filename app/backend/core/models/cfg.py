@@ -14,6 +14,12 @@ PREFIX_EVAL_ROC_DIR= 'eval_roc'
 PREFIX_EVAL_ROC_TABLE='table'
 PREFIX_EVAL_ROC_ROC='roc'
 
+PREFIX_FSPACE_DIR= 'fspace-out'
+PREFIX_FSPACE_FSP= 'fspace'
+
+PREFIX_WEIGHT_DIR= 'weights-out'
+PREFIX_WEIGHT_VIS= 'cfg.json'
+
 EXT_MODEL_WEIGHTS='h5kerasmodel'
 
 if __name__ == '__main__':

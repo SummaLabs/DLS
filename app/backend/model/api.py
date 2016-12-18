@@ -45,3 +45,36 @@ def upload_file():
             file.save(fullname)
             uploaded.append( os.path.join(tempDir, filename))
     return Response(json.dumps(uploaded), mimetype='application/json')
+
+
+@model.route('/layers/visualization', methods=['GET'])
+def layers_visualization():
+
+    if request.method == 'GET':
+
+      return Response(json.dumps([
+          {
+              'name': "DataInput_1",
+              'type': "datainput",
+              'shape': "3x256x256",
+              'previewPath': "/frontend/components/layers/visualization/filter.jpg"
+          },
+          {
+              'name': "Convolution2D_1",
+              'type': "convolution2D",
+              'shape': "3x256x256",
+              'previewPath': "/frontend/components/layers/visualization/filter.jpg"
+          },
+          {
+              'name': "Convolution2D_3",
+              'type': "convolution2D",
+              'shape': "3x256x256",
+              'previewPath': "/frontend/components/layers/visualization/filter.jpg"
+          },
+          {
+              'name': "Convolution2D_4",
+              'type': "convolution2D",
+              'shape': "3x256x256",
+              'previewPath': "/frontend/components/layers/visualization/filter.jpg"
+          }]
+      ), mimetype='application/json')
