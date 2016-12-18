@@ -1,13 +1,13 @@
 (function () {
     'use strict';
 
-    angular.module('rocAnalysis', ['ngMaterial', 'deviceSelector', 'taskManagerService'])
-        .directive('rocAnalysis', function () {
+    angular.module('featureSpace', ['ngMaterial', 'deviceSelector', 'taskManagerService'])
+        .directive('featureSpace', function () {
             return {
                 scope: {
                     modelId: '@'
                 },
-                templateUrl: '/frontend/components/classification/image-2d/model/validation/roc-analysis/roc-analysis.html',
+                templateUrl: '/frontend/components/classification/image-2d/model/validation/feature-space/feature-space.html',
                 controller: function ($rootScope, $scope, $mdDialog, $mdToast, modelService, taskManagerService) {
                     var self = this;
 
@@ -66,7 +66,7 @@
                             event.stopPropagation();
                             var reloadRocData = false;
                             tasks.forEach(function (task) {
-                                if (task.type = 'roc-image2d-cls') {
+                                if (task.type = 'fspace-image2d') {
                                     for (var i = 0; i < $scope.rocsIds.length; i++) {
                                         var rocId = $scope.rocsIds[i];
                                         if (rocId.hasOwnProperty('taskId')
@@ -87,6 +87,7 @@
                                 });
                             }
                         });
+                        initChart();
                     };
 
                     this.showToast = function (message) {
@@ -98,58 +99,7 @@
                         );
                     };
 
-                    $scope.applyROCAnalysis = function ($event) {
-                        var model_id = $scope.modelId;
-                        $mdDialog.show({
-                            clickOutsideToClose: true,
-                            parent: angular.element(document.body),
-                            targetEvent: $event,
-                            templateUrl: '/frontend/components/classification/image-2d/model/validation/roc-analysis/apply-roc-analysis.html',
-                            controller: function ($scope, datasetService, taskManagerService) {
-                                $scope.dataSets = [];
-                                $scope.device = "";
-                                $scope.dataSetSelected = "";
-
-                                var future = datasetService.getDatasetsInfoStatList();
-                                future.then(function mySucces(response) {
-                                    response.data.forEach(function (dataSet) {
-                                        $scope.dataSets.push(dataSet);
-                                    });
-                                    $scope.dataSetSelected = $scope.dataSets[0];
-                                }, function myError(response) {
-                                });
-
-                                $scope.submitROCAnalysisTask = function () {
-                                    var params = {
-                                        'model-id': model_id,
-                                        'dataset-id': $scope.dataSetSelected.id,
-                                        'deviceType': $scope.device.type
-                                    };
-                                    var futureTask = taskManagerService.startTask('roc-image2d-cls', params);
-                                    futureTask.then(function mySucces(response) {
-                                        var taskId = response.data.taskId;
-                                        var runningTask = {
-                                            name: $scope.dataSetSelected.name,
-                                            inProgress: true,
-                                            taskId : taskId
-                                        };
-                                        $rootScope.$emit(ROCAnalysis.RUN, runningTask);
-                                        self.showToast('ROC Analysis task is running. Task id: ' + taskId);
-                                    }, function myError(response) {
-                                    });
-                                    
-
-                                    $mdDialog.hide();
-                                };
-
-                                $scope.closeDialog = function () {
-                                    $mdDialog.hide();
-                                }
-                            }
-                        });
-
-
-                    };
+                
                     
                     $scope.applyFeatureSpace = function ($event) {
                         var model_id = $scope.modelId;
@@ -157,7 +107,7 @@
                             clickOutsideToClose: true,
                             parent: angular.element(document.body),
                             targetEvent: $event,
-                            templateUrl: '/frontend/components/classification/image-2d/model/validation/roc-analysis/apply-feature-space.html',
+                            templateUrl: '/frontend/components/classification/image-2d/model/validation/feature-space/apply-feature-space.html',
                             controller: function ($scope, datasetService, taskManagerService) {
                                 $scope.dataSets = [];
                                 $scope.device = "";
@@ -319,6 +269,43 @@
                             "formatters": {}
                         };
                     }
+                    
+                    function initChart(){
+                        var trace1 = {
+  x: [1, 2, 3, 4, 5],
+  y: [1, 6, 3, 6, 1],
+  mode: 'markers',
+  type: 'scatter',
+  name: 'Team A',
+  text: ['A-1', 'A-2', 'A-3', 'A-4', 'A-5'],
+  marker: { size: 12 }
+};
+
+var trace2 = {
+  x: [1.5, 2.5, 3.5, 4.5, 5.5],
+  y: [4, 1, 7, 1, 4],
+  mode: 'markers',
+  type: 'scatter',
+  name: 'Team B',
+  text: ['B-a', 'B-b', 'B-c', 'B-d', 'B-e'],
+  marker: { size: 12 }
+};
+
+var data = [ trace1, trace2 ];
+
+var layout = {
+  xaxis: {
+    range: [ 0.75, 5.25 ]
+  },
+  yaxis: {
+    range: [0, 8]
+  },
+  title:'Data Labels Hover'
+};
+
+Plotly.newPlot('feature-space-chart', data, layout);
+                    }
+                    
                     
                 }
             }
