@@ -3,45 +3,15 @@ angular.module('layersVisualization', ['ngMaterial'])
     .component('layersVisualization', {
         templateUrl: '/frontend/components/layers/visualization/layers-visualization.html',
         bindings: {
-            layers: "<"
+            model: '<'
         },
-        controller: function ($mdDialog, modelService) {
+        controller: function ($scope, $mdDialog, modelService) {
             var self = this;
-            this.$onInit = function () {
-                self.layers = [
-                    {
-                        name: "DataInput_1",
-                        type: "datainput",
-                        shape: "3x256x256",
-                        previewPath: "/frontend/components/layers/visualization/filter.jpg"
-                    },
-                    {
-                        name: "Convolution2D_1",
-                        type: "convolution2D",
-                        shape: "3x256x256",
-                        previewPath: "/frontend/components/layers/visualization/filter.jpg"
-                    },
-                    {
-                        name: "Convolution2D_3",
-                        type: "convolution2D",
-                        shape: "3x256x256",
-                        previewPath: "/frontend/components/layers/visualization/filter.jpg"
-                    },
-                    {
-                        name: "Convolution2D_4",
-                        type: "convolution2D",
-                        shape: "3x256x256",
-                        previewPath: "/frontend/components/layers/visualization/filter.jpg"
-                    }
-                ];
 
-                modelService.loadLayersVisualization().then(
-                    function successCallback(response) {
-                        self.layers = response.data;
-                    },
-                    function errorCallback(response) {
-                        console.log(response.data);
-                    })
+
+            this.$onInit = function () {
+                self.layers = [];
+                update(self.model);
             };
             
             this.zoomFilterImage = function($event, filterImagePath) {
@@ -65,5 +35,28 @@ angular.module('layersVisualization', ['ngMaterial'])
                     }
 
             };
+
+            $scope.$on('model-main:update-model', function (event, model) {
+                update(model);
+            });
+            function update(model) {
+                modelService.loadLayersVisualization(model.id).then(
+                    function successCallback(response) {
+                        self.layers.length = 0;
+                        response.data.forEach(function (item) {
+                            self.layers.push({
+                                name: item.layerName,
+                                type: item.layerType,
+                                shape: item.layerShape,
+                                previewPath: item.previewPath,
+                            });
+                        });
+
+                    },
+                    function errorCallback(response) {
+                        console.log(response.data);
+                    }
+                );
+            }
         }
     });

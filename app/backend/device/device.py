@@ -67,7 +67,7 @@ def get_available_devices_list():
     cpuInfo=generate_cpu_info()
     memInfo=generate_mem_info()
     tmemTotal    = int(memInfo['total'])
-    tmemFreeReal = int(memInfo['free'])+int(memInfo['buffers'])+int(memInfo['cached'])
+    tmemFreeReal = int(memInfo['free']) #+int(memInfo['buffers'])+int(memInfo['cached'])
     tmemUsage    = tmemTotal - tmemFreeReal
     tret.append({
         'id':           'cpu',

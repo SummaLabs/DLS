@@ -23,6 +23,7 @@ from app.backend.core.utils import getPathForProjectDir
 from app.backend.core.models.flow_parser import DLSDesignerFlowsParser
 from app.backend.core.models.mdlpreview import ModelsWatcher
 from app.backend.core.models.keras_trainer_v4 import KerasTrainer as ModelProcessor
+import config
 
 models = Blueprint(__name__, __name__)
 
@@ -99,11 +100,10 @@ def check_model_json():
         return Response(json.dumps(ret), mimetype='application/json')
     return Response(json.dumps(('error', 'invalid request')), mimetype='application/json')
 
-@models.route('/vismodel/', methods=['POST'])
-def vis_model_json():
-    if request.method == "POST":
-        dataJson = json.loads(request.data)
-        modelId = dataJson['modelId']
+@models.route('/layers/visualization/<path:model_id>')
+def vis_model_json(model_id):
+    if request.method == "GET":
+        modelId = model_id
         if modelId not in modelsWatcher.dictModelsInfo.keys():
             return Response(json.dumps(('error', 'invalid model-id [%s]' % modelId)), mimetype='application/json')
         try:
@@ -112,6 +112,11 @@ def vis_model_json():
             return Response(json.dumps(('error', 'Exception: [%s]' % err)), mimetype='application/json')
         return Response(json.dumps(retJson), mimetype='application/json')
     return Response(json.dumps(('error', 'invalid request')), mimetype='application/json')
+
+@models.route('/image/<path:image_path>', methods=['GET'])
+def load_image(image_path):
+    with open(image_path, 'r') as f:
+        return f.read()
 
 @models.route('/calcshape/', methods=['POST'])
 def calcshape_model_json():
@@ -138,7 +143,15 @@ def check_model_list():
     return Response(json.dumps(ret), mimetype='application/json')
 
 def generateModelWeightsVis(modelId):
+
+
     modelInfo = modelsWatcher.dictModelsInfo[modelId]
+    # (2) Prepare output directory
+    dirBase = modelInfo.dirModel
+    dirOut = os.path.join(dirBase, PREFIX_WEIGHT_DIR)
+    routeImagePath = 'models/image/' + os.path.relpath(dirOut, config.BASE_DIR)
+    cfgOut = os.path.join(dirOut, PREFIX_WEIGHT_VIS)
+
     modelProcessor = ModelProcessor()
     modelProcessor.loadModelFromTrainingStateInDir(modelInfo.dirModel)
     # (1) Prepare layers:
@@ -157,19 +170,17 @@ def generateModelWeightsVis(modelId):
             isAppend = True
         if isAppend:
             lstLayers.append(ll)
-            tmpInfo['previewPath'] = "%s.jpg" % ll.name
+            tmpInfo['previewPath'] = "%s/%s.jpg" % (routeImagePath, ll.name)
         else:
             tmpInfo['previewPath'] = ""
         retInfo.append(tmpInfo)
-    # (2) Prepare output directory
-    dirBase = modelInfo.dirModel
-    dirOut = os.path.join(dirBase, PREFIX_WEIGHT_DIR)
-    cfgOut = os.path.join(dirOut, PREFIX_WEIGHT_VIS)
+
     dlsutils.makeDirIfNotExists(dirOut)
     # (3) Export images
     for ii, ll in enumerate(lstLayers):
         print ('[%d] * %s, #params = %d' % (ii, ll.name, ll.count_params()))
         foutImg = '%s/%s.jpg' % (dirOut, ll.name)
+
         if isinstance(ll, keras.layers.Convolution2D):
             tmp = ll.get_weights()
             dataW = tmp[0]

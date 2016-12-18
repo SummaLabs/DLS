@@ -53,10 +53,10 @@ function ModelService($http) {
         })
     };
     
-    this.loadLayersVisualization = function () {
+    this.loadLayersVisualization = function (modelId) {
         return $http({
             method: 'GET',
-            url: '/model/layers/visualization'
+            url: '/models/layers/visualization/' + modelId
         });
     };
 }
