@@ -776,6 +776,9 @@ function placeComplexLayer(network, complexLayer) {
     let complexLayerPosition = {x:0, y:0};
     let networkCenter = getNetworkCenter(network);
     let complexLayerCenter = getNetworkCenter(complexLayer);
+    let offset = {x: complexLayerCenter.x - networkCenter.x, y: complexLayerCenter.y - networkCenter.y};
+    let dist = Math.sqrt(offset.x * offset.x + offset.y * offset.y);
+    offset = {x: offset.x / dist, y: offset.y / dist};
 
     // console.log(networkCenter, complexLayerCenter);
 
@@ -795,6 +798,52 @@ function getNetworkCenter(network) {
         });
         networkCenter.x = networkCenter.x / network.length;
         networkCenter.y = networkCenter.y / network.length;
+
+        let res = isIntersect({x:1, y:1}, {x:5, y:1},{x:1, y:3},{x:5, y:0});
+        console.log(res);
     }
     return networkCenter;
+}
+
+function segmentIntersection(first, second) {
+
+    return 1;
+}
+
+function isIntersect (pt1, pt2, pt3, pt4) {
+    let v34 = {
+        x: pt3.x - pt4.x,
+        y: pt3.y - pt4.y
+    };
+    let v31 = {
+        x: pt3.x - pt1.x,
+        y: pt3.y - pt1.y
+    };
+    let v32 = {
+        x: pt3.x - pt2.x,
+        y: pt3.y - pt2.y
+    };
+
+    let v12 = {
+        x: pt1.x - pt2.x,
+        y: pt1.y - pt2.y
+    };
+    let v13 = {
+        x: pt1.x - pt3.x,
+        y: pt1.y - pt3.y
+    };
+    let v14 = {
+        x: pt1.x - pt4.x,
+        y: pt1.y - pt4.y
+    };
+
+    if (vectopMul(v34, v31) * vectopMul(v34, v32) < 0 && vectopMul(v12, v13) * vectopMul(v12, v14) < 0)
+        return true;
+
+    return false;
+
+}
+
+function vectopMul(first, second) {
+    return first.x * second.y - first.y * second.x;
 }
