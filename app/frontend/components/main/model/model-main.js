@@ -8,7 +8,7 @@
                 models: '<',
                 selected:'<'
             },
-            controller: function (modelService) {
+            controller: function ($rootScope, modelService) {
 
                 var self = this;
                 this.$onInit = function () {
@@ -23,6 +23,7 @@
                                     'id': info.id,
                                     'network': "Test Network",//TODO Add network name to description of trained model
                                     'dataSet': info['dataset-name'],
+                                    'dataSetId': info['dataset-id'],
                                     'type': info.type,
                                     'date': info.date.str + " " + info.time.str,
                                     'size': info.size.str,
@@ -39,6 +40,7 @@
 
                 this.selectModel = function( model ) {
                     self.selected = angular.isNumber(model) ? $scope.models[model] : model;
+                    $rootScope.$emit('model_select', model);
                     self.initChart(model);
                 };
                 

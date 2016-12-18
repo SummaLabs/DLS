@@ -5,7 +5,7 @@
         .directive('featureSpace', function () {
             return {
                 scope: {
-                    modelId: '@'
+                    model: '@'
                 },
                 templateUrl: '/frontend/components/classification/image-2d/model/validation/feature-space/feature-space.html',
                 controller: function ($rootScope, $scope, $mdDialog, $mdToast, modelService, taskManagerService) {
@@ -23,9 +23,9 @@
                         $scope.rocsIds = [];
                         $scope.dsTypes = [];
                         $scope.classNames = [];
-                        var future = modelService.loadModelROCsData($scope.modelId);
+                        var future = modelService.loadModelFeatureSpace(JSON.parse($scope.model).id);
                         future.then(function mySucces(response) {
-                            setModelROCsHistoryData(response.data);
+                            initChart(response.data);
                         }, function myError(response) {
                             console.log();
                         });
@@ -61,6 +61,14 @@
                         $rootScope.$on(ROCAnalysis.RUN, function ($event, data) {
                             $scope.rocsIds.push(data);
                         });
+                        $rootScope.$on('model_select', function ($event, data){
+                             var future = modelService.loadModelFeatureSpace(JSON.parse($scope.model).id);
+                             future.then(function mySucces(response) {
+                                 initChart(response.data);
+                             }, function myError(response) {
+                                console.log();
+                                });
+                        });
 
                         taskManagerService.subToTasksStatusUpdate(function (event, tasks) {
                             event.stopPropagation();
@@ -79,15 +87,14 @@
                                 }
                             });
                             if (reloadRocData) {
-                                var future = modelService.loadModelROCsData($scope.modelId);
+                                var future = modelService.loadModelFeatureSpace($scope.modelId);
                                 future.then(function mySucces(response) {
-                                    updateModelROCsHistoryData(response.data);
+                                    initChart(response.data);
                                     self.showToast('ROC Analysis task is completed!');
                                 }, function myError(response) {
                                 });
                             }
                         });
-                        initChart();
                     };
 
                     this.showToast = function (message) {
@@ -102,30 +109,32 @@
                 
                     
                     $scope.applyFeatureSpace = function ($event) {
-                        var model_id = $scope.modelId;
+                        var modelObject = JSON.parse($scope.model);
+                        var model_id = modelObject.id;
+                        var dataset_id = modelObject.dataSetId;
                         $mdDialog.show({
                             clickOutsideToClose: true,
                             parent: angular.element(document.body),
                             targetEvent: $event,
                             templateUrl: '/frontend/components/classification/image-2d/model/validation/feature-space/apply-feature-space.html',
-                            controller: function ($scope, datasetService, taskManagerService) {
+                            controller: function ($scope, $rootScope, datasetService, taskManagerService) {
                                 $scope.dataSets = [];
                                 $scope.device = "";
                                 $scope.dataSetSelected = "";
                                 $scope.samps = [500, 1000, 1500];
                                 $scope.layers = [
-    'convolution1d',
-    'convolution2d',
-    'convolution3d',
-    'pooling1d',
-    'pooling2d',
-    'pooling3d',
-    'activation',
-    'flatten',
-    'merge',
-    'dense',
-    'datainput',
-    'dataoutput'];
+                               'convolution1d',
+                               'convolution2d',
+                               'convolution3d',
+                               'pooling1d',
+                               'pooling2d',
+                               'pooling3d',
+                               'activation',
+                               'flatten',
+                               'merge',
+                               'dense',
+                               'datainput',
+                               'dataoutput'];
                                 $scope.isPca = false;
                                 $scope.isTsne = false;
                                 $scope.samples = 1000;
@@ -135,23 +144,15 @@
                                 };
                                 $scope.selectedLayers;
 
-                                var future = datasetService.getDatasetsInfoStatList();
-                                future.then(function mySucces(response) {
-                                    response.data.forEach(function (dataSet) {
-                                        $scope.dataSets.push(dataSet);
-                                    });
-                                    $scope.dataSetSelected = $scope.dataSets[0];
-                                }, function myError(response) {
-                                });
 
                                 $scope.submitFeatureSpaceTask = function () {
                                     var params = {
                                         'model-id': model_id,
-                                        'dataset-id': $scope.dataSetSelected.id,
+                                        'dataset-id': dataset_id,
                                         'deviceType': $scope.device.type,
                                         'is-pca': $scope.isPca,
                                         'is-tsne': $scope.isTsne,
-                                        layers: $scope.sele, 
+                                        layers: $scope.selectedLayers, 
                                         samples: $scope.samples
                                     };
                                     var futureTask = taskManagerService.startTask('fspace-image2d', params);
@@ -269,41 +270,66 @@
                             "formatters": {}
                         };
                     }
+
+                    function createTrace(cluster){
+                        return {
+                                    x: cluster.x,
+                                    y: cluster.y,
+                                    mode: 'markers',
+                                    type: 'scatter',
+                                    name: j,
+                                    marker: { size: 5 }
+                                 };
+                    }
+
+                    function visualize(layer, type, name){
+                         var traces = [];
+                            for(var j in layer){
+                                var cluster = layer[j];
+                                 var trace = {
+                                    x: cluster.x,
+                                    y: cluster.y,
+                                    mode: 'markers',
+                                    type: 'scatter',
+                                    name: j,
+                                    marker: { size: 5 }
+                                 };
+                                traces.push(trace);
+                            }
+
+                            var layout = {
+                                title: name + ' ' + type
+                            };
+                            var divId = 'feature-space-chart' + name + '_' +  type;
+                            $('#feature-space-chart').after( '<div id="' + divId + '" class="fs-chart"></div>' );
+                            Plotly.newPlot(divId, traces, layout);
+                    }
+
+
                     
-                    function initChart(){
-                        var trace1 = {
-  x: [1, 2, 3, 4, 5],
-  y: [1, 6, 3, 6, 1],
-  mode: 'markers',
-  type: 'scatter',
-  name: 'Team A',
-  text: ['A-1', 'A-2', 'A-3', 'A-4', 'A-5'],
-  marker: { size: 12 }
-};
-
-var trace2 = {
-  x: [1.5, 2.5, 3.5, 4.5, 5.5],
-  y: [4, 1, 7, 1, 4],
-  mode: 'markers',
-  type: 'scatter',
-  name: 'Team B',
-  text: ['B-a', 'B-b', 'B-c', 'B-d', 'B-e'],
-  marker: { size: 12 }
-};
-
-var data = [ trace1, trace2 ];
-
-var layout = {
-  xaxis: {
-    range: [ 0.75, 5.25 ]
-  },
-  yaxis: {
-    range: [0, 8]
-  },
-  title:'Data Labels Hover'
-};
-
-Plotly.newPlot('feature-space-chart', data, layout);
+                    function initChart(space){
+                        $('.fs-chart').html('');
+                        for(var i=0; i<space.length; i++){
+                            var layer = space[i];
+                            var pca = layer.data.pca;
+                            var tsne = layer.data.tsne;
+                            /*var traces = [];
+                            for(var j in pca){
+                                var cluster = pca[j];
+                                 var trace = createTrace(cluster);
+                                traces.push(trace);
+                            }
+                            
+                            var layout = {
+                                title: layer.name + ' PCA'
+                            };
+                            var divId = 'feature-space-chart' + layer.name + "_PCA";
+                            $('#feature-space-chart').after( '<div id="' + divId + '"></div>' );
+                            Plotly.newPlot(divId, traces, layout);*/
+                            visualize(pca, "PCA", layer.name);
+                            visualize(tsne, "TSNE", layer.name);
+                            
+                        }
                     }
                     
                     

@@ -9,7 +9,7 @@ from functools import wraps
 
 from app.backend.core import utils as dlsutils
 from app.backend.core.models.cfg import CFG_MODEL, CFG_SOLVER, CFG_MODEL_TRAIN, CFG_PROGRESS, \
-    PREFIX_SNAPSHOT, EXT_MODEL_WEIGHTS, PREFIX_TASKS_DIR, CFG_EVAL_ROC, PREFIX_EVAL_ROC_DIR, CFG_MODEL_NETWORK
+    PREFIX_SNAPSHOT, EXT_MODEL_WEIGHTS, PREFIX_TASKS_DIR, CFG_EVAL_ROC, PREFIX_EVAL_ROC_DIR, CFG_MODEL_NETWORK, PREFIX_EVAL_FS_DIR
 from app.backend.datasets import api as dbapi
 from flow_parser import DLSDesignerFlowsParser
 from ..utils import getDateTimeForConfig
@@ -193,6 +193,19 @@ class ModelInfo:
                     tret.append(tdataJson)
         return tret
 
+    def getFeatureSpace(self):
+        tret=[]
+        lstDirROC=glob.glob('%s/%s*' % (self.dirModel, PREFIX_EVAL_FS_DIR))
+        for ll in lstDirROC:
+            fnROC=os.path.join(ll, "fspace-train.json")
+            if os.path.isfile(fnROC):
+                with open(fnROC,'r') as f:
+                    tdataJson = json.load(f)
+                    tret.append(tdataJson)
+        if(len(tret)) > 0:
+            return tret[len(tret) - 1]
+        return []
+
 class ModelsWatcher:
     dirModels       = None
     dictModelsInfo  = {}
@@ -233,6 +246,14 @@ class ModelsWatcher:
             return self.dictModelsInfo[modelId].getDataROC()
         else:
             raise Exception('Unknown model ID [%s]' % modelId)
+
+    def getFeatureSpace(self, modelId):
+        if modelId in self.dictModelsInfo.keys():
+            return self.dictModelsInfo[modelId].getFeatureSpace()
+        else:
+            raise Exception('Unknown model ID [%s]' % modelId)
+
+
 
 ####################################
 if __name__ == '__main__':

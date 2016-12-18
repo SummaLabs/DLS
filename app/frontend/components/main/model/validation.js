@@ -8,7 +8,8 @@
             function buildTemplate(modelType, modelId) {
                 var inferenceType =
                 {
-                    'image2d-classification': '<roc-analysis model-id="' + modelId + '"></roc-analysis>'
+                    'image2d-classification': '<roc-analysis model-id="' + modelId + '"></roc-analysis>',
+                    'feature-space': '<feature-space model-id="' + modelId + '"></feature-space>'
                 };
                 return inferenceType[modelType];
             }

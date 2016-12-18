@@ -115,5 +115,11 @@ def check_model_list():
     return Response(json.dumps(ret), mimetype='application/json')
 
 
+@models.route('/fs/load/<path:model_id>', methods=['GET'])
+def load_feature_space(model_id):
+    #return Response(open('/home/ar/projects/DLS/temp/fspace-out-20161218-080508-410197/fspace-train.json', 'r').read(), mimetype='application/json')
+    return Response(json.dumps(modelsWatcher.getFeatureSpace(model_id)), mimetype='application/json')
+
+
 if __name__ == '__main__':
     print ('-----')

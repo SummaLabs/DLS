@@ -134,7 +134,7 @@ class TaskFeatureSpaceVisImage2D(Task):
             tkeys = dbInfo.dbIndex[dbType]['keys'][trndIdx]
             tlabels = dbInfo.dbIndex[dbType]['lblid'][trndIdx]
             for imgId, imgStrId in enumerate(tkeys):
-                timg = dbInfo.getRawImageFromDB(dbType, imgId, isNumpyArray=True)
+                timg = dbInfo.getRawImageFromDB(dbType, trndIdx[imgId], isNumpyArray=True)
                 tdataX = modelProcessor.convertImgUint8ToDBImage(timg)
                 tdataX = tdataX.reshape([1] + list(tdataX.shape))
                 tret = featuresNN([tdataX])
@@ -191,8 +191,8 @@ class TaskFeatureSpaceVisImage2D(Task):
 
 if __name__ == '__main__':
     cfgJson = {
-        'model-id':     'mdltask-20161217-172716-664949',
-        'dataset-id':   'dbset-20160922-220305-935526',
+        'model-id':     'mdltask-20161211-203057-599375',
+        'dataset-id':   'dbset-20160922-220218-011462',
         'is-pca':       True,
         'is-tsne':      False,
         'samples':      1000

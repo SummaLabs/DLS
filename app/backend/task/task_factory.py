@@ -4,6 +4,7 @@ from app.backend.task.roc_analysis_task import ROCAnalysisTask
 from task_db_image2d_cls import TaskDBImage2DBuilder
 from task_model_image2d_cls import TaskModelTrainImage2DCls
 from task_roc_image2d_cls import TaskROCImage2DCls
+from task_feature_visualization_image2d import  TaskFeatureSpaceVisImage2D
 
 
 class TaskFactory:
@@ -23,5 +24,7 @@ class TaskFactory:
             return TaskModelTrainImage2DCls(params)
         elif type == 'roc-image2d-cls':
             return TaskROCImage2DCls(params)
+        elif type == 'fspace-image2d':
+            return TaskFeatureSpaceVisImage2D(params)
         else:
             return NotImplemented
