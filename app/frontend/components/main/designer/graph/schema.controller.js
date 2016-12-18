@@ -778,9 +778,8 @@ function placeComplexLayer(network, complexLayer) {
     let complexLayerCenter = getNetworkCenter(complexLayer);
     let offset = {x: complexLayerCenter.x - networkCenter.x, y: complexLayerCenter.y - networkCenter.y};
     let dist = Math.sqrt(offset.x * offset.x + offset.y * offset.y);
-    offset = {x: offset.x / dist, y: offset.y / dist};
+    // offset = {x: offset.x / dist, y: offset.y / dist};
 
-    // console.log(networkCenter, complexLayerCenter);
 
     return complexLayerPosition;
 }
@@ -798,16 +797,8 @@ function getNetworkCenter(network) {
         });
         networkCenter.x = networkCenter.x / network.length;
         networkCenter.y = networkCenter.y / network.length;
-
-        let res = isIntersect({x:1, y:1}, {x:5, y:1},{x:1, y:3},{x:5, y:0});
-        console.log(res);
     }
     return networkCenter;
-}
-
-function segmentIntersection(first, second) {
-
-    return 1;
 }
 
 function isIntersect (pt1, pt2, pt3, pt4) {
