@@ -13,7 +13,7 @@ from app.backend.core.utils import getPathForProjectDir
 
 from app.backend.core.models.flow_parser import DLSDesignerFlowsParser
 from app.backend.core.models.mdlpreview import ModelsWatcher
-from app.backend.core.models.keras_trainer_v3 import KerasTrainer as ModelProcessor
+from app.backend.core.models.keras_trainer_v4 import KerasTrainer as ModelProcessor
 
 models = Blueprint(__name__, __name__)
 

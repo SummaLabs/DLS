@@ -8,13 +8,13 @@ import json
 from task import Task
 import random
 
-from app.backend.core.models.keras_trainer_v3 import KerasTrainer
+from app.backend.core.models.keras_trainer_v4 import KerasTrainer
 from app.backend.core.models.mdlpreview import ModelTaskDirBuilder
 from app.backend.core.models.api import modelsWatcher
 from app.backend.core import utils as dlsutils
 
 
-class TaskModelTeainImage2DCls(Task, KerasTrainer):
+class TaskModelTrainImage2DCls(Task, KerasTrainer):
     prefixModel = 'mdltask'
     prefixProgress = 'progress.json'
     modelId=None

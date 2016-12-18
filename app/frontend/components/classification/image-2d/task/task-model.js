@@ -7,10 +7,11 @@
             return {
                 scope: {
                     taskId: '@',
-                    rows: ''
+                    task: '@',
+                    plot: '@'
                 },
                 templateUrl: "/frontend/components/classification/image-2d/task/task-model.html",
-                controller: function ($scope, networkDataService) {
+                controller: function ($scope, networkDataService, $http, $interval) {
                     this.$onInit = function () {
                         $scope.plot = this.getInitPlotData();
 

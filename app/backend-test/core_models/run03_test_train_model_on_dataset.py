@@ -12,7 +12,7 @@ from keras.utils.visualize_util import plot as kplot
 from app.backend.core.datasets.dbwatcher import DatasetsWatcher
 from app.backend.core.models.flow_parser import DLSDesignerFlowsParser
 from app.backend.core.models.batcher_image2d import BatcherImage2DLMDB
-from app.backend.core.models.keras_trainer_v3 import KerasTrainer
+from app.backend.core.models.keras_trainer_v4 import KerasTrainer
 
 pathTestModel='../../../data-test/test-models-json/test_cnn1.json'
 
