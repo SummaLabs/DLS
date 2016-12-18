@@ -116,4 +116,4 @@ def check_model_list():
 
 
 if __name__ == '__main__':
-    pass
+    print ('-----')
