@@ -64,7 +64,9 @@ function LayerService($rootScope, $http, $templateCache,
         'dense':            denseLayer,
         'datainput':        datainputLayer,
         'dataoutput':       dataoutputLayer,
-        'complex':          complex
+        'inception':        complex.getAssessor('inception'),
+        'resnet':           complex.getAssessor('resnet'),
+        'vgg':              complex.getAssessor('vgg')
     };
 
     const templatesByType = {
@@ -109,7 +111,9 @@ function LayerService($rootScope, $http, $templateCache,
         denseLayer.getDefault(),
         datainputLayer.getDefault(),
         dataoutputLayer.getDefault(),
-        complex.getDefault()
+        complex.getInception(),
+        complex.getResnet(),
+        complex.getVgg()
     ];
 
     this.pubLayersUpdateEvent = function() {
@@ -137,6 +141,7 @@ function LayerService($rootScope, $http, $templateCache,
     };
     
     this.getIconByType = function(type) {
+        // console.log(layerByType[type]);
         return layerByType[type].getIconPath();
     };
 
