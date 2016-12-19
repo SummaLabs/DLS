@@ -1,0 +1,147 @@
+{
+  "layers": [
+    {
+      "category": "basic", 
+      "wires": [
+        "node_2013", 
+        "node_3640"
+      ], 
+      "name": "Activation", 
+      "pos": {
+        "y": 25.5, 
+        "x": 375.5
+      }, 
+      "params": {
+        "activationFunction": "linear"
+      }, 
+      "layerType": "activation", 
+      "id": "node_30cb"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_5e79"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 250.5, 
+        "x": 175.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_2013"
+    }, 
+    {
+      "category": "basic", 
+      "wires": [
+        "node_914f"
+      ], 
+      "name": "Activation", 
+      "pos": {
+        "y": 375.5, 
+        "x": 175.5
+      }, 
+      "params": {
+        "activationFunction": "relu"
+      }, 
+      "layerType": "activation", 
+      "id": "node_5e79"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_76a0"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 500.5, 
+        "x": 175.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_914f"
+    }, 
+    {
+      "category": "basic", 
+      "wires": [
+        "node_5993"
+      ], 
+      "name": "Activation", 
+      "pos": {
+        "y": 625, 
+        "x": 175
+      }, 
+      "params": {
+        "activationFunction": "linear"
+      }, 
+      "layerType": "activation", 
+      "id": "node_76a0"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_bb01"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 750.5, 
+        "x": 175.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_5993"
+    }, 
+    {
+      "category": "basic", 
+      "wires": [
+        "node_3640"
+      ], 
+      "name": "Activation", 
+      "pos": {
+        "y": 875.5, 
+        "x": 175.5
+      }, 
+      "params": {
+        "activationFunction": "linear"
+      }, 
+      "layerType": "activation", 
+      "id": "node_bb01"
+    }, 
+    {
+      "category": "basic", 
+      "name": "Merge", 
+      "pos": {
+        "y": 1100.5, 
+        "x": 550.5
+      }, 
+      "params": {
+        "mergeType": "concat", 
+        "mergeAxis": "-1"
+      }, 
+      "layerType": "merge", 
+      "id": "node_3640"
+    }
+  ], 
+  "source": "custom", 
+  "preview": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48bGluZSB4MT0iNzguNzM1MDE5OTczMzY4ODIiIHkxPSIyMCIgeDI9IjIwLjE0NjQ3MTM3MTUwNDY2IiB5Mj0iNDMuMDIzMjU1ODEzOTUzNDgiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9Ijc4LjczNTAxOTk3MzM2ODgyIiB5MT0iMjAiIHgyPSIxMzAiIHkyPSIxMzAiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjIwLjE0NjQ3MTM3MTUwNDY2IiB5MT0iNDMuMDIzMjU1ODEzOTUzNDgiIHgyPSIyMC4xNDY0NzEzNzE1MDQ2NiIgeTI9IjU1LjgxMzk1MzQ4ODM3MjA5IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIyMC4xNDY0NzEzNzE1MDQ2NiIgeTE9IjU1LjgxMzk1MzQ4ODM3MjA5IiB4Mj0iMjAuMTQ2NDcxMzcxNTA0NjYiIHkyPSI2OC42MDQ2NTExNjI3OTA3IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIyMC4xNDY0NzEzNzE1MDQ2NiIgeTE9IjY4LjYwNDY1MTE2Mjc5MDciIHgyPSIyMCIgeTI9IjgxLjM0NDE4NjA0NjUxMTYyIiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIyMCIgeTE9IjgxLjM0NDE4NjA0NjUxMTYyIiB4Mj0iMjAuMTQ2NDcxMzcxNTA0NjYiIHkyPSI5NC4xODYwNDY1MTE2Mjc5MSIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iMjAuMTQ2NDcxMzcxNTA0NjYiIHkxPSI5NC4xODYwNDY1MTE2Mjc5MSIgeDI9IjIwLjE0NjQ3MTM3MTUwNDY2IiB5Mj0iMTA2Ljk3Njc0NDE4NjA0NjUiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjIwLjE0NjQ3MTM3MTUwNDY2IiB5MT0iMTA2Ljk3Njc0NDE4NjA0NjUiIHgyPSIxMzAiIHkyPSIxMzAiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGNpcmNsZSByPSIyLjkyOTQyNzQzMDA5MzIwODYiIGN4PSI3OC43MzUwMTk5NzMzNjg4MiIgY3k9IjIwIiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMi45Mjk0Mjc0MzAwOTMyMDg2IiBjeD0iMjAuMTQ2NDcxMzcxNTA0NjYiIGN5PSI0My4wMjMyNTU4MTM5NTM0OCIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIuOTI5NDI3NDMwMDkzMjA4NiIgY3g9IjIwLjE0NjQ3MTM3MTUwNDY2IiBjeT0iNTUuODEzOTUzNDg4MzcyMDkiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyLjkyOTQyNzQzMDA5MzIwODYiIGN4PSIyMC4xNDY0NzEzNzE1MDQ2NiIgY3k9IjY4LjYwNDY1MTE2Mjc5MDciIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyLjkyOTQyNzQzMDA5MzIwODYiIGN4PSIyMCIgY3k9IjgxLjM0NDE4NjA0NjUxMTYyIiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMi45Mjk0Mjc0MzAwOTMyMDg2IiBjeD0iMjAuMTQ2NDcxMzcxNTA0NjYiIGN5PSI5NC4xODYwNDY1MTE2Mjc5MSIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIuOTI5NDI3NDMwMDkzMjA4NiIgY3g9IjIwLjE0NjQ3MTM3MTUwNDY2IiBjeT0iMTA2Ljk3Njc0NDE4NjA0NjUiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyLjkyOTQyNzQzMDA5MzIwODYiIGN4PSIxMzAiIGN5PSIxMzAiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PC9zdmc+", 
+  "name": "layer_resnet_v1", 
+  "description": ""
+}
