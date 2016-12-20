@@ -9,6 +9,7 @@ angular.module('layerService', [
     'flattenLayer',
     'mergeLayer',
     'denseLayer',
+    // 'upsampling3dLayer',
     'datainputLayer',
     'dataoutputLayer',
     'complex'])
@@ -22,6 +23,7 @@ angular.module('layerService', [
         'activationLayer',
         'flattenLayer',
         'mergeLayer',
+        // 'upsampling3dLayer',
         'denseLayer',
         'datainputLayer',
         'dataoutputLayer',
@@ -38,6 +40,7 @@ function LayerService($rootScope, $http, $templateCache,
                       flattenLayer,
                       mergeLayer,
                       denseLayer,
+                      // upsampling3dLayer,
                       datainputLayer,
                       dataoutputLayer,
                       complex) {
@@ -62,6 +65,7 @@ function LayerService($rootScope, $http, $templateCache,
         'merge':            mergeLayer,
         'flatten':          flattenLayer,
         'dense':            denseLayer,
+        // 'upsampling3d':     upsampling3dLayer,
         'datainput':        datainputLayer,
         'dataoutput':       dataoutputLayer,
         'inception':        complex.getAssessor('inception'),
@@ -80,6 +84,7 @@ function LayerService($rootScope, $http, $templateCache,
         'flatten': '',
         'merge': '',
         'dense': '',
+        // 'upsampling3d': '',
         'datainput': '',
         'dataoutput': ''
     };
@@ -95,6 +100,7 @@ function LayerService($rootScope, $http, $templateCache,
     loadTemplate('flatten');
     loadTemplate('merge');
     loadTemplate('dense');
+    // loadTemplate('upsampling3d');
     loadTemplate('datainput');
     loadTemplate('dataoutput');
 
@@ -109,6 +115,7 @@ function LayerService($rootScope, $http, $templateCache,
         flattenLayer.getDefault(),
         mergeLayer.getDefault(),
         denseLayer.getDefault(),
+        // upsampling3dLayer.getDefault(),
         datainputLayer.getDefault(),
         dataoutputLayer.getDefault(),
         complex.getInception(),

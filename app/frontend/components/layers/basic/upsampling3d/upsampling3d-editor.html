@@ -1,0 +1,24 @@
+    <div layout-margin>
+        <div layout="column">
+            <md-input-container>
+                <label>UpSampling Type</label>
+                <md-select ng-model="params.subsamplingType" ng-model-options="{trackBy: '$value'}" required>
+                    <md-option ng-repeat="option in subsamplingTypeList" ng-value="option.value">
+                        {{option.text}}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container>
+                <label>UpSampling Size Width</label>
+                <input ng-model="params.subsamplingSizeWidth" type="number" min="1" required>
+            </md-input-container>
+            <md-input-container>
+                <label>UpSampling Size Height</label>
+                <input ng-model="params.subsamplingSizeHeight" type="number" min="1" required>
+            </md-input-container>
+            <md-input-container>
+                <label>UpSampling Size Depth</label>
+                <input ng-model="params.subsamplingSizeDepth" type="number" min="1" required>
+            </md-input-container>
+        </div>
+    </div>
