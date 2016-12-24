@@ -194,16 +194,14 @@ class ModelInfo:
         return tret
 
     def getFeatureSpace(self):
-        tret=[]
         lstDirROC=glob.glob('%s/%s*' % (self.dirModel, PREFIX_EVAL_FS_DIR))
-        for ll in lstDirROC:
-            fnROC=os.path.join(ll, "fspace-train.json")
-            if os.path.isfile(fnROC):
-                with open(fnROC,'r') as f:
-                    tdataJson = json.load(f)
-                    tret.append(tdataJson)
-        if(len(tret)) > 0:
-            return tret[len(tret) - 1]
+        lstDirROC.sort()
+        if(len(lstDirROC) > 0):
+            path = lstDirROC[-1]
+            fullPath = os.path.join(path, "fspace-train.json")
+            if os.path.isfile(fullPath):
+                with open(fullPath, 'r') as f:
+                    return json.load(f)
         return []
 
 class ModelsWatcher:

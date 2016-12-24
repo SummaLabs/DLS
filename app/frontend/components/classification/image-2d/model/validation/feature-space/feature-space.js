@@ -29,7 +29,7 @@
                         }, function myError(response) {
                             console.log();
                         });
-                        
+
                         $scope.$watch('rocHistorySelected', function (newValue, oldValue) {
                             if (oldValue != null) {
                                 var index = 0;
@@ -62,7 +62,8 @@
                             $scope.rocsIds.push(data);
                         });
                         $rootScope.$on('model_select', function ($event, data){
-                             var future = modelService.loadModelFeatureSpace(JSON.parse($scope.model).id);
+                            $scope.currentModelId = data.id;
+                             var future = modelService.loadModelFeatureSpace(data.id);
                              future.then(function mySucces(response) {
                                  initChart(response.data);
                              }, function myError(response) {
@@ -109,7 +110,7 @@
                 
                     
                     $scope.applyFeatureSpace = function ($event) {
-                        var modelObject = JSON.parse($scope.model);
+                        var modelObject =  JSON.parse($scope.model);
                         var model_id = modelObject.id;
                         var dataset_id = modelObject.dataSetId;
                         $mdDialog.show({
@@ -121,7 +122,7 @@
                                 $scope.dataSets = [];
                                 $scope.device = "";
                                 $scope.dataSetSelected = "";
-                                $scope.samps = [500, 1000, 1500];
+                                $scope.samps = [100, 250, 500, 1000, 1500];
                                 $scope.layers = [
                                'convolution1d',
                                'convolution2d',
@@ -137,7 +138,7 @@
                                'dataoutput'];
                                 $scope.isPca = false;
                                 $scope.isTsne = false;
-                                $scope.samples = 1000;
+                                $scope.samples = 100;
                                 $scope.searchTerm;
                                 $scope.clearSearchTerm = function() {
                                     $scope.searchTerm = '';
@@ -282,7 +283,7 @@
                                  };
                     }
 
-                    function visualize(layer, type, name){
+                    function generatePlot(layer, type, name){
                          var traces = [];
                             for(var j in layer){
                                 var cluster = layer[j];
@@ -301,8 +302,16 @@
                                 title: name + ' ' + type
                             };
                             var divId = 'feature-space-chart' + name + '_' +  type;
-                            $('#feature-space-chart').after( '<div id="' + divId + '" class="fs-chart"></div>' );
-                            Plotly.newPlot(divId, traces, layout);
+                            return {divId: divId, traces: traces, layout: layout};
+                    }
+                    
+                    function visualize(pce, tsne){
+                        
+                        $('#feature-space-chart').after( '<div class="layout-row"><div id="' + pce.divId + '" class="fs-chart"></div><div id="' + tsne.divId + '" class="fs-chart"></div></div>' );
+                        
+                        Plotly.newPlot(pce.divId, pce.traces, pce.layout);
+                        Plotly.newPlot(tsne.divId, tsne.traces, tsne.layout);
+                        
                     }
 
 
@@ -313,21 +322,7 @@
                             var layer = space[i];
                             var pca = layer.data.pca;
                             var tsne = layer.data.tsne;
-                            /*var traces = [];
-                            for(var j in pca){
-                                var cluster = pca[j];
-                                 var trace = createTrace(cluster);
-                                traces.push(trace);
-                            }
-                            
-                            var layout = {
-                                title: layer.name + ' PCA'
-                            };
-                            var divId = 'feature-space-chart' + layer.name + "_PCA";
-                            $('#feature-space-chart').after( '<div id="' + divId + '"></div>' );
-                            Plotly.newPlot(divId, traces, layout);*/
-                            visualize(pca, "PCA", layer.name);
-                            visualize(tsne, "TSNE", layer.name);
+                            visualize(generatePlot(pca, "PCA", layer.name), generatePlot(tsne, "TSNE", layer.name))
                             
                         }
                     }
