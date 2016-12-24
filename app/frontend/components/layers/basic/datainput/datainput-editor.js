@@ -4,7 +4,7 @@ angular
 .directive('datainputEditor', function () {
     return {
         scope: {
-            layerId: '@',
+            layerData: '=',
             doOnSubmit: '&'
         },
         templateUrl: "frontend/components/layers/basic/datainput/datainput-editor.html",
@@ -29,16 +29,14 @@ angular
 
 
                 $scope.$watch('selectedDataSet', function (selectedDataSet) {
-                    var layer = networkDataService.getLayerById($scope.layerId);
                     if (selectedDataSet != null)
-                        layer.params.datasetId = selectedDataSet.id;
+                        $scope.layerData.params.datasetId = selectedDataSet.id;
                 }, true);
 
 
                 function setUpLayerParams(dataSets) {
                     $scope.dataSets = dataSets;
-                    var currentLayer = networkDataService.getLayerById($scope.layerId);
-                    var savedParams = currentLayer.params;
+                    var savedParams = $scope.layerData.params;
                     var savedDataSetIndex = -1;
                     for (var i = 0; i < dataSets.length; i++) {
                         if (savedParams['datasetId'] == dataSets[i].id) {
@@ -51,7 +49,7 @@ angular
                         if(dataSets.length > 0) {
                             $scope.selectedDataSet = dataSets[0];
                         }
-                        currentLayer.params = layerService.getLayerByType(currentLayer.layerType).params;
+                        $scope.layerData.params = layerService.getLayerByType($scope.layerData.layerType).params;
                     }
                 }
             }

@@ -5,18 +5,17 @@ angular
 .directive('convolution2dEditor', function () {
     return {
         scope: {
-            layerId: '@'
+            layerData: '='
         },
         templateUrl: "frontend/components/layers/basic/convolution2d/convolution2d-editor.html",
         controller: function ($scope, networkDataService, convolution2dLayer) {
             this.$onInit = function () {
-                setUpLayerParams(networkDataService.getLayerById($scope.layerId).params);
+                setUpLayerParams($scope.layerData.params);
                 $scope.activationFunctionList = convolution2dLayer.getActivationFunctions();
 
 
                 $scope.$watch('params', function (params) {
-                    var layer = networkDataService.getLayerById($scope.layerId);
-                    updateLayer(layer, params);
+                    updateLayer($scope.layerData, params);
                 }, true);
 
                 function updateLayer(layer, params) {

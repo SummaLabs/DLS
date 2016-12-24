@@ -5,19 +5,18 @@ angular
 .directive('mergeEditor', function () {
     return {
         scope: {
-            layerId: '@'
+            layerData: '='
         },
         templateUrl: "frontend/components/layers/basic/merge/merge-editor.html",
         controller: function ($scope, networkDataService, mergeLayer) {
             this.$onInit = function () {
-                setUpLayerParams(networkDataService.getLayerById($scope.layerId).params);
+                setUpLayerParams($scope.layerData.params);
                 $scope.mergeTypesList = mergeLayer.getMergeTypes();
                 $scope.mergeAxisList = mergeLayer.getMergeAxis();
                 
 
                 $scope.$watch('params', function (params) {
-                    var layer = networkDataService.getLayerById($scope.layerId);
-                    updateLayer(layer, params);
+                    updateLayer($scope.layerData, params);
                 }, true);
 
                 function updateLayer(layer, params) {

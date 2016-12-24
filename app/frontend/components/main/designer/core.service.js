@@ -1,5 +1,116 @@
 'use strict';
 
+
+function CoreService(layerService, appConfig) {
+    let store = {};
+    store.scale = 1;
+    let counter = 0;
+    let layerDefinition = {};
+    let schema = null;
+    this.createSchema = function (viewContext, maxStorageSize) {
+         schema = new Schema(viewContext, maxStorageSize);
+         return schema;
+    };
+
+    this.addLayer = function (layerType, position) {
+         let layer = layerService.getLayerByType(layerType);
+         let node = schema.addNode(layer.name, layer.layerType, layer.category, layerService.getTemplateByType(layerType));
+         node.params = layer.params;
+         node.position(position.x, position.y, appConfig.svgDefinitions.gridStep);
+         return node;
+    };
+
+    this.getLayerById = function (id) {
+        return schema.getNodeById(id);
+    };
+
+    this.getNetwork = function () {
+        return schema.getSchema();
+    };
+
+    this.param = function (key, value) {
+        if (arguments.length === 1)
+            return store[key];
+
+        store[key] = value;
+    };
+
+
+
+    this.getNodeTemplate = function(layerType) {
+		let template = layerService.getTemplateByType(layerType);
+		if (!template)
+			template = layerService.getTemplateByType('data');
+
+		return template;
+	};
+
+	this.getNodeDefinition = function(layerType) {
+		if (!layerDefinition[layerType]) {
+			counter ++;
+			let templateHtml = this.getNodeTemplate(layerType);
+			if (!templateHtml)
+				console.log('Template for "layerType" did not loaded!');
+
+        	layerDefinition[layerType] = calculateProportions(templateHtml, appConfig.svgDefinitions.markerPortIn, appConfig.svgDefinitions.markerPortOut);
+		}
+
+		return layerDefinition[layerType];
+	};
+
+
+	function calculateProportions(templateHtml, portInSign, portOutSign) {
+	    let displayData = {};
+
+        let svg = document.createElement('div');
+        svg.style.position = 'absolute';
+        svg.style.top = '-1000px';
+        svg.innerHTML = '<svg>' + templateHtml + '</svg>';
+        document.body.appendChild(svg);
+
+        let portIn = angular.element(svg.querySelector('#' + portInSign));
+        if (!portIn[0])
+        	console.log(portIn, portInSign, templateHtml);
+        let portInRect = portIn[0].getBoundingClientRect();
+        let portOut = angular.element(svg.querySelector('#' + portOutSign));
+        let portOutRect = portOut[0].getBoundingClientRect();
+        let rect = angular.element(svg.firstElementChild.firstElementChild);
+        let elementRect = rect[0].getBoundingClientRect();
+
+        displayData.portIn = {
+            centerOffset: {
+                x: portInRect.left + (portInRect.right - portInRect.left) / 2,
+                y: portInRect.top  + (portInRect.bottom - portInRect.top) / 2 + 1000
+            },
+            width: portInRect.right - portInRect.left,
+            height: portInRect.bottom - portInRect.top
+        };
+
+        displayData.portOut = {
+            centerOffset: {
+                x: portOutRect.left + (portOutRect.right - portOutRect.left) / 2,
+                y: portOutRect.top  + (portOutRect.bottom - portOutRect.top) / 2 + 1000
+            },
+            width: portOutRect.right - portOutRect.left,
+            height: portOutRect.bottom - portOutRect.top
+        };
+
+
+
+        displayData.node = {
+            offsetCenter: {
+                x: elementRect.left + (elementRect.right - elementRect.left) / 2,
+                y: elementRect.top  + (elementRect.bottom - elementRect.top) / 2 + 1000
+            },
+            width: elementRect.right - elementRect.left,
+            height: elementRect.bottom - elementRect.top
+        };
+        document.body.removeChild(svg);
+        return displayData;
+	}
+
+}
+
 function Position(x, y, step) {
     if (!step)
         step = 1;

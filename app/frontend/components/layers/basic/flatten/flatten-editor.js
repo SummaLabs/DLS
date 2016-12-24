@@ -5,7 +5,7 @@ angular
 .directive('flattenEditor', function () {
     return {
         scope: {
-            layerId: '@'
+            layerData: '='
         },
         templateUrl: "frontend/components/layers/basic/flatten/flatten-editor.html",
         controller: function () {

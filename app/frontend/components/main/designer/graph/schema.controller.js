@@ -26,7 +26,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
     let self = this;
     let viewX = 0;
     let viewY = 0;
-    let schema = new Schema(self, 10);
+    let schema = coreService.createSchema(self, 10);
 
     self.$onInit = function() {
         let divSvg = document.getElementById('workspace');
@@ -78,14 +78,15 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         setScale(scale);
   	};
 
-    $scope.controlItem.addLayer = function(layer) {
-        var node = schema.addNode(layer.name, layer.layerType, layer.category, layer.template, layer.id);
-        if (!node)
-            return false;
-		node.position(layer.pos.x, layer.pos.y, appConfig.svgDefinitions.gridStep);
-
-        return node.id;
-    };
+    // $scope.controlItem.addLayer = function(layer) {
+    //     var node = schema.addNode(layer.name, layer.layerType, layer.category, layer.template, layer.id);
+    //
+    //     if (!node)
+    //         return false;
+		// node.position(layer.pos.x, layer.pos.y, appConfig.svgDefinitions.gridStep);
+    //
+    //     return node.id;
+    // };
 
     $scope.controlItem.clear = function() {
         schema.clear();
@@ -111,8 +112,9 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
             let index = 0;
             let layersInterval = setInterval(() => {
                 $scope.$apply( function() {
-                    let layerId = $scope.controlItem.addLayer(layers[index]);
-                    if (!layerId) {
+                    // let layerId = $scope.controlItem.addLayer(layers[index]);
+                    let layer = coreService.addLayer(layers[index].layerType, layers[index].pos);
+                    if (!layer) {
                         console.log('addLayer:error');
                         return false;
                     }
@@ -120,12 +122,12 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                         if (layers[a].wires && layers[a].wires.length > 0)
                         layers[a].wires.forEach(function(nodeId, i, array){
                             if (nodeId === layers[index].id) {
-                                layers[a].wires[i] = layerId;
+                                layers[a].wires[i] = layer.id;
                             }
                         });
                     }
 
-                    layers[index].id = layerId;
+                    layers[index].id = layer.id;
                     self.emitEvent(events.UPDATE, [layers[index]]);
 
                 });
@@ -233,16 +235,16 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         schema.redo();
     };
 
-    function addNode(name, layerType, category, template, pos) {
-        var node = schema.addNode(name, layerType, category, template);
-        if (!node)
-            return false;
-
-        node.position(pos.x, pos.y, appConfig.svgDefinitions.gridStep);
-        self.emitEvent(events.ADD_NODE, node);
-
-        return true;
-    }
+    // function addNode(name, layerType, category, template, pos) {
+    //     var node = schema.addNode(name, layerType, category, template);
+    //     if (!node)
+    //         return false;
+    //
+    //     node.position(pos.x, pos.y, appConfig.svgDefinitions.gridStep);
+    //     self.emitEvent(events.ADD_NODE, node);
+    //
+    //     return true;
+    // }
 
 	function addLink(nodeFrom, nodeTo) {
 		var link = schema.addLink(nodeFrom, nodeTo);
@@ -290,9 +292,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                             $scope.controlItem.setLayers(layers, false);
                         } else {
                             schema.saveState();
-
-                            let templatePath = layerService.getTemplatePathByType(data.node.layerType);
-						    addNode(data.node.name, data.node.layerType, data.node.category, templatePath, correctPos);
+                            coreService.addLayer(data.node.layerType, correctPos);
                         }
 
 					});
@@ -536,22 +536,10 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 		parentNode.on('keydown', function (event) {
 			if (event.keyCode === 46) {
 				$scope.$apply( function() {
-					// if (activeItem && activeItem.isActive) {
-					//     schema.saveState();
-					//     if (schema.removeItem(activeItem.id, activeItem.type)) {
-                     //        if (activeItem.type === 'node') {
-                     //            self.emitEvent(events.REMOVE_NODE, activeItem);
-                     //        } else if (activeItem.type === 'link') {
-                     //            self.emitEvent(events.REMOVE_LINK, activeItem);
-                     //        }
-					//     }
-					// 	activeItem = -1;
-					// } else {
-					    schema.saveState();
-                        let rem = schema.removeSelectedItems();
-						if (rem)
-                			self.emitEvent(events.REMOVE_ITEMS, rem);
-                	// }
+                    schema.saveState();
+                    let rem = schema.removeSelectedItems();
+                    if (rem)
+                        self.emitEvent(events.REMOVE_ITEMS, rem);
            		});
 			}
 		});
@@ -778,8 +766,6 @@ function placeComplexLayer(network, complexLayer) {
     let complexLayerCenter = getNetworkCenter(complexLayer);
     let offset = {x: complexLayerCenter.x - networkCenter.x, y: complexLayerCenter.y - networkCenter.y};
     let dist = Math.sqrt(offset.x * offset.x + offset.y * offset.y);
-    // offset = {x: offset.x / dist, y: offset.y / dist};
-
 
     return complexLayerPosition;
 }
