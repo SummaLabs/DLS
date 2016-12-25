@@ -1,0 +1,320 @@
+{
+  "layers": [
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_238dcea"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 1875.5, 
+        "x": 2000.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_a70ac09"
+    }, 
+    {
+      "category": "basic: pooling", 
+      "wires": [
+        "node_2b471b6", 
+        "node_c4ed713"
+      ], 
+      "name": "Pooling2D", 
+      "pos": {
+        "y": 2000.5, 
+        "x": 2000.5
+      }, 
+      "params": {
+        "subsamplingSizeHeight": 2, 
+        "subsamplingSizeWidth": 2, 
+        "subsamplingType": "max_pooling"
+      }, 
+      "layerType": "pooling2d", 
+      "id": "node_238dcea"
+    }, 
+    {
+      "category": "input/output", 
+      "wires": [
+        "node_a70ac09"
+      ], 
+      "name": "DataInput", 
+      "pos": {
+        "y": 1650, 
+        "x": 2000
+      }, 
+      "params": {
+        "datasetType": "", 
+        "datasetId": ""
+      }, 
+      "layerType": "datainput", 
+      "id": "node_1aad9b7"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_3291ee5"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 2175.5, 
+        "x": 2000.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_2b471b6"
+    }, 
+    {
+      "category": "basic: pooling", 
+      "wires": [
+        "node_5de05da", 
+        "node_1c1fb4c"
+      ], 
+      "name": "Pooling2D", 
+      "pos": {
+        "y": 2300.5, 
+        "x": 2000.5
+      }, 
+      "params": {
+        "subsamplingSizeHeight": 2, 
+        "subsamplingSizeWidth": 2, 
+        "subsamplingType": "max_pooling"
+      }, 
+      "layerType": "pooling2d", 
+      "id": "node_3291ee5"
+    }, 
+    {
+      "category": "basic: pooling", 
+      "wires": [
+        "node_7eca656"
+      ], 
+      "name": "Pooling2D", 
+      "pos": {
+        "y": 2600.5, 
+        "x": 2000.5
+      }, 
+      "params": {
+        "subsamplingSizeHeight": 2, 
+        "subsamplingSizeWidth": 2, 
+        "subsamplingType": "max_pooling"
+      }, 
+      "layerType": "pooling2d", 
+      "id": "node_994ede9"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_994ede9"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 2475.5, 
+        "x": 2000.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_5de05da"
+    }, 
+    {
+      "category": "input/output", 
+      "name": "DataOutput", 
+      "pos": {
+        "y": 4125.5, 
+        "x": 1600.5
+      }, 
+      "params": {
+        "lossFunction": "categorical_crossentropy", 
+        "datasetId": ""
+      }, 
+      "layerType": "dataoutput", 
+      "id": "node_5a25ecc"
+    }, 
+    {
+      "category": "basic: upsampling", 
+      "wires": [
+        "node_1c1fb4c"
+      ], 
+      "name": "Upsampling2D", 
+      "pos": {
+        "y": 3175.5, 
+        "x": 2350.5
+      }, 
+      "params": {
+        "subsamplingSizeHeight": 2, 
+        "subsamplingSizeWidth": 2
+      }, 
+      "layerType": "upsampling2d", 
+      "id": "node_5d9b668"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_470dcab"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 3300.5, 
+        "x": 1675.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_106e146"
+    }, 
+    {
+      "category": "basic: upsampling", 
+      "wires": [
+        "node_7070814"
+      ], 
+      "name": "Upsampling2D", 
+      "pos": {
+        "y": 3828.5, 
+        "x": 1254.5
+      }, 
+      "params": {
+        "subsamplingSizeHeight": 2, 
+        "subsamplingSizeWidth": 2
+      }, 
+      "layerType": "upsampling2d", 
+      "id": "node_12a7b1a"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_5d9b668"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 3050.5, 
+        "x": 2350.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_7eca656"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_12a7b1a"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 3700.5, 
+        "x": 1250.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_5f35302"
+    }, 
+    {
+      "category": "basic: upsampling", 
+      "wires": [
+        "node_c4ed713"
+      ], 
+      "name": "Upsampling2D", 
+      "pos": {
+        "y": 3425.5, 
+        "x": 1675.5
+      }, 
+      "params": {
+        "subsamplingSizeHeight": 2, 
+        "subsamplingSizeWidth": 2
+      }, 
+      "layerType": "upsampling2d", 
+      "id": "node_470dcab"
+    }, 
+    {
+      "category": "basic", 
+      "wires": [
+        "node_5f35302"
+      ], 
+      "name": "Merge", 
+      "pos": {
+        "y": 3525.5, 
+        "x": 1250.5
+      }, 
+      "params": {
+        "mergeType": "concat", 
+        "mergeAxis": "-1"
+      }, 
+      "layerType": "merge", 
+      "id": "node_c4ed713"
+    }, 
+    {
+      "category": "basic", 
+      "wires": [
+        "node_106e146"
+      ], 
+      "name": "Merge", 
+      "pos": {
+        "y": 3175.5, 
+        "x": 1675.5
+      }, 
+      "params": {
+        "mergeType": "concat", 
+        "mergeAxis": "-1"
+      }, 
+      "layerType": "merge", 
+      "id": "node_1c1fb4c"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_5a25ecc"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 3950.5, 
+        "x": 1250.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_7070814"
+    }
+  ], 
+  "source": "custom", 
+  "preview": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48bGluZSB4MT0iOTUiIHkxPSIzMC4wMjAxOTc5Mzk4MTAxNDYiIHgyPSI5NSIgeTI9IjM1LjU3NDYzMTM4NzU5ODQ3IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI5NSIgeTE9IjM1LjU3NDYzMTM4NzU5ODQ3IiB4Mj0iOTUiIHkyPSI0My4zNTA4MzgyMTQ1MDIxMiIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iOTUiIHkxPSIzNS41NzQ2MzEzODc1OTg0NyIgeDI9IjIwIiB5Mj0iMTAzLjMzODcxOTQ1MDYxNjA0IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI5NC45NDk5OTk5OTk5OTk5OSIgeTE9IjIwIiB4Mj0iOTUiIHkyPSIzMC4wMjAxOTc5Mzk4MTAxNDYiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9Ijk1IiB5MT0iNDMuMzUwODM4MjE0NTAyMTIiIHgyPSI5NSIgeTI9IjQ4LjkwNTI3MTY2MjI5MDQ0NiIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iOTUiIHkxPSI0OC45MDUyNzE2NjIyOTA0NDYiIHgyPSI5NSIgeTI9IjU2LjY4MTQ3ODQ4OTE5NDEwNiIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iOTUiIHkxPSI0OC45MDUyNzE2NjIyOTA0NDYiIHgyPSI2Mi41IiB5Mj0iODcuNzg2MzA1Nzk2ODA4NzIiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9Ijk1IiB5MT0iNjIuMjM1OTExOTM2OTgyNDMiIHgyPSIxMzAiIHkyPSI4Mi4yMzE4NzIzNDkwMjA0IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI5NSIgeTE9IjU2LjY4MTQ3ODQ4OTE5NDEwNiIgeDI9Ijk1IiB5Mj0iNjIuMjM1OTExOTM2OTgyNDMiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjEzMCIgeTE9Ijg3Ljc4NjMwNTc5NjgwODcyIiB4Mj0iNjIuNSIgeTI9Ijg3Ljc4NjMwNTc5NjgwODcyIiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI2Mi41IiB5MT0iOTMuMzQwNzM5MjQ0NTk3MDYiIHgyPSI2Mi41IiB5Mj0iOTguODk1MTcyNjkyMzg1MzciIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjIwLjM5OTk5OTk5OTk5OTk5IiB5MT0iMTE2LjgwMjY2NjEyODA1NDk1IiB4Mj0iMjAiIHkyPSIxMjIuMjIzNzkzMTczMDk2MzUiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjEzMCIgeTE9IjgyLjIzMTg3MjM0OTAyMDQiIHgyPSIxMzAiIHkyPSI4Ny43ODYzMDU3OTY4MDg3MiIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iMjAiIHkxPSIxMTEuMTE0OTI2Mjc3NTE5NyIgeDI9IjIwLjM5OTk5OTk5OTk5OTk5IiB5Mj0iMTE2LjgwMjY2NjEyODA1NDk1IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI2Mi41IiB5MT0iOTguODk1MTcyNjkyMzg1MzciIHgyPSIyMCIgeTI9IjEwMy4zMzg3MTk0NTA2MTYwNCIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iMjAiIHkxPSIxMDMuMzM4NzE5NDUwNjE2MDQiIHgyPSIyMCIgeTI9IjExMS4xMTQ5MjYyNzc1MTk3IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI2Mi41IiB5MT0iODcuNzg2MzA1Nzk2ODA4NzIiIHgyPSI2Mi41IiB5Mj0iOTMuMzQwNzM5MjQ0NTk3MDYiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjIwIiB5MT0iMTIyLjIyMzc5MzE3MzA5NjM1IiB4Mj0iNTUiIHkyPSIxMzAiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGNpcmNsZSByPSIyIiBjeD0iOTUiIGN5PSIzMC4wMjAxOTc5Mzk4MTAxNDYiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iOTUiIGN5PSIzNS41NzQ2MzEzODc1OTg0NyIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSI5NC45NDk5OTk5OTk5OTk5OSIgY3k9IjIwIiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9Ijk1IiBjeT0iNDMuMzUwODM4MjE0NTAyMTIiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iOTUiIGN5PSI0OC45MDUyNzE2NjIyOTA0NDYiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iOTUiIGN5PSI2Mi4yMzU5MTE5MzY5ODI0MyIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSI5NSIgY3k9IjU2LjY4MTQ3ODQ4OTE5NDEwNiIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSI1NSIgY3k9IjEzMCIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSIxMzAiIGN5PSI4Ny43ODYzMDU3OTY4MDg3MiIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSI2Mi41IiBjeT0iOTMuMzQwNzM5MjQ0NTk3MDYiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMjAuMzk5OTk5OTk5OTk5OTkiIGN5PSIxMTYuODAyNjY2MTI4MDU0OTUiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMTMwIiBjeT0iODIuMjMxODcyMzQ5MDIwNCIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSIyMCIgY3k9IjExMS4xMTQ5MjYyNzc1MTk3IiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMiIgY3g9IjYyLjUiIGN5PSI5OC44OTUxNzI2OTIzODUzNyIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSIyMCIgY3k9IjEwMy4zMzg3MTk0NTA2MTYwNCIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSI2Mi41IiBjeT0iODcuNzg2MzA1Nzk2ODA4NzIiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMjAiIGN5PSIxMjIuMjIzNzkzMTczMDk2MzUiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PC9zdmc+", 
+  "name": "u_net_v2", 
+  "description": ""
+}
