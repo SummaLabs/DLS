@@ -1,3 +1,116 @@
+'use strict';
+
+
+function CoreService(layerService, appConfig) {
+    let store = {};
+    store.scale = 1;
+    let counter = 0;
+    let layerDefinition = {};
+    let schema = null;
+    this.createSchema = function (viewContext, maxStorageSize) {
+         schema = new Schema(viewContext, maxStorageSize);
+         return schema;
+    };
+
+    this.addLayer = function (layerType, position) {
+         let layer = layerService.getLayerByType(layerType);
+         let node = schema.addNode(layer.name, layer.layerType, layer.category, layerService.getTemplateByType(layerType));
+         node.params = layer.params;
+         node.position(position.x, position.y, appConfig.svgDefinitions.gridStep);
+         return node;
+    };
+
+    this.getLayerById = function (id) {
+        return schema.getNodeById(id);
+    };
+
+    this.getNetwork = function () {
+        return schema.getSchema();
+    };
+
+    this.param = function (key, value) {
+        if (arguments.length === 1)
+            return store[key];
+
+        store[key] = value;
+    };
+
+
+
+    this.getNodeTemplate = function(layerType) {
+		let template = layerService.getTemplateByType(layerType);
+		if (!template)
+			template = layerService.getTemplateByType('data');
+
+		return template;
+	};
+
+	this.getNodeDefinition = function(layerType) {
+		if (!layerDefinition[layerType]) {
+			counter ++;
+			let templateHtml = this.getNodeTemplate(layerType);
+			if (!templateHtml)
+				console.log('Template for "layerType" did not loaded!');
+
+        	layerDefinition[layerType] = calculateProportions(templateHtml, appConfig.svgDefinitions.markerPortIn, appConfig.svgDefinitions.markerPortOut);
+		}
+
+		return layerDefinition[layerType];
+	};
+
+
+	function calculateProportions(templateHtml, portInSign, portOutSign) {
+	    let displayData = {};
+
+        let svg = document.createElement('div');
+        svg.style.position = 'absolute';
+        svg.style.top = '-1000px';
+        svg.innerHTML = '<svg>' + templateHtml + '</svg>';
+        document.body.appendChild(svg);
+
+        let portIn = angular.element(svg.querySelector('#' + portInSign));
+        if (!portIn[0])
+        	console.log(portIn, portInSign, templateHtml);
+        let portInRect = portIn[0].getBoundingClientRect();
+        let portOut = angular.element(svg.querySelector('#' + portOutSign));
+        let portOutRect = portOut[0].getBoundingClientRect();
+        let rect = angular.element(svg.firstElementChild.firstElementChild);
+        let elementRect = rect[0].getBoundingClientRect();
+
+        displayData.portIn = {
+            centerOffset: {
+                x: portInRect.left + (portInRect.right - portInRect.left) / 2,
+                y: portInRect.top  + (portInRect.bottom - portInRect.top) / 2 + 1000
+            },
+            width: portInRect.right - portInRect.left,
+            height: portInRect.bottom - portInRect.top
+        };
+
+        displayData.portOut = {
+            centerOffset: {
+                x: portOutRect.left + (portOutRect.right - portOutRect.left) / 2,
+                y: portOutRect.top  + (portOutRect.bottom - portOutRect.top) / 2 + 1000
+            },
+            width: portOutRect.right - portOutRect.left,
+            height: portOutRect.bottom - portOutRect.top
+        };
+
+
+
+        displayData.node = {
+            offsetCenter: {
+                x: elementRect.left + (elementRect.right - elementRect.left) / 2,
+                y: elementRect.top  + (elementRect.bottom - elementRect.top) / 2 + 1000
+            },
+            width: elementRect.right - elementRect.left,
+            height: elementRect.bottom - elementRect.top
+        };
+        document.body.removeChild(svg);
+        return displayData;
+	}
+
+}
+
 function Position(x, y, step) {
     if (!step)
         step = 1;
@@ -85,13 +198,13 @@ function Rect(x1, y1, x2, y2) {
     rc.height(Math.abs(y1 - y2));
 
     return rc;
-}
+};
 
 function Item(type) {
     this.id = null;
     this.type = type;
     this.isActive = false;
-}
+};
 
 function Node() {
     Item.call(this, 'node');
@@ -101,7 +214,7 @@ function Node() {
     this.template = null;
     this.category = null;
     this.pos = new Position(0, 0);
-}
+};
 
 Node.prototype = Object.create(Item.prototype);
 Node.prototype.constructor = Node;
@@ -132,16 +245,104 @@ function Link() {
 Link.prototype = Object.create(Item.prototype);
 Link.prototype.constructor = Link;
 
-function Schema() {
-    var nodes = [];
-    var links = [];
-    var idList = [];
+function SchemaStorage(size) {
+    this.maxSize = size;
+    this.schemaStorage = [];
+    this.storageIndex = 0;
+}
+
+SchemaStorage.prototype.createState = function() {
+    let state = {
+        nodes: [],
+        links: [],
+        idList: []
+    };
+
+    if (this.schemaStorage.length === this.maxSize) {
+        this.schemaStorage.shift();
+    }
+    this.schemaStorage.splice(this.storageIndex + 1, this.schemaStorage.length - this.storageIndex - 1);
+
+    this.storageIndex = this.schemaStorage.push(state) - 1;
+    return state;
+};
+
+SchemaStorage.prototype.saveState = function() {
+    let state = this.createState();
+    state.nodes = copyArray(this.schemaStorage[this.schemaStorage.length - 2].nodes);
+    state.links = copyArray(this.schemaStorage[this.schemaStorage.length - 2].links);
+    state.idList = copyArray(this.schemaStorage[this.schemaStorage.length - 2].idList);
+    return state;
+};
+
+SchemaStorage.prototype.currentState = function() {
+    return this.schemaStorage[this.storageIndex];
+};
+
+SchemaStorage.prototype.undo = function() {
+    if (this.storageIndex > 0) {
+        return this.schemaStorage[--this.storageIndex];
+    }
+    return null;
+};
+
+SchemaStorage.prototype.redo = function() {
+    if (this.storageIndex < this.schemaStorage.length -1) {
+        return this.schemaStorage[++this.storageIndex];
+    }
+    return null;
+};
+
+
+function Schema(viewContext, maxStorageSize) {
+
+    let storage = new SchemaStorage(maxStorageSize);
+    storage.createState();
+
+
+    this.saveState = function () {
+        let state = storage.saveState();
+        this.updateLinks();
+        return state;
+    };
+
+    this.currentState = function () {
+        let state = storage.currentState();
+        viewContext.nodes = state.nodes;
+        viewContext.links = state.links;
+
+        return state;
+    };
+
+    this.undo = function () {
+        let state = storage.undo();
+        this.updateLinks();
+        if (state) {
+            viewContext.nodes = state.nodes;
+            viewContext.links = state.links;
+        }
+
+        return state;
+    };
+
+    this.redo = function () {
+        let state = storage.redo();
+        this.updateLinks();
+        if (state) {
+            viewContext.nodes = state.nodes;
+            viewContext.links = state.links;
+        }
+
+        return state;
+    };
 
     this.getSchema = function() {
-    	var schema = [];
+    	let schema = [];
+    	let nodes = this.currentState().nodes;
+    	let links = this.currentState().links;
 
     	nodes.forEach(function(node){
-    		var layer = Object.create(null);
+    		let layer = Object.create(null);
     		layer.id = node.id;
 			layer.name = node.name;
             layer.layerType = node.layerType;
@@ -160,11 +361,14 @@ function Schema() {
     };
 
     this.addNode = function(name, layerType,  category, template, id) {
-        var node = new Node();
+        let node = new Node();
+        let nodes = this.currentState().nodes;
+
         if (id && checkIdForUnique(id)) {
             node.id = id;
+            this.currentState().idList.push('' + node.id);
         } else {
-            node.id = 'node_' + generateId();
+            node.id = generateId();
         }
 
         node.name = name;
@@ -176,14 +380,16 @@ function Schema() {
     };
 
     this.getNodeById = function(id) {
-        return getItemById(nodes, id);
+        return getItemById(this.currentState().nodes, id);
     };
 
     this.getNodes = function() {
-        return nodes;
+        return this.currentState().nodes;
     };
 
     this.removeNode = function(id) {
+        let nodes = this.currentState().nodes;
+        let links = this.currentState().links;
         nodes.forEach(function(node, index){
             if (node.id === id) {
                 nodes.splice(index, 1);
@@ -206,7 +412,8 @@ function Schema() {
         if (this.getLinkById(from.id + '_' + to.id))
             return;
 
-        var link = new Link();
+        let links = this.currentState().links;
+        let link = new Link();
         link.id = from.id + '_' + to.id;
 
         link.nodes = [from, to];
@@ -214,15 +421,26 @@ function Schema() {
         return link;
     };
 
+    this.updateLinks = function () {
+        let links = this.currentState().links;
+        for (let a = 0; a < links.length; a ++) {
+            if (links[a].nodes && links[a].nodes.length === 2) {
+                links[a].nodes[0] = this.getNodeById(links[a].nodes[0].id);
+                links[a].nodes[1] = this.getNodeById(links[a].nodes[1].id);
+            }
+        }
+    };
+
     this.getLinkById = function(id) {
-        return getItemById(links, id);
+        return getItemById(this.currentState().links, id);
     };
 
     this.getLinks = function() {
-        return links;
+        return this.currentState().links;
     };
 
     this.removeLink = function(id) {
+        let links = this.currentState().links;
         links.forEach(function(link, index){
             if (link.id === id) {
                 links.splice(index, 1);
@@ -266,6 +484,9 @@ function Schema() {
             links: []
         };
 
+        let links = this.currentState().links;
+        let nodes = this.currentState().nodes;
+
         for (let i = 0; i < nodes.length; ++i) {
             if (nodes[i].isActive) {
                 delNodes.push(i);
@@ -306,7 +527,8 @@ function Schema() {
     };
 
     this.selectNodesInsideRect = function(rect) {
-        var listSelected = [];
+        let listSelected = [];
+        let nodes = this.currentState().nodes;
         for (let i = 0; i < nodes.length ; i ++) {
             if (isPointInRect({x: nodes[i].pos.x, y: nodes[i].pos.y}, rect)
                 && isPointInRect({  x: nodes[i].pos.x + nodes[i].displayData.node.width,
@@ -320,12 +542,14 @@ function Schema() {
 
 
     this.clear = function() {
-        nodes.length = 0;
-        links.length = 0;
-        idList.length = 0;
+
+
+        ///  FIX    !!!!!!!!!!!!!!!!
+        // return storage.createState();
     };
 
     this.rect = function () {
+        let nodes = storage.currentState().nodes;
         if (nodes.length < 1)
             return null;
         var x_min = Number.MAX_VALUE;
@@ -334,8 +558,8 @@ function Schema() {
         var y_max = Number.MIN_VALUE;
 
         nodes.forEach(function (node) {
-            var width = 0;
-            var height = 0;
+            let width = 0;
+            let height = 0;
             if (node.displayData) {
                 width = node.displayData.node.width;
                 height = node.displayData.node.height;
@@ -351,9 +575,12 @@ function Schema() {
     };
 
     function generateId() {
-        var id;
+
+        let idList = storage.currentState().idList;
+        let id;
         while (true) {
-            id = Math.floor(Math.random() * 0x10000).toString(16);
+            id = Math.floor(Math.random() * 0x10000000).toString(16);
+            id = 'node_' + id;
             if (checkIdForUnique(id)) {
                 idList.push(id);
                 return id;
@@ -362,14 +589,45 @@ function Schema() {
     }
 
     function checkIdForUnique(id) {
+        let idList = storage.currentState().idList;
         return idList.indexOf(id) === -1;
     }
 
     function getItemById(array, id) {
-        for (var i = 0; i < array.length ; i ++) {
+        for (let i = 0; i < array.length ; i ++) {
             if (array[i].id === id) {
                 return array[i];
             }
         }
     }
+}
+
+function copyArray(array) {
+    let newArray = [];
+    for (let item of array) {
+        newArray.push(copyObject(item));
+    }
+    return newArray;
+}
+
+function copyObject(obj) {
+    if (typeof obj === 'string')
+        return '' + obj;
+    let copy = new obj.constructor();
+
+    for (let attr in obj) {
+        if (obj.hasOwnProperty(attr))
+            if (obj[attr] !== null && typeof obj[attr] === 'object' && !(obj[attr] instanceof Element)) {
+                copy[attr] = copyObject(obj[attr]);
+            } else {
+                copy[attr] = obj[attr];
+            }
+    }
+    return copy;
+}
+
+if (!Array.prototype.last){
+    Array.prototype.last = function(){
+        return this[this.length - 1];
+    };
 }

@@ -1,14 +1,14 @@
 (function () {
     'use strict';
 
-    angular.module('modelMain', ['ngMaterial', 'modelService', 'inference', 'validation'])
+    angular.module('modelMain', ['ngMaterial', 'modelService', 'inference', 'layersVisualization'])
         .component('modelMain', {
             templateUrl: '/frontend/components/main/model/model-main.html',
             bindings: {
                 models: '<',
                 selected:'<'
             },
-            controller: function ($rootScope, modelService) {
+            controller: function (modelService, $scope, $rootScope) {
 
                 var self = this;
                 this.$onInit = function () {
@@ -41,6 +41,7 @@
                 this.selectModel = function( model ) {
                     self.selected = angular.isNumber(model) ? $scope.models[model] : model;
                     $rootScope.$emit('model_select', model);
+                    $scope.$broadcast('model-main:update-model', model);
                     self.initChart(model);
                 };
                 

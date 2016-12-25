@@ -4,18 +4,19 @@ angular
 .module('convolution1dEditor', ['ngMaterial'])
 .directive('convolution1dEditor', function () {
     return {
+
         scope: {
-            layerId: '@'
+            layerData: '='
         },
         templateUrl: "frontend/components/layers/basic/convolution1d/convolution1d-editor.html",
         controller: function ($scope, networkDataService, convolution1dLayer) {
             this.$onInit = function () {
-                setUpLayerParams(networkDataService.getLayerById($scope.layerId).params);
+
+                setUpLayerParams($scope.layerData.params);
                 $scope.activationFunctionList = convolution1dLayer.getActivationFunctions();
 
                 $scope.$watch('params', function (params) {
-                    var layer = networkDataService.getLayerById($scope.layerId);
-                    updateLayer(layer, params);
+                    updateLayer($scope.layerData, params);
                 }, true);
 
                 function updateLayer(layer, params) {

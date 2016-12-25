@@ -1,0 +1,119 @@
+{
+  "layers": [
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_d5af"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 275.5, 
+        "x": 400.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 32, 
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_6941"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_9682"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 400.5, 
+        "x": 400.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 32, 
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_d5af"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_5051"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 525.5, 
+        "x": 400.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 32, 
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_9682"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_a1dc"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 650.5, 
+        "x": 400.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 32, 
+        "isTrainable": true, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_5051"
+    }, 
+    {
+      "category": "basic: pooling", 
+      "wires": [
+        "node_3bd2"
+      ], 
+      "name": "Pooling2D", 
+      "pos": {
+        "y": 775.5, 
+        "x": 400.5
+      }, 
+      "params": {
+        "subsamplingSizeHeight": 2, 
+        "subsamplingSizeWidth": 2, 
+        "subsamplingType": "max_pooling"
+      }, 
+      "layerType": "pooling2d", 
+      "id": "node_a1dc"
+    }, 
+    {
+      "category": "basic", 
+      "name": "Activation", 
+      "pos": {
+        "y": 900.5, 
+        "x": 400.5
+      }, 
+      "params": {
+        "activationFunction": "relu"
+      }, 
+      "layerType": "activation", 
+      "id": "node_3bd2"
+    }
+  ], 
+  "source": "custom", 
+  "preview": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48bGluZSB4MT0iMjAiIHkxPSIyMCIgeDI9IjIwIiB5Mj0iNDIiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjIwIiB5MT0iNDIiIHgyPSIyMCIgeTI9IjY0IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIyMCIgeTE9IjY0IiB4Mj0iMjAiIHkyPSI4NiIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iMjAiIHkxPSI4NiIgeDI9IjIwIiB5Mj0iMTA4IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIyMCIgeTE9IjEwOCIgeDI9IjIwIiB5Mj0iMTMwIiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxjaXJjbGUgcj0iMTEwIiBjeD0iMjAiIGN5PSIyMCIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjExMCIgY3g9IjIwIiBjeT0iNDIiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIxMTAiIGN4PSIyMCIgY3k9IjY0IiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMTEwIiBjeD0iMjAiIGN5PSI4NiIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjExMCIgY3g9IjIwIiBjeT0iMTA4IiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMTEwIiBjeD0iMjAiIGN5PSIxMzAiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PC9zdmc+", 
+  "name": "layer_vgg_v1", 
+  "description": ""
+}

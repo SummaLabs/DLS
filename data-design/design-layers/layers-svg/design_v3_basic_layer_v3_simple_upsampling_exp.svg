@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg2"
+   height="116.74114"
+   width="250.32376"
+   version="1.1">
+  <defs
+     id="defs4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(14.868001,-0.01242256)"
+     id="g4203">
+    <rect
+       style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-width:4.2943511;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="border"
+       y="20.115913"
+       x="-12.720825"
+       ry="6.1623058"
+       height="78.367546"
+       width="246.0294" />
+    <rect
+       style="fill:#80e5ff;fill-opacity:1;stroke:#000000;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="in"
+       y="2.0124226"
+       x="92.101913"
+       ry="18.191961"
+       rx="18.191961"
+       height="36.383923"
+       width="36.383923" />
+    <rect
+       style="fill:#55ddff;fill-opacity:1;stroke:#000000;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="out"
+       y="80.606964"
+       x="93.220573"
+       ry="17.073299"
+       rx="17.073301"
+       height="34.146599"
+       width="34.146603" />
+    <text
+       style="font-style:normal;font-weight:normal;font-size:22px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       xml:space="preserve"
+       id="text"
+       y="62.356079"
+       x="110.34466"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:'Comic Sans MS';-inkscape-font-specification:'Comic Sans MS Bold';text-align:center;text-anchor:middle"
+         id="tspan3852"
+         y="62.356079"
+         x="110.34466">Layer name</tspan></text>
+    <text
+       style="font-style:normal;font-weight:normal;font-size:22px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       xml:space="preserve"
+       id="shape_in"
+       y="90.932533"
+       x="0.040727615"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:13px;font-family:'Comic Sans MS';-inkscape-font-specification:'Comic Sans MS Bold'"
+         id="tspan3852-1-3"
+         y="90.932533"
+         x="0.040727615"><tspan
+           style="font-size:11px"
+           id="tspan3897-9"><tspan
+             style="font-size:10px"
+             id="tspan3899-1"><tspan
+               style="font-size:8px"
+               id="tspan4046"><tspan
+                 style="font-size:6px"
+                 id="tspan4048"><tspan
+                   style="font-size:8px"
+                   id="tspan4056"><tspan
+                     style="font-size:6px"
+                     id="tspan4058"><tspan
+                       style="font-style:italic;-inkscape-font-specification:'Comic Sans MS Bold Italic'"
+                       id="tspan4064"><tspan
+                         style="font-style:normal;-inkscape-font-specification:'Comic Sans MS Bold'"
+                         id="tspan4066"><tspan
+                           style="font-size:11px"
+                           id="tspan4072"><tspan
+                             style="font-size:10px"
+                             id="tspan4074"><tspan
+                               style="font-size:8px"
+                               id="tspan4076">[*,32,32,128] </tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></text>
+    <text
+       style="font-style:normal;font-weight:normal;font-size:22px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       xml:space="preserve"
+       id="shape_out"
+       y="90.932533"
+       x="159.71762"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:13px;font-family:'Comic Sans MS';-inkscape-font-specification:'Comic Sans MS Bold'"
+         id="tspan3852-1-1-9"
+         y="90.932533"
+         x="159.71762"><tspan
+           style="font-size:11px"
+           id="tspan3897-0-3"><tspan
+             style="font-size:10px"
+             id="tspan3899-3-3"><tspan
+               style="font-size:6px"
+               id="tspan4050"><tspan
+                 style="font-size:8px"
+                 id="tspan4078">[*,16,16,256] </tspan></tspan></tspan></tspan></tspan></text>
+  </g>
+</svg>

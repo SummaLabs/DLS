@@ -57,6 +57,11 @@ function ModelService($http) {
         return $http({
             method: "GET",
             url: "/models/fs/load/" + modelId
-        })
+        })}
+    this.loadLayersVisualization = function (modelId) {
+        return $http({
+            method: 'GET',
+            url: '/models/layers/visualization/' + modelId
+        });
     };
 }

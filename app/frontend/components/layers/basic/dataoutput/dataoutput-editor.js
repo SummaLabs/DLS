@@ -4,10 +4,10 @@ angular
 .directive('dataoutputEditor', function () {
     return {
         scope: {
-            layerId: '@'
+            layerData: '='
         },
         templateUrl: "frontend/components/layers/basic/dataoutput/dataoutput-editor.html",
-        controller: function ($scope, networkDataService, layerService, datasetService, dataoutputLayer) {
+        controller: function ($scope, layerService, datasetService, dataoutputLayer) {
             this.$onInit = function () {
                 datasetService.getDatasetsInfoStatList().then(
                     function successCallback(response) {
@@ -29,24 +29,21 @@ angular
                     });
 
                 $scope.$watch('lossFunction', function (lossFunction) {
-                    var layer = networkDataService.getLayerById($scope.layerId);
                     if (lossFunction != null) {
-                        layer.params.lossFunction = lossFunction;
+                        $scope.layerData.params.lossFunction = lossFunction;
                     }
                 });
 
                 $scope.$watch('selectedDataSet', function (selectedDataSet) {
-                    var layer = networkDataService.getLayerById($scope.layerId);
                     if (selectedDataSet != null)
-                        layer.params.datasetId = selectedDataSet.id;
+                        $scope.layerData.params.datasetId = selectedDataSet.id;
                 });
 
                 function setUpLayerParams(dataSets) {
                     $scope.lossFunctionList = dataoutputLayer.getLossFunctions();
                     $scope.lossFunction = $scope.lossFunctionList[0].value;
                     $scope.dataSets = dataSets;
-                    var currentLayer = networkDataService.getLayerById($scope.layerId);
-                    var savedParams = currentLayer.params;
+                    var savedParams = $scope.layerData.params;
 
                     if (savedParams.lossFunction) {
                         $scope.lossFunction = savedParams.lossFunction;
@@ -64,7 +61,7 @@ angular
                         if (dataSets.length > 0) {
                             $scope.selectedDataSet = dataSets[0];
                         }
-                        currentLayer.params = layerService.getLayerByType(currentLayer.layerType).params;
+                        $scope.layerData.params = layerService.getLayerByType($scope.layerData.layerType).params;
                     }
                 }
             }

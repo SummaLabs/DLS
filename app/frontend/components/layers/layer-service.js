@@ -9,8 +9,11 @@ angular.module('layerService', [
     'flattenLayer',
     'mergeLayer',
     'denseLayer',
+    'upsampling2dLayer',
+    'upsampling3dLayer',
     'datainputLayer',
-    'dataoutputLayer'])
+    'dataoutputLayer',
+    'complex'])
     .service('layerService', ['$rootScope', '$http', '$templateCache',
         'convolution1dLayer',
         'convolution2dLayer',
@@ -22,8 +25,11 @@ angular.module('layerService', [
         'flattenLayer',
         'mergeLayer',
         'denseLayer',
+        'upsampling2dLayer',
+        'upsampling3dLayer',
         'datainputLayer',
-        'dataoutputLayer', LayerService]);
+        'dataoutputLayer',
+        'complex', LayerService]);
 
 function LayerService($rootScope, $http, $templateCache,
                       convolution1dLayer,
@@ -36,8 +42,11 @@ function LayerService($rootScope, $http, $templateCache,
                       flattenLayer,
                       mergeLayer,
                       denseLayer,
+                      upsampling2dLayer,
+                      upsampling3dLayer,
                       datainputLayer,
-                      dataoutputLayer) {
+                      dataoutputLayer,
+                      complex) {
 
     const networkLayerEvent = {
         UPDATE:     'layer:update',
@@ -46,7 +55,7 @@ function LayerService($rootScope, $http, $templateCache,
         REMOVE:     'layer:remove'
     };
 
-    const categories = ['input/output', 'basic: convolution', 'basic: pooling', 'basic: dense', 'basic', 'complex'];
+    const categories = ['input/output', 'basic: convolution', 'basic: pooling', 'basic: dense', 'basic: upsampling', 'basic', 'complex'];
     
     const layerByType = {
         'convolution1d':    convolution1dLayer,
@@ -59,8 +68,13 @@ function LayerService($rootScope, $http, $templateCache,
         'merge':            mergeLayer,
         'flatten':          flattenLayer,
         'dense':            denseLayer,
+        'upsampling2d':     upsampling2dLayer,
+        'upsampling3d':     upsampling3dLayer,
         'datainput':        datainputLayer,
-        'dataoutput':        dataoutputLayer
+        'dataoutput':       dataoutputLayer,
+        'inception':        complex.getAssessor('inception'),
+        'resnet':           complex.getAssessor('resnet'),
+        'vgg':              complex.getAssessor('vgg')
     };
 
     const templatesByType = {
@@ -74,6 +88,8 @@ function LayerService($rootScope, $http, $templateCache,
         'flatten': '',
         'merge': '',
         'dense': '',
+        'upsampling2d': '',
+        'upsampling3d': '',
         'datainput': '',
         'dataoutput': ''
     };
@@ -89,6 +105,8 @@ function LayerService($rootScope, $http, $templateCache,
     loadTemplate('flatten');
     loadTemplate('merge');
     loadTemplate('dense');
+    loadTemplate('upsampling2d');
+    loadTemplate('upsampling3d');
     loadTemplate('datainput');
     loadTemplate('dataoutput');
 
@@ -103,8 +121,13 @@ function LayerService($rootScope, $http, $templateCache,
         flattenLayer.getDefault(),
         mergeLayer.getDefault(),
         denseLayer.getDefault(),
+        upsampling2dLayer.getDefault(),
+        upsampling3dLayer.getDefault(),
         datainputLayer.getDefault(),
-        dataoutputLayer.getDefault()
+        dataoutputLayer.getDefault(),
+        complex.getInception(),
+        complex.getResnet(),
+        complex.getVgg()
     ];
 
     this.pubLayersUpdateEvent = function() {
@@ -132,6 +155,7 @@ function LayerService($rootScope, $http, $templateCache,
     };
     
     this.getIconByType = function(type) {
+        // console.log(layerByType[type]);
         return layerByType[type].getIconPath();
     };
 

@@ -25,7 +25,7 @@ function Convolution2dLayer() {
                 "filtersCount": 16,
                 "filterWidth": 3,
                 "filterHeight": 3,
-                "activationFunction": "linear",
+                "activationFunction": "relu",
                 "isTrainable": true
             }
         }

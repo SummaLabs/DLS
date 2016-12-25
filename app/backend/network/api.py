@@ -59,11 +59,19 @@ def load_saved_network_names():
 @network.route('/load/<path:type>/<path:filename>')
 def load_network(type, filename):
     saved_path = os.path.join(root_path, network_dir[type], filename + ".json")
-    print(saved_path)
     if request.method == 'GET':
         with open(saved_path, 'r') as f:
             data = json.load(f)
             data['name'] = filename
+            return Response(json.dumps(data), mimetype='application/json')
+
+
+@network.route('/complex/<path:filename>')
+def load_complex_network(filename):
+    saved_path = os.path.join(root_path, "complex", filename + ".json")
+    if request.method == 'GET':
+        with open(saved_path, 'r') as f:
+            data = json.load(f)
             return Response(json.dumps(data), mimetype='application/json')
 
 

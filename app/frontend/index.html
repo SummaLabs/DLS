@@ -27,18 +27,21 @@
     <h3>Deep Learning Studio</h3>
 </md-toolbar>
 
-<md-tabs md-selected="selectedIndex" md-border-bottom md-dynamic-height>
+<md-tabs id="main-tab" md-selected="selectedIndex" md-border-bottom  md-dynamic-height>
     <md-tab ui-sref="networks" class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="networks">apps</md-icon>
             Networks
         </md-tab-label>
     </md-tab>
-    <md-tab ui-sref="designer" class="unselectable">
+    <md-tab ui-sref="designer" class="unselectable" layout-fill>
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="builder">build</md-icon>
             Designer
         </md-tab-label>
+        <!--<md-tab-body>-->
+            <!--<designer style="height: 100%;"></designer>-->
+        <!--</md-tab-body>-->
     </md-tab>
     <md-tab ui-sref="models" class="unselectable">
         <md-tab-label>
@@ -66,6 +69,7 @@
     </md-tab>
 </md-tabs>
 
+<designer id="designer"></designer>
 <div id="content" ui-view> </div>
 
 <script src="/frontend/lib/angular.js"></script>
@@ -77,10 +81,15 @@
 <script src="/frontend/lib/ng-google-chart.js"></script>
 <script src="/frontend/lib/socket.io.js"></script>
 <script src="/frontend/lib/plotly.min.js"></script>
+<!--<script src="/frontend/lib/paper-full.min.js"></script>-->
+<script src="/frontend/lib/fabric.js"></script>
 
 <script src="/frontend/app.js"></script>
 
 <!-- BEGIN * Layers-Editors -->
+
+<script src="/frontend/components/layers/basic/compex/complex.js"></script>
+
 <script src="/frontend/components/layers/basic/convolution1d/convolution1d-editor.js"></script>
 <script src="/frontend/components/layers/basic/convolution2d/convolution2d-editor.js"></script>
 <script src="/frontend/components/layers/basic/convolution3d/convolution3d-editor.js"></script>
@@ -93,6 +102,8 @@
 <script src="/frontend/components/layers/basic/flatten/flatten-editor.js"></script>
 <script src="/frontend/components/layers/basic/merge/merge-editor.js"></script>
 <script src="/frontend/components/layers/basic/dense/dense-editor.js"></script>
+<script src="/frontend/components/layers/basic/upsampling2d/upsampling2d-editor.js"></script>
+<script src="/frontend/components/layers/basic/upsampling3d/upsampling3d-editor.js"></script>
 <script src="/frontend/components/layers/basic/datainput/datainput-editor.js"></script>
 <script src="/frontend/components/layers/basic/dataoutput/dataoutput-editor.js"></script>
 
@@ -113,6 +124,8 @@
 <script src="/frontend/components/layers/basic/flatten/flatten-layer.js"></script>
 <script src="/frontend/components/layers/basic/merge/merge-layer.js"></script>
 <script src="/frontend/components/layers/basic/dense/dense-layer.js"></script>
+<script src="/frontend/components/layers/basic/upsampling2d/upsampling2d-layer.js"></script>
+<script src="/frontend/components/layers/basic/upsampling3d/upsampling3d-layer.js"></script>
 <script src="/frontend/components/layers/basic/datainput/datainput-layer.js"></script>
 <script src="/frontend/components/layers/basic/dataoutput/dataoutput-layer.js"></script>
 <!-- END * LAYERS -->
@@ -158,11 +171,11 @@
 <script src="/frontend/components/main/training-params/training-params.js"></script>
 
 
+<script src="/frontend/components/main/designer/core.service.js"></script>
 <script src="/frontend/components/main/designer/core.js"></script>
 <script src="/frontend/components/main/designer/viewport.js"></script>
 <script src="/frontend/components/main/designer/palette/palette.js"></script>
 <script src="/frontend/components/main/designer/palette/layers-panel.js"></script>
-<script src="/frontend/components/main/designer/graph/types.js"></script>
 <script src="/frontend/components/main/designer/graph/schema.controller.js"></script>
 <script src="/frontend/components/main/designer/graph/schema.module.js"></script>
 <script src="/frontend/components/main/designer/graph/node.js"></script>
@@ -178,8 +191,10 @@
 <script src="/frontend/components/classification/image-2d/data-set/create/create-2D-img-data-set.js"></script>
 <script src="/frontend/components/classification/image-2d/model/inference/classify-image/classify-image.js"></script>
 <script src="/frontend/components/classification/image-2d/model/validation/roc-analysis/roc-analysis.js"></script>
+
 <script src="/frontend/components/classification/image-2d/model/validation/feature-space/feature-space.js"></script>
 
+<script src="/frontend/components/layers/visualization/layers-visualization.js"></script>
 <!-- Classification part of UI: END-->
 </body>
 </html>

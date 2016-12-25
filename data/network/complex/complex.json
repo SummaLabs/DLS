@@ -1,0 +1,119 @@
+{
+  "layers": [
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_dc68"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 1450, 
+        "x": 625
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_d22"
+    }, 
+    {
+      "category": "basic: pooling", 
+      "wires": [
+        "node_4f91"
+      ], 
+      "name": "Pooling2D", 
+      "pos": {
+        "y": 1600, 
+        "x": 625
+      }, 
+      "params": {
+        "subsamplingSizeHeight": 2, 
+        "subsamplingSizeWidth": 2, 
+        "subsamplingType": "max_pooling"
+      }, 
+      "layerType": "pooling2d", 
+      "id": "node_dc68"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_4130"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 1450, 
+        "x": 1050
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_9733"
+    }, 
+    {
+      "category": "basic: pooling", 
+      "wires": [
+        "node_4f91"
+      ], 
+      "name": "Pooling2D", 
+      "pos": {
+        "y": 1600, 
+        "x": 1050
+      }, 
+      "params": {
+        "subsamplingSizeHeight": 2, 
+        "subsamplingSizeWidth": 2, 
+        "subsamplingType": "max_pooling"
+      }, 
+      "layerType": "pooling2d", 
+      "id": "node_4130"
+    }, 
+    {
+      "category": "basic", 
+      "wires": [
+        "node_fb14"
+      ], 
+      "name": "Merge", 
+      "pos": {
+        "y": 1850, 
+        "x": 825
+      }, 
+      "params": {
+        "mergeType": "concat", 
+        "mergeAxis": "-1"
+      }, 
+      "layerType": "merge", 
+      "id": "node_4f91"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 2025, 
+        "x": 825
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "linear", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_fb14"
+    }
+  ], 
+  "source": "custom", 
+  "preview": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48bGluZSB4MT0iMjAiIHkxPSIyMCIgeDI9IjIwIiB5Mj0iNDguNjk1NjUyMTczOTEzMDA0IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIyMCIgeTE9IjQ4LjY5NTY1MjE3MzkxMzAwNCIgeDI9IjcxLjc2NDcwNTg4MjM1Mjk2IiB5Mj0iOTYuNTIxNzM5MTMwNDM0NzUiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjEzMC4wMDAwMDAwMDAwMDAwMyIgeTE9IjIwIiB4Mj0iMTMwLjAwMDAwMDAwMDAwMDAzIiB5Mj0iNDguNjk1NjUyMTczOTEzMDA0IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIxMzAuMDAwMDAwMDAwMDAwMDMiIHkxPSI0OC42OTU2NTIxNzM5MTMwMDQiIHgyPSI3MS43NjQ3MDU4ODIzNTI5NiIgeTI9Ijk2LjUyMTczOTEzMDQzNDc1IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI3MS43NjQ3MDU4ODIzNTI5NiIgeTE9Ijk2LjUyMTczOTEzMDQzNDc1IiB4Mj0iNzEuNzY0NzA1ODgyMzUyOTYiIHkyPSIxMzAiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGNpcmNsZSByPSIyLjU4ODIzNTI5NDExNzY0NyIgY3g9IjIwIiBjeT0iMjAiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyLjU4ODIzNTI5NDExNzY0NyIgY3g9IjIwIiBjeT0iNDguNjk1NjUyMTczOTEzMDA0IiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMi41ODgyMzUyOTQxMTc2NDciIGN4PSIxMzAuMDAwMDAwMDAwMDAwMDMiIGN5PSIyMCIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIuNTg4MjM1Mjk0MTE3NjQ3IiBjeD0iMTMwLjAwMDAwMDAwMDAwMDAzIiBjeT0iNDguNjk1NjUyMTczOTEzMDA0IiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMi41ODgyMzUyOTQxMTc2NDciIGN4PSI3MS43NjQ3MDU4ODIzNTI5NiIgY3k9Ijk2LjUyMTczOTEzMDQzNDc1IiBzdHlsZT0iZmlsbDojZmYwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpibHVlO3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLW9wYWNpdHk6MSIvPjxjaXJjbGUgcj0iMi41ODgyMzUyOTQxMTc2NDciIGN4PSI3MS43NjQ3MDU4ODIzNTI5NiIgY3k9IjEzMCIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48L3N2Zz4=", 
+  "name": "New network2", 
+  "description": ""
+}

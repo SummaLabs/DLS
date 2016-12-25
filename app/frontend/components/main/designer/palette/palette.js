@@ -105,20 +105,32 @@ function PaletteController(layerService, $scope) {
 }
 
 function createTree(categories, layers) {
-	let tree = []
+	let tree = [];
 	var idCounter = 0;
 	categories.forEach(function(category, i, array) {
 		let items = [];
 		layers.forEach(function(item, i, array) {
 			if (item.category === category) {
-				items.push({
-					type: 'item',
-					name: item.name,
-					layerType: item.layerType,
-					id: ++idCounter,
-					params: item.params,
-					category: item.category
-				});
+				if (category === 'complex') {
+                    items.push({
+						type: 'item',
+						name: item.name,
+						layerType: item.layerType,
+						id: ++idCounter,
+						category: item.category,
+						structure: item.structure
+					});
+                } else {
+					items.push({
+						type: 'item',
+						name: item.name,
+						layerType: item.layerType,
+						id: ++idCounter,
+						params: item.params,
+						category: item.category
+					});
+				}
+
 			}
 		});
 		tree.push({

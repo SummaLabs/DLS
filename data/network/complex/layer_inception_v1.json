@@ -1,0 +1,179 @@
+{
+  "layers": [
+    {
+      "category": "basic", 
+      "wires": [
+        "node_ffe3", 
+        "node_8f55", 
+        "node_75d4", 
+        "node_ce6"
+      ], 
+      "name": "Activation", 
+      "pos": {
+        "y": 888.5, 
+        "x": 1489.5
+      }, 
+      "params": {
+        "activationFunction": "linear"
+      }, 
+      "layerType": "activation", 
+      "id": "node_62e9"
+    }, 
+    {
+      "category": "basic", 
+      "name": "Merge", 
+      "pos": {
+        "y": 1700.5, 
+        "x": 1475.5
+      }, 
+      "params": {
+        "mergeType": "concat", 
+        "mergeAxis": "-1"
+      }, 
+      "layerType": "merge", 
+      "id": "node_664f"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_664f"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 1200.5, 
+        "x": 1100.5
+      }, 
+      "params": {
+        "filterWidth": 1, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "filterHeight": 1
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_ffe3"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_b275"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 1200.5, 
+        "x": 1450.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_8f55"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_664f"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 1350.5, 
+        "x": 1450.5
+      }, 
+      "params": {
+        "filterWidth": 1, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "filterHeight": 1
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_b275"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_e90a"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 1200.5, 
+        "x": 1750.5
+      }, 
+      "params": {
+        "filterWidth": 5, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "filterHeight": 5
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_75d4"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_664f"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 1350.5, 
+        "x": 1750.5
+      }, 
+      "params": {
+        "filterWidth": 3, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "relu", 
+        "filterHeight": 3
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_e90a"
+    }, 
+    {
+      "category": "basic: pooling", 
+      "wires": [
+        "node_664f"
+      ], 
+      "name": "Pooling2D", 
+      "pos": {
+        "y": 1350.5, 
+        "x": 2050.5
+      }, 
+      "params": {
+        "subsamplingSizeHeight": 2, 
+        "subsamplingSizeWidth": 2, 
+        "subsamplingType": "max_pooling"
+      }, 
+      "layerType": "pooling2d", 
+      "id": "node_d73c"
+    }, 
+    {
+      "category": "basic: convolution", 
+      "wires": [
+        "node_d73c"
+      ], 
+      "name": "Convolution2D", 
+      "pos": {
+        "y": 1200.5, 
+        "x": 2050.5
+      }, 
+      "params": {
+        "filterWidth": 1, 
+        "filtersCount": 16, 
+        "isTrainable": true, 
+        "activationFunction": "linear", 
+        "filterHeight": 1
+      }, 
+      "layerType": "convolution2d", 
+      "id": "node_ce6"
+    }
+  ], 
+  "source": "custom", 
+  "preview": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48bGluZSB4MT0iNjUuMDQyMTA1MjYzMTU3OTEiIHkxPSIyMCIgeDI9IjIwIiB5Mj0iNjIuMjY2MDA5ODUyMjE2NzU0IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI2NS4wNDIxMDUyNjMxNTc5MSIgeTE9IjIwIiB4Mj0iNjAuNTI2MzE1Nzg5NDczNyIgeTI9IjYyLjI2NjAwOTg1MjIxNjc1NCIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iNjUuMDQyMTA1MjYzMTU3OTEiIHkxPSIyMCIgeDI9Ijk1LjI2MzE1Nzg5NDczNjg1IiB5Mj0iNjIuMjY2MDA5ODUyMjE2NzU0IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI2NS4wNDIxMDUyNjMxNTc5MSIgeTE9IjIwIiB4Mj0iMTMwIiB5Mj0iNjIuMjY2MDA5ODUyMjE2NzU0IiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIyMCIgeTE9IjYyLjI2NjAwOTg1MjIxNjc1NCIgeDI9IjYzLjQyMTA1MjYzMTU3ODk2IiB5Mj0iMTMwIiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI2MC41MjYzMTU3ODk0NzM3IiB5MT0iNjIuMjY2MDA5ODUyMjE2NzU0IiB4Mj0iNjAuNTI2MzE1Nzg5NDczNyIgeTI9IjgyLjU4NjIwNjg5NjU1MTczIiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI2MC41MjYzMTU3ODk0NzM3IiB5MT0iODIuNTg2MjA2ODk2NTUxNzMiIHgyPSI2My40MjEwNTI2MzE1Nzg5NiIgeTI9IjEzMCIgc3Ryb2tlPSJibHVlIiBzdHJva2Utd2lkdGg9IjEiLz48bGluZSB4MT0iOTUuMjYzMTU3ODk0NzM2ODUiIHkxPSI2Mi4yNjYwMDk4NTIyMTY3NTQiIHgyPSI5NS4yNjMxNTc4OTQ3MzY4NSIgeTI9IjgyLjU4NjIwNjg5NjU1MTczIiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSI5NS4yNjMxNTc4OTQ3MzY4NSIgeTE9IjgyLjU4NjIwNjg5NjU1MTczIiB4Mj0iNjMuNDIxMDUyNjMxNTc4OTYiIHkyPSIxMzAiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjEzMCIgeTE9IjgyLjU4NjIwNjg5NjU1MTczIiB4Mj0iNjMuNDIxMDUyNjMxNTc4OTYiIHkyPSIxMzAiIHN0cm9rZT0iYmx1ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PGxpbmUgeDE9IjEzMCIgeTE9IjYyLjI2NjAwOTg1MjIxNjc1NCIgeDI9IjEzMCIgeTI9IjgyLjU4NjIwNjg5NjU1MTczIiBzdHJva2U9ImJsdWUiIHN0cm9rZS13aWR0aD0iMSIvPjxjaXJjbGUgcj0iMiIgY3g9IjY1LjA0MjEwNTI2MzE1NzkxIiBjeT0iMjAiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iNjMuNDIxMDUyNjMxNTc4OTYiIGN5PSIxMzAiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iMjAiIGN5PSI2Mi4yNjYwMDk4NTIyMTY3NTQiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iNjAuNTI2MzE1Nzg5NDczNyIgY3k9IjYyLjI2NjAwOTg1MjIxNjc1NCIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSI2MC41MjYzMTU3ODk0NzM3IiBjeT0iODIuNTg2MjA2ODk2NTUxNzMiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iOTUuMjYzMTU3ODk0NzM2ODUiIGN5PSI2Mi4yNjYwMDk4NTIyMTY3NTQiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PGNpcmNsZSByPSIyIiBjeD0iOTUuMjYzMTU3ODk0NzM2ODUiIGN5PSI4Mi41ODYyMDY4OTY1NTE3MyIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSIxMzAiIGN5PSI4Mi41ODYyMDY4OTY1NTE3MyIgc3R5bGU9ImZpbGw6I2ZmMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6Ymx1ZTtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1vcGFjaXR5OjEiLz48Y2lyY2xlIHI9IjIiIGN4PSIxMzAiIGN5PSI2Mi4yNjYwMDk4NTIyMTY3NTQiIHN0eWxlPSJmaWxsOiNmZjAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOmJsdWU7c3Ryb2tlLXdpZHRoOjAuNTtzdHJva2Utb3BhY2l0eToxIi8+PC9zdmc+", 
+  "name": "inception_layer_v1", 
+  "description": ""
+}

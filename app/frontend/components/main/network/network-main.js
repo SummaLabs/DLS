@@ -106,9 +106,9 @@
         }).filter('networksFilter', function () {
             return function (items, tabIndex) {
                 return items.filter(function (item) {
-                    if (tabIndex === 0 && item.source === 'prepared')
+                    if (tabIndex === 1 && item.source === 'prepared')
                         return true;
-                    else if (tabIndex === 1 && item.source === 'custom')
+                    else if (tabIndex === 0 && item.source === 'custom')
                         return true;
                     return false;
                 });

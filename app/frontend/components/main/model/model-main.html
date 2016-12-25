@@ -1,6 +1,6 @@
 <div layout="column" layout-fill>
-    <md-content flex layout="row">
-        <md-content flex="30">
+    <div flex layout="row">
+        <div flex="30">
             <md-list layout-padding>
                 <md-list-item class="md-whiteframe-1dp" ng-repeat="model in $ctrl.models"
                               ng-click="$ctrl.selectModel(model)">
@@ -20,9 +20,9 @@
                     </div>
                 </md-list-item>
             </md-list>
-        </md-content>
+        </div>
         <md-divider></md-divider>
-        <md-content layout="column" flex layout-padding>
+        <div layout="column" flex layout-padding>
                 <md-chips>
                     <md-chip><strong>Name: </strong>{{ $ctrl.selected.name }}</md-chip>
                     <md-chip><strong>Network: </strong>{{ $ctrl.selected.network }}</md-chip>
@@ -32,7 +32,7 @@
             <md-tabs md-dynamic-height md-border-bottom>
                 <md-tab label="Training">
                     <md-card>
-                        
+
                          <div flex ng-cloak id="model-training-chart"
                              class="md-item-text md-whiteframe-z1"></div>
                          <div flex ng-cloak id="model-validation-chart"
@@ -45,12 +45,15 @@
                 <md-tab label="Validation">
                     <div validation model="{{$ctrl.selected}}"></div>
                 </md-tab>
+                <md-tab label="Layers Visualization">
+                    <layers-visualization model="$ctrl.selected"></layers-visualization>
+                </md-tab>
                  <md-tab label="Feature Space">
                     <md-card>
                         <div feature-space model="{{$ctrl.selected}}"></div>
                     </md-card>
                 </md-tab>
             </md-tabs>
-        </md-content>
-    </md-content>
+        </div>
+    </div>
 </div>

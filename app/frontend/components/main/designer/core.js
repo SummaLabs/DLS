@@ -7,7 +7,7 @@ angular.module('designerCore', [
     'trainingParams'
 ]);
 
-var editorDefinition = {
+let editorDefinition = {
     templateUrl: '/frontend/components/main/designer/core.html',
     controller: ConstructorController,
     replace: true,
@@ -16,103 +16,11 @@ var editorDefinition = {
 
 angular.module('designerCore')
     .component('designer', editorDefinition)
-    .service('coreService', CoreService);
+    .service('coreService', ['layerService', 'appConfig', CoreService]);
 
 
-function CoreService(layerService, appConfig) {
-    var store = {};
-    store.scale = 1;
-    let counter = 0;
-
-    let layerDefinition = {};
-
-    this.param = function (key, value) {
-        if (arguments.length === 1)
-            return store[key];
-
-        store[key] = value;
-    };
-
-
-
-    this.getNodeTemplate = function(layerType) {
-		let template = layerService.getTemplateByType(layerType);
-		if (!template)
-			template = layerService.getTemplateByType('data');
-
-		return template;
-	};
-
-	this.getNodeDefinition = function(layerType) {
-		if (!layerDefinition[layerType]) {
-			counter ++;
-			let templateHtml = this.getNodeTemplate(layerType);
-			if (!templateHtml)
-				console.log('Template for "layerType" did not loaded!');
-
-        	layerDefinition[layerType] = calculateProportions(templateHtml, appConfig.svgDefinitions.markerPortIn, appConfig.svgDefinitions.markerPortOut);
-		}
-
-		return layerDefinition[layerType];
-	};
-
-
-	function calculateProportions(templateHtml, portInSign, portOutSign) {
-	    var displayData = {};
-
-        var svg = document.createElement('div');
-        svg.style.position = 'absolute';
-        svg.style.top = '-1000px';
-        svg.innerHTML = '<svg>' + templateHtml + '</svg>';
-        document.body.appendChild(svg);
-
-        var portIn = angular.element(svg.querySelector('#' + portInSign));
-        if (!portIn[0])
-        	console.log(portIn, portInSign, templateHtml);
-        var portInRect = portIn[0].getBoundingClientRect();
-        var portOut = angular.element(svg.querySelector('#' + portOutSign));
-        var portOutRect = portOut[0].getBoundingClientRect();
-        var rect = angular.element(svg.firstElementChild.firstElementChild);
-        var elementRect = rect[0].getBoundingClientRect();
-
-        displayData.portIn = {
-            element: null,
-            offsetCenter: {
-                x: portInRect.left + (portInRect.right - portInRect.left) / 2,
-                y: portInRect.top  + (portInRect.bottom - portInRect.top) / 2 + 1000
-            },
-            width: portInRect.right - portInRect.left,
-            height: portInRect.bottom - portInRect.top
-        };
-
-        displayData.portOut = {
-            element: null,
-            offsetCenter: {
-                x: portOutRect.left + (portOutRect.right - portOutRect.left) / 2,
-                y: portOutRect.top  + (portOutRect.bottom - portOutRect.top) / 2 + 1000
-            },
-            width: portOutRect.right - portOutRect.left,
-            height: portOutRect.bottom - portOutRect.top
-        };
-
-
-
-        displayData.node = {
-            offsetCenter: {
-                x: elementRect.left + (elementRect.right - elementRect.left) / 2,
-                y: elementRect.top  + (elementRect.bottom - elementRect.top) / 2 + 1000
-            },
-            width: elementRect.right - elementRect.left,
-            height: elementRect.bottom - elementRect.top
-        };
-        document.body.removeChild(svg);
-        return displayData;
-	}
-
-}
-
-function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkDataService, modelService,  appConfig, layerService) {
-    var self = this;
+function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkDataService, modelService,  appConfig, layerService, coreService) {
+    let self = this;
 
     self.svgWidth = appConfig.svgDefinitions.areaWidth;
     self.svgHeight = appConfig.svgDefinitions.areaHeight;
@@ -120,10 +28,11 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
     constructorListeners();
 
     function doUpdateNetwork() {
-        var nodes = self.svgControl.getNodes();
-        var layers = networkDataService.getLayers();
+
+        let nodes = self.svgControl.getNodes();
+        // let layers = networkDataService.getLayers();
         nodes.forEach(function (node) {
-            var layer = networkDataService.getLayerById(node.id);
+            let layer = networkDataService.getLayerById(node.id);
             layer.pos = node.pos;
         });
     }
@@ -141,7 +50,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         var dataNetwork = networkDataService.getNetwork();
         modelService.checkNetworkFast(dataNetwork).then(
             function successCallback(response) {
-                var ret = response.data;
+                let ret = response.data;
                 if ((ret.length < 1) || (ret[0] != 'ok')) {
                     showToast(response.data) ;
                 } else {
@@ -300,6 +209,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
             }
 
             $scope.saveNetwork = function () {
+
                 if (doSave) {
                     var image = networkDataService.buildPreviewImage(networkDataService.getNetwork().layers, 150, 150, 20);
                     networkDataService.getNetwork().preview = image;
@@ -325,7 +235,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
     };
 
     this.zoomOut = function (event) {
-        var scale = self.svgControl.getScale();
+        let scale = self.svgControl.getScale();
         scale /= appConfig.svgDefinitions.scaleFactor;
         if (scale > appConfig.svgDefinitions.scaleMin) {
             self.svgControl.scale(scale);
@@ -333,7 +243,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
     };
 
     this.zoomIn = function (event) {
-        var scale = self.svgControl.getScale();
+        let scale = self.svgControl.getScale();
         scale *= appConfig.svgDefinitions.scaleFactor;
         if (scale < appConfig.svgDefinitions.scaleMax) {
             self.svgControl.scale(scale);
@@ -349,31 +259,36 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         networkDataService.clearLayers();
     };
 
+    function createLayer(node) {
+        let layers = networkDataService.getLayers();
+        let layer = layerService.getLayerByType(node.layerType);
+        layers.push(layer);
+        layer.id = node.id;
+        layer.name = node.name;
+        layer.layerType = node.layerType;
+        layer.category = node.category;
+        layer.pos = {
+            x: node.pos.x,
+            y: node.pos.y
+        };
+        layer.wires = node.wires;
+        return layer;
+    }
+
     function constructorListeners() {
 
         networkDataService.subNetworkUpdateEvent(setUpNetwork);
         let bInit = false;
         let bUpdate = false;
+
         $scope.$on('graph:init', function (event, node) {
             bInit = true;
-            // if (bUpdate)
-                setUpNetwork();
-            // console.log('init');
-            // // self.svgControl.setLayers(networkDataService.getLayers());
+            setUpNetwork();
         });
 
         $scope.$on('graph:addNode', function (event, node) {
             console.log('graph:addNode');
-            var layers = networkDataService.getLayers();
-            var layer = layerService.getLayerByType(node.layerType);
-            layers.push(layer);
-            layer.id = node.id;
-            layer.name = node.name;
-            layer.layerType = node.layerType;
-            layer.category = node.category;
-            layer.pos = node.pos;
-            layer.wires = node.wires;
-
+            createLayer(node);
             networkDataService.setChangesSaved(false);
             event.stopPropagation();
         });
@@ -391,6 +306,8 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
             console.log('graph:addLink');
 
             let layer = networkDataService.getLayerById(link.nodes[0].id);
+            if (!layer)
+                layer = createLayer(link.nodes[0]);
             if (!layer.wires)
                 layer.wires = [];
             layer.wires.push(link.nodes[1].id);
@@ -433,29 +350,69 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         });
 
         $scope.$on('graph:addedLayers', function (event, data) {
-            data.eventType = 'update'
+            data.eventType = 'update';
             $scope.$broadcast('constructor:viewport', data);
             event.stopPropagation();
         });
 
+        $scope.$on('graph:activateItem', function (event, item) {
+            $scope.$apply( function() {
+                self.layer = coreService.getLayerById(item.id);
+            });
+            event.stopPropagation();
+        });
+
+        $scope.$on('graph:changePosition', function (event, node) {
+            let layer = networkDataService.getLayerById(node.id);
+            if (!layer)
+                layer = createLayer(node);
+            layer.pos.x = node.pos.x;
+            layer.pos.y = node.pos.y;
+            event.stopPropagation();
+        });
+
+        $scope.$on('graph:update', function (event, layers) {
+            let existLayers = networkDataService.getLayers();
+            layers.forEach(function (layer) {
+                let existLayer = networkDataService.getLayerById(layer.id);
+                if (existLayer) {
+                    existLayer.pos = layer.pos;
+                    if (layer.wires)
+                        existLayer.wires = layer.wires;
+                    if (layer.params) {
+                         existLayer.parems = layer.params;
+                    }
+                } else {
+                    let layerTemp = layerService.getLayerByType(layer.layerType);
+
+                    layerTemp.id = layer.id;
+                    layerTemp.name = layer.name;
+                    layerTemp.layerType = layer.layerType;
+                    layerTemp.category = layer.category;
+                    layerTemp.pos = layer.pos;
+                    layerTemp.wires = layer.wires;
+                    existLayers.push(layerTemp);
+                }
+
+
+            });
+
+            event.stopPropagation();
+        });
         $scope.$on('viewport:changed', function (event, data) {
             if (self.svgControl.viewportPos)
                 self.svgControl.viewportPos(data.x, data.y);
             event.stopPropagation();
         });
 
-        $scope.$on('graph:activateItem', function (event, item) {
-            self.layerId = item.id;
-            self.layerType = item.layerType;
-            event.stopPropagation();
-        });
+        $scope.toggleUndo = function () {
+            self.svgControl.undo();
+        };
 
-        $scope.$on('graph:changePosition', function (event, node) {
-            let layer = networkDataService.getLayerById(node.id);
-            layer.pos.x = node.pos.x;
-            layer.pos.y = node.pos.y;
-            event.stopPropagation();
-        });
+        $scope.toggleRedo = function () {
+            self.svgControl.redo();
+        };
+
 
         $scope.toggleIcon = 'keyboard_tab';
         $scope.toggleLeft = buildToggler('left');
@@ -483,7 +440,6 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         }
     }
 
-    "use strict";
     function adaptNetworkPositions(layers, maxWidth, maxHeight) {
         iteration();
         function iteration() {
