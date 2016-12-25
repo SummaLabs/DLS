@@ -9,7 +9,8 @@ angular.module('layerService', [
     'flattenLayer',
     'mergeLayer',
     'denseLayer',
-    // 'upsampling3dLayer',
+    'upsampling2dLayer',
+    'upsampling3dLayer',
     'datainputLayer',
     'dataoutputLayer',
     'complex'])
@@ -23,8 +24,9 @@ angular.module('layerService', [
         'activationLayer',
         'flattenLayer',
         'mergeLayer',
-        // 'upsampling3dLayer',
         'denseLayer',
+        'upsampling2dLayer',
+        'upsampling3dLayer',
         'datainputLayer',
         'dataoutputLayer',
         'complex', LayerService]);
@@ -40,7 +42,8 @@ function LayerService($rootScope, $http, $templateCache,
                       flattenLayer,
                       mergeLayer,
                       denseLayer,
-                      // upsampling3dLayer,
+                      upsampling2dLayer,
+                      upsampling3dLayer,
                       datainputLayer,
                       dataoutputLayer,
                       complex) {
@@ -52,7 +55,7 @@ function LayerService($rootScope, $http, $templateCache,
         REMOVE:     'layer:remove'
     };
 
-    const categories = ['input/output', 'basic: convolution', 'basic: pooling', 'basic: dense', 'basic', 'complex'];
+    const categories = ['input/output', 'basic: convolution', 'basic: pooling', 'basic: dense', 'basic: upsampling', 'basic', 'complex'];
     
     const layerByType = {
         'convolution1d':    convolution1dLayer,
@@ -65,7 +68,8 @@ function LayerService($rootScope, $http, $templateCache,
         'merge':            mergeLayer,
         'flatten':          flattenLayer,
         'dense':            denseLayer,
-        // 'upsampling3d':     upsampling3dLayer,
+        'upsampling2d':     upsampling2dLayer,
+        'upsampling3d':     upsampling3dLayer,
         'datainput':        datainputLayer,
         'dataoutput':       dataoutputLayer,
         'inception':        complex.getAssessor('inception'),
@@ -84,7 +88,8 @@ function LayerService($rootScope, $http, $templateCache,
         'flatten': '',
         'merge': '',
         'dense': '',
-        // 'upsampling3d': '',
+        'upsampling2d': '',
+        'upsampling3d': '',
         'datainput': '',
         'dataoutput': ''
     };
@@ -100,7 +105,8 @@ function LayerService($rootScope, $http, $templateCache,
     loadTemplate('flatten');
     loadTemplate('merge');
     loadTemplate('dense');
-    // loadTemplate('upsampling3d');
+    loadTemplate('upsampling2d');
+    loadTemplate('upsampling3d');
     loadTemplate('datainput');
     loadTemplate('dataoutput');
 
@@ -115,7 +121,8 @@ function LayerService($rootScope, $http, $templateCache,
         flattenLayer.getDefault(),
         mergeLayer.getDefault(),
         denseLayer.getDefault(),
-        // upsampling3dLayer.getDefault(),
+        upsampling2dLayer.getDefault(),
+        upsampling3dLayer.getDefault(),
         datainputLayer.getDefault(),
         dataoutputLayer.getDefault(),
         complex.getInception(),

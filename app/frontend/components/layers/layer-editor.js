@@ -12,7 +12,8 @@ angular
         'flattenEditor',
         'mergeEditor',
         'denseEditor',
-        // 'upsampling3d',
+        'upsampling2dEditor',
+        'upsampling3dEditor',
         'datainputEditor',
         'dataoutputEditor'
     ])
@@ -31,7 +32,8 @@ angular
                 'merge':            '<merge-editor layer-data=elem.layer></merge-editor>',
                 'flatten':          '<flatten-editor layer-data=elem.layer></flatten-editor>',
                 'dense':            '<dense-editor layer-data=elem.layer></dense-editor>',
-                // 'upsampling3d':     '<upsampling3d-editor layer-id="' + layerId + '"></upsampling3d-editor>',
+                'upsampling2d':     '<upsampling2d-editor layer-data=elem.layer></upsampling2d-editor>',
+                'upsampling3d':     '<upsampling3d-editor layer-data=elem.layer></upsampling3d-editor>',
                 'datainput':        '<datainput-editor layer-data=elem.layer></datainput-editor>',
                 'dataoutput':       '<dataoutput-editor layer-data=elem.layer></dataoutput-editor>'
             };

@@ -1,23 +1,22 @@
-angular.module('pooling2dLayer', [])
-    .service('pooling2dLayer', [Pooling2dLayer]);
+angular.module('upsampling2dLayer', [])
+    .service('upsampling2dLayer', [UpSampling2dLayer]);
 
-function Pooling2dLayer() {
+function UpSampling2dLayer() {
 
-    this.getSubSamplingTypes = function () {
-        return [
-            {value: "max_pooling", text: "Max Pooling"},
-            {value: "average_pooling", text: "Average Pooling"}
-        ];
-    };
+    // this.getSubSamplingTypes = function () {
+    //     return [
+    //         {value: "max_pooling", text: "Max Pooling"},
+    //         {value: "average_pooling", text: "Average Pooling"}
+    //     ];
+    // };
 
     this.getDefault = function () {
         return {
             "id": 0,
-            "name": "Pooling2D",
-            "layerType": 'pooling2d',
-            "category": "basic: pooling",
+            "name": "Upsampling2D",
+            "layerType": 'upsampling2d',
+            "category": "basic: upsampling",
             "params": {
-                "subsamplingType": "max_pooling",
                 "subsamplingSizeWidth":  2,
                 "subsamplingSizeHeight": 2
             }
@@ -25,10 +24,10 @@ function Pooling2dLayer() {
     };
         
     this.getTemplatePath = function () {
-      return "frontend/components/layers/basic/pooling2d/pooling2d.svg";
+      return "frontend/components/layers/basic/upsampling2d/upsampling2d.svg";
     };
     
     this.getIconPath = function () {
-        return "frontend/assets/img/palette/basic/layer-pooling-2d-v1.png"
+        return "frontend/assets/img/palette/basic/layer-upsampling-2d-v1.png"
     };
 }
