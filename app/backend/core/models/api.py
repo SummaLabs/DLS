@@ -74,7 +74,7 @@ def inference_model_fast():
     try:
         for pp in lstRealFiles:
             tret = modelProcessor.inferOneImagePathSorted(pp)
-            # Convert probabilities in floats to strings:
+            # Convert probabilities from floats to strings:
             #FIXME: i think that this is a stupid code...
             tmp = [(xx[0], '%0.3f' % xx[1]) for xx in tret['distrib']]
             tret['distrib'] = tmp
@@ -143,8 +143,6 @@ def check_model_list():
     return Response(json.dumps(ret), mimetype='application/json')
 
 def generateModelWeightsVis(modelId):
-
-
     modelInfo = modelsWatcher.dictModelsInfo[modelId]
     # (2) Prepare output directory
     dirBase = modelInfo.dirModel
@@ -174,13 +172,11 @@ def generateModelWeightsVis(modelId):
         else:
             tmpInfo['previewPath'] = ""
         retInfo.append(tmpInfo)
-
     dlsutils.makeDirIfNotExists(dirOut)
     # (3) Export images
     for ii, ll in enumerate(lstLayers):
         print ('[%d] * %s, #params = %d' % (ii, ll.name, ll.count_params()))
         foutImg = '%s/%s.jpg' % (dirOut, ll.name)
-
         if isinstance(ll, keras.layers.Convolution2D):
             tmp = ll.get_weights()
             dataW = tmp[0]
