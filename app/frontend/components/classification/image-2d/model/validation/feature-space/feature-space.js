@@ -11,16 +11,13 @@
                 controller: function ($rootScope, $scope, $mdDialog, $mdToast, modelService, taskManagerService) {
                     var self = this;
 
-                    const ROCAnalysis = {
-                        RUN: 'ROCAnalysis:run'
+                    const FeatureSpace = {
+                        RUN: 'FeatureSpace:run'
                     };
 
-                    var modelRocHistoryData = [];
-                    var dataSetTypesRocData = [];
-                    var classesRocData = [];
 
                     this.$onInit = function () {
-                        $scope.rocsIds = [];
+                        $scope.taskIds = [];
                         $scope.dsTypes = [];
                         $scope.classNames = [];
                         var future = modelService.loadModelFeatureSpace(JSON.parse($scope.model).id);
@@ -30,36 +27,8 @@
                             console.log();
                         });
 
-                        $scope.$watch('rocHistorySelected', function (newValue, oldValue) {
-                            if (oldValue != null) {
-                                var index = 0;
-                                $scope.rocsIds.forEach(function (rocId) {
-                                    if (rocId.name == $scope.rocHistorySelected) {
-                                        setROCDataForDsType(modelRocHistoryData[index]);
-                                    }
-                                    index++;
-                                });
-                            }
-                        });
-
-                        $scope.$watch('dsTypeSelected', function (newValue, oldValue) {
-                            if (oldValue != null) {
-                                var types = $scope.dsTypes;
-                                var index = types.indexOf($scope.dsTypeSelected);
-                                setROCDataForClass(dataSetTypesRocData[index]);
-                            }
-                        });
-
-                        $scope.$watch('classNameSelected', function (newValue, oldValue) {
-                            if (oldValue != null) {
-                                var classNames = $scope.classNames;
-                                var index = classNames.indexOf($scope.classNameSelected);
-                                $scope.rocData = classesRocData[index];
-                            }
-                        });
-
-                        $rootScope.$on(ROCAnalysis.RUN, function ($event, data) {
-                            $scope.rocsIds.push(data);
+                        $rootScope.$on(FeatureSpace.RUN, function ($event, data) {
+                            $scope.taskIds.push(data);
                         });
                         $rootScope.$on('model_select', function ($event, data){
                             $scope.currentModelId = data.id;
@@ -73,25 +42,25 @@
 
                         taskManagerService.subToTasksStatusUpdate(function (event, tasks) {
                             event.stopPropagation();
-                            var reloadRocData = false;
+                            var reloadData = false;
                             tasks.forEach(function (task) {
                                 if (task.type = 'fspace-image2d') {
-                                    for (var i = 0; i < $scope.rocsIds.length; i++) {
-                                        var rocId = $scope.rocsIds[i];
-                                        if (rocId.hasOwnProperty('taskId')
-                                            && rocId.taskId == task.id
+                                    for (var i = 0; i < $scope.taskIds.length; i++) {
+                                        var taskId = $scope.taskIds[i];
+                                        if (taskId.hasOwnProperty('taskId')
+                                            && taskId.taskId == task.id
                                             && task.state == 'finished') {
-                                            $scope.rocsIds.splice(i, 1);
-                                            reloadRocData = true;
+                                            $scope.taskIds.splice(i, 1);
+                                            reloadData = true;
                                         }
                                     }
                                 }
                             });
-                            if (reloadRocData) {
+                            if (reloadData) {
                                 var future = modelService.loadModelFeatureSpace($scope.modelId);
                                 future.then(function mySucces(response) {
                                     initChart(response.data);
-                                    self.showToast('ROC Analysis task is completed!');
+                                    self.showToast('Feature Space task is completed!');
                                 }, function myError(response) {
                                 });
                             }
@@ -106,8 +75,6 @@
                                 .hideDelay(3000)
                         );
                     };
-
-                
                     
                     $scope.applyFeatureSpace = function ($event) {
                         var modelObject =  JSON.parse($scope.model);
@@ -164,7 +131,7 @@
                                             inProgress: true,
                                             taskId : taskId
                                         };
-                                        $rootScope.$emit(ROCAnalysis.RUN, runningTask);
+                                        $rootScope.$emit(FeatureSpace.RUN, runningTask);
                                         self.showToast('Feature Space Analysis task is running. Task id: ' + taskId);
                                     }, function myError(response) {
                                     });
@@ -181,107 +148,6 @@
 
 
                     };
-
-                    function updateModelROCsHistoryData(rocsHistoryData) {
-                        $scope.rocsIds.length = 0;
-                        $scope.classNames.length = 0;
-                        modelRocHistoryData.length = 0;
-                        classesRocData.length = 0;
-                        setModelROCsHistoryData(rocsHistoryData)
-                    }
-
-                    function setModelROCsHistoryData(rocsHistoryData) {
-                        rocsHistoryData.forEach(function (rocData) {
-                            modelRocHistoryData.push(rocData);
-                            $scope.rocsIds.push({
-                                name: rocData['dataset-name'] + "-" + rocData['date'],
-                                inProgress: false
-                            });
-                        });
-                        $scope.rocHistorySelected = $scope.rocsIds[0].name;
-                        setROCDataForDsType(modelRocHistoryData[0]);
-                    }
-
-                    function setROCDataForDsType(rocData) {
-                        $scope.dsTypes = [];
-                        rocData.dbtypes.forEach(function (type) {
-                            $scope.dsTypes.push(type);
-                            dataSetTypesRocData.push(rocData.roc[type]);
-                        });
-                        $scope.dsTypeSelected = $scope.dsTypes[0];
-                        setROCDataForClass(dataSetTypesRocData[0]);
-                    }
-
-                    function setROCDataForClass(rocData) {
-                        $scope.classNames = [];
-                        classesRocData.length = 0;
-                        rocData.forEach(function (classROC) {
-                            $scope.classNames.push(classROC.name);
-                            var chartPoints = createRocChartPoints(classROC.rocPoints);
-                            var chartSettings = getDefaultChartSettings(classROC.auc);
-                            chartSettings['data']['rows'] = chartPoints;
-                            classesRocData.push(chartSettings)
-                        });
-                        $scope.classNameSelected = $scope.classNames[0];
-                        $scope.rocData = classesRocData[0];
-                    }
-
-                    function createRocChartPoints(classRocPointsJson) {
-                        var classRocPoints = [];
-                        classRocPointsJson.forEach(function (point) {
-                            classRocPoints.push({
-                                "c": [
-                                    {"v": point.x},
-                                    {"v": point.y}
-                                ]
-                            })
-                        });
-
-                        return classRocPoints;
-                    }
-
-                    function getDefaultChartSettings(auc) {
-                        return {
-                            "type": "AreaChart",
-                            "displayed": false,
-                            "data": {
-                                "cols": [
-                                    {
-                                        "id": "TP",
-                                        "type": "number",
-                                        "p": {}
-                                    },
-                                    {
-                                        "id": "FP",
-                                        "label": "AUC: " + auc + "",
-                                        "type": "number",
-                                        "p": {}
-                                    }
-                                ],
-                                "rows": []
-                            },
-                            "options": {
-                                "vAxis": {
-                                    "title": "True Positive Rate"
-                                },
-                                "hAxis": {
-                                    "title": "False Positive Rate"
-                                }
-                            },
-                            "formatters": {}
-                        };
-                    }
-
-                    function createTrace(cluster){
-                        return {
-                                    x: cluster.x,
-                                    y: cluster.y,
-                                    mode: 'markers',
-                                    type: 'scatter',
-                                    name: j,
-                                    marker: { size: 5 }
-                                 };
-                    }
 
                     function generatePlot(layer, type, name){
                          var traces = [];
@@ -314,8 +180,6 @@
                         
                     }
 
-
-                    
                     function initChart(space){
                         $('.fs-chart').html('');
                         for(var i=0; i<space.length; i++){
