@@ -119,7 +119,7 @@ module.exports = function (grunt) {
                     {
                         expand:  true,
                         flatten: true,
-                        src: '<%= globalConfig.node_modules_path %>/socket.io-client/dist/socket.io.js',
+                        src: '<%= globalConfig.node_modules_path %>/socket.io-client/socket.io.js',
                         dest: outPathExt
                     },
                     {
