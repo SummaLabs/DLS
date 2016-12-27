@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('modelMain', ['ngMaterial', 'modelService', 'inference', 'layersVisualization'])
+    angular.module('modelMain', ['ngMaterial', 'modelService', 'inference', 'layersVisualization', 'validation'])
         .component('modelMain', {
             templateUrl: '/frontend/components/main/model/model-main.html',
             bindings: {
