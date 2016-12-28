@@ -14,7 +14,7 @@ angular.module('datasetMain', ['ngMaterial', 'datasetService', 'create2dImgDatas
             this._mdPanel = $mdPanel;
             var self = this;
             self.$onInit = function () {
-                datasetService.getDatasetsInfoStatList().then(
+                datasetService.getDatasetsMetadata().then(
                     function successCallback(response) {
                         self.datasets = response.data;
                     },

@@ -9,7 +9,7 @@ angular
         templateUrl: "frontend/components/layers/basic/dataoutput/dataoutput-editor.html",
         controller: function ($scope, layerService, datasetService, dataoutputLayer) {
             this.$onInit = function () {
-                datasetService.getDatasetsInfoStatList().then(
+                datasetService.getDatasetsMetadata().then(
                     function successCallback(response) {
                         var loadedDataSets = response.data;
                         var dataSets = [];

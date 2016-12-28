@@ -3,14 +3,14 @@
  */
 
 angular.module('datasetService', [])
-    .service('datasetService', ['$http', DBInfoService]);
+    .service('datasetService', ['$http', DataSetService]);
 
-function DBInfoService($http) {
+function DataSetService($http) {
     var self = this;
-    self.getDatasetsInfoStatList = function () {
+    self.getDatasetsMetadata = function () {
         return $http({
-                method: 'POST',
-                url: '/dbpreview/dbinfolist/'
+                method: 'GET',
+                url: '/dataset/all/metadata/list'
             });
     };
     self.getInfoStatAboutDB = function (dbID) {
