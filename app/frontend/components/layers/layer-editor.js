@@ -42,7 +42,7 @@ angular
         
         function ElementController($scope, $element) {
             let self = this;
-            $scope.$watch('layerData.id', function(newValue, oldValue) {
+            $scope.$watch('layerData', function(newValue, oldValue) {
                 self.layer = $scope.layerData;
                 if (!self.layer)
                     return;

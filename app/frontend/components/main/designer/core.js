@@ -27,16 +27,6 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
     self.svgControl = {};
     constructorListeners();
 
-    function doUpdateNetwork() {
-
-        let nodes = self.svgControl.getNodes();
-        // let layers = networkDataService.getLayers();
-        nodes.forEach(function (node) {
-            let layer = networkDataService.getLayerById(node.id);
-            layer.pos = node.pos;
-        });
-    }
-
     this.$onInit = function () {
         $scope.networkName = networkDataService.getNetwork().name;
 
@@ -46,8 +36,8 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
     };
 
     this.trainModel = function ($event) {
-        doUpdateNetwork();
-        var dataNetwork = networkDataService.getNetwork();
+        networkDataService.setLayers(coreService.getNetwork());
+        let dataNetwork = networkDataService.getNetwork();
         modelService.checkNetworkFast(dataNetwork).then(
             function successCallback(response) {
                 let ret = response.data;
@@ -65,7 +55,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
     };
 
     this.createNewNetwork = function ($event) {
-        var createNewNetworkFunc = function () {
+        let createNewNetworkFunc = function () {
             self.saveOrCreateNetworkDialog($event, false);
         };
         if (!networkDataService.isChangesSaved()) {
@@ -100,13 +90,13 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
     }
 
     this.checkModelJson = function ($event) {
-        doUpdateNetwork();
-        var dataNetwork = networkDataService.getNetwork();
+        networkDataService.setLayers(coreService.getNetwork());
+        let dataNetwork = networkDataService.getNetwork();
         modelService.checkNetworkFast(dataNetwork).then(
             function successCallback(response) {
-                var ret = response.data;
-                var isError = true;
-                var strError = 'Unknown Error...';
+                let ret = response.data;
+                let isError = true;
+                let strError = 'Unknown Error...';
                 if (ret.length > 1) {
                     if (ret[0] == 'ok') {
                         isError = false;
@@ -114,11 +104,11 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
                         strError = ret[1];
                     }
                 }
-                var retMessage = "OK: network is correct!";
+                let retMessage = "OK: network is correct!";
                 if (isError) {
                     retMessage = "ERROR: " + strError;
                 }
-                var toast = $mdToast.simple()
+                let toast = $mdToast.simple()
                     .textContent(retMessage)
                     .action('UNDO')
                     .highlightAction(true)
@@ -136,19 +126,19 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         );
     };
     this.calcModelShape = function ($event) {
-        doUpdateNetwork();
-        var dataNetwork = networkDataService.getNetwork();
+        networkDataService.setLayers(coreService.getNetwork());
+        let dataNetwork = networkDataService.getNetwork();
         modelService.calcModelShape(dataNetwork).then(
             function successCallback(response) {
-                var ret = response.data;
-                var isError = true;
-                var strError = 'Unknown Error...';
+                let ret = response.data;
+                let isError = true;
+                let strError = 'Unknown Error...';
                 if (ret['status'] == 'ok') {
                     isError = false;
                 } else {
                     strError = ret['data'];
                 }
-                var retMessage = "OK: network is correct (please see dev-tools log)!";
+                let retMessage = "OK: network is correct (please see dev-tools log)!";
                 if (isError) {
                     retMessage = "ERROR: " + strError;
                 } else {
@@ -161,7 +151,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
                         }
                     });
                 }
-                var toast = $mdToast.simple()
+                let toast = $mdToast.simple()
                     .textContent(retMessage)
                     .action('UNDO')
                     .highlightAction(true)
@@ -181,8 +171,11 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
 
 
     this.saveOrCreateNetworkDialog = function ($event, doSave, createNewNetworkFunc) {
-        doUpdateNetwork();
-        var parentEl = angular.element(document.body);
+        networkDataService.setLayers(coreService.getNetwork());
+        console.log(networkDataService.getLayers());
+
+
+        let parentEl = angular.element(document.body);
         $mdDialog.show({
             clickOutsideToClose: true,
             parent: parentEl,
@@ -211,7 +204,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
             $scope.saveNetwork = function () {
 
                 if (doSave) {
-                    var image = networkDataService.buildPreviewImage(networkDataService.getNetwork().layers, 150, 150, 20);
+                    let image = networkDataService.buildPreviewImage(networkDataService.getNetwork().layers, 150, 150, 20);
                     networkDataService.getNetwork().preview = image;
                     networkDataService.saveNetwork($scope.network.name, $scope.network.description);
                 } else {
@@ -259,86 +252,36 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         networkDataService.clearLayers();
     };
 
-    function createLayer(node) {
-        let layers = networkDataService.getLayers();
-        let layer = layerService.getLayerByType(node.layerType);
-        layers.push(layer);
-        layer.id = node.id;
-        layer.name = node.name;
-        layer.layerType = node.layerType;
-        layer.category = node.category;
-        layer.pos = {
-            x: node.pos.x,
-            y: node.pos.y
-        };
-        layer.wires = node.wires;
-        return layer;
-    }
-
     function constructorListeners() {
 
         networkDataService.subNetworkUpdateEvent(setUpNetwork);
         let bInit = false;
-        let bUpdate = false;
 
         $scope.$on('graph:init', function (event, node) {
             bInit = true;
-            setUpNetwork();
         });
 
         $scope.$on('graph:addNode', function (event, node) {
-            console.log('graph:addNode');
-            createLayer(node);
             networkDataService.setChangesSaved(false);
             event.stopPropagation();
         });
 
         $scope.$on('graph:removeNode', function (event, node) {
-            console.log('graph:removeNode');
-
-            networkDataService.removeLayerById(node.id);
-
             networkDataService.setChangesSaved(false);
             event.stopPropagation();
         });
 
         $scope.$on('graph:addLink', function (event, link) {
-            console.log('graph:addLink');
-
-            let layer = networkDataService.getLayerById(link.nodes[0].id);
-            if (!layer)
-                layer = createLayer(link.nodes[0]);
-            if (!layer.wires)
-                layer.wires = [];
-            layer.wires.push(link.nodes[1].id);
-
             networkDataService.setChangesSaved(false);
             event.stopPropagation();
         });
 
         $scope.$on('graph:removeLink', function (event, link) {
-            console.log('graph:removeLink');
-
-            let layer = networkDataService.getLayerById(link.nodes[0].id);
-            layer.wires.splice(layer.wires.indexOf(link.nodes[1].id), 1);
-
             networkDataService.setChangesSaved(false);
             event.stopPropagation();
         });
 
         $scope.$on('graph:removeItems', function (event, items) {
-            console.log('graph:removeItems');
-
-            for (let a = 0; a < items.links.length; a++) {
-                let link = items.links[a];
-                let layer = networkDataService.getLayerById(link.nodes[0].id);
-                layer.wires.splice(layer.wires.indexOf(link.nodes[1].id), 1);
-            }
-
-            for (let a = 0; a < items.nodes.length; a++) {
-                networkDataService.removeLayerById(items.nodes[a]);
-            }
-
             networkDataService.setChangesSaved(false);
             event.stopPropagation();
         });
@@ -362,43 +305,6 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
             event.stopPropagation();
         });
 
-        $scope.$on('graph:changePosition', function (event, node) {
-            let layer = networkDataService.getLayerById(node.id);
-            if (!layer)
-                layer = createLayer(node);
-            layer.pos.x = node.pos.x;
-            layer.pos.y = node.pos.y;
-            event.stopPropagation();
-        });
-
-        $scope.$on('graph:update', function (event, layers) {
-            let existLayers = networkDataService.getLayers();
-            layers.forEach(function (layer) {
-                let existLayer = networkDataService.getLayerById(layer.id);
-                if (existLayer) {
-                    existLayer.pos = layer.pos;
-                    if (layer.wires)
-                        existLayer.wires = layer.wires;
-                    if (layer.params) {
-                         existLayer.parems = layer.params;
-                    }
-                } else {
-                    let layerTemp = layerService.getLayerByType(layer.layerType);
-
-                    layerTemp.id = layer.id;
-                    layerTemp.name = layer.name;
-                    layerTemp.layerType = layer.layerType;
-                    layerTemp.category = layer.category;
-                    layerTemp.pos = layer.pos;
-                    layerTemp.wires = layer.wires;
-                    existLayers.push(layerTemp);
-                }
-
-
-            });
-
-            event.stopPropagation();
-        });
         $scope.$on('viewport:changed', function (event, data) {
             if (self.svgControl.viewportPos)
                 self.svgControl.viewportPos(data.x, data.y);
@@ -434,45 +340,8 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         }
 
         function setUpNetwork() {
-            if (bInit)
-                self.svgControl.setLayers(networkDataService.getLayers());
-            else bUpdate = true;
+            self.svgControl.clear(true);
+            self.svgControl.setLayers(networkDataService.getLayers());
         }
-    }
-
-    function adaptNetworkPositions(layers, maxWidth, maxHeight) {
-        iteration();
-        function iteration() {
-
-            let mustMoved = false;
-
-            do {
-                mustMoved = false;
-                for (let a = 0; a < layers.length; a++) {
-                    if (!layers[a].wires)
-                            continue;
-                    for (let w = 0; w < layers[a].wires.length; w ++) {
-
-                        for (let b = 0; b < layers.length; b++) {
-
-                            if (layers[a].wires[w] === layers[b].id) {
-                                let diff = layers[b].pos.y - layers[a].pos.y;
-
-                                if (diff > 0 && diff < maxHeight) {
-                                    mustMoved = true;
-                                    layers[b].pos.y = layers[a].pos.y + maxHeight;
-                                } else if (diff < 0 && diff > -maxHeight) {
-                                    mustMoved = true;
-                                    layers[a].pos.y = layers[b].pos.y + maxHeight;
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-            } while (mustMoved);
-        }
-        iteration();
-
     }
 }

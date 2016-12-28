@@ -3,7 +3,7 @@ angular.module('networkDataService', [])
 
 
 function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
-    var self = this;
+    let self = this;
 
     const networkEvent = {
         UPDATE: 'network:update',
@@ -12,9 +12,9 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
         REMOVE_LAYER: 'network:remove'
     };
 
-    var isChangesSaved = false;
+    let isChangesSaved = false;
 
-    var network =
+    let network =
     {
         name: 'New network',
         description: '',
@@ -23,7 +23,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
         layers: []
     };
 
-    var savedNetworks = [];
+    let savedNetworks = [];
 
     this.pubNetworkUpdateEvent = function() {
         $rootScope.$emit(networkEvent.UPDATE, {});
@@ -72,7 +72,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
             };
 
             self.pubClearNetworkEvent();
-            var future = loadNetworkByName(name, source);
+            let future = loadNetworkByName(name, source);
             future.then(function mySucces(response) {
                 network.name = response.data.name;
                 network.description = response.data.description;
@@ -87,7 +87,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
 
     this.deleteNetwork = function(name) {
         if (network.name === name.name && network.layers.length > 0) {
-            var toast = $mdToast.simple()
+            let toast = $mdToast.simple()
                 .textContent('Could not remove network. "' + name.name + '"is open in in designer!')
                 .highlightAction(true)
                 .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
@@ -122,7 +122,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
         network.description = description;
         network.layers = filterNetwork(network.layers);
         network.source = 'custom';
-        var result = saveNetwork(network, name);
+        let result = saveNetwork(network, name);
         result.then(function (response) {
                 isChangesSaved = true;
                 // self.pubNetworkUpdateEvent();
@@ -133,9 +133,9 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
     };
 
     function filterNetwork(rawNetwork) {
-        var filteredNetwork = [];
+        let filteredNetwork = [];
         rawNetwork.forEach(function (layer) {
-            var filteredLayer = {
+            let filteredLayer = {
                 id: layer.id,
                 name: layer.name,
                 layerType: layer.layerType,
@@ -153,8 +153,8 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
     }
 
     this.getLayerById = function(id) {
-        for (var i = 0, len = network.layers.length; i < len; i++) {
-            var layer = network.layers[i];
+        for (let i = 0, len = network.layers.length; i < len; i++) {
+            let layer = network.layers[i];
             if(layer.id == id) {
                 return layer;
             }
@@ -174,9 +174,9 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
     };    
 
     this.removeLayerById = function(id) {
-        var index = -1;
-        for (var i = 0, len = network.layers.length; i < len; i++) {
-            var layer = network.layers[i];
+        let index = -1;
+        for (let i = 0, len = network.layers.length; i < len; i++) {
+            let layer = network.layers[i];
             if (layer.wires) {
                 for (let a = 0; a < layer.wires.length; a++) {
                     if (layer.wires[a] === id) {

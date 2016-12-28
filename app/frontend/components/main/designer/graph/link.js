@@ -5,7 +5,24 @@ angular.module('graph')
 
 function link() {
 
-	return {
+    function calcLinkNodePosition($scope) {
+		$scope.from = {
+			x: $scope.linkData.nodes[0].pos.x + $scope.linkData.nodes[0].displayData.portOut.centerOffset.x,
+			y: $scope.linkData.nodes[0].pos.y + $scope.linkData.nodes[0].displayData.portOut.centerOffset.y
+		};
+
+		if($scope.linkData.nodes[1].id === 'activePoint') {
+			$scope.to = $scope.linkData.nodes[1].pos;
+		} else {
+
+			$scope.to = {
+				x: $scope.linkData.nodes[1].pos.x + $scope.linkData.nodes[1].displayData.portIn.centerOffset.x,
+				y: $scope.linkData.nodes[1].pos.y + $scope.linkData.nodes[1].displayData.portIn.centerOffset.y
+			}
+		}
+    }
+
+    return {
 		restrict: 'E',
 		controller: LinkCtrl,
 		controllerAs: 'ln',
@@ -18,22 +35,8 @@ function link() {
 
 		link: function($scope, element, attrs) {
 
-			$scope.from = {
-			    x: $scope.linkData.nodes[0].pos.x + $scope.linkData.nodes[0].displayData.portOut.centerOffset.x,
-			    y: $scope.linkData.nodes[0].pos.y + $scope.linkData.nodes[0].displayData.portOut.centerOffset.y
-			};
-
-			if($scope.linkData.nodes[1].id === 'activePoint') {
-				$scope.to = $scope.linkData.nodes[1].pos;
-			} else {
-
-				$scope.to = {
-                    x: $scope.linkData.nodes[1].pos.x + $scope.linkData.nodes[1].displayData.portIn.centerOffset.x,
-                    y: $scope.linkData.nodes[1].pos.y + $scope.linkData.nodes[1].displayData.portIn.centerOffset.y
-                }
-			}
-
-			updatePos(element, $scope.from, $scope.to);
+			calcLinkNodePosition($scope);
+            updatePos(element, $scope.from, $scope.to);
 			linkWatcher.bind(this)($scope, element);
 			eventsHandler.bind(this)($scope, element);
 		}
@@ -76,8 +79,8 @@ function link() {
 		});
 
 
-        var prev_from_x = scope.linkData.nodes[0].pos.x;
-        var prev_from_y = scope.linkData.nodes[0].pos.y;
+        let prev_from_x = scope.linkData.nodes[0].pos.x;
+        let prev_from_y = scope.linkData.nodes[0].pos.y;
 
         scope.$on('node:move_' + scope.linkData.nodes[0].id, function (event, data) {
             scope.from.x += scope.linkData.nodes[0].pos.x - prev_from_x;
@@ -87,8 +90,8 @@ function link() {
             updatePos(element, scope.from, scope.to);
         });
 
-        var prev_to_x = scope.linkData.nodes[1].pos.x;
-        var prev_to_y = scope.linkData.nodes[1].pos.y;
+        let prev_to_x = scope.linkData.nodes[1].pos.x;
+        let prev_to_y = scope.linkData.nodes[1].pos.y;
 
         scope.$on('node:move_' + scope.linkData.nodes[1].id, function (event, data) {
             scope.to.x += scope.linkData.nodes[1].pos.x - prev_to_x;
@@ -96,23 +99,28 @@ function link() {
             prev_to_x = scope.linkData.nodes[1].pos.x;
             prev_to_y = scope.linkData.nodes[1].pos.y;
             updatePos(element, scope.from, scope.to);
+        });
 
+        scope.$on('links:update_' + scope.linkData.id, function (event, data) {
+			scope.linkData.nodes = data.nodes;
+			calcLinkNodePosition(scope);
+            updatePos(element, scope.from, scope.to);
         });
 	}
 
 	function updatePos(element, from, to){
-		var path = calculatePath(from, to, 'vertical');
+		let path = calculatePath(from, to, 'vertical');
 		element.attr('d', path);
 	}
 
 	function calculatePath(from, to, orientation = 'horizontal') {
-		var ARC_OFFSET = 0.5;
-		var ARC_MIN = 30;
-		var points = [];
-		var dx = to.x - from.x;
-		var dy = to.y - from.y;
+		let ARC_OFFSET = 0.5;
+		let ARC_MIN = 30;
+		let points = [];
+		let dx = to.x - from.x;
+		let dy = to.y - from.y;
 
-		var distance = Math.max(Math.sqrt(dx * dx + dy * dy) * ARC_OFFSET, ARC_MIN);
+		let distance = Math.max(Math.sqrt(dx * dx + dy * dy) * ARC_OFFSET, ARC_MIN);
 
 		points.push(from);
 		if (orientation === 'horizontal') {
@@ -124,7 +132,7 @@ function link() {
 		}
 		points.push(to);
 
-        var line = 'M';
+        let line = 'M';
 		if(points.length != 4)
 			return null;
 

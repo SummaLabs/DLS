@@ -12,10 +12,15 @@ function CoreService(layerService, appConfig) {
          return schema;
     };
 
-    this.addLayer = function (layerType, position) {
+    this.addLayerByDefault = function (layerType, position) {
          let layer = layerService.getLayerByType(layerType);
-         let node = schema.addNode(layer.name, layer.layerType, layer.category, layerService.getTemplateByType(layerType));
-         node.params = layer.params;
+         let node = schema.addNode(layer);
+         node.position(position.x, position.y, appConfig.svgDefinitions.gridStep);
+         return node;
+    };
+
+    this.addLayer = function (layer, position) {
+         let node = schema.addNode(layer);
          node.position(position.x, position.y, appConfig.svgDefinitions.gridStep);
          return node;
     };
@@ -132,16 +137,16 @@ Position.prototype.getAddedPos = function(offset, offsetY) {
 };
 
 function Rect(x1, y1, x2, y2) {
-    var x;
-    var y;
-    var width;
-    var height;
+    let x;
+    let y;
+    let width;
+    let height;
 
 
     function _rect(){
 
         this.scale = function(scale) {
-            var scaled_rect = Rect(0,0,0,0);
+            let scaled_rect = Rect(0,0,0,0);
             scaled_rect.x(x * scale);
             scaled_rect.y(y * scale);
             scaled_rect.width(width * scale);
@@ -191,7 +196,7 @@ function Rect(x1, y1, x2, y2) {
 
     }
 
-    var rc = new _rect();
+    let rc = new _rect();
     rc.x(Math.min(x1, x2));
     rc.y(Math.min(y1, y2));
     rc.width(Math.abs(x1 - x2));
@@ -211,9 +216,10 @@ function Node() {
 
     this.name = null;
     this.layerType = null;
-    this.template = null;
+    // this.template = null;
     this.category = null;
     this.pos = new Position(0, 0);
+    this.params = {};
 };
 
 Node.prototype = Object.create(Item.prototype);
@@ -229,7 +235,7 @@ Node.prototype.position = function(x, y, step) {
 Node.prototype.move = function(offsetX, offsetY, step) {
     if (!step)
         step = 1;
-    var newPos = this.pos.getAddedPos(offsetX, offsetY);
+    let newPos = this.pos.getAddedPos(offsetX, offsetY);
     if (newPos.x < 0)
         newPos.x = 0;
     if (newPos.y < 0)
@@ -273,6 +279,16 @@ SchemaStorage.prototype.saveState = function() {
     state.links = copyArray(this.schemaStorage[this.schemaStorage.length - 2].links);
     state.idList = copyArray(this.schemaStorage[this.schemaStorage.length - 2].idList);
     return state;
+};
+
+SchemaStorage.prototype.free = function() {
+    this.schemaStorage.forEach(function(state) {
+        state.nodes.length = 0;
+        state.links.length = 0;
+        state.idList.length = 0;
+    });
+    this.schemaStorage.length = 1;
+    this.storageIndex = 0;
 };
 
 SchemaStorage.prototype.currentState = function() {
@@ -347,8 +363,9 @@ function Schema(viewContext, maxStorageSize) {
 			layer.name = node.name;
             layer.layerType = node.layerType;
 			layer.category = node.category;
-			layer.template = node.template;
+			// layer.template = node.template;
 			layer.pos = node.pos;
+			layer.params = node.params;
 			layer.wires = [];
 			links.forEach(function(link){
 				if (link.nodes[0].id === layer.id) {
@@ -360,21 +377,21 @@ function Schema(viewContext, maxStorageSize) {
     	return schema;
     };
 
-    this.addNode = function(name, layerType,  category, template, id) {
+    this.addNode = function(layer) {
         let node = new Node();
         let nodes = this.currentState().nodes;
 
-        if (id && checkIdForUnique(id)) {
-            node.id = id;
+        if (layer.id && checkIdForUnique(layer.id)) {
+            node.id = layer.id;
             this.currentState().idList.push('' + node.id);
         } else {
             node.id = generateId();
         }
 
-        node.name = name;
-        node.layerType = layerType;
-        node.category = category;
-        node.template = template;
+        node.name = layer.name;
+        node.layerType = layer.layerType;
+        node.category = layer.category;
+        node.params = layer.params;
         nodes.push(node);
         return node;
     };
@@ -393,9 +410,9 @@ function Schema(viewContext, maxStorageSize) {
         nodes.forEach(function(node, index){
             if (node.id === id) {
                 nodes.splice(index, 1);
-                var ind = 0;
+                let ind = 0;
                 while (ind < links.length)	{
-                    var link = links[ind];
+                    let link = links[ind];
                     if (link.nodes.length === 2) {
                         if (link.nodes[0].id === id || link.nodes[1].id === id ) {
                             links.splice(ind, 1);
@@ -450,7 +467,7 @@ function Schema(viewContext, maxStorageSize) {
 
     this.getItemById = function(id, type) {
         if (!type) {
-            var item = this.getNodeById(id);
+            let item = this.getNodeById(id);
             if (!item)
                 item = this.getLinkById(id);
 
@@ -469,17 +486,17 @@ function Schema(viewContext, maxStorageSize) {
                 this.removeLink(id);
             }
         } else {
-            var item = this.getItemById(id);
+            let item = this.getItemById(id);
             this.removeItem(item.id, item.type);
         }
         return true;
     };
 
     this.removeSelectedItems = function() {
-        var delNodes = [];
-        var delLinks = [];
+        let delNodes = [];
+        let delLinks = [];
 
-        var remItems = {
+        let remItems = {
             nodes: [],
             links: []
         };
@@ -500,8 +517,8 @@ function Schema(viewContext, maxStorageSize) {
                 remItems.links.push(links[i]);
             }
             else {
-                for (var a = 0; a < delNodes.length; ++a) {
-                    var nodeId = nodes[delNodes[a]].id;
+                for (let a = 0; a < delNodes.length; ++a) {
+                    let nodeId = nodes[delNodes[a]].id;
                     if (links[i].nodes[0].id === nodeId || links[i].nodes[1].id === nodeId) {
                         delLinks.push(i);
                         remItems.links.push(links[i]);
@@ -511,7 +528,7 @@ function Schema(viewContext, maxStorageSize) {
             }
         }
 
-        var counterDel = 0;
+        let counterDel = 0;
         for (let i = 0; i < delNodes.length; ++i) {
             nodes.splice(delNodes[i] - counterDel, 1);
             counterDel ++;
@@ -541,21 +558,23 @@ function Schema(viewContext, maxStorageSize) {
     };
 
 
-    this.clear = function() {
-
-
-        ///  FIX    !!!!!!!!!!!!!!!!
-        // return storage.createState();
+    this.clear = function(permanently) {
+        if (permanently) {
+            storage.free();
+        } else {
+            storage.createState();
+        }
+        this.currentState();
     };
 
     this.rect = function () {
         let nodes = storage.currentState().nodes;
         if (nodes.length < 1)
             return null;
-        var x_min = Number.MAX_VALUE;
-        var x_max = Number.MIN_VALUE;
-        var y_min = Number.MAX_VALUE;
-        var y_max = Number.MIN_VALUE;
+        let x_min = Number.MAX_VALUE;
+        let x_max = Number.MIN_VALUE;
+        let y_min = Number.MAX_VALUE;
+        let y_max = Number.MIN_VALUE;
 
         nodes.forEach(function (node) {
             let width = 0;

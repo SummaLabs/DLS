@@ -5,7 +5,7 @@ angular.module('graph')
 
 function node($compile, $templateCache, $http, appConfig, $rootScope, coreService) {
 
-	var patternDefinitions = appConfig.svgDefinitions;
+	let patternDefinitions = appConfig.svgDefinitions;
 
 	function NodeCtrl($scope, $element, $document) {
 
@@ -43,9 +43,6 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
 			let shapeIn = angular.element(element[0].querySelector('#' + patternDefinitions.markerShapeIn));
 			let shapeOut = angular.element(element[0].querySelector('#' + patternDefinitions.markerShapeOut));
-
-			// $scope.nodeData.displayData.portIn.element = portIn;
-			// $scope.nodeData.displayData.portOut.element = portOut;
 
 			portInit(portIn, patternDefinitions.markerPortIn, idNode);
 			portInit(portOut, patternDefinitions.markerPortOut, idNode);
@@ -240,7 +237,7 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 	function setShapes(node, shapes) {
         if (!shapes || shapes === 'Unknown')
             return;
-        var text = '';
+        let text = '';
         for (let a = 0; a < shapes.length; a ++) {
             if (shapes[a])
                 text += shapes[a] + ',';
@@ -255,8 +252,8 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
     }
 
     function adaptText(node, textNode, text, scale) {
-        var textRect = node[0].getBoundingClientRect();
-        var textWidth = textNode[0].getComputedTextLength() * scale;
+        let textRect = node[0].getBoundingClientRect();
+        let textWidth = textNode[0].getComputedTextLength() * scale;
 
         if (textWidth < textRect.width)
             return text;

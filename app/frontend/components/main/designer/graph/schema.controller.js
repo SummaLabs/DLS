@@ -78,18 +78,8 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         setScale(scale);
   	};
 
-    // $scope.controlItem.addLayer = function(layer) {
-    //     var node = schema.addNode(layer.name, layer.layerType, layer.category, layer.template, layer.id);
-    //
-    //     if (!node)
-    //         return false;
-		// node.position(layer.pos.x, layer.pos.y, appConfig.svgDefinitions.gridStep);
-    //
-    //     return node.id;
-    // };
-
-    $scope.controlItem.clear = function() {
-        schema.clear();
+    $scope.controlItem.clear = function(permanently) {
+        schema.clear(permanently);
   	};
 
     let addLinks = null;
@@ -112,8 +102,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
             let index = 0;
             let layersInterval = setInterval(() => {
                 $scope.$apply( function() {
-                    // let layerId = $scope.controlItem.addLayer(layers[index]);
-                    let layer = coreService.addLayer(layers[index].layerType, layers[index].pos);
+                    let layer = coreService.addLayer(layers[index], layers[index].pos);
                     if (!layer) {
                         console.log('addLayer:error');
                         return false;
@@ -155,12 +144,12 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                 }
             }
 
-
             initBackground(self, $scope, appConfig.svgDefinitions.gridStep, $element, $compile);
 
 
-            if (layers.length > 1 && clear)
+            if (layers.length > 1 && clear) {
                 $scope.controlItem.reset();
+            }
 
             self.emitEvent(events.ADDED_LAYERS, {});
         };
@@ -169,7 +158,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
     };
 
 
-    var initProgress = function() {
+    let initProgress = function() {
         return function(val, max) {
 
             let curr = val;
@@ -218,7 +207,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
     $scope.controlItem.reset = function() {
         let rect = schema.rect();
         if (rect && self.viewWidth > 0 && self.viewHeight > 0) {
-            var sc = Math.min(self.viewWidth / rect.width(), self.viewHeight / rect.height());
+            let sc = Math.min(self.viewWidth / rect.width(), self.viewHeight / rect.height());
             setScale(sc);
             viewBox(rect.x() * sc, rect.y() * sc, self.viewWidth, self.viewHeight);
         }
@@ -230,31 +219,27 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
     $scope.controlItem.undo = function() {
         schema.undo();
+        schema.getLinks().forEach(function (link) {
+            $scope.$broadcast('links:update_' + link.id, link);
+        });
     };
     $scope.controlItem.redo = function() {
         schema.redo();
+        updateLinks();
     };
 
-    // function addNode(name, layerType, category, template, pos) {
-    //     var node = schema.addNode(name, layerType, category, template);
-    //     if (!node)
-    //         return false;
-    //
-    //     node.position(pos.x, pos.y, appConfig.svgDefinitions.gridStep);
-    //     self.emitEvent(events.ADD_NODE, node);
-    //
-    //     return true;
-    // }
-
 	function addLink(nodeFrom, nodeTo) {
-		var link = schema.addLink(nodeFrom, nodeTo);
+		let link = schema.addLink(nodeFrom, nodeTo);
         if (link)
             self.emitEvent(events.ADD_LINK, link);
 	}
 
-	function clearScene() {
-		schema.clear();
+    function updateLinks() {
+		schema.getLinks().forEach(function (link) {
+            $scope.$broadcast('links:update_' + link.id, link);
+        });
 	}
+
 
     self.emitEvent = function(eventType, data) {
         $scope.$emit(eventType, data);
@@ -292,9 +277,9 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                             $scope.controlItem.setLayers(layers, false);
                         } else {
                             schema.saveState();
-                            coreService.addLayer(data.node.layerType, correctPos);
+                            coreService.addLayerByDefault(data.node.layerType, correctPos);
                         }
-
+                        self.emitEvent(events.ADD_NODE, node);
 					});
 				}
 			}
@@ -391,7 +376,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                 }
             }
 			activeItem = item;
-			self.emitEvent(events.ACTIVATE_ITEM, activeItem);
+            self.emitEvent(events.ACTIVATE_ITEM, activeItem);
 		});
 
 		//Mouse events:
