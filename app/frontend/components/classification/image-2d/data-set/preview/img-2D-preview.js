@@ -17,7 +17,7 @@ angular.module('image2dPreview', ['ngMaterial', 'image2dPaging', 'cl.paging'])
         self.listClasses = [];
         self.$onInit = function () {
             self.listClasses = [];
-            datasetService.getInfoStatWithHistsAboutDB(self.databaseId).then(
+            datasetService.getDataSetMetadataHists(self.databaseId).then(
                 function successCallback(response) {
                     var tdataHist   = response.data.hist.histTrain;
                     var numAll      = response.data.info.numTrain;

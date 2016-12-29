@@ -7,36 +7,42 @@ angular.module('datasetService', [])
 
 function DataSetService($http) {
     var self = this;
-    self.getDatasetsMetadata = function () {
+    
+    self.getDataSetsMetadata = function () {
         return $http({
                 method: 'GET',
                 url: '/dataset/all/metadata/list'
             });
     };
-    self.getInfoStatAboutDB = function (dbID) {
+    
+    self.getDataSetMetadata = function (id) {
         return $http({
-                method: 'POST',
-                url: '/dbpreview/dbinfo/' + dbID
+                method: 'GET',
+                url: '/dataset/' + id + '/metadata'
             });
     };
-    self.getInfoStatWithHistsAboutDB = function (dbID) {
+    
+    self.getDataSetMetadataHists = function (id) {
         return $http({
-                method: 'POST',
-                url: '/dbpreview/dbinfohist/' + dbID
+                method: 'GET',
+                url: '/dataset/' + id + '/metadata/hists'
             });
     };
+    
     self.getImagePreviewForDB = function (dbID) {
         return $http({
                 method: 'POST',
                 url: '/dbpreview/dbimgpreview/' + dbID
             });
     };
+    
     self.getImageMeanForDB = function (dbID) {
         return $http({
                 method: 'POST',
                 url: '/dbpreview/dbimgmean/' + dbID
             });
     };
+    
     self.getDatasetRangeInfo = function (dbId, dbType, labelId, pfrom, pto) {
         return $http({
             method: 'POST',
@@ -50,20 +56,21 @@ function DataSetService($http) {
             }
         });
     };
-    //
+    
     self.getServerPathFromUrlPath = function(urlPath) {
         return $http({
             method: "GET",
             url: "/dbpreview/getserverpath/" + urlPath
         });
     };
+    
     self.chekServerPathFromUrlPath = function (urlPath) {
         return $http({
             method: "GET",
             url: "/dbpreview/checkpath/" + urlPath
         });
     };
-    //
+    
     self.getDatasetInfo = function (dbId) {
         return $http({
                 method: 'POST',
@@ -73,6 +80,7 @@ function DataSetService($http) {
                 }
             });
     };
+    
     self.getDatasetRange = function (dbId, pfrom, pto) {
         return $http({
             method: 'POST',

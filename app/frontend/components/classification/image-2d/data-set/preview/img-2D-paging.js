@@ -27,7 +27,7 @@ angular.module('image2dPaging', ['ngMaterial', 'cl.paging'])
             };
             //
             self.numPerPage = 24;
-            datasetService.getInfoStatWithHistsAboutDB(self.paramDatabase).then(function successCallback(response) {
+            datasetService.getDataSetMetadataHists(self.paramDatabase).then(function successCallback(response) {
                 var tdata       = response.data;
 
                 var tdataHist   = null;

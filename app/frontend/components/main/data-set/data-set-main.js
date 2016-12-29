@@ -13,8 +13,9 @@ angular.module('datasetMain', ['ngMaterial', 'datasetService', 'create2dImgDatas
         controller: function ($scope, $rootScope, $mdDialog, $mdPanel, $timeout, $location, appConfig, datasetService) {
             this._mdPanel = $mdPanel;
             var self = this;
+            
             self.$onInit = function () {
-                datasetService.getDatasetsMetadata().then(
+                datasetService.getDataSetsMetadata().then(
                     function successCallback(response) {
                         self.datasets = response.data;
                     },
@@ -23,8 +24,8 @@ angular.module('datasetMain', ['ngMaterial', 'datasetService', 'create2dImgDatas
                     });
             };
             
-            self.createDialogPreviewDB = function($event,dbId) {
-                datasetService.getInfoStatWithHistsAboutDB(dbId).then(
+            self.previewDataSet = function($event, dbId) {
+                datasetService.getDataSetMetadataHists(dbId).then(
                     function successCallback(response) {
                         self.currentDbInfo = response.data;
                         var parentEl = angular.element(document.body);

@@ -110,7 +110,7 @@
                                 $scope.device = "";
                                 $scope.dataSetSelected = "";
 
-                                var future = datasetService.getDatasetsMetadata();
+                                var future = datasetService.getDataSetsMetadata();
                                 future.then(function mySucces(response) {
                                     response.data.forEach(function (dataSet) {
                                         $scope.dataSets.push(dataSet);

@@ -38,17 +38,17 @@ def dbpreview_db_check_config():
 ###############################
 @dbpreview.route('/dbinfolist/', methods=['GET', 'POST'])
 def dbpreview_db_infolist():
-    jsonData = json.dumps(datasetWatcher.getDatasetsInfoStatList())
+    jsonData = json.dumps(datasetWatcher.get_data_sets_metadata())
     return Response(jsonData, mimetype='application/json')
 
 @dbpreview.route('/dbinfo/<string:dbid>', methods=['GET', 'POST'])
 def dbpreview_db_info(dbid):
-    jsonData = json.dumps(datasetWatcher.getInfoStatAboutDB(dbid))
+    jsonData = json.dumps(datasetWatcher.get_data_set_metadata(dbid))
     return Response(jsonData, mimetype='application/json')
 
 @dbpreview.route('/dbinfohist/<string:dbid>', methods=['GET', 'POST'])
 def dbpreview_db_infohist(dbid):
-    jsonData = json.dumps(datasetWatcher.getInfoStatWithHistsAboutDB(dbid))
+    jsonData = json.dumps(datasetWatcher.get_data_set_metadata_hists(dbid))
     return Response(jsonData, mimetype='application/json')
 
 @dbpreview.route('/dbimgpreview/<string:dbid>', methods=['GET', 'POST'])
