@@ -59,9 +59,9 @@ class DatasetsWatcher:
         if self.dictDbInfo.has_key(dbId):
             return self.dictDbInfo[dbId].getInfoStatWithHists()
 
-    def getPreviewImageDataRawForDB(self, dbId):
-        if self.dictDbInfo.has_key(dbId):
-            return self.dictDbInfo[dbId].getPreviewImageDataRaw()
+    def get_data_set_img_preview(self, id):
+        if self.dictDbInfo.has_key(id):
+            return self.dictDbInfo[id].getPreviewImageDataRaw()
 
     def getMeanImageRawForDB(self, dbId):
         if self.dictDbInfo.has_key(dbId):

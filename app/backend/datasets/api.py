@@ -54,7 +54,7 @@ def dbpreview_db_infohist(dbid):
 @dbpreview.route('/dbimgpreview/<string:dbid>', methods=['GET', 'POST'])
 def dbpreview_db_imgpreview(dbid):
     try:
-        tdata = datasetWatcher.getPreviewImageDataRawForDB(dbid)
+        tdata = datasetWatcher.get_data_set_img_preview(dbid)
     except Exception as err:
         tdata = None
         print (err)

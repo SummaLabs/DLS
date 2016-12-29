@@ -29,10 +29,10 @@ function DataSetService($http) {
             });
     };
     
-    self.getImagePreviewForDB = function (dbID) {
+    self.getDataSetImgPreview = function (id) {
         return $http({
-                method: 'POST',
-                url: '/dbpreview/dbimgpreview/' + dbID
+                method: 'GET',
+                url: '/dataset/' + id + '/img/preview'
             });
     };
     

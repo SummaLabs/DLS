@@ -31,3 +31,13 @@ def data_set_metadata(id):
 def ata_set_metadata_hists(id):
     metadata_hists = json.dumps(datasetWatcher.get_data_set_metadata_hists(id))
     return Response(metadata_hists, mimetype='application/json')
+
+
+@dataset.route('/<string:id>/img/preview', methods=['GET'])
+def data_set_img_preview(id):
+    try:
+        img_data = datasetWatcher.get_data_set_img_preview(id)
+    except Exception as err:
+        img_data = None
+        print (err)
+    return img_data
