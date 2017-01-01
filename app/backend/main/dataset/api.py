@@ -5,7 +5,7 @@ __author__ = 'ar'
 import json
 
 from flask import Blueprint
-from flask import Response
+from flask import request, Response
 
 dataset = Blueprint(__name__, __name__)
 
@@ -41,3 +41,23 @@ def data_set_img_preview(id):
         img_data = None
         print (err)
     return img_data
+
+
+@dataset.route('/<string:id>/img/mean', methods=['GET'])
+def data_set_img_mean(id):
+    try:
+        img_data = datasetWatcher.get_data_set_img_mean(id)
+    except Exception as err:
+        img_data = None
+        print (err)
+    return img_data
+
+
+@dataset.route('/metadata/range', methods=['POST'])
+def data_set_metadata_in_range():
+    metadata = datasetWatcher.get_data_set_metadata_in_range(request.args['id'],
+                                                             request.args['type'],
+                                                             request.args['label'],
+                                                             int(request.args['from']),
+                                                             int(request.args['to']))
+    return Response(json.dumps(metadata), mimetype='application/json')

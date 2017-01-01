@@ -36,23 +36,23 @@ function DataSetService($http) {
             });
     };
     
-    self.getImageMeanForDB = function (dbID) {
+    self.getDataSetImgMean = function (id) {
         return $http({
-                method: 'POST',
-                url: '/dbpreview/dbimgmean/' + dbID
+                method: 'GET',
+                url: '/dataset/' + id + '/img/mean'
             });
     };
     
-    self.getDatasetRangeInfo = function (dbId, dbType, labelId, pfrom, pto) {
+    self.getDataSetMetadataInRange = function (id, type, label, from, to) {
         return $http({
             method: 'POST',
-            url:    '/dbpreview/dbrangeinfo/',
+            url:    '/dataset/metadata/range',
             params: {
-                from:       pfrom,
-                to:         pto,
-                dbid:       dbId,
-                dbtype:     dbType,
-                labelid:    labelId
+                id:       id,
+                type:     type,
+                label:    label,
+                from:     from,
+                to:       to
             }
         });
     };

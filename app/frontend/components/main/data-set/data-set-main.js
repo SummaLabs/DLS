@@ -185,7 +185,7 @@ function DialogControllerPreviewDB($scope, $mdDialog, dbId, dbInfo, datasetServi
     };
 
     $scope.getMeanImage = function () {
-        datasetService.getImageMeanForDB().then(
+        datasetService.getDataSetImgMean().then(
             function successCallback(response) {
                 return response.data;
             },

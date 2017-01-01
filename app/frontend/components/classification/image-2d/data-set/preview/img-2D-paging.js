@@ -71,10 +71,9 @@ angular.module('image2dPaging', ['ngMaterial', 'cl.paging'])
                 console.log(response);
             });
         };
-        //
+        
         function loadPages() {
             if($scope.paging.total>0) {
-                // console.log('Current page is : ' + $scope.paging.current);
                 $scope.currentPage  = $scope.paging.current;
                 self.currentIdx     = self.listIndexes[$scope.currentPage-1];
                 var tmp = [];
@@ -82,10 +81,7 @@ angular.module('image2dPaging', ['ngMaterial', 'cl.paging'])
                 for(var ii=0; ii<numItems; ii++) {
                     tmp.push(self.currentIdx.from + ii);
                 }
-                // self.currentListIdx = tmp;
-                // console.log(self.currentListIdx);
-                //
-                datasetService.getDatasetRangeInfo(
+                datasetService.getDataSetMetadataInRange(
                     self.paramDatabase,
                     self.paramType,
                     self.paramClassIdx,

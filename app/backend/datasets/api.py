@@ -63,7 +63,7 @@ def dbpreview_db_imgpreview(dbid):
 @dbpreview.route('/dbimgmean/<string:dbid>', methods=['GET', 'POST'])
 def dbpreview_db_imgmean(dbid):
     try:
-        tdata = datasetWatcher.getMeanImageRawForDB(dbid)
+        tdata = datasetWatcher.get_data_set_img_mean(dbid)
     except Exception as err:
         tdata = None
         print (err)
@@ -85,7 +85,7 @@ def dataset_dbrangeinfo():
     labelid = request.args['labelid']
     tfrom   = int(request.args['from'])
     tto     = int(request.args['to'])
-    tret    = datasetWatcher.getDbRangeInfo(dbid,dbtype, labelid, tfrom, tto)
+    tret    = datasetWatcher.get_data_set_metadata_in_range(dbid, dbtype, labelid, tfrom, tto)
     # tret  = []
     # for xx in range(tfrom,tto):
     #     tret.append(tmp[xx])

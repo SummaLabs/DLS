@@ -51,27 +51,27 @@ class DatasetsWatcher:
             tret.append(db.getInfoStatWithHists())
         return tret
 
-    def get_data_set_metadata(self, dbId):
-        if self.dictDbInfo.has_key(dbId):
-            return self.dictDbInfo[dbId].getInfoStat()
+    def get_data_set_metadata(self, id):
+        if self.dictDbInfo.has_key(id):
+            return self.dictDbInfo[id].getInfoStat()
 
-    def get_data_set_metadata_hists(self, dbId):
-        if self.dictDbInfo.has_key(dbId):
-            return self.dictDbInfo[dbId].getInfoStatWithHists()
+    def get_data_set_metadata_hists(self, id):
+        if self.dictDbInfo.has_key(id):
+            return self.dictDbInfo[id].getInfoStatWithHists()
 
     def get_data_set_img_preview(self, id):
         if self.dictDbInfo.has_key(id):
             return self.dictDbInfo[id].getPreviewImageDataRaw()
 
-    def getMeanImageRawForDB(self, dbId):
-        if self.dictDbInfo.has_key(dbId):
-            return self.dictDbInfo[dbId].getMeanImageDataRaw()
+    def get_data_set_img_mean(self, id):
+        if self.dictDbInfo.has_key(id):
+            return self.dictDbInfo[id].getMeanImageDataRaw()
 
     def getRawImageFromDB(self, dbId, ptype, imdIdx):
         if self.dictDbInfo.has_key(dbId):
             return self.dictDbInfo[dbId].getRawImageFromDB(ptype, imdIdx)
 
-    def getDbRangeInfo(self, dbId, ptype, labelIdx, idxFrom, idxTo):
+    def get_data_set_metadata_in_range(self, dbId, ptype, labelIdx, idxFrom, idxTo):
         if self.dictDbInfo.has_key(dbId):
             return self.dictDbInfo[dbId].getDbRangeInfo(ptype, labelIdx, idxFrom, idxTo)
 
