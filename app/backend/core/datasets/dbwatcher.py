@@ -67,7 +67,7 @@ class DatasetsWatcher:
         if self.dictDbInfo.has_key(id):
             return self.dictDbInfo[id].getMeanImageDataRaw()
 
-    def getRawImageFromDB(self, dbId, ptype, imdIdx):
+    def get_img_from_data_set(self, dbId, ptype, imdIdx):
         if self.dictDbInfo.has_key(dbId):
             return self.dictDbInfo[dbId].getRawImageFromDB(ptype, imdIdx)
 

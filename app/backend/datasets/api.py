@@ -72,7 +72,7 @@ def dbpreview_db_imgmean(dbid):
 @dbpreview.route('/getdbimgdata/<string:dbid>/<string:ptype>/<string:imgidx>', methods=['GET', 'POST'])
 def dbpreview_db_imgfromdb(dbid, ptype, imgidx):
     try:
-        tdata = datasetWatcher.getRawImageFromDB(dbid, ptype, imgidx)
+        tdata = datasetWatcher.get_img_from_data_set(dbid, ptype, imgidx)
     except Exception as err:
         tdata = None
         print (err)

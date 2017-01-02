@@ -28,7 +28,7 @@ def data_set_metadata(id):
 
 
 @dataset.route('/<string:id>/metadata/hists', methods=['GET'])
-def ata_set_metadata_hists(id):
+def data_set_metadata_hists(id):
     metadata_hists = json.dumps(datasetWatcher.get_data_set_metadata_hists(id))
     return Response(metadata_hists, mimetype='application/json')
 
@@ -61,3 +61,19 @@ def data_set_metadata_in_range():
                                                              int(request.args['from']),
                                                              int(request.args['to']))
     return Response(json.dumps(metadata), mimetype='application/json')
+
+
+@dataset.route('/<string:dsId>/<string:dsType>/img/<string:imgIndex>', methods=['GET'])
+def get_img_from_data_set(dsId, dsType, imgIndex):
+    try:
+        img = datasetWatcher.get_img_from_data_set(dsId, dsType, imgIndex)
+    except Exception as err:
+        img = None
+        print (err)
+    return img
+
+
+@dataset.route('/delete/<path:id>')
+def delete(id):
+    datasetWatcher.delete(id)
+    return Response(json.dumps(''), mimetype='application/json')

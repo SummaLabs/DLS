@@ -56,48 +56,12 @@ function DataSetService($http) {
             }
         });
     };
-    
-    self.getServerPathFromUrlPath = function(urlPath) {
-        return $http({
-            method: "GET",
-            url: "/dbpreview/getserverpath/" + urlPath
-        });
-    };
-    
-    self.chekServerPathFromUrlPath = function (urlPath) {
-        return $http({
-            method: "GET",
-            url: "/dbpreview/checkpath/" + urlPath
-        });
-    };
-    
-    self.getDatasetInfo = function (dbId) {
-        return $http({
-                method: 'POST',
-                url: '/dbpreview/datasetinfo/',
-                data: {
-                    dbid:   dbId
-                }
-            });
-    };
-    
-    self.getDatasetRange = function (dbId, pfrom, pto) {
-        return $http({
-            method: 'POST',
-            url:    '/dbpreview/datasetrange/',
-            params: {
-                from:   pfrom,
-                to:     pto,
-                dbid:   dbId
-            }
-        });
-    };
 
-    self.deleteDataset = function (dbId){
-        console.log(dbId);
+    self.deleteDataset = function (id){
+        console.log(id);
         return $http({
             method: "GET",
-            url: "/dbpreview/delete/"+ dbId
+            url: "/dataset/delete/"+ id
         })
     };
 }
