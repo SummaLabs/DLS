@@ -7,7 +7,6 @@ from flask_sockets import Sockets
 
 from app.backend import app_flask
 from app.backend.core.models.api import models
-from app.backend.datasets.api import dbpreview
 from app.backend.main.dataset.api import dataset
 from app.backend.device.api import device
 from app.backend.file_manager.api import file_manager
@@ -21,7 +20,6 @@ sockets = Sockets(app=app_flask)
 app_flask.register_blueprint(network, url_prefix='/network')
 app_flask.register_blueprint(file_manager, url_prefix='/fm')
 app_flask.register_blueprint(images, url_prefix='/images')
-app_flask.register_blueprint(dbpreview, url_prefix='/dbpreview')
 app_flask.register_blueprint(dataset, url_prefix='/dataset')
 app_flask.register_blueprint(device, url_prefix='/device')
 app_flask.register_blueprint(task, url_prefix='/task')
