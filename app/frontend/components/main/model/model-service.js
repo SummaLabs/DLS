@@ -2,25 +2,25 @@ angular.module('modelService', [])
     .service('modelService', ['$http', ModelService]);
 
 function ModelService($http) {
-    
-    this.loadAllModels = function() {
+
+    this.getModelsMetadata = function () {
         return $http({
-            method: "GET",
-            url: "/model/load/all"
-        })
+            method: 'GET',
+            url: '/model/all/metadata/list'
+        });
     };
 
-    this.inference = function (imagesPath, modelId) {
+    this.inference = function (images, modelId) {
         return $http({
             method: 'POST',
-            url: '/models/inference/',
+            url: '/model/inference/',
             data: {
-                'imagesPath': imagesPath,
+                'images': images,
                 'modelId': modelId
             }
         })
     };
- 
+
     this.checkNetworkFast = function (network) {
         return $http({
             method: 'POST',
@@ -36,13 +36,6 @@ function ModelService($http) {
             url: '/models/calcshape/',
             data: network,
             headers: {'Content-Type': 'application/json;charset=utf-8'}
-        });
-    };
-
-    this.listInfo = function () {
-        return $http({
-            method: 'POST',
-            url: '/models/list/info/'
         });
     };
     
