@@ -10,7 +10,7 @@ import random
 
 from app.backend.core.models.keras_trainer_v4 import KerasTrainer
 from app.backend.core.models.mdlpreview import ModelTaskDirBuilder
-from app.backend.core.models.api import modelsWatcher
+from app.backend.model.api import modelsWatcher
 from app.backend.core import utils as dlsutils
 
 

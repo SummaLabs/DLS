@@ -16,7 +16,7 @@ import sklearn
 from sklearn.metrics import roc_auc_score
 
 from app.backend.core import utils as dlsutils
-from app.backend.core.models.api import modelsWatcher
+from app.backend.model.api import modelsWatcher
 
 from task import Task
 

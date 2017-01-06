@@ -21,19 +21,10 @@ function ModelService($http) {
         })
     };
 
-    this.checkNetworkFast = function (network) {
+    this.validateNetwork = function (network) {
         return $http({
             method: 'POST',
-            url: '/models/checkmodel/',
-            data: network,
-            headers: {'Content-Type': 'application/json;charset=utf-8'}
-        });
-    };
-
-    this.calcModelShape = function (network) {
-        return $http({
-            method: 'POST',
-            url: '/models/calcshape/',
+            url: '/model/network/validate',
             data: network,
             headers: {'Content-Type': 'application/json;charset=utf-8'}
         });
@@ -49,12 +40,13 @@ function ModelService($http) {
     this.loadModelFeatureSpace = function(modelId) {
         return $http({
             method: "GET",
-            url: "/models/fs/load/" + modelId
-        })}
+            url: "/model/" + modelId + "/feature-space/load"
+        })};
+    
     this.loadLayersVisualization = function (modelId) {
         return $http({
             method: 'GET',
-            url: '/models/layers/visualization/' + modelId
+            url: '/model/layers/visualization/' + modelId
         });
     };
 }

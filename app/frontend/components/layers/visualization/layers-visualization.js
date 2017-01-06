@@ -5,7 +5,7 @@ angular.module('layersVisualization', ['ngMaterial'])
         bindings: {
             model: '<'
         },
-        controller: function ($scope, $mdDialog, modelService) {
+        controller: function ($scope, $mdDialog, modelService, appConfig) {
             var self = this;
 
 
@@ -40,6 +40,7 @@ angular.module('layersVisualization', ['ngMaterial'])
                 update(model);
             });
             function update(model) {
+                var imagesApiPath = appConfig.image.loadApiUrl;
                 modelService.loadLayersVisualization(model.id).then(
                     function successCallback(response) {
                         self.layers.length = 0;
@@ -48,7 +49,7 @@ angular.module('layersVisualization', ['ngMaterial'])
                                 name: item.layerName,
                                 type: item.layerType,
                                 shape: item.layerShape,
-                                previewPath: item.previewPath,
+                                previewPath: imagesApiPath + item.previewPath
                             });
                         });
 

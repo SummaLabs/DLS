@@ -6,7 +6,6 @@ from flask import send_from_directory
 from flask_sockets import Sockets
 
 from app.backend import app_flask
-from app.backend.core.models.api import models
 from app.backend.main.dataset.api import dataset
 from app.backend.device.api import device
 from app.backend.file_manager.api import file_manager
@@ -24,7 +23,6 @@ app_flask.register_blueprint(dataset, url_prefix='/dataset')
 app_flask.register_blueprint(device, url_prefix='/device')
 app_flask.register_blueprint(task, url_prefix='/task')
 app_flask.register_blueprint(model, url_prefix='/model')
-app_flask.register_blueprint(models, url_prefix='/models')
 
 @app_flask.route('/')
 @app_flask.route('/index')
