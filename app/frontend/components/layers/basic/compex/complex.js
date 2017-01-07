@@ -3,7 +3,6 @@ angular.module('complex', [])
 
 function Complex($http) {
 
-    // let structurePath = "frontend/components/layers/basic/compex/complex.json";
     let complexLayers = {
         inception: {
             "name": "Inception",
@@ -69,7 +68,7 @@ function Complex($http) {
     function loadStructure(name) {
         return $http({
             method: "GET",
-                url: "/network/complex/" + name
+                url: "/network/complex/layer/" + name
         })
     }
 

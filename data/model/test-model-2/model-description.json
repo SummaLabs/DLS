@@ -1,8 +1,0 @@
-{
-  "name":"test-model-2",
-  "date":"2016.09.20 22:13:11",
-  "network":"demo_network",
-  "dataSet":"dataset-cat-vs-dogs",
-  "type": "image-classification",
-  "size":"112KB"
-}
