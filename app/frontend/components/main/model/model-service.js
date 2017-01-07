@@ -33,7 +33,7 @@ function ModelService($http) {
     this.loadModelROCsData = function(modelId) {
         return $http({
             method: "GET",
-            url: "/images/rocs/load/" + modelId
+            url: "/model/roc-analysis/load/" + modelId
         })
     };
     

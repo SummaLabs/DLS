@@ -40,7 +40,7 @@ angular.module('layersVisualization', ['ngMaterial'])
                 update(model);
             });
             function update(model) {
-                var imagesApiPath = appConfig.image.loadApiUrl;
+                var loadImageUrl = appConfig.util.loadImageUrl;
                 modelService.loadLayersVisualization(model.id).then(
                     function successCallback(response) {
                         self.layers.length = 0;
@@ -49,7 +49,7 @@ angular.module('layersVisualization', ['ngMaterial'])
                                 name: item.layerName,
                                 type: item.layerType,
                                 shape: item.layerShape,
-                                previewPath: imagesApiPath + item.previewPath
+                                previewPath: loadImageUrl + item.previewPath
                             });
                         });
 

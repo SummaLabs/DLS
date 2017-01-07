@@ -114,6 +114,23 @@ def load_feature_space(model_id):
     return Response(json.dumps(modelsWatcher.getFeatureSpace(model_id)), mimetype='application/json')
 
 
+@model.route('/roc-analysis/load/<path:model_id>')
+def load_model_rocs(model_id):
+    if request.method == 'GET':
+        roc_analysis = []
+        model_dir = os.path.join(models_dir, model_id)
+        for file in os.listdir(model_dir):
+            file_path = os.path.join(model_dir, file)
+            if os.path.isdir(file_path) and ("eval_roc" in file_path):
+                try:
+                    with open(os.path.join(file_path, "cfg.json"), 'r') as f:
+                        roc_analysis.append(json.load(f))
+                except IOError as e:
+                    print "ROC analysis file not found: {0}".format(e.strerror)
+
+        return Response(json.dumps(roc_analysis), mimetype='application/json')
+
+
 @model.route('/layers/visualization/<path:model_id>')
 def model_layer_visualization(model_id):
     if request.method == "GET":

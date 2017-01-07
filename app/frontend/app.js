@@ -12,7 +12,7 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'layerService',
     'googlechart',
     'FileManagerApp',
-                          'featureSpace'
+    'featureSpace'
 ]);
 
 
@@ -37,8 +37,8 @@ angular.module('dlsApp')
             pickFolder: true,
             singleSelection: true
         },
-        image: {
-            loadApiUrl: '/images/load?imagePath='
+        util: {
+            loadImageUrl: '/util/image/load?imagePath='
         }
     }).config(['$compileProvider', function ($compileProvider) {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(|blob|):/);

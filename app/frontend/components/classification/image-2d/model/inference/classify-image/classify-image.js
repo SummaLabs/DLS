@@ -108,12 +108,12 @@
                     };
 
                     function showNClasses(images, classesNumber) {
-                        var imagesApiPath = appConfig.image.loadApiUrl;
+                        var loadImageUrl = appConfig.util.loadImageUrl;
                         var i = 0;
                         images.forEach(function (result) {
                             var classifiedImage = {
                                 'classProbabilities': result.classProbabilities.slice(0, classesNumber),
-                                'imagePath': imagesApiPath + result.imagePath
+                                'imagePath': loadImageUrl + result.imagePath
                             };
                             $scope.images.push(classifiedImage);
                             i++;
