@@ -1,7 +1,7 @@
 import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-DLS_MODELS_REL_PATH = '/data/models'
+DLS_MODELS_REL_PATH = 'data/models'
 
 class Config(object):
     DEBUG = True
