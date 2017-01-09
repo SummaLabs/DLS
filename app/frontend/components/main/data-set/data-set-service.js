@@ -58,7 +58,6 @@ function DataSetService($http) {
     };
 
     self.deleteDataset = function (id){
-        console.log(id);
         return $http({
             method: "GET",
             url: "/dataset/delete/"+ id

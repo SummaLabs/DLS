@@ -1,5 +1,8 @@
 import os
 import glob
+
+import shutil
+
 from app.backend.api import app_flask
 from dbimageinfo import DatasetImage2dInfo
 
@@ -76,10 +79,10 @@ class DatasetsWatcher:
             return self.dictDbInfo[dbId].getDbRangeInfo(ptype, labelIdx, idxFrom, idxTo)
 
     def delete(self, dbId):
-        if self.dictDbInfo.has_key(dbId):
-            print(self.dictDbInfo[dbId])
-
-            return
+        dirname = os.path.join(self.dirDatasets, dbId)
+        if os.path.exists(dirname):
+            shutil.rmtree(dirname)
+        return True
 
 ###############################
 if __name__ == '__main__':

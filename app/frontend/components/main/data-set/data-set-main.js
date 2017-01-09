@@ -51,12 +51,6 @@ angular.module('datasetMain', ['ngMaterial', 'datasetService', 'create2dImgDatas
                 datasetService.deleteDataset(dbId).then(
                     function successCallback(response) {
                         self.datasets = response.data;
-                        for (let a = 0;a < self.datasets.length; a++) {
-                            if (self.datasets.dbId === dbId) {
-                                self.savedNetworks.splice(a, 1);
-                                break;
-                            }
-                        }
                     },
                     function errorCallback(response) {
                         console.log(response.data);
