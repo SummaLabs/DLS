@@ -1,4 +1,3 @@
-
 import os
 import json
 import subprocess
@@ -9,18 +8,18 @@ import logging
 logger = logging.getLogger('DLS')
 
 
-def generate_system_info():
+def get_system_info():
     info = {}
-    gpu_info = generate_gpu_info()
-    if (len(gpu_info) > 0):
+    gpu_info = get_gpu_info()
+    if len(gpu_info) > 0:
         gpu_pids = generate_gpu_pids()
         for g in gpu_info:
             g['gpu_pids'] = filter(lambda x: x['gpu'] == g['id'], gpu_pids)
         info['gpu'] = gpu_info
         info['gpuSelected'] = gpu_info[0]['id']
 
-    info['mem'] = generate_mem_info()
-    info['cpu'] = generate_cpu_info()
+    info['mem'] = get_mem_info()
+    info['cpu'] = get_cpu_info()
     info['ts'] = datetime.datetime.now().time().strftime("%H:%M:%S")
     return json.dumps(info)
 
@@ -31,7 +30,7 @@ def retrieve_tokens(s, line_num):
 
 
 # Get Memory Summary info
-def generate_mem_info():
+def get_mem_info():
     try:
         output = execute_bash_command("free -m")
         mem_values = retrieve_tokens(output, 1)
@@ -45,7 +44,7 @@ def generate_mem_info():
 
 
 # Query GPU Info from OS
-def generate_gpu_info():
+def get_gpu_info():
     gpu_info = []
     try:
         bash_command = "nvidia-smi --query-gpu=index,name,uuid,memory.total,memory.free,memory.used,count,utilization.gpu,utilization.memory --format=csv"
@@ -62,10 +61,11 @@ def generate_gpu_info():
 
     return gpu_info
 
+
 def get_available_devices_list():
     tret = []
-    cpuInfo=generate_cpu_info()
-    memInfo=generate_mem_info()
+    cpuInfo=get_cpu_info()
+    memInfo=get_mem_info()
     tmemTotal    = int(memInfo['total'])
     tmemFreeReal = int(memInfo['free']) #+int(memInfo['buffers'])+int(memInfo['cached'])
     tmemUsage    = tmemTotal - tmemFreeReal
@@ -79,7 +79,7 @@ def get_available_devices_list():
         'isbusy':       False,
         'isAvalible': True
     })
-    gpuInfo = generate_gpu_info()
+    gpuInfo = get_gpu_info()
     if (len(gpuInfo) == 0):
         tret.append({'isAvalible': False, 'type': 'gpu'})
         return tret
@@ -110,6 +110,7 @@ def get_available_devices_list():
         })
     return tret
 
+
 def get_available_devices_dict():
     tret = {}
     tmp = get_available_devices_list()
@@ -117,11 +118,14 @@ def get_available_devices_dict():
         tret[kk] = tmp
     return tret
 
-def get_available_devices_list_json():
+
+def get_available_devices():
     return json.dumps(get_available_devices_list())
+
 
 def get_available_devices_dict_json():
     return json.dumps(get_available_devices_dict())
+
 
 # Query GPU Processes info
 def generate_gpu_pids():
@@ -148,7 +152,7 @@ def generate_gpu_pids():
 
 
 # Query CPU Info from OS
-def generate_cpu_info():
+def get_cpu_info():
     empty_info = {'id': 'cpu', 'name': '-', 'cores': '-', 'cache': '-'}
     try:
         output = execute_bash_command("cat /proc/cpuinfo")

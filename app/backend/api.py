@@ -7,7 +7,7 @@ from flask_sockets import Sockets
 
 from app.backend import app_flask
 from app.backend.main.dataset.api import dataset
-from app.backend.device.api import device
+from app.backend.env.api import environment
 from app.backend.file_manager.api import file_manager
 from app.backend.util.api import util
 from app.backend.model.api import model
@@ -20,7 +20,7 @@ app_flask.register_blueprint(network, url_prefix='/network')
 app_flask.register_blueprint(model, url_prefix='/model')
 app_flask.register_blueprint(dataset, url_prefix='/dataset')
 app_flask.register_blueprint(task, url_prefix='/task')
-app_flask.register_blueprint(device, url_prefix='/device')
+app_flask.register_blueprint(environment, url_prefix='/environment')
 app_flask.register_blueprint(file_manager, url_prefix='/fm')
 app_flask.register_blueprint(util, url_prefix='/util')
 

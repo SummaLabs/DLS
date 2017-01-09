@@ -9,6 +9,7 @@ from theano.sandbox.cuda import dnn
 logger = logging.getLogger("dls")
 cfg = config.Config()
 
+
 def get_base_dir():
     basedir = os.path.abspath(os.path.dirname(__file__))
     return basedir + '/../../..'
@@ -20,11 +21,11 @@ def check_required_packages():
     f = open(req_file, "r")
     for line in f:
         name = line.split("==")[0]
-        result[name] = checkpackageinstalled(name, '')
+        result[name] = check_installed_packages(name, '')
     return result
 
 
-def checkpackageinstalled(name, version):
+def check_installed_packages(name, version):
     installed_packages = pip.get_installed_distributions()
     for i in installed_packages:
         if i.key.lower() == name.lower() and (i.version == version or not version):
@@ -96,8 +97,7 @@ def check_cudnn():
     return result
 
 
-
-def check_environment():
+def check():
     """High level method. Returns Map with results of environment chech"""
     result =  {}
     result['packages'] = check_required_packages()
@@ -109,7 +109,7 @@ def check_environment():
 
 if __name__ == '__main__':
 
-    info = check_environment()
+    info = check()
     print(info)
     if info['cuda']['return'] == 0:
         print 'CUDA: OK'
