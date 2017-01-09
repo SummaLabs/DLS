@@ -76,4 +76,5 @@ def get_img_from_data_set(dsId, dsType, imgIndex):
 @dataset.route('/delete/<path:id>')
 def delete(id):
     datasetWatcher.delete(id)
-    return Response(json.dumps(''), mimetype='application/json')
+    datasetWatcher.refreshDatasetsInfo()
+    return list_data_sets_metadata()

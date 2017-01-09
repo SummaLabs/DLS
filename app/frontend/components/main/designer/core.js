@@ -296,6 +296,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         }
 
         function setUpNetwork() {
+            console.log('core:setUpNetwork');
             self.svgControl.clear(true);
             self.svgControl.setLayers(networkDataService.getLayers());
         }
