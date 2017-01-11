@@ -23,7 +23,7 @@ from task import Task
 import keras
 from keras import backend as K
 
-from app.backend.main.dataset.api import datasetWatcher
+from app.backend.dataset.api import datasetWatcher
 from app.backend.core.models.keras_trainer_v4 import KerasTrainer as ModelProcessor
 from app.backend.core.models.cfg import PREFIX_EVAL_ROC_DIR, CFG_EVAL_ROC, PREFIX_EVAL_ROC_TABLE, PREFIX_FSPACE_DIR, PREFIX_FSPACE_FSP
 from app.backend.core import utils as dlsutils

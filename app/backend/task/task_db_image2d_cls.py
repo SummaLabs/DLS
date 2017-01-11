@@ -15,7 +15,7 @@ import skimage.io as skio
 from app.backend.core import utils as dlsutils
 from app.backend.core.datasets.dbbuilder import DBImage2DBuilder, Progressor
 from app.backend.core.datasets.imgproc2d import ImageTransformer2D
-from app.backend.main.dataset.api import datasetWatcher
+from app.backend.dataset.api import datasetWatcher
 from task import Task
 
 

@@ -4,7 +4,7 @@ from flask_sockets import Sockets
 from app.backend import app_flask
 from app.backend.env.api import environment
 from app.backend.file_manager.api import file_manager
-from app.backend.main.dataset.api import dataset
+from app.backend.dataset.api import dataset
 from app.backend.model.api import model
 from app.backend.network.api import network
 from app.backend.task.api import task

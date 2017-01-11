@@ -292,7 +292,7 @@ class DLSDesignerFlowsParser:
         # (2) Generate dict-based Json Kearas model (from DLS model representation)
         if isUseDatasetWatcher:
             # (2.1) Import pointer to DatasetWatcher
-            from app.backend.main.dataset.api import datasetWatcher as dbWatcher
+            from app.backend.dataset.api import datasetWatcher as dbWatcher
             from batcher_image2d import BatcherImage2DLMDB
             modelJson, tmpLstDatasetIdx = self.generateModelKerasConfigJson(dbWatcher=dbWatcher)
             if len(tmpLstDatasetIdx)<0:
