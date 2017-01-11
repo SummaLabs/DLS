@@ -414,8 +414,8 @@ if __name__=='__main__':
     dbWatcher.refreshDatasetsInfo()
     #
     foutJson = 'keras-model-generated-db.json'
-    # fnFlowJson = '../../../../data/network/saved/testnet_multi_input_multi_output_v1.json'
-    fnFlowJson = '../../../../data/network/saved/test_simple_cnn_model1.json'
+    fnFlowJson = '../../../../data/network/saved/testnet_multi_input_multi_output_v1.json'
+    # fnFlowJson = '../../../../data/network/saved/test_simple_cnn_model1.json'
     flowParser = DLSDesignerFlowsParser(fnFlowJson)
     flowParser.cleanAndValidate()
     # (1) Build connected and validated Model Node-flow (DLS-model-representation)
@@ -432,5 +432,5 @@ if __name__=='__main__':
     for ii, ll in enumerate(sortedFlow):
         print ('[%d] %s\t: %s' % (ii, ll.type(), ll))
     # (2) Generate dict-based Json Kearas model (from DLS model representation)
-    modelJson, lstDBIdx = flowParser.generateModelKerasConfigJson(dbWatcher=dbWatcher)
-    keras.models.model_from_config(modelJson).summary()
+    # modelJson, lstDBIdx = flowParser.generateModelKerasConfigJson(dbWatcher=dbWatcher)
+    # keras.models.model_from_config(modelJson).summary()
