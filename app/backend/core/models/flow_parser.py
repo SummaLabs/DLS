@@ -189,24 +189,40 @@ class DLSDesignerFlowsParser:
     def exportConfigFlow(self, fout):
         self.checkIsOk()
         self.exportConfig2Json(self.configFlow, fout=fout)
-    def generateModelKerasConfigJson(self, modelName='model_1', dbWatcher=None):
-        self.checkIsOk()
-        if self.configFlowLinked is None:
-            raise Exception('Node-linked Flow is not prepared, please call ::buildConnectedFlow() before!')
-        # (0) Prepare topological sorted model flow
+    def _topoSort(self, linkedFlow):
         tmpIdxDict = {}
-        for ii,ll in enumerate(self.configFlowLinked):
+        for ii, ll in enumerate(linkedFlow):
             tmpIdxDict[ll] = ii
         tmpTopoDict = {}
-        for ii, ll in enumerate(self.configFlowLinked):
+        for ii, ll in enumerate(linkedFlow):
             tmpIdxSet = set({})
             if ll.outNode is not None:
                 for kk in ll.outNode:
                     tmpIdxSet.add(tmpIdxDict[kk])
             tmpTopoDict[ii] = tmpIdxSet
-        # sortedFlowIdx  = list(toposort.toposort(tmpTopoDict))[::-1]
         sortedFlowIdx = list(toposort.toposort_flatten(tmpTopoDict))[::-1]
-        self.configFlowLinkedSorted = [self.configFlowLinked[idx] for idx in sortedFlowIdx]
+        retFlowLinkedSorted = [linkedFlow[idx] for idx in sortedFlowIdx]
+        return retFlowLinkedSorted
+    def generateModelKerasConfigJson(self, modelName='model_1', dbWatcher=None):
+        self.checkIsOk()
+        if self.configFlowLinked is None:
+            raise Exception('Node-linked Flow is not prepared, please call ::buildConnectedFlow() before!')
+        # (0) Prepare topological sorted model flow
+        self.configFlowLinkedSorted = self._topoSort(self.configFlowLinked)
+        # >---------------------REMOVE-----------------<
+        # tmpIdxDict = {}
+        # for ii,ll in enumerate(self.configFlowLinked):
+        #     tmpIdxDict[ll] = ii
+        # tmpTopoDict = {}
+        # for ii, ll in enumerate(self.configFlowLinked):
+        #     tmpIdxSet = set({})
+        #     if ll.outNode is not None:
+        #         for kk in ll.outNode:
+        #             tmpIdxSet.add(tmpIdxDict[kk])
+        #     tmpTopoDict[ii] = tmpIdxSet
+        # sortedFlowIdx = list(toposort.toposort_flatten(tmpTopoDict))[::-1]
+        # self.configFlowLinkedSorted = [self.configFlowLinked[idx] for idx in sortedFlowIdx]
+        # >---------------------REMOVE-----------------<
         #FIXME: this is a temporary solution
         tmpExcludeNodes={'dataoutput'}
         # (1) Basic model json-template
@@ -366,10 +382,32 @@ class DLSDesignerFlowsParser:
             kerasTrainer.model = model
         return (kerasTrainer, cfgJsonSolver)
 
+def precalculateShapes(sortedFlow):
+    # (1) clean old shape info
+    for nn in sortedFlow:
+        nn.cleanShapes()
+    # (2) precalculate Input/Output shapes
+    for ii,nn in enumerate(sortedFlow):
+        if (nn.inpNode is None) and (nn.shapeInp is None):
+            raise Exception('Invalid Network Flow (disconnected graphs currently not supported) '
+                            'or flow is not topologically sorted (non-sorted Flow currently not supported)!')
+        if not nn.isInputNode():
+            if nn.isMultipleInputNode():
+                tinpShape = []
+                for ll in nn.inpNode:
+                    tinpShape.append(ll.shapeOut)
+            else:
+                tinpShape = nn.inpNode[0].shapeOut
+        else:
+            tinpShape = nn.shapeInp
+        toutShape = nn._getLayer().get_output_shape_for(tinpShape)
+        nn.shapeInp = tinpShape
+        nn.shapeOut = toutShape
+
 ####################################
 if __name__=='__main__':
     import app.backend.core.utils as dlsutils
-    from app.backend.core.datasets.dbpreview import DatasetsWatcher
+    from app.backend.core.datasets.dbwatcher import DatasetsWatcher
     #
     dirData = dlsutils.getPathForDatasetDir()
     dbWatcher = DatasetsWatcher(dirData)
@@ -382,6 +420,17 @@ if __name__=='__main__':
     flowParser.cleanAndValidate()
     # (1) Build connected and validated Model Node-flow (DLS-model-representation)
     flowParser.buildConnectedFlow()
+    print ('----[ Network Flow]----')
+    for ii, ll in enumerate(flowParser.configFlowLinked):
+        print (ii," : ", ll)
+    sortedFlow = flowParser._topoSort(flowParser.configFlowLinked)
+    print ('----[ Topologically Sorted Flow]----')
+    for ii, ll in enumerate(sortedFlow):
+        print (ii, " : ", ll)
+    precalculateShapes(sortedFlow)
+    print ('----[ Flow With Shapes]----')
+    for ii, ll in enumerate(sortedFlow):
+        print ('[%d] %s\t: %s' % (ii, ll.type(), ll))
     # (2) Generate dict-based Json Kearas model (from DLS model representation)
     modelJson, lstDBIdx = flowParser.generateModelKerasConfigJson(dbWatcher=dbWatcher)
     keras.models.model_from_config(modelJson).summary()
