@@ -12,7 +12,7 @@ def get_system_info():
     return Response(hardware.get_system_info(), mimetype='application/json')
 
 
-@environment.route('/environment/available', methods=["GET"])
+@environment.route('/device/available', methods=["GET"])
 def get_available_devices():
     return Response(hardware.get_available_devices(), mimetype='application/json')
 
