@@ -3,93 +3,64 @@
  */
 
 angular.module('datasetService', [])
-    .service('datasetService', ['$http', DBInfoService]);
+    .service('datasetService', ['$http', DataSetService]);
 
-function DBInfoService($http) {
+function DataSetService($http) {
     var self = this;
-    self.getDatasetsInfoStatList = function () {
+    
+    self.getDataSetsMetadata = function () {
         return $http({
-                method: 'POST',
-                url: '/dbpreview/dbinfolist/'
+                method: 'GET',
+                url: '/dataset/all/metadata/list'
             });
     };
-    self.getInfoStatAboutDB = function (dbID) {
+    
+    self.getDataSetMetadata = function (id) {
         return $http({
-                method: 'POST',
-                url: '/dbpreview/dbinfo/' + dbID
+                method: 'GET',
+                url: '/dataset/' + id + '/metadata'
             });
     };
-    self.getInfoStatWithHistsAboutDB = function (dbID) {
+    
+    self.getDataSetMetadataHists = function (id) {
         return $http({
-                method: 'POST',
-                url: '/dbpreview/dbinfohist/' + dbID
+                method: 'GET',
+                url: '/dataset/' + id + '/metadata/hists'
             });
     };
-    self.getImagePreviewForDB = function (dbID) {
+    
+    self.getDataSetImgPreview = function (id) {
         return $http({
-                method: 'POST',
-                url: '/dbpreview/dbimgpreview/' + dbID
+                method: 'GET',
+                url: '/dataset/' + id + '/img/preview'
             });
     };
-    self.getImageMeanForDB = function (dbID) {
+    
+    self.getDataSetImgMean = function (id) {
         return $http({
-                method: 'POST',
-                url: '/dbpreview/dbimgmean/' + dbID
+                method: 'GET',
+                url: '/dataset/' + id + '/img/mean'
             });
     };
-    self.getDatasetRangeInfo = function (dbId, dbType, labelId, pfrom, pto) {
+    
+    self.getDataSetMetadataInRange = function (id, type, label, from, to) {
         return $http({
             method: 'POST',
-            url:    '/dbpreview/dbrangeinfo/',
+            url:    '/dataset/metadata/range',
             params: {
-                from:       pfrom,
-                to:         pto,
-                dbid:       dbId,
-                dbtype:     dbType,
-                labelid:    labelId
-            }
-        });
-    };
-    //
-    self.getServerPathFromUrlPath = function(urlPath) {
-        return $http({
-            method: "GET",
-            url: "/dbpreview/getserverpath/" + urlPath
-        });
-    };
-    self.chekServerPathFromUrlPath = function (urlPath) {
-        return $http({
-            method: "GET",
-            url: "/dbpreview/checkpath/" + urlPath
-        });
-    };
-    //
-    self.getDatasetInfo = function (dbId) {
-        return $http({
-                method: 'POST',
-                url: '/dbpreview/datasetinfo/',
-                data: {
-                    dbid:   dbId
-                }
-            });
-    };
-    self.getDatasetRange = function (dbId, pfrom, pto) {
-        return $http({
-            method: 'POST',
-            url:    '/dbpreview/datasetrange/',
-            params: {
-                from:   pfrom,
-                to:     pto,
-                dbid:   dbId
+                id:       id,
+                type:     type,
+                label:    label,
+                from:     from,
+                to:       to
             }
         });
     };
 
-    self.deleteDataset = function (dbId){
-        console.log(dbId);
+    self.deleteDataset = function (id){
         return $http({
             method: "GET",
-            url: "/dbpreview/delete/"+ dbId
+            url: "/dataset/delete/"+ id
         })
     };
 }

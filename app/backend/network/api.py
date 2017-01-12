@@ -1,42 +1,20 @@
-from flask import request
-from flask import Response
+import json
+import os
+import re
 from os.path import dirname
 
-import json
-import re
-import shutil
-import stat
-import os
 import flask
-import PIL.Image
+from flask import Response
+from flask import request
 
 network = flask.Blueprint(__name__, __name__)
 
 root_path = os.path.join(dirname(dirname(dirname(dirname(__file__)))), 'data/network')
 
-layers_dir = os.path.join(root_path, 'layers')
 network_dir = {
     'custom': 'saved',
     'prepared': 'library'
 }
-
-
-@network.route('/layer/categories')
-def network_layer_categories():
-    layers_path = os.path.join(layers_dir, 'categories.json')
-
-    if request.method == 'GET':
-        with open(layers_path, 'r') as f:
-            return Response(json.dumps(json.load(f)), mimetype='application/json')
-
-
-@network.route('/layers')
-def network_layers():
-    layers_path = os.path.join(layers_dir, 'library.json')
-
-    if request.method == 'GET':
-        with open(layers_path, 'r') as f:
-            return Response(json.dumps(json.load(f)), mimetype='application/json')
 
 
 @network.route('/saved/names')
@@ -55,7 +33,6 @@ def load_saved_network_names():
         return Response(json.dumps(networks), mimetype='application/json')
 
 
-
 @network.route('/load/<path:type>/<path:filename>')
 def load_network(type, filename):
     saved_path = os.path.join(root_path, network_dir[type], filename + ".json")
@@ -66,7 +43,7 @@ def load_network(type, filename):
             return Response(json.dumps(data), mimetype='application/json')
 
 
-@network.route('/complex/<path:filename>')
+@network.route('/complex/layer/<path:filename>')
 def load_complex_network(filename):
     saved_path = os.path.join(root_path, "complex", filename + ".json")
     if request.method == 'GET':
@@ -85,11 +62,11 @@ def save_network():
         try:
             with open(file_out, 'w') as f:
                 f.write(json.dumps(net_config, indent=2))
-            ret = ['ok', file_out_name]
+            response = ['ok', file_out_name]
         except Exception as err:
-            ret = ['error', 'Cant save file [%s], Error: [%s]' % (file_out_name, str(err))]
+            response = ['error', 'Cant save file [%s], Error: [%s]' % (file_out_name, str(err))]
 
-    return Response(json.dumps(ret), mimetype='application/json')
+    return Response(json.dumps(response), mimetype='application/json')
 
 
 @network.route('/remove/<path:type>/<path:filename>')
@@ -97,11 +74,11 @@ def remove(type, filename):
     full_path = os.path.join(root_path, network_dir[type], str(filename) + ".json")
     try:
         os.remove(full_path)
-        ret = ['ok', full_path]
+        response = ['ok', full_path]
     except Exception as err:
-        ret = ['error', 'Cant remove file [%s], Error: [%s]' % (full_path, str(err))]
+        response = ['error', 'Cant remove file [%s], Error: [%s]' % (full_path, str(err))]
 
-    return Response(json.dumps(ret), mimetype='application/json')
+    return Response(json.dumps(response), mimetype='application/json')
 
 
 def read_network(path, file_name, source):
@@ -118,6 +95,6 @@ def read_network(path, file_name, source):
             if data.get('preview') is not None:
                 network_item['preview'] = data['preview']
 
-
             networks.append(network_item)
+
     return networks

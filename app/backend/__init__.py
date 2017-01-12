@@ -10,8 +10,6 @@ from config import DevelopmentConfig
 
 
 def mkdir_p(path):
-    """Creates directories recursively
-    http://stackoverflow.com/a/600612/190597 (tzot)"""
     try:
         os.makedirs(path, exist_ok=True)  # Python>3.2
     except TypeError:
@@ -48,9 +46,9 @@ socketio = SocketIO(app_flask, async_mode=async_mode)
 
 from app.backend import api
 from app.backend.core import datasets
-from app.backend.datasets import api
+from app.backend.dataset import api
 from app.backend.core import models
-from app.backend.core.models import api
-from app.backend.device import sockets
+from app.backend.model import api
+from app.backend.env import sockets
 
 

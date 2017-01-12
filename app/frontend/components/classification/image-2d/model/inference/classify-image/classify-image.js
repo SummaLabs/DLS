@@ -72,17 +72,17 @@
                                 scope.select = function (answer) {
                                     $mdDialog.hide(answer);
 
-                                    var imagesPath = [];
+                                    var images = [];
                                     $rootScope.selectedFiles.forEach(function (item, i, array) {
                                         console.log(item.model.fullPath(), item.model.name, item.model.type, item.model.size);
-                                        imagesPath.push(item.model.fullPath());
+                                        images.push(item.model.fullPath());
                                     });
 
-                                    if (imagesPath.length > 0) {
+                                    if (images.length > 0) {
                                         $scope.state = state.LOADING;
                                         $scope.images.length = 0;
 
-                                        var future = modelService.inference(imagesPath, $scope.modelId);
+                                        var future = modelService.inference(images, $scope.modelId);
                                          processInferenceResult(future);
                                     } else {
                                         choseImageAlert();
@@ -108,12 +108,12 @@
                     };
 
                     function showNClasses(images, classesNumber) {
-                        var imagesApiPath = appConfig.image.loadApiUrl;
+                        var loadImageUrl = appConfig.util.loadImageUrl;
                         var i = 0;
                         images.forEach(function (result) {
                             var classifiedImage = {
-                                'classProbabilities': result.result.distrib.slice(0, classesNumber),
-                                'imagePath': imagesApiPath + result.filepath
+                                'classProbabilities': result.classProbabilities.slice(0, classesNumber),
+                                'imagePath': loadImageUrl + result.imagePath
                             };
                             $scope.images.push(classifiedImage);
                             i++;
@@ -125,7 +125,7 @@
                         var classes = [];
                         var csv = "path,";
                         var i = 0;
-                        var classProbs = images[0].result.distrib;
+                        var classProbs = images[0].classProbabilities;
                         classProbs.forEach(function (classProb) {
                             classes.push(classProb[0]);
                         });
@@ -143,10 +143,10 @@
                         });
                         //csv content
                         images.forEach(function (image) {
-                            csv += image.filepath + ',';
+                            csv += image.imagePath + ',';
                             i = 0;
                             classes.forEach(function (className) {
-                                image.result.distrib.forEach(function (classProb) {
+                                image.classProbabilities.forEach(function (classProb) {
                                     if (classProb[0] == className) {
                                         csv += classProb[1];
                                         if (i < classes.length - 1) {

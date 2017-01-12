@@ -10,7 +10,7 @@ angular
         templateUrl: "frontend/components/layers/basic/datainput/datainput-editor.html",
         controller: function ($scope, networkDataService, layerService, datasetService, datainputLayer) {
             this.$onInit = function () {
-                datasetService.getDatasetsInfoStatList().then(
+                datasetService.getDataSetsMetadata().then(
                     function successCallback(response) {
                         var loadedDataSets = response.data;
                         var dataSets = [];

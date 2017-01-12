@@ -38,7 +38,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
     this.trainModel = function ($event) {
         networkDataService.setLayers(coreService.getNetwork());
         let dataNetwork = networkDataService.getNetwork();
-        modelService.checkNetworkFast(dataNetwork).then(
+        modelService.validateNetwork(dataNetwork).then(
             function successCallback(response) {
                 let ret = response.data;
                 if ((ret.length < 1) || (ret[0] != 'ok')) {
@@ -92,7 +92,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
     this.checkModelJson = function ($event) {
         networkDataService.setLayers(coreService.getNetwork());
         let dataNetwork = networkDataService.getNetwork();
-        modelService.checkNetworkFast(dataNetwork).then(
+        modelService.validateNetwork(dataNetwork).then(
             function successCallback(response) {
                 let ret = response.data;
                 let isError = true;
@@ -125,50 +125,6 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
             }
         );
     };
-    this.calcModelShape = function ($event) {
-        networkDataService.setLayers(coreService.getNetwork());
-        let dataNetwork = networkDataService.getNetwork();
-        modelService.calcModelShape(dataNetwork).then(
-            function successCallback(response) {
-                let ret = response.data;
-                let isError = true;
-                let strError = 'Unknown Error...';
-                if (ret['status'] == 'ok') {
-                    isError = false;
-                } else {
-                    strError = ret['data'];
-                }
-                let retMessage = "OK: network is correct (please see dev-tools log)!";
-                if (isError) {
-                    retMessage = "ERROR: " + strError;
-                } else {
-                    console.log('*** Model with shapes ***');
-                    console.log(ret['data']);
-                    ret['data'].layers.forEach(function (layer) {
-                        if (layer.shape) {
-                            self.svgControl.setShape(layer.id, layer.shape.inp, 'in');
-                            self.svgControl.setShape(layer.id, layer.shape.out, 'out');
-                        }
-                    });
-                }
-                let toast = $mdToast.simple()
-                    .textContent(retMessage)
-                    .action('UNDO')
-                    .highlightAction(true)
-                    .highlightClass('md-accent')
-                    .position('top right');
-                $mdToast.show(toast).then(function (response) {
-                    if (response == 'ok') {
-                        //todo
-                    }
-                });
-            },
-            function errorCallback(response) {
-                console.log(response.data);
-            }
-        );
-    };
-
 
     this.saveOrCreateNetworkDialog = function ($event, doSave, createNewNetworkFunc) {
         networkDataService.setLayers(coreService.getNetwork());
@@ -340,6 +296,7 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
         }
 
         function setUpNetwork() {
+            console.log('core:setUpNetwork');
             self.svgControl.clear(true);
             self.svgControl.setLayers(networkDataService.getLayers());
         }

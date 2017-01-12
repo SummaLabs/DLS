@@ -1,8 +1,6 @@
 angular.module('deviceService', [])
     .service('deviceService', ['$rootScope', '$http', DeviceService]);
 
-
-
 function DeviceService($rootScope, $http) {
     var self = this;
     
@@ -10,7 +8,7 @@ function DeviceService($rootScope, $http) {
         var deviceInfo = {info: {}};
         $http({
             method: "GET",
-            url: "/device/info"
+            url: "/environment/info"
         }).then(function mySucces(response) {
             deviceInfo.info = response.data
         }, function myError(response) {
@@ -22,7 +20,7 @@ function DeviceService($rootScope, $http) {
     this.getAvailableDevices = function() {
         return $http({
             method: "GET",
-            url: "/device/available"
+            url: "/environment/device/available"
         });
     };
     

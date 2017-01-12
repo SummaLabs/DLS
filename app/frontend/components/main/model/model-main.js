@@ -14,7 +14,7 @@
                 this.$onInit = function () {
                     self.models = [];
 
-                    modelService.listInfo().then(
+                    modelService.getModelsMetadata().then(
                         function successCallback(response) {
                             response.data.forEach(function (model) {
                                 var info = model.info;

@@ -14,7 +14,7 @@
         </div>
         <md-grid-list md-cols="2" md-cols-gt-xs="4" md-cols-md="6" md-cols-gt-md="8" md-row-height="1:1" md-gutter="12px">
             <md-grid-tile ng-repeat="lblInfo in $ctrl.currentListIdx">
-                <img ng-src="/dbpreview/getdbimgdata/{{$ctrl.paramDatabase}}/{{$ctrl.paramType}}/{{lblInfo.idx}}" class="db-img-preview md-whiteframe-8dp">
+                <img ng-src="/dataset/{{$ctrl.paramDatabase}}/{{$ctrl.paramType}}/img/{{lblInfo.idx}}" class="db-img-preview md-whiteframe-8dp">
                 <md-grid-tile-footer layout-padding="4px">
                     <h2 style="font-weight: 800;">
                         {{lblInfo.info}} : {{lblInfo.idx}}

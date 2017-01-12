@@ -2,66 +2,51 @@ angular.module('modelService', [])
     .service('modelService', ['$http', ModelService]);
 
 function ModelService($http) {
-    
-    this.loadAllModels = function() {
+
+    this.getModelsMetadata = function () {
         return $http({
-            method: "GET",
-            url: "/model/load/all"
-        })
+            method: 'GET',
+            url: '/model/all/metadata/list'
+        });
     };
 
-    this.inference = function (imagesPath, modelId) {
+    this.inference = function (images, modelId) {
         return $http({
             method: 'POST',
-            url: '/models/inference/',
+            url: '/model/inference/',
             data: {
-                'imagesPath': imagesPath,
+                'images': images,
                 'modelId': modelId
             }
         })
     };
- 
-    this.checkNetworkFast = function (network) {
+
+    this.validateNetwork = function (network) {
         return $http({
             method: 'POST',
-            url: '/models/checkmodel/',
+            url: '/model/network/validate',
             data: network,
             headers: {'Content-Type': 'application/json;charset=utf-8'}
-        });
-    };
-
-    this.calcModelShape = function (network) {
-        return $http({
-            method: 'POST',
-            url: '/models/calcshape/',
-            data: network,
-            headers: {'Content-Type': 'application/json;charset=utf-8'}
-        });
-    };
-
-    this.listInfo = function () {
-        return $http({
-            method: 'POST',
-            url: '/models/list/info/'
         });
     };
     
     this.loadModelROCsData = function(modelId) {
         return $http({
             method: "GET",
-            url: "/images/rocs/load/" + modelId
+            url: "/model/roc-analysis/load/" + modelId
         })
     };
     
     this.loadModelFeatureSpace = function(modelId) {
         return $http({
             method: "GET",
-            url: "/models/fs/load/" + modelId
-        })}
+            url: "/model/" + modelId + "/feature-space/load"
+        })};
+    
     this.loadLayersVisualization = function (modelId) {
         return $http({
             method: 'GET',
-            url: '/models/layers/visualization/' + modelId
+            url: '/model/layers/visualization/' + modelId
         });
     };
 }

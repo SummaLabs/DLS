@@ -88,6 +88,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
     let defaultCursor = document.body.style.cursor;
 
     $scope.controlItem.setLayers = function(layers, clear=true) {
+        console.log('setLayers');
         if (layers.length > 0) {
             document.body.style.cursor = 'wait';
         }
@@ -150,7 +151,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
             if (layers.length > 1 && clear) {
                 $scope.controlItem.reset();
             }
-
+            console.log('addLinks');
             self.emitEvent(events.ADDED_LAYERS, {});
         };
 

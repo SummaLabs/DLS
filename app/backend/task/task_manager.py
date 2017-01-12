@@ -57,7 +57,6 @@ class TaskManager:
         socketio.emit('task_monitor', json.dumps(task_data))
         return task_data
 
-
     def task_info(self, id):
         t = self.tasks[int(id)]
         return t.detailed_status()

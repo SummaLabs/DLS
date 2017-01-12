@@ -7,7 +7,7 @@
                 this.$onInit = function () {
                      $http({
                         method: "GET",
-                        url: "/device/checkenv"
+                        url: "/environment/check"
                     }).then(function mySucces(response) {
                         console.log(response.data);
                         $scope.env = response.data;

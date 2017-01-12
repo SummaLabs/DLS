@@ -30,14 +30,14 @@
 
         <div class='md-padding' layout="row" layout-wrap>
             <md-card ng-repeat="db in $ctrl.datasets" class="md-whiteframe-8dp">
-                <img ng-src="/dbpreview/dbimgpreview/{{db.id}}" class="md-card-image md-whiteframe-2dp"
+                <img ng-src="/dataset/{{db.id}}/img/preview" class="md-card-image md-whiteframe-2dp"
                      alt="user avatar">
                 <md-card-content>
                     <h2>{{db.name}}</h2>
                     <p>{{db.type}}, <strong>{{db.shapestr}}</strong>, {{db.info.date.str}} ({{db.info.time.str}})</p>
                 </md-card-content>
                 <div class="md-actions" layout="row" layout-align="end center">
-                    <md-button class="" ng-click="$ctrl.createDialogPreviewDB($event, db.id)">
+                    <md-button class="" ng-click="$ctrl.previewDataSet($event, db.id)">
                         <md-icon md-font-library="material-icons" aria-label="show">visibility</md-icon>
                         Info
                     </md-button>
