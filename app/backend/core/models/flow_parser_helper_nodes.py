@@ -9,6 +9,7 @@ from keras.layers import Layer, \
     InputLayer, Activation, Flatten, Merge, Dense
 
 from flow_parser_helper_basic import dictAvailableConnectionsFromTo, dictRequiredFields
+import abc
 
 ####################################
 class NodeFBuilder:
@@ -60,6 +61,9 @@ class NodeF:
     inpNode = None
     outNode = None
     jsonCfg = None
+    #
+    shapeInp = None
+    shapeOut = None
     def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
         self.goodName   = goodName
         self.jsonCfg    = jsonNode
@@ -87,6 +91,8 @@ class NodeF:
         if self.jsonCfg is not None:
             strCfg = '%s(%s)' % (self.jsonCfg['id'], self.getName())
         ret = '{obj->[%s],  in:%s, out:%s}' % (strCfg, strInp, strOut)
+        if (self.shapeInp is not None) and (self.shapeOut is not None):
+            ret = '(inp:[%s]-out:[%s])->%s' % (list(self.shapeInp), list(self.shapeOut), ret)
         return ret
     def validateFields(self):
         if self.jsonCfg is not None:
@@ -102,7 +108,7 @@ class NodeF:
     def __repr__(self):
         return self.toString()
     def getConfig(self, inputShape=None):
-        tmpLayerCfg = Layer().get_config()
+        tmpLayerCfg = self._getLayer().get_config()
         tmpLayerCfg['name'] = self.getName()
         return {
             'class_name': 'Layer',
@@ -119,6 +125,23 @@ class NodeF:
                     0
                 ])
         return ret
+    def _getLayer(self, inputShape=None):
+        return Layer()
+    def isMultipleInputNode(self):
+        return False
+    def isInputNode(self):
+        if isinstance(self, NodeDataInput):
+            return True
+        else:
+            return False
+    def getValidInput(self):
+        if self.isInputNode():
+            return self._getLayer().input_shape
+        else:
+            return None
+    def cleanShapes(self):
+        self.shapeInp = self.getValidInput()
+        self.shapeOut = None
 
 ####################################
 class NodeDataInput(NodeF):
@@ -126,11 +149,7 @@ class NodeDataInput(NodeF):
     def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
         NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
     def getConfig(self, inputShape=None):
-        #FIXME: setup input shape from Dataset Info
-        if inputShape is None:
-            tmpLayerCfg = InputLayer(input_shape=(3,256,256)).get_config()
-        else:
-            tmpLayerCfg = InputLayer(input_shape=inputShape).get_config()
+        tmpLayerCfg = self._getLayer(inputShape=inputShape).get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
             'class_name': self.nodeClass,
@@ -139,17 +158,20 @@ class NodeDataInput(NodeF):
             'inbound_nodes': self.getInboundNodesCfg()
         }
         return tmp
+    def _getLayer(self, inputShape=None):
+        # FIXME: setup input shape from Dataset Info
+        if inputShape is None:
+            tmpLayer = InputLayer(input_shape=(3, 256, 256))
+        else:
+            tmpLayer = InputLayer(input_shape=inputShape)
+        return tmpLayer
 
 class NodeConvolution1D(NodeF):
     nodeClass = 'Convolution1D'
     def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
         NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
     def getConfig(self, inputShape=None):
-        tmpCfg = self.jsonCfg['params']
-        tmpLayerCfg = Convolution1D(nb_filter=tmpCfg['filtersCount'],
-                                    filter_length=tmpCfg['filterWidth'],
-                                    activation=tmpCfg['activationFunction'],
-                                    trainable=tmpCfg['isTrainable']).get_config()
+        tmpLayerCfg = self._getLayer().get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
             'class_name': self.nodeClass,
@@ -158,18 +180,21 @@ class NodeConvolution1D(NodeF):
             'inbound_nodes': self.getInboundNodesCfg()
         }
         return tmp
+    def _getLayer(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayer = Convolution1D(nb_filter=tmpCfg['filtersCount'],
+                                    filter_length=tmpCfg['filterWidth'],
+                                    activation=tmpCfg['activationFunction'],
+                                    trainable=tmpCfg['isTrainable'])
+        return tmpLayer
+
 
 class NodeConvolution2D(NodeF):
     nodeClass = 'Convolution2D'
     def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
         NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
     def getConfig(self, inputShape=None):
-        tmpCfg = self.jsonCfg['params']
-        tmpLayerCfg = Convolution2D(nb_filter=tmpCfg['filtersCount'],
-                                    nb_col=tmpCfg['filterWidth'],
-                                    nb_row=tmpCfg['filterHeight'],
-                                    activation=tmpCfg['activationFunction'],
-                                    trainable=tmpCfg['isTrainable']).get_config()
+        tmpLayerCfg = self._getLayer().get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
             'class_name': self.nodeClass,
@@ -178,19 +203,21 @@ class NodeConvolution2D(NodeF):
             'inbound_nodes': self.getInboundNodesCfg()
         }
         return tmp
+    def _getLayer(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayer = Convolution2D(nb_filter=tmpCfg['filtersCount'],
+                                    nb_col=tmpCfg['filterWidth'],
+                                    nb_row=tmpCfg['filterHeight'],
+                                    activation=tmpCfg['activationFunction'],
+                                    trainable=tmpCfg['isTrainable'])
+        return tmpLayer
 
 class NodeConvolution3D(NodeF):
     nodeClass = 'Convolution3D'
     def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
         NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
     def getConfig(self, inputShape=None):
-        tmpCfg = self.jsonCfg['params']
-        tmpLayerCfg = Convolution3D(nb_filter=tmpCfg['filtersCount'],
-                                    kernel_dim1=tmpCfg['filterWidth'],
-                                    kernel_dim2=tmpCfg['filterHeight'],
-                                    kernel_dim3=tmpCfg['filterDepth'],
-                                    activation=tmpCfg['activationFunction'],
-                                    trainable=tmpCfg['isTrainable']).get_config()
+        tmpLayerCfg = self._getLayer().get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
             'class_name': self.nodeClass,
@@ -199,6 +226,15 @@ class NodeConvolution3D(NodeF):
             'inbound_nodes': self.getInboundNodesCfg()
         }
         return tmp
+    def _getLayer(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayer = Convolution3D(nb_filter=tmpCfg['filtersCount'],
+                                    kernel_dim1=tmpCfg['filterWidth'],
+                                    kernel_dim2=tmpCfg['filterHeight'],
+                                    kernel_dim3=tmpCfg['filterDepth'],
+                                    activation=tmpCfg['activationFunction'],
+                                    trainable=tmpCfg['isTrainable'])
+        return tmpLayer
 
 class NodePooling1D(NodeF):
     nodeClass = 'MaxPooling1D'
@@ -209,11 +245,7 @@ class NodePooling1D(NodeF):
         else:
             self.nodeClass = 'AveragePooling1D'
     def getConfig(self, inputShape=None):
-        tmpCfg = self.jsonCfg['params']
-        if self.nodeClass=='MaxPooling1D':
-            tmpLayerCfg = MaxPooling1D(pool_length=tmpCfg['subsamplingSizeWidth']).get_config()
-        else:
-            tmpLayerCfg = AveragePooling1D(pool_length=tmpCfg['subsamplingSizeWidth']).get_config()
+        tmpLayerCfg = self._getLayer().get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
             'class_name': self.nodeClass,
@@ -222,6 +254,13 @@ class NodePooling1D(NodeF):
             'inbound_nodes': self.getInboundNodesCfg()
         }
         return tmp
+    def _getLayer(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        if self.nodeClass == 'MaxPooling1D':
+            tmpLayer = MaxPooling1D(pool_length=tmpCfg['subsamplingSizeWidth'])
+        else:
+            tmpLayer = AveragePooling1D(pool_length=tmpCfg['subsamplingSizeWidth'])
+        return tmpLayer
 
 class NodePooling2D(NodeF):
     nodeClass = 'MaxPooling2D'
@@ -232,13 +271,7 @@ class NodePooling2D(NodeF):
         else:
             self.nodeClass = 'AveragePooling2D'
     def getConfig(self, inputShape=None):
-        tmpCfg = self.jsonCfg['params']
-        if self.nodeClass == 'MaxPooling2D':
-            tmpLayerCfg = MaxPooling2D(
-                pool_size=(tmpCfg['subsamplingSizeWidth'], tmpCfg['subsamplingSizeHeight'])).get_config()
-        else:
-            tmpLayerCfg = AveragePooling2D(
-                pool_size=(tmpCfg['subsamplingSizeWidth'], tmpCfg['subsamplingSizeHeight'])).get_config()
+        tmpLayerCfg = self._getLayer().get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
             'class_name': self.nodeClass,
@@ -247,6 +280,16 @@ class NodePooling2D(NodeF):
             'inbound_nodes': self.getInboundNodesCfg()
         }
         return tmp
+    def _getLayer(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        if self.nodeClass == 'MaxPooling2D':
+            tmpLayer = MaxPooling2D(
+                pool_size=(tmpCfg['subsamplingSizeWidth'], tmpCfg['subsamplingSizeHeight']))
+        else:
+            tmpLayer = AveragePooling2D(
+                pool_size=(tmpCfg['subsamplingSizeWidth'], tmpCfg['subsamplingSizeHeight']))
+        return tmpLayer
+
 
 class NodePooling3D(NodeF):
     nodeClass = 'MaxPooling3D'
@@ -257,17 +300,7 @@ class NodePooling3D(NodeF):
         else:
             self.nodeClass = 'AveragePooling3D'
     def getConfig(self, inputShape=None):
-        tmpCfg = self.jsonCfg['params']
-        if self.nodeClass == 'MaxPooling3D':
-            tmpLayerCfg = MaxPooling3D(
-                pool_size=(tmpCfg['subsamplingSizeWidth'],
-                           tmpCfg['subsamplingSizeHeight'],
-                           tmpCfg['subsamplingSizeDepth'])).get_config()
-        else:
-            tmpLayerCfg = AveragePooling3D(
-                pool_size=(tmpCfg['subsamplingSizeWidth'],
-                           tmpCfg['subsamplingSizeHeight'],
-                           tmpCfg['subsamplingSizeDepth'])).get_config()
+        tmpLayerCfg = self._getLayer().get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
             'class_name': self.nodeClass,
@@ -276,14 +309,26 @@ class NodePooling3D(NodeF):
             'inbound_nodes': self.getInboundNodesCfg()
         }
         return tmp
+    def _getLayer(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        if self.nodeClass == 'MaxPooling3D':
+            tmpLayer = MaxPooling3D(
+                pool_size=(tmpCfg['subsamplingSizeWidth'],
+                           tmpCfg['subsamplingSizeHeight'],
+                           tmpCfg['subsamplingSizeDepth']))
+        else:
+            tmpLayer = AveragePooling3D(
+                pool_size=(tmpCfg['subsamplingSizeWidth'],
+                           tmpCfg['subsamplingSizeHeight'],
+                           tmpCfg['subsamplingSizeDepth']))
+        return tmpLayer
 
 class NodeActivation(NodeF):
     nodeClass = 'Activation'
     def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
         NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
     def getConfig(self, inputShape=None):
-        tmpCfg = self.jsonCfg['params']
-        tmpLayerCfg = Activation(activation=tmpCfg['activationFunction']).get_config()
+        tmpLayerCfg = self._getLayer().get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
             'class_name': self.nodeClass,
@@ -292,13 +337,17 @@ class NodeActivation(NodeF):
             'inbound_nodes': self.getInboundNodesCfg()
         }
         return tmp
+    def _getLayer(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayer = Activation(activation=tmpCfg['activationFunction'])
+        return tmpLayer
 
 class NodeFlatten(NodeF):
     nodeClass = 'Flatten'
     def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
         NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
     def getConfig(self, inputShape=None):
-        tmpLayerCfg = Flatten().get_config()
+        tmpLayerCfg = self._getLayer().get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
             'class_name': self.nodeClass,
@@ -307,15 +356,15 @@ class NodeFlatten(NodeF):
             'inbound_nodes': self.getInboundNodesCfg()
         }
         return tmp
+    def _getLayer(self, inputShape=None):
+        return Flatten()
 
 class NodeMerge(NodeF):
     nodeClass = 'Merge'
     def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
         NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
     def getConfig(self, inputShape=None):
-        tmpCfg = self.jsonCfg['params']
-        tmpLayerCfg = Merge(mode=tmpCfg['mergeType'],
-                            concat_axis=int(tmpCfg['mergeAxis'])).get_config()
+        tmpLayerCfg = self._getLayer().get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
             'class_name': self.nodeClass,
@@ -324,16 +373,19 @@ class NodeMerge(NodeF):
             'inbound_nodes': self.getInboundNodesCfg()
         }
         return tmp
+    def _getLayer(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayer = Merge(mode=tmpCfg['mergeType'], concat_axis=int(tmpCfg['mergeAxis']))
+        return tmpLayer
+    def isMultipleInputNode(self):
+        return True
 
 class NodeDense(NodeF):
     nodeClass = 'Dense'
     def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
         NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
     def getConfig(self, inputShape=None):
-        tmpCfg = self.jsonCfg['params']
-        tmpLayerCfg = Dense(output_dim=tmpCfg['neuronsCount'],
-                            activation=tmpCfg['activationFunction'],
-                            trainable=tmpCfg['isTrainable']).get_config()
+        tmpLayerCfg = self._getLayer().get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
             'class_name': self.nodeClass,
@@ -342,6 +394,12 @@ class NodeDense(NodeF):
             'inbound_nodes': self.getInboundNodesCfg()
         }
         return tmp
+    def _getLayer(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayer = Dense(output_dim=tmpCfg['neuronsCount'],
+                            activation=tmpCfg['activationFunction'],
+                            trainable=tmpCfg['isTrainable'])
+        return tmpLayer
 
 if __name__ == '__main__':
     pass
