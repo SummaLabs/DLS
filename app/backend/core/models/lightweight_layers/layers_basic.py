@@ -13,10 +13,12 @@ class LW_Layer(object):
     def get_output_shape_for(self, input_shape):
         return input_shape
 
+###############################################
 class LW_InputLayer(LW_Layer):
     def __init__(self, input_shape=None):
         self.input_shape = input_shape
 
+###############################################
 class LW_Merge(LW_Layer):
     def __init__(self, layers=None, mode='sum', concat_axis=-1, dot_axes=-1):
         self.layers = layers
@@ -47,5 +49,32 @@ class LW_Merge(LW_Layer):
                 output_shape += [1]
             return tuple(output_shape)
 
+###############################################
+class LW_Flatten(LW_Layer):
+    def get_output_shape_for(self, input_shape):
+        if not all(input_shape[1:]):
+            raise Exception('The shape of the input to "Flatten" '
+                            'is not fully defined '
+                            '(got ' + str(input_shape[1:]) + '. '
+                            'Make sure to pass a complete "input_shape" '
+                            'or "batch_input_shape" argument to the first '
+                            'layer in your model.')
+        tprod = 1
+        for ii in input_shape[1:]:
+            tprod += ii
+        return (input_shape[0], tprod)
+
+###############################################
+class LW_Dense(LW_Layer):
+    def __init__(self, output_dim):
+        self.output_dim = output_dim
+    def get_output_shape_for(self, input_shape):
+        assert input_shape and len(input_shape) == 2
+        return (input_shape[0], self.output_dim)
+
+class LW_Activation(LW_Layer):
+    pass
+
+###############################################
 if __name__ == '__main__':
     pass
