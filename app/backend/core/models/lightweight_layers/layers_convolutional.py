@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'ar'
 
-###############################################
-default_dim_ordering = 'th'
+from layers_basic import LW_Layer, default_dim_ordering
 
 ###############################################
 def conv_output_length(input_length, filter_size, border_mode, stride, dilation=1):
@@ -18,49 +17,6 @@ def conv_output_length(input_length, filter_size, border_mode, stride, dilation=
     elif border_mode == 'full':
         output_length = input_length + dilated_filter_size - 1
     return (output_length + stride - 1) // stride
-
-###############################################
-class LW_Layer(object):
-    input_shape=None
-    def get_config(self):
-        pass
-    def get_output_shape_for(self, input_shape):
-        return input_shape
-
-class LW_InputLayer(LW_Layer):
-    def __init__(self, input_shape=None):
-        self.input_shape = input_shape
-
-class LW_Merge(LW_Layer):
-    def __init__(self, layers=None, mode='sum', concat_axis=-1, dot_axes=-1):
-        self.layers = layers
-        self.mode = mode
-        self.concat_axis = concat_axis
-        self.dot_axes = dot_axes
-    def get_output_shape_for(self, input_shape):
-        input_shapes = input_shape
-        if self.mode in ['sum', 'mul', 'ave', 'max']:
-            # All tuples in input_shapes should be the same.
-            return input_shapes[0]
-        elif self.mode == 'concat':
-            output_shape = list(input_shapes[0])
-            for shape in input_shapes[1:]:
-                if output_shape[self.concat_axis] is None or shape[self.concat_axis] is None:
-                    output_shape[self.concat_axis] = None
-                    break
-                output_shape[self.concat_axis] += shape[self.concat_axis]
-            return tuple(output_shape)
-        elif self.mode in ['dot', 'cos']:
-            shape1 = list(input_shapes[0])
-            shape2 = list(input_shapes[1])
-            shape1.pop(self.dot_axes[0])
-            shape2.pop(self.dot_axes[1])
-            shape2.pop(0)
-            output_shape = shape1 + shape2
-            if len(output_shape) == 1:
-                output_shape += [1]
-            return tuple(output_shape)
-
 
 ###############################################
 class LW_Convolution1D(LW_Layer):
@@ -287,6 +243,156 @@ class LW_UpSampling3D(LW_Layer):
                     dim2,
                     dim3,
                     input_shape[4])
+        else:
+            raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
+
+class LW_ZeroPadding1D(LW_Layer):
+    def __init__(self, padding=1):
+        self.padding = padding
+        if isinstance(padding, int):
+            self.left_pad = padding
+            self.right_pad = padding
+        elif isinstance(padding, dict):
+            if set(padding.keys()) <= {'left_pad', 'right_pad'}:
+                self.left_pad = padding.get('left_pad', 0)
+                self.right_pad = padding.get('right_pad', 0)
+            else:
+                raise ValueError('Unexpected key found in `padding` dictionary. '
+                                 'Keys have to be in {"left_pad", "right_pad"}. '
+                                 'Found: ' + str(padding.keys()))
+        else:
+            padding = tuple(padding)
+            if len(padding) != 2:
+                raise ValueError('`padding` should be int, or dict with keys '
+                                 '{"left_pad", "right_pad"}, or tuple of length 2. '
+                                 'Found: ' + str(padding))
+            self.left_pad = padding[0]
+            self.right_pad = padding[1]
+    def get_output_shape_for(self, input_shape):
+        length = input_shape[1] + self.left_pad + self.right_pad if input_shape[1] is not None else None
+        return (input_shape[0], length, input_shape[2])
+
+class LW_ZeroPadding2D(LW_Layer):
+    def __init__(self, padding=(1, 1), dim_ordering='default'):
+        if dim_ordering == 'default':
+            dim_ordering = default_dim_ordering
+        assert dim_ordering in {'tf', 'th'}, '`dim_ordering` must be in {"tf", "th"}.'
+        self.padding = padding
+        if isinstance(padding, dict):
+            if set(padding.keys()) <= {'top_pad', 'bottom_pad', 'left_pad', 'right_pad'}:
+                self.top_pad = padding.get('top_pad', 0)
+                self.bottom_pad = padding.get('bottom_pad', 0)
+                self.left_pad = padding.get('left_pad', 0)
+                self.right_pad = padding.get('right_pad', 0)
+            else:
+                raise ValueError('Unexpected key found in `padding` dictionary. '
+                                 'Keys have to be in {"top_pad", "bottom_pad", '
+                                 '"left_pad", "right_pad"}.'
+                                 'Found: ' + str(padding.keys()))
+        else:
+            padding = tuple(padding)
+            if len(padding) == 2:
+                self.top_pad = padding[0]
+                self.bottom_pad = padding[0]
+                self.left_pad = padding[1]
+                self.right_pad = padding[1]
+            elif len(padding) == 4:
+                self.top_pad = padding[0]
+                self.bottom_pad = padding[1]
+                self.left_pad = padding[2]
+                self.right_pad = padding[3]
+            else:
+                raise TypeError('`padding` should be tuple of int '
+                                'of length 2 or 4, or dict. '
+                                'Found: ' + str(padding))
+        self.dim_ordering = dim_ordering
+    def get_output_shape_for(self, input_shape):
+        if self.dim_ordering == 'th':
+            rows = input_shape[2] + self.top_pad + self.bottom_pad if input_shape[2] is not None else None
+            cols = input_shape[3] + self.left_pad + self.right_pad if input_shape[3] is not None else None
+            return (input_shape[0], input_shape[1], rows, cols)
+        elif self.dim_ordering == 'tf':
+            rows = input_shape[1] + self.top_pad + self.bottom_pad if input_shape[1] is not None else None
+            cols = input_shape[2] + self.left_pad + self.right_pad if input_shape[2] is not None else None
+            return (input_shape[0], rows, cols, input_shape[3])
+        else:
+            raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
+
+class LW_ZeroPadding3D(LW_Layer):
+    def __init__(self, padding=(1, 1, 1), dim_ordering='default'):
+        if dim_ordering == 'default':
+            dim_ordering = default_dim_ordering
+        assert dim_ordering in {'tf', 'th'}, 'dim_ordering must be in {tf, th}'
+        self.padding = tuple(padding)
+        self.dim_ordering = dim_ordering
+    def get_output_shape_for(self, input_shape):
+        if self.dim_ordering == 'th':
+            dim1 = input_shape[2] + 2 * self.padding[0] if input_shape[2] is not None else None
+            dim2 = input_shape[3] + 2 * self.padding[1] if input_shape[3] is not None else None
+            dim3 = input_shape[4] + 2 * self.padding[2] if input_shape[4] is not None else None
+            return (input_shape[0], input_shape[1], dim1, dim2, dim3)
+        elif self.dim_ordering == 'tf':
+            dim1 = input_shape[1] + 2 * self.padding[0] if input_shape[1] is not None else None
+            dim2 = input_shape[2] + 2 * self.padding[1] if input_shape[2] is not None else None
+            dim3 = input_shape[3] + 2 * self.padding[2] if input_shape[3] is not None else None
+            return (input_shape[0], dim1, dim2, dim3, input_shape[4])
+        else:
+            raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
+
+class LW_Cropping1D(LW_Layer):
+    def __init__(self, cropping=(1, 1)):
+        self.cropping = tuple(cropping)
+        assert len(self.cropping) == 2, 'cropping must be a tuple length of 2'
+    def get_output_shape_for(self, input_shape):
+        length = input_shape[1] - self.cropping[0] - self.cropping[1] if input_shape[1] is not None else None
+        return (input_shape[0], length, input_shape[2])
+
+class LW_Cropping2D(LW_Layer):
+    def __init__(self, cropping=((0, 0), (0, 0)), dim_ordering='default', **kwargs):
+        if dim_ordering == 'default':
+            dim_ordering = default_dim_ordering
+        self.cropping = tuple(cropping)
+        assert len(self.cropping) == 2, 'cropping must be a tuple length of 2'
+        assert len(self.cropping[0]) == 2, 'cropping[0] must be a tuple length of 2'
+        assert len(self.cropping[1]) == 2, 'cropping[1] must be a tuple length of 2'
+        assert dim_ordering in {'tf', 'th'}, 'dim_ordering must be in {tf, th}'
+        self.dim_ordering = dim_ordering
+    def get_output_shape_for(self, input_shape):
+        if self.dim_ordering == 'th':
+            return (input_shape[0],
+                    input_shape[1],
+                    input_shape[2] - self.cropping[0][0] - self.cropping[0][1],
+                    input_shape[3] - self.cropping[1][0] - self.cropping[1][1])
+        elif self.dim_ordering == 'tf':
+            return (input_shape[0],
+                    input_shape[1] - self.cropping[0][0] - self.cropping[0][1],
+                    input_shape[2] - self.cropping[1][0] - self.cropping[1][1],
+                    input_shape[3])
+        else:
+            raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
+
+class LW_Cropping3D(LW_Layer):
+    def __init__(self, cropping=((1, 1), (1, 1), (1, 1)), dim_ordering='default', **kwargs):
+        if dim_ordering == 'default':
+            dim_ordering = default_dim_ordering
+        self.cropping = tuple(cropping)
+        assert len(self.cropping) == 3, 'cropping must be a tuple length of 3'
+        assert len(self.cropping[0]) == 2, 'cropping[0] must be a tuple length of 2'
+        assert len(self.cropping[1]) == 2, 'cropping[1] must be a tuple length of 2'
+        assert len(self.cropping[2]) == 2, 'cropping[2] must be a tuple length of 2'
+        assert dim_ordering in {'tf', 'th'}, 'dim_ordering must be in {tf, th}'
+        self.dim_ordering = dim_ordering
+    def get_output_shape_for(self, input_shape):
+        if self.dim_ordering == 'th':
+            dim1 = input_shape[2] - self.cropping[0][0] - self.cropping[0][1] if input_shape[2] is not None else None
+            dim2 = input_shape[3] - self.cropping[1][0] - self.cropping[1][1] if input_shape[3] is not None else None
+            dim3 = input_shape[4] - self.cropping[2][0] - self.cropping[2][1] if input_shape[4] is not None else None
+            return (input_shape[0], input_shape[1], dim1, dim2, dim3)
+        elif self.dim_ordering == 'tf':
+            dim1 = input_shape[1] - self.cropping[0][0] - self.cropping[0][1] if input_shape[1] is not None else None
+            dim2 = input_shape[2] - self.cropping[1][0] - self.cropping[1][1] if input_shape[2] is not None else None
+            dim3 = input_shape[3] - self.cropping[2][0] - self.cropping[2][1] if input_shape[3] is not None else None
+            return (input_shape[0], dim1, dim2, dim3, input_shape[4])
         else:
             raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
 
