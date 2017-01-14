@@ -396,5 +396,6 @@ class LW_Cropping3D(LW_Layer):
         else:
             raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
 
+###############################################
 if __name__ == '__main__':
     pass
