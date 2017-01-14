@@ -8,10 +8,11 @@ from keras.layers import Layer, \
     AveragePooling1D, AveragePooling2D, AveragePooling3D, \
     InputLayer, Activation, Flatten, Merge, Dense
 
-from flow_parser_helper_basic import dictAvailableConnectionsFromTo, dictRequiredFields
-import abc
+from lightweight_layers import *
 
-####################################
+from flow_parser_helper_basic import dictAvailableConnectionsFromTo, dictRequiredFields
+
+#########################################
 class NodeFBuilder:
     # Counter dict
     nodeTypeCounter = None
@@ -54,7 +55,7 @@ class NodeFBuilder:
         else:
             return NodeF(jsonNode, goodName=strNodeName)
 
-####################################
+#########################################
 class NodeF:
     nodeClass = 'Layer'
     goodName = None
@@ -127,6 +128,8 @@ class NodeF:
         return ret
     def _getLayer(self, inputShape=None):
         return Layer()
+    def _getLayer_LW(self, inputShape=None):
+        return LW_Layer()
     def isMultipleInputNode(self):
         return False
     def isInputNode(self):
@@ -143,7 +146,7 @@ class NodeF:
         self.shapeInp = self.getValidInput()
         self.shapeOut = None
 
-####################################
+#########################################
 class NodeDataInput(NodeF):
     nodeClass = 'InputLayer'
     def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
@@ -164,6 +167,13 @@ class NodeDataInput(NodeF):
             tmpLayer = InputLayer(input_shape=(3, 256, 256))
         else:
             tmpLayer = InputLayer(input_shape=inputShape)
+        return tmpLayer
+    def _getLayer_LW(self, inputShape=None):
+        # FIXME: setup input shape from Dataset Info
+        if inputShape is None:
+            tmpLayer = LW_InputLayer(input_shape=(3, 256, 256))
+        else:
+            tmpLayer = LW_InputLayer(input_shape=inputShape)
         return tmpLayer
 
 class NodeConvolution1D(NodeF):
@@ -187,7 +197,11 @@ class NodeConvolution1D(NodeF):
                                     activation=tmpCfg['activationFunction'],
                                     trainable=tmpCfg['isTrainable'])
         return tmpLayer
-
+    def _getLayer_LW(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayer = LW_Convolution1D(nb_filter=tmpCfg['filtersCount'],
+                                 filter_length=tmpCfg['filterWidth'])
+        return tmpLayer
 
 class NodeConvolution2D(NodeF):
     nodeClass = 'Convolution2D'
@@ -210,6 +224,12 @@ class NodeConvolution2D(NodeF):
                                     nb_row=tmpCfg['filterHeight'],
                                     activation=tmpCfg['activationFunction'],
                                     trainable=tmpCfg['isTrainable'])
+        return tmpLayer
+    def _getLayer_LW(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayer = LW_Convolution2D(nb_filter=tmpCfg['filtersCount'],
+                                 nb_col=tmpCfg['filterWidth'],
+                                 nb_row=tmpCfg['filterHeight'])
         return tmpLayer
 
 class NodeConvolution3D(NodeF):
@@ -234,6 +254,13 @@ class NodeConvolution3D(NodeF):
                                     kernel_dim3=tmpCfg['filterDepth'],
                                     activation=tmpCfg['activationFunction'],
                                     trainable=tmpCfg['isTrainable'])
+        return tmpLayer
+    def _getLayer_LW(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayer = LW_Convolution3D(nb_filter=tmpCfg['filtersCount'],
+                                 kernel_dim1=tmpCfg['filterWidth'],
+                                 kernel_dim2=tmpCfg['filterHeight'],
+                                 kernel_dim3=tmpCfg['filterDepth'])
         return tmpLayer
 
 class NodePooling1D(NodeF):
@@ -260,6 +287,13 @@ class NodePooling1D(NodeF):
             tmpLayer = MaxPooling1D(pool_length=tmpCfg['subsamplingSizeWidth'])
         else:
             tmpLayer = AveragePooling1D(pool_length=tmpCfg['subsamplingSizeWidth'])
+        return tmpLayer
+    def _getLayer_LW(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        if self.nodeClass == 'MaxPooling1D':
+            tmpLayer = LW_MaxPooling1D(pool_length=tmpCfg['subsamplingSizeWidth'])
+        else:
+            tmpLayer = LW_AveragePooling1D(pool_length=tmpCfg['subsamplingSizeWidth'])
         return tmpLayer
 
 class NodePooling2D(NodeF):
@@ -289,7 +323,13 @@ class NodePooling2D(NodeF):
             tmpLayer = AveragePooling2D(
                 pool_size=(tmpCfg['subsamplingSizeWidth'], tmpCfg['subsamplingSizeHeight']))
         return tmpLayer
-
+    def _getLayer_LW(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        if self.nodeClass == 'MaxPooling2D':
+            tmpLayer = LW_MaxPooling2D(pool_size=(tmpCfg['subsamplingSizeWidth'], tmpCfg['subsamplingSizeHeight']))
+        else:
+            tmpLayer = LW_AveragePooling2D(pool_size=(tmpCfg['subsamplingSizeWidth'], tmpCfg['subsamplingSizeHeight']))
+        return tmpLayer
 
 class NodePooling3D(NodeF):
     nodeClass = 'MaxPooling3D'
@@ -322,6 +362,19 @@ class NodePooling3D(NodeF):
                            tmpCfg['subsamplingSizeHeight'],
                            tmpCfg['subsamplingSizeDepth']))
         return tmpLayer
+    def _getLayer_LW(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        if self.nodeClass == 'MaxPooling3D':
+            tmpLayer = LW_MaxPooling3D(
+                pool_size=(tmpCfg['subsamplingSizeWidth'],
+                           tmpCfg['subsamplingSizeHeight'],
+                           tmpCfg['subsamplingSizeDepth']))
+        else:
+            tmpLayer = LW_AveragePooling3D(
+                pool_size=(tmpCfg['subsamplingSizeWidth'],
+                           tmpCfg['subsamplingSizeHeight'],
+                           tmpCfg['subsamplingSizeDepth']))
+        return tmpLayer
 
 class NodeActivation(NodeF):
     nodeClass = 'Activation'
@@ -341,6 +394,9 @@ class NodeActivation(NodeF):
         tmpCfg = self.jsonCfg['params']
         tmpLayer = Activation(activation=tmpCfg['activationFunction'])
         return tmpLayer
+    def _getLayer_LW(self, inputShape=None):
+        tmpLayer = LW_Activation()
+        return tmpLayer
 
 class NodeFlatten(NodeF):
     nodeClass = 'Flatten'
@@ -358,6 +414,8 @@ class NodeFlatten(NodeF):
         return tmp
     def _getLayer(self, inputShape=None):
         return Flatten()
+    def _getLayer_LW(self, inputShape=None):
+        return LW_Flatten()
 
 class NodeMerge(NodeF):
     nodeClass = 'Merge'
@@ -373,12 +431,16 @@ class NodeMerge(NodeF):
             'inbound_nodes': self.getInboundNodesCfg()
         }
         return tmp
+    def isMultipleInputNode(self):
+        return True
     def _getLayer(self, inputShape=None):
         tmpCfg = self.jsonCfg['params']
         tmpLayer = Merge(mode=tmpCfg['mergeType'], concat_axis=int(tmpCfg['mergeAxis']))
         return tmpLayer
-    def isMultipleInputNode(self):
-        return True
+    def _getLayer_LW(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayer = LW_Merge(mode=tmpCfg['mergeType'], concat_axis=int(tmpCfg['mergeAxis']))
+        return tmpLayer
 
 class NodeDense(NodeF):
     nodeClass = 'Dense'
@@ -400,6 +462,11 @@ class NodeDense(NodeF):
                             activation=tmpCfg['activationFunction'],
                             trainable=tmpCfg['isTrainable'])
         return tmpLayer
+    def _getLayer_LW(self, inputShape=None):
+        tmpCfg = self.jsonCfg['params']
+        tmpLayer = LW_Dense(output_dim=tmpCfg['neuronsCount'])
+        return tmpLayer
 
+#########################################
 if __name__ == '__main__':
     pass
