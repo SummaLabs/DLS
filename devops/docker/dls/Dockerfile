@@ -1,4 +1,4 @@
-FROM nvidia/cuda:cudnn-runtime-ubuntu14.04
+FROM nvidia/cuda:7.5-cudnn5-devel-ubuntu14.04
 MAINTAINER Yehor Tsebro <egortsb@gmail.com>
 #Update pip
 RUN \
@@ -15,8 +15,8 @@ ADD dls/ /opt/dls
 RUN mkdir -p  /opt/dls/data/datasets
 WORKDIR /opt/dls
 RUN npm install grunt-cli -g
-RUN npm install
+#RUN npm install
 
 RUN sudo pip install -r requirements.txt
-RUN grunt
-CMD python run-app.py >> dls.out
+#RUN grunt
+CMD python run-app.py
