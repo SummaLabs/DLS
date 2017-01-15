@@ -404,6 +404,28 @@ def precalculateShapes(sortedFlow):
         nn.shapeInp = tinpShape
         nn.shapeOut = toutShape
 
+def precalculateShapes_LW(sortedFlow):
+    # (1) clean old shape info
+    for nn in sortedFlow:
+        nn.cleanShapes()
+    # (2) precalculate Input/Output shapes
+    for ii, nn in enumerate(sortedFlow):
+        if (nn.inpNode is None) and (nn.shapeInp is None):
+            raise Exception('Invalid Network Flow (disconnected graphs currently not supported) '
+                            'or flow is not topologically sorted (non-sorted Flow currently not supported)!')
+        if not nn.isInputNode():
+            if nn.isMultipleInputNode():
+                tinpShape = []
+                for ll in nn.inpNode:
+                    tinpShape.append(ll.shapeOut)
+            else:
+                tinpShape = nn.inpNode[0].shapeOut
+        else:
+            tinpShape = nn.shapeInp
+        toutShape = nn._getLayer_LW().get_output_shape_for(tinpShape)
+        nn.shapeInp = tinpShape
+        nn.shapeOut = toutShape
+
 ####################################
 if __name__=='__main__':
     import app.backend.core.utils as dlsutils
@@ -416,20 +438,28 @@ if __name__=='__main__':
     foutJson = 'keras-model-generated-db.json'
     fnFlowJson = '../../../../data/network/saved/testnet_multi_input_multi_output_v1.json'
     # fnFlowJson = '../../../../data/network/saved/test_simple_cnn_model1.json'
-    flowParser = DLSDesignerFlowsParser(fnFlowJson)
+    flowParser    = DLSDesignerFlowsParser(fnFlowJson)
+    flowParser_LW = DLSDesignerFlowsParser(fnFlowJson)
     flowParser.cleanAndValidate()
+    flowParser_LW.cleanAndValidate()
     # (1) Build connected and validated Model Node-flow (DLS-model-representation)
     flowParser.buildConnectedFlow()
+    flowParser_LW.buildConnectedFlow()
     print ('----[ Network Flow]----')
     for ii, ll in enumerate(flowParser.configFlowLinked):
         print (ii," : ", ll)
-    sortedFlow = flowParser._topoSort(flowParser.configFlowLinked)
+    sortedFlow    = flowParser._topoSort(flowParser.configFlowLinked)
+    sortedFlow_LW = flowParser_LW._topoSort(flowParser_LW.configFlowLinked)
     print ('----[ Topologically Sorted Flow]----')
     for ii, ll in enumerate(sortedFlow):
         print (ii, " : ", ll)
     precalculateShapes(sortedFlow)
+    precalculateShapes_LW(sortedFlow_LW)
     print ('----[ Flow With Shapes]----')
     for ii, ll in enumerate(sortedFlow):
+        print ('[%d] %s\t: %s' % (ii, ll.type(), ll))
+    print ('**************** LW-version ****************')
+    for ii, ll in enumerate(sortedFlow_LW):
         print ('[%d] %s\t: %s' % (ii, ll.type(), ll))
     # (2) Generate dict-based Json Kearas model (from DLS model representation)
     # modelJson, lstDBIdx = flowParser.generateModelKerasConfigJson(dbWatcher=dbWatcher)
