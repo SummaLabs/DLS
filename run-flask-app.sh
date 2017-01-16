@@ -4,9 +4,11 @@ wdir=`dirname $0`
 
 cd $wdir
 
-output=$(~/.local/bin/jupyter-notebook &> jupiter.log &)
+JUPYTER_CONFIG_DIR="/home/sergo/Work/Gitlab/DLS/devops/jupyter"
 
-echo $output
+jupyter-notebook
 
 python run-app.py
+
+trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
