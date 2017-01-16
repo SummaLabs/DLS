@@ -114,6 +114,10 @@ angular.module('dlsApp')
                 $rootScope.tabIndex = 5;
                 document.getElementById('designer').style.display = 'none';
             }
+        }).state('notebook', {
+            controller: function ($window, $location) {
+                $window.open('http://'+ $location.host() + ':8888/', '_blank');
+            }
         });
     }).controller('mainCtrl', ['$rootScope', '$scope', '$location',  'layerService', function($rootScope, $scope, $location) {
         $rootScope.tabIndex = 0;
