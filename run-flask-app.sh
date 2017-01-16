@@ -4,9 +4,9 @@ wdir=`dirname $0`
 
 cd $wdir
 
-JUPYTER_CONFIG_DIR="/home/sergo/Work/Gitlab/DLS/devops/jupyter"
+export JUPYTER_CONFIG_DIR=$PWD/devops/jupyter
 
-jupyter-notebook
+jupyter-notebook &>jupyter.log &
 
 python run-app.py
 
