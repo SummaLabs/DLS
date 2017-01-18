@@ -77,4 +77,5 @@ class LW_Activation(LW_Layer):
 
 ###############################################
 if __name__ == '__main__':
-    pass
+    testMergeLayer = LW_Merge(mode='concat')
+    print ('----')
