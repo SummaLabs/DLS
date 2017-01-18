@@ -37,8 +37,6 @@ export class LW_InputLayer extends LW_Layer {
 }
 
 //////////////////////////////////////////////
-
-
 export class LW_Merge extends LW_Layer {
     constructor({mode='sum', concat_axis=-1, dot_axes=-1}) {
         super();
