@@ -9,8 +9,8 @@ def task_manager():
 
 
 def test_start_task(task_manager):
-    task_manager.start_task(Task())
-    task_manager.start_task(Task())
+    task_manager.start_task(DefaultTask())
+    task_manager.start_task(DefaultTask())
     progress = task_manager.report_progress()
     assert 2 == len(progress)
 
@@ -27,6 +27,9 @@ def test_kill_task(task_manager):
     progress = task_manager.report_progress()
     assert 1 == len(progress)
     assert 'killed' == progress[0]['state']
+
+if __name__ == '__main__':
+    pytest.main([__file__])
 
 
 

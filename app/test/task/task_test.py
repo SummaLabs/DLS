@@ -1,10 +1,10 @@
 import pytest
-from app.backend.task.default_task import Task
+from app.backend.task.default_task import DefaultTask
 
 
 @pytest.fixture
 def default_task():
-    return Task()
+    return DefaultTask()
 
 
 def test_default_task_run(default_task):
@@ -32,3 +32,5 @@ def test_default_task_state(default_task):
     assert status['state'] == "ready"
     assert status['id'] is not None
 
+if __name__ == '__main__':
+    pytest.main([__file__])
