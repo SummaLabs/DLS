@@ -68,7 +68,7 @@ class LW_AveragePooling2D(_LW_Pooling2D):
 
 ###############################################
 class _LW_Pooling3D(LW_Layer):
-    def __init__(self, pool_size=(2, 2, 2), strides=None, border_mode='valid', dim_ordering='default', **kwargs):
+    def __init__(self, pool_size=(2, 2, 2), strides=None, border_mode='valid', dim_ordering='default'):
         if dim_ordering == 'default':
             dim_ordering = default_dim_ordering
         assert dim_ordering in {'tf', 'th'}, 'dim_ordering must be in {tf, th}'
@@ -110,7 +110,7 @@ class LW_AveragePooling3D(_LW_Pooling3D):
 
 ###############################################
 class _LW_GlobalPooling1D(LW_Layer):
-    def __init__(self, **kwargs):
+    def __init__(self):
         pass
     def get_output_shape_for(self, input_shape):
         return (input_shape[0], input_shape[2])
