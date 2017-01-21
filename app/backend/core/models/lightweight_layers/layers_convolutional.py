@@ -83,12 +83,8 @@ class LW_Convolution2D(LW_Layer):
 
 class LW_AtrousConvolution2D(LW_Convolution2D):
     def __init__(self, nb_filter, nb_row, nb_col,
-                 init='glorot_uniform', activation=None, weights=None,
                  border_mode='valid', subsample=(1, 1),
-                 atrous_rate=(1, 1), dim_ordering='default',
-                 W_regularizer=None, b_regularizer=None, activity_regularizer=None,
-                 W_constraint=None, b_constraint=None,
-                 bias=True, **kwargs):
+                 atrous_rate=(1, 1), dim_ordering='default'):
         if dim_ordering == 'default':
             dim_ordering = default_dim_ordering
         if border_mode not in {'valid', 'same', 'full'}:
