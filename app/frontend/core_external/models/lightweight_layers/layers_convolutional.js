@@ -123,3 +123,171 @@ export class LW_Convolution2D extends LW_Layer {
         }
     }
 }
+
+export class LW_AtrousConvolution2D extends LW_Convolution2D {
+    constructor({nb_filter, nb_row, nb_col,  border_mode='valid', subsample=[1, 1],
+                    atrous_rate=[1, 1], dim_ordering='default'}) {
+        //FIXME: check that super()-call on first line of constructor() is equal Pythonic last-line call...
+        super({
+            nb_filter:      nb_filter,
+            nb_row:         nb_row,
+            nb_col:         nb_col,
+            border_mode:    border_mode,
+            subsample:      subsample,
+            dim_ordering:   dim_ordering
+        });
+        if (dim_ordering === 'default') {
+            dim_ordering = default_dim_ordering;
+        }
+        if (['valid', 'same', 'full'].indexOf(border_mode)<0) {
+            throw new TypeError(`Invalid border mode for AtrousConv2D: ${border_mode}`);
+        }
+        this.atrous_rate = atrous_rate;
+    }
+    get_output_shape_for(input_shape) {
+        let rows, cols;
+        if (this.dim_ordering === 'th') {
+            rows = input_shape[2];
+            cols = input_shape[3];
+        } else if (this.dim_ordering === 'tf') {
+            rows = input_shape[1];
+            cols = input_shape[2];
+        } else {
+            throw new TypeError(`Invalid dim_ordering: ${this.dim_ordering}`);
+        }
+        rows = conv_output_length({
+            input_length:   rows,
+            filter_size:    this.nb_row,
+            border_mode:    this.border_mode,
+            stride:         this.subsample[0],
+            dilation:       this.atrous_rate[0]
+        });
+        cols = conv_output_length({
+            input_length:   cols,
+            filter_size:    this.nb_col,
+            border_mode:    this.border_mode,
+            stride:         this.subsample[1],
+            dilation:       this.atrous_rate[1]
+        });
+        if (this.dim_ordering === 'th') {
+            return [input_shape[0], this.nb_filter, rows, cols];
+        } else if (this.dim_ordering === 'tf') {
+            return [input_shape[0], rows, cols, this.nb_filter];
+        } else {
+            throw new TypeError(`Invalid dim_ordering: ${this.dim_ordering}`);
+        }
+    }
+}
+
+export class LW_SeparableConvolution2D extends LW_Layer {
+    constructor() {
+        super();
+    }
+    get_output_shape_for(input_shape) {
+
+    }
+}
+
+//////////////////////////////////////////////
+export class LW_Convolution3D extends LW_Layer {
+    constructor() {
+        super();
+    }
+    get_output_shape_for(input_shape) {
+
+    }
+}
+
+//////////////////////////////////////////////
+export class LW_UpSampling1D extends LW_Layer {
+    constructor() {
+        super();
+    }
+    get_output_shape_for(input_shape) {
+
+    }
+}
+
+export class LW_UpSampling2D extends LW_Layer {
+    constructor() {
+        super();
+    }
+    get_output_shape_for(input_shape) {
+
+    }
+}
+
+export class LW_UpSampling3D extends LW_Layer {
+    constructor() {
+        super();
+    }
+    get_output_shape_for(input_shape) {
+
+    }
+}
+
+//////////////////////////////////////////////
+export class LW_ZeroPadding1D extends LW_Layer {
+    constructor() {
+        super();
+    }
+    get_output_shape_for(input_shape) {
+
+    }
+}
+
+export class LW_ZeroPadding2D extends LW_Layer {
+    constructor() {
+        super();
+    }
+    get_output_shape_for(input_shape) {
+
+    }
+}
+
+export class LW_ZeroPadding3D extends LW_Layer {
+    constructor() {
+        super();
+    }
+    get_output_shape_for(input_shape) {
+
+    }
+}
+
+//////////////////////////////////////////////
+export class LW_Cropping1D extends LW_Layer {
+    constructor() {
+        super();
+    }
+    get_output_shape_for(input_shape) {
+
+    }
+}
+
+export class LW_Cropping2D extends LW_Layer {
+    constructor() {
+        super();
+    }
+    get_output_shape_for(input_shape) {
+
+    }
+}
+
+export class LW_Cropping3D extends LW_Layer {
+    constructor() {
+        super();
+    }
+    get_output_shape_for(input_shape) {
+
+    }
+}
+
+
+
+
+
+
+
+
+
+

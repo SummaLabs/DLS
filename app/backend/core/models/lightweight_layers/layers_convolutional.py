@@ -81,6 +81,7 @@ class LW_Convolution2D(LW_Layer):
         else:
             raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
 
+###############################################
 class LW_AtrousConvolution2D(LW_Convolution2D):
     def __init__(self, nb_filter, nb_row, nb_col,
                  border_mode='valid', subsample=(1, 1),
@@ -145,6 +146,7 @@ class LW_SeparableConvolution2D(LW_Layer):
         else:
             raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
 
+###############################################
 class LW_Convolution3D(LW_Layer):
     def __init__(self, nb_filter, kernel_dim1, kernel_dim2, kernel_dim3,
                  border_mode='valid', subsample=(1, 1, 1), dim_ordering='default'):
@@ -181,6 +183,7 @@ class LW_Convolution3D(LW_Layer):
         else:
             raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
 
+###############################################
 class LW_UpSampling1D(LW_Layer):
     def __init__(self, length=2):
         self.length = length
@@ -242,6 +245,7 @@ class LW_UpSampling3D(LW_Layer):
         else:
             raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
 
+###############################################
 class LW_ZeroPadding1D(LW_Layer):
     def __init__(self, padding=1):
         self.padding = padding
@@ -335,6 +339,7 @@ class LW_ZeroPadding3D(LW_Layer):
         else:
             raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
 
+###############################################
 class LW_Cropping1D(LW_Layer):
     def __init__(self, cropping=(1, 1)):
         self.cropping = tuple(cropping)
