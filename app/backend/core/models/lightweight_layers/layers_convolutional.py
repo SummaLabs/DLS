@@ -349,7 +349,7 @@ class LW_Cropping1D(LW_Layer):
         return (input_shape[0], length, input_shape[2])
 
 class LW_Cropping2D(LW_Layer):
-    def __init__(self, cropping=((0, 0), (0, 0)), dim_ordering='default', **kwargs):
+    def __init__(self, cropping=((0, 0), (0, 0)), dim_ordering='default'):
         if dim_ordering == 'default':
             dim_ordering = default_dim_ordering
         self.cropping = tuple(cropping)
@@ -373,7 +373,7 @@ class LW_Cropping2D(LW_Layer):
             raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
 
 class LW_Cropping3D(LW_Layer):
-    def __init__(self, cropping=((1, 1), (1, 1), (1, 1)), dim_ordering='default', **kwargs):
+    def __init__(self, cropping=((1, 1), (1, 1), (1, 1)), dim_ordering='default'):
         if dim_ordering == 'default':
             dim_ordering = default_dim_ordering
         self.cropping = tuple(cropping)
