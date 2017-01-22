@@ -2,9 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Test Core External</title>
+    <title>Test Network Flow Parsing</title>
+    <link rel="stylesheet" href="node_modules/angular-material/angular-material.min.css">
 </head>
-<body>
-    <script src="main-compiled.js"></script>
+<body ng-app="DemoNetworkFlowParser" layout="column">
+
+
+<md-toolbar layout="row">
+    <h3>Demo Network Flow Parsing</h3>
+</md-toolbar>
+<md-list ng-controller="ControllerFlowParsing">
+    <md-list-item ng-repeat="item in testArray">
+        Element = <b>{{item}}</b>
+    </md-list-item>
+</md-list>
+
+
+
+<script src="node_modules/angular/angular.js"></script>
+<script src="node_modules/angular-animate/angular-animate.js"></script>
+<script src="node_modules/angular-aria/angular-aria.js"></script>
+<script src="node_modules/angular-material/angular-material.js"></script>
+<script src="main.js"></script>
+
 </body>
 </html>
