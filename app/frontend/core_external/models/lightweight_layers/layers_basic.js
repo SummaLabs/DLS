@@ -24,7 +24,8 @@ export class LW_Layer {
         } catch (err) {
             outputShape = 'unknown';
         }
-        return `${layerClassName}(input_shape=${this.input_shape}, output_shape=${outputShape})`;
+        // return `${layerClassName}(input_shape=${this.input_shape}, output_shape=${outputShape})`;
+        return `${layerClassName}(inp=?, out=?)`;
     }
     isMultiInput() {
         return false;
@@ -59,7 +60,8 @@ export class LW_Merge extends LW_Layer {
             // All tuples in input_shapes should be the same.
             return input_shapes[0]
         } else if(this.mode === 'concat') {
-            let output_shape = new Array(...input_shapes[0]); // make a copy
+            // let output_shape = new Array(...input_shapes[0]); // make a copy
+            let output_shape = input_shapes[0].slice();
             for (let shape of input_shapes.slice(1)) {
                 // fucking JS
                 let idxAxisOut = this.concat_axis;
@@ -76,10 +78,12 @@ export class LW_Merge extends LW_Layer {
                 //FIXME: check "+= shape operation" --> Array concatenation?
                 output_shape[idxAxisOut] += shape[idxAxisShp];
             }
-            return new Array(output_shape);
+            return output_shape;
         } else if(['dot', 'cos'].indexOf(this.mode)) {
-            let shape1 = new Array(...input_shapes[0]); // make a copy
-            let shape2 = new Array(...input_shapes[1]);
+            // let shape1 = new Array(...input_shapes[0]); // make a copy
+            // let shape2 = new Array(...input_shapes[1]);
+            let shape1 = input_shapes[0].slice();
+            let shape2 = input_shapes[1].slice();
             shape1.pop(this.dot_axes[0]);
             shape2.pop(this.dot_axes[1]);
             shape2.pop(0);
@@ -96,7 +100,7 @@ export class LW_Merge extends LW_Layer {
             concat_axis:    jsonCfg['mergeAxis']
         });
     }
-    static isMultiInput() {
+    isMultiInput() {
         return true;
     }
 }

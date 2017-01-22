@@ -232,6 +232,7 @@ export function calculateShapesInModel(modelJson, defaultInputShape=[null, 3, 25
     // (4) Sort Topolgicaly index of nodes
     let nodeIndexTopoSorted = topologicalSort(edgesIdx);
     console.log(nodeIndexTopoSorted);
+    console.log(nodeArray);
     // (5) Fill Shape Information for every Node from list of NodeF
     for(let ii of nodeIndexTopoSorted) {
         let ll = nodeArray[ii];
@@ -243,8 +244,8 @@ export function calculateShapesInModel(modelJson, defaultInputShape=[null, 3, 25
                     let tmpInp = [];
                     let isOk   = true;
                     for (let nn of ll.inpNodesLst) {
-                        tmpInp.push(nn.shapeOut);
-                        if(nn.shapeOut==null) {
+                        tmpInp.push(nn.shapeOut.slice());
+                        if(nn.shapeOut===null) {
                             isOk = false;
                         }
                     }
@@ -271,13 +272,13 @@ export function calculateShapesInModel(modelJson, defaultInputShape=[null, 3, 25
             ll.shapeOut  = null;
         } else {
             ll.shapeOut  = tmpLayer.get_output_shape_for(ll.shapeInp.slice());
-            console.log(`${ll.shapeInp} : ${ll.shapeOut} -> ${ll.toString()} * ${tmpLayer}`);
+            console.log(`[${ii}] ${ll.shapeInp} : [${ll.shapeOut}] -> ${ll.toString()} * ${tmpLayer}`);
         }
     }
     // (6) Add inpShape and outShape properties in Model Json
     for( let ll of nodeArray) {
         modelLayers[ll.nodeIdx].shapeInp = ll.shapeInp;
-        modelLayers[ll.nodeIdx].shapeOut = ll.shapeInp;
+        modelLayers[ll.nodeIdx].shapeOut = ll.shapeOut;
     }
 }
 

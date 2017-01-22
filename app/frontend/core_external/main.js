@@ -14,7 +14,8 @@ function ControllerFlowParsing($scope, $http) {
     $scope.modelLayers  = null;
     test_network_library();
     let pathJsonTest1 = 'data/testnet_simple_cnn_model1.json';
-    $http.get(pathJsonTest1).success(function (data) {
+    let pathJsonTest2 = 'data/testnet_multi_input_multi_output_v1.json';
+    $http.get(pathJsonTest2).success(function (data) {
         console.log('JSON-Load: success');
         let tmpModelJson   = data;
         $scope.modelLayers = data.layers;
