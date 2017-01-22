@@ -46,6 +46,12 @@ export class LW_Convolution1D extends LW_Layer {
         });
         return [input_shape[0], lengthOut, this.nb_filter];
     }
+    static get_layer(jsonCfg) {
+        return new LW_Convolution1D({
+            nb_filter:      jsonCfg['filtersCount'],
+            filter_length:  jsonCfg['filterWidth']
+        });
+    }
 }
 
 export class LW_AtrousConvolution1D extends LW_Convolution1D {
@@ -68,6 +74,13 @@ export class LW_AtrousConvolution1D extends LW_Convolution1D {
             dilation:       this.atrous_rate
         });
         return [input_shape[0], lengthOut, this.nb_filter];
+    }
+    //FIXME: validate parameters!!!
+    static get_layer(jsonCfg) {
+        return new LW_AtrousConvolution1D({
+            nb_filter:      jsonCfg['filtersCount'],
+            filter_length:  jsonCfg['filterWidth']
+        });
     }
 }
 
@@ -121,6 +134,13 @@ export class LW_Convolution2D extends LW_Layer {
         } else {
             throw new TypeError(`Invalid dim_ordering: ${this.dim_ordering}`);
         }
+    }
+    static get_layer(jsonCfg) {
+        return new LW_Convolution2D({
+            nb_filter:  jsonCfg['filtersCount'],
+            nb_row:     jsonCfg['filterWidth'],
+            nb_col:     jsonCfg['filterHeight']
+        });
     }
 }
 
@@ -178,6 +198,14 @@ export class LW_AtrousConvolution2D extends LW_Convolution2D {
             throw new TypeError(`Invalid dim_ordering: ${this.dim_ordering}`);
         }
     }
+    //FIXME: validate parameters!!!
+    static get_layer(jsonCfg) {
+        return new LW_AtrousConvolution2D({
+            nb_filter:  jsonCfg['filtersCount'],
+            nb_row:     jsonCfg['filterWidth'],
+            nb_col:     jsonCfg['filterHeight']
+        });
+    }
 }
 
 export class LW_SeparableConvolution2D extends LW_Layer {
@@ -232,6 +260,14 @@ export class LW_SeparableConvolution2D extends LW_Layer {
         } else {
             throw new TypeError(`Invalid dim_ordering: ${this.dim_ordering}`);
         }
+    }
+    static get_layer(jsonCfg) {
+        //FIXME: validate parameters!!!
+        return new LW_SeparableConvolution2D({
+            nb_filter:  jsonCfg['filtersCount'],
+            nb_row:     jsonCfg['filterWidth'],
+            nb_col:     jsonCfg['filterHeight']
+        });
     }
 }
 
@@ -296,6 +332,15 @@ export class LW_Convolution3D extends LW_Layer {
             throw new TypeError(`Invalid dim_ordering: ${this.dim_ordering}`);
         }
     }
+    static get_layer(jsonCfg) {
+        //FIXME: validate parameters!!!
+        return new LW_Convolution3D({
+            nb_filter:      jsonCfg['filtersCount'],
+            kernel_dim1:    jsonCfg['filterWidth'],
+            kernel_dim2:    jsonCfg['filterHeight'],
+            kernel_dim3:    jsonCfg['filterDepth']
+        });
+    }
 }
 
 //////////////////////////////////////////////
@@ -312,6 +357,11 @@ export class LW_UpSampling1D extends LW_Layer {
             length = null;
         }
         return [input_shape[0], length, input_shape[2]];
+    }
+    static get_layer(jsonCfg) {
+        return new LW_UpSampling1D({
+            length: jsonCfg['subsamplingSizeWidth']
+        });
     }
 }
 
@@ -357,6 +407,12 @@ export class LW_UpSampling2D extends LW_Layer {
             throw new TypeError(`Invalid dim_ordering: ${this.dim_ordering}`);
         }
     }
+    static get_layer(jsonCfg) {
+        let tmpSize = [jsonCfg['subsamplingSizeWidth'], jsonCfg['subsamplingSizeHeight']];
+        return new LW_UpSampling2D({
+            size:   tmpSize
+        });
+    }
 }
 
 export class LW_UpSampling3D extends LW_Layer {
@@ -386,6 +442,15 @@ export class LW_UpSampling3D extends LW_Layer {
         } else {
             throw new TypeError(`Invalid dim_ordering: ${this.dim_ordering}`);
         }
+    }
+    static get_layer(jsonCfg) {
+        let tmpSize = [
+            jsonCfg['subsamplingSizeWidth'],
+            jsonCfg['subsamplingSizeHeight'],
+            jsonCfg['subsamplingSizeDepth']];
+        return new LW_UpSampling3D({
+            size:   tmpSize
+        });
     }
 }
 

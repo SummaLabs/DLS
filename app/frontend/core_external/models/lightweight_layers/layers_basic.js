@@ -10,8 +10,8 @@ export class LW_Layer {
         this.input_shape=null;
     }
     // FIXME: is this method really needed?
-    static get_config() {
-        return null;
+    static get_layer(jsonCfg) {
+        return new this();
     }
     get_output_shape_for(input_shape) {
         return input_shape;
@@ -26,6 +26,9 @@ export class LW_Layer {
         }
         return `${layerClassName}(input_shape=${this.input_shape}, output_shape=${outputShape})`;
     }
+    isMultiInput() {
+        return false;
+    }
 }
 
 //////////////////////////////////////////////
@@ -33,6 +36,12 @@ export class LW_InputLayer extends LW_Layer {
     constructor(input_shape=null) {
         super();
         this.input_shape = input_shape;
+    }
+}
+
+export class LW_OutputLayer extends LW_Layer {
+    constructor() {
+        super();
     }
 }
 
@@ -81,6 +90,15 @@ export class LW_Merge extends LW_Layer {
             return output_shape;
         }
     }
+    static get_layer(jsonCfg) {
+        return new LW_Merge({
+            mode:           jsonCfg['mergeType'],
+            concat_axis:    jsonCfg['mergeAxis']
+        });
+    }
+    static isMultiInput() {
+        return true;
+    }
 }
 
 //////////////////////////////////////////////
@@ -98,9 +116,9 @@ export class LW_Flatten extends LW_Layer {
             'or "batch_input_shape" argument to the first '
             'layer in your model.')
          */
-        tprod = 1;
-        for (ii of input_shape.slice(1)) {
-            tprod += ii;
+        let tprod = 1;
+        for (let ii of input_shape.slice(1)) {
+            tprod *= ii;
         }
         return [input_shape[0], tprod];
     }
@@ -117,6 +135,9 @@ export class LW_Dense extends LW_Layer {
             throw new TypeError(`Invalid input shape: ${input_shape}`);
         }
         return [input_shape[0], this.output_dim];
+    }
+    static get_layer(jsonCfg) {
+        return new LW_Dense(jsonCfg['neuronsCount']);
     }
 }
 

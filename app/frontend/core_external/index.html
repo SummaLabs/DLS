@@ -14,7 +14,7 @@
 <md-list ng-controller="ControllerFlowParsing">
     <md-list-item ng-repeat="item in modelLayers">
         <p>
-            <b>{{item}}</b>
+            <b>{{item['name']}}({{item['id']}})</b> : inpShape=<b>{{item['shapeInp']}}</b>, outShape=<b>{{item['shapeOut']}}</b>
         </p>
         <br>
         <hr>
