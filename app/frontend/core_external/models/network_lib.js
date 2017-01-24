@@ -25,6 +25,7 @@ import {
     LW_GlobalMaxPooling3D, LW_GlobalAveragePooling3D
 } from './lightweight_layers/layers_pooling';
 
+
 /*
 export {
     LW_InputLayer, LW_Merge, LW_Flatten, LW_Dense, LW_Activation,
@@ -285,12 +286,6 @@ export function calculateShapesInModel(modelJson, defaultInputShape=[null, 3, 25
 export function test_network_library() {
     console.log('Hello, from network library!');
 }
-
-
-
-
-
-
 
 
 
