@@ -14,11 +14,11 @@ class Dataset(object):
         print ""
 
 
-class Input(object):
-    def __init__(self, csv_file_path, with_header=False):
+class Schema(object):
+    def __init__(self, csv_file_path, header=False):
         self.csv_file_path = csv_file_path
         header_row = self._read_rows(self.csv_file_path, 1)[0]
-        if with_header:
+        if header:
             self._columns = header_row
         else:
             self._columns = range(0, len(header_row))
@@ -43,19 +43,73 @@ class Input(object):
     def columns(self, columns):
         l = len(columns)
         if (l > len(self._columns)) or (l < len(self._columns)):
-            raise Exception("Input columns size: %d is not compatible with existing data size: %d" % (l, len(self._columns)))
+            raise Exception("Passed columns number: %d is not compatible with current columns number: %d" % (l, len(self._columns)))
         self._columns = columns
 
-    @property
-    def column_by_index(self, index):
-        return self._columns[index]
+    def drop_column(self, column_name):
+        pass
 
-    @column_by_index.setter
-    def column_by_index(self, index, name):
-        self._columns[index] = name
+    def merge_columns(self, column_names):
+        pass
 
     def print_columns(self):
         print self._columns
+
+    def print_data(self):
+        print self._read_rows(self.csv_file_path, 10)
+
+
+class PathInput(object):
+    def __init__(self, files_base_path, reader):
+        pass
+
+
+class CSVInput(object):
+    def __init__(self, schema):
+        if not isinstance(schema, Schema):
+            raise TypeError("Must be set to an Schema")
+        pass
+
+    def transform_column(self, column_name, transforms, reader = None):
+        pass
+
+
+class Transform(object):
+    def __init__(self):
+        pass
+
+    def apply(self, data):
+        return data
+
+
+class CropImageTransform(Transform):
+    def __init__(self):
+        pass
+
+    def apply(self, data):
+        return data
+
+
+class Image2DTransform(Transform):
+    def __init__(self):
+        pass
+
+    def apply(self, data):
+        return data
+
+class Reader(object):
+    def __init__(self):
+        pass
+
+    def read(self, path):
+        return
+
+class Image2DReader(Reader):
+    def __init__(self):
+        pass
+
+    def read(self, path):
+        return
 
 
 class Data(object):
@@ -92,5 +146,4 @@ class DataType:
 
 
 if __name__ == '__main__':
-    input = Input("/home/sergo/Work/Gitlab/DLS/data-test/idx-simple4c_test-all.csv", with_header=True)
-    input.print_columns()
+    print "main method"
