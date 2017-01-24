@@ -30,6 +30,16 @@ class _LW_Pooling1D extends LW_Layer {
         });
         return [input_shape[0], lengthOut, input_shape[2]]
     }
+    static get_layer(jsonCfg) {
+        let tcfg = {
+            pool_length: jsonCfg['subsamplingSizeWidth']
+        };
+        if(jsonCfg['subsamplingType']==='max_pooling') {
+            return new LW_MaxPooling1D(tcfg);
+        } else {
+            return new LW_AveragePooling1D(tcfg);
+        }
+    }
 }
 
 export class LW_MaxPooling1D extends _LW_Pooling1D {
@@ -102,6 +112,16 @@ class _LW_Pooling2D extends LW_Layer {
             return [input_shape[0], rows, cols, input_shape[3]];
         } else {
             throw new TypeError(`Invalid dim_ordering: ${this.dim_ordering}`);
+        }
+    }
+    static get_layer(jsonCfg) {
+        let tcfg = {
+            pool_size: [jsonCfg['subsamplingSizeWidth'], jsonCfg['subsamplingSizeHeight']]
+        };
+        if(jsonCfg['subsamplingType']==='max_pooling') {
+            return new LW_MaxPooling2D(tcfg);
+        } else {
+            return new LW_AveragePooling2D(tcfg);
         }
     }
 }
@@ -186,6 +206,20 @@ class _LW_Pooling3D extends LW_Layer {
             return [input_shape[0], len_dim1, len_dim2, len_dim3, input_shape[4]];
         } else {
             throw new TypeError(`Invalid dim_ordering: ${this.dim_ordering}`);
+        }
+    }
+    static get_layer(jsonCfg) {
+        let tcfg = {
+            pool_size: [
+                jsonCfg['subsamplingSizeWidth'],
+                jsonCfg['subsamplingSizeHeight'],
+                jsonCfg['subsamplingSizeDepth']
+            ]
+        };
+        if(jsonCfg['subsamplingType']==='max_pooling') {
+            return new LW_MaxPooling3D(tcfg);
+        } else {
+            return new LW_AveragePooling3D(tcfg);
         }
     }
 }
@@ -297,7 +331,6 @@ export class LW_GlobalMaxPooling3D extends _LW_GlobalPooling3D {
         super();
     }
 }
-
 
 
 

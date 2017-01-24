@@ -2,7 +2,7 @@
  * Created by ar on 17.01.17.
  */
 
-import {test_network_library, calculateShapesInModel} from './models/network_lib';
+//import {test_network_library, calculateShapesInModel} from './models/network_lib';
 
 angular.module('DemoNetworkFlowParser', ['ngMaterial'])
     .controller('ControllerFlowParsing', ControllerFlowParsing);

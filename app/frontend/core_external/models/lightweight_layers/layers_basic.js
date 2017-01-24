@@ -10,8 +10,8 @@ export class LW_Layer {
         this.input_shape=null;
     }
     // FIXME: is this method really needed?
-    static get_config() {
-        return null;
+    static get_layer(jsonCfg) {
+        return new this();
     }
     get_output_shape_for(input_shape) {
         return input_shape;
@@ -24,7 +24,11 @@ export class LW_Layer {
         } catch (err) {
             outputShape = 'unknown';
         }
-        return `${layerClassName}(input_shape=${this.input_shape}, output_shape=${outputShape})`;
+        // return `${layerClassName}(input_shape=${this.input_shape}, output_shape=${outputShape})`;
+        return `${layerClassName}(inp=?, out=?)`;
+    }
+    isMultiInput() {
+        return false;
     }
 }
 
@@ -33,6 +37,12 @@ export class LW_InputLayer extends LW_Layer {
     constructor(input_shape=null) {
         super();
         this.input_shape = input_shape;
+    }
+}
+
+export class LW_OutputLayer extends LW_Layer {
+    constructor() {
+        super();
     }
 }
 
@@ -50,7 +60,8 @@ export class LW_Merge extends LW_Layer {
             // All tuples in input_shapes should be the same.
             return input_shapes[0]
         } else if(this.mode === 'concat') {
-            let output_shape = new Array(...input_shapes[0]); // make a copy
+            // let output_shape = new Array(...input_shapes[0]); // make a copy
+            let output_shape = input_shapes[0].slice();
             for (let shape of input_shapes.slice(1)) {
                 // fucking JS
                 let idxAxisOut = this.concat_axis;
@@ -67,10 +78,12 @@ export class LW_Merge extends LW_Layer {
                 //FIXME: check "+= shape operation" --> Array concatenation?
                 output_shape[idxAxisOut] += shape[idxAxisShp];
             }
-            return new Array(output_shape);
+            return output_shape;
         } else if(['dot', 'cos'].indexOf(this.mode)) {
-            let shape1 = new Array(...input_shapes[0]); // make a copy
-            let shape2 = new Array(...input_shapes[1]);
+            // let shape1 = new Array(...input_shapes[0]); // make a copy
+            // let shape2 = new Array(...input_shapes[1]);
+            let shape1 = input_shapes[0].slice();
+            let shape2 = input_shapes[1].slice();
             shape1.pop(this.dot_axes[0]);
             shape2.pop(this.dot_axes[1]);
             shape2.pop(0);
@@ -80,6 +93,15 @@ export class LW_Merge extends LW_Layer {
             }
             return output_shape;
         }
+    }
+    static get_layer(jsonCfg) {
+        return new LW_Merge({
+            mode:           jsonCfg['mergeType'],
+            concat_axis:    jsonCfg['mergeAxis']
+        });
+    }
+    isMultiInput() {
+        return true;
     }
 }
 
@@ -98,9 +120,9 @@ export class LW_Flatten extends LW_Layer {
             'or "batch_input_shape" argument to the first '
             'layer in your model.')
          */
-        tprod = 1;
-        for (ii of input_shape.slice(1)) {
-            tprod += ii;
+        let tprod = 1;
+        for (let ii of input_shape.slice(1)) {
+            tprod *= ii;
         }
         return [input_shape[0], tprod];
     }
@@ -117,6 +139,9 @@ export class LW_Dense extends LW_Layer {
             throw new TypeError(`Invalid input shape: ${input_shape}`);
         }
         return [input_shape[0], this.output_dim];
+    }
+    static get_layer(jsonCfg) {
+        return new LW_Dense(jsonCfg['neuronsCount']);
     }
 }
 
