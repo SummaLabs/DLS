@@ -58,5 +58,5 @@ class CSVInput(object):
             raise TypeError("Must be set to an Schema")
         pass
 
-    def transform_column(self, column_name, transforms, reader = None):
+    def transform_column(self, column_name, transforms = [], reader = None):
         pass

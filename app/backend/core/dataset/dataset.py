@@ -1,3 +1,5 @@
+import numpy as np
+
 
 class Dataset(object):
     def __init__(self, workspace, path):
@@ -8,7 +10,7 @@ class Dataset(object):
         print "Load Dataset from Path" + path
 
     def get_batch(self, batch_size):
-        return Data
+        return Data()
 
 
 class Builder(object):
@@ -18,7 +20,7 @@ class Builder(object):
         pass
 
     def build(self):
-        return Dataset
+        return Dataset("", "path")
 
 
 class Data(object):
@@ -31,14 +33,8 @@ class Data(object):
     def to_data_frame(self):
         raise NotImplementedError("Please Implement this method")
 
-
-class Image2DData(Data):
-    def __init__(self):
-        print ""
-
-    def _load_data(self):
-        print "Test"
-
+    def for_column(self, column_name):
+        return np.array([[7, 8, 5], [3, 5, 7]], np.int32)
 
 class Metadata(object):
     def __init__(self):
