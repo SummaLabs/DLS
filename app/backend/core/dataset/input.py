@@ -5,13 +5,14 @@ import csv, sys
 class Schema(object):
     def __init__(self, csv_file_path, header=False):
         self.csv_file_path = csv_file_path
-        header_row = self._read_rows(self.csv_file_path, 1)[0]
+        header_row = self.read_n_rows(self.csv_file_path, 1)[0]
         if header:
             self._columns = header_row
         else:
-            self._columns = range(0, len(header_row))
+            self._columns = [ 'col_' + str(index) for index in range(0, len(header_row))]
 
-    def _read_rows(self, csv_file_path, rows_number):
+    @staticmethod
+    def read_n_rows(csv_file_path, rows_number):
         rows = []
         with open(csv_file_path, 'rb') as f:
             reader = csv.reader(f)
@@ -22,6 +23,10 @@ class Schema(object):
                 sys.exit('file %s, line %d: %s' % (csv_file_path, reader.line_num, e))
 
         return rows
+
+    def __setitem__(self, key, item):
+        index = self._columns.index(key)
+        self._columns[index] = item
 
     @property
     def columns(self):
@@ -41,10 +46,12 @@ class Schema(object):
         pass
 
     def print_columns(self):
-        print self._columns
+        print ", ".join([col for col in self._columns])
 
     def print_data(self):
-        print self._read_rows(self.csv_file_path, 10)
+        print "First 10 records:"
+        for row in self.read_n_rows(self.csv_file_path, 10):
+            print row
 
 
 class PathInput(object):
