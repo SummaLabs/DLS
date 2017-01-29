@@ -15,7 +15,7 @@ class CropImageTransform(Transform):
         return data
 
 
-class Image2DTransform(Transform):
+class ResizeTransform(Transform):
     def __init__(self):
         pass
 

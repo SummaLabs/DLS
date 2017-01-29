@@ -6,6 +6,7 @@ class Reader(object):
     def read(self, path):
         return
 
+
 class Image2DReader(Reader):
     def __init__(self):
         pass
