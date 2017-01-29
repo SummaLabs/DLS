@@ -65,13 +65,13 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
 			if (shapeIn) {
 				shapeIn.attr('id', '#' + patternDefinitions.markerShapeIn + idNode);
-				shapeIn.text('[*]');
+				setShape(shapeIn, $scope.nodeData.shapeInp);
 			}
 
 			if (shapeOut) {
 				shapeOut.attr('id', '#' + patternDefinitions.markerShapeOut + idNode);
-				shapeOut.text('[*]');
-			}
+				setShape(shapeOut, $scope.nodeData.shapeOut);
+            }
 
 			element.attr('id', 'id_' + idNode);
 
@@ -224,32 +224,15 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 	}
 
 	function shapeEvents(scope, shapeIn, shapeOut, idNode) {
-		scope.$on('node:set_shapes_' + idNode, function (event, data) {
-			if (data.type === 'in' && shapeIn[0]) {
-				setShapes(shapeIn, data.shapes);
-			} else if (data.type === 'out' && shapeOut[0]) {
-                setShapes(shapeOut, data.shapes);
-			}
 
-        });
+		scope.$watch('nodeData.shapeInp', function(newValue, oldValue) {
+            setShape(shapeIn, newValue);
+		});
+
+		scope.$watch('nodeData.shapeOut', function(newValue, oldValue) {
+			setShape(shapeOut, newValue);
+		});
 	}
-
-	function setShapes(node, shapes) {
-        if (!shapes || shapes === 'Unknown')
-            return;
-        let text = '';
-        for (let a = 0; a < shapes.length; a ++) {
-            if (shapes[a])
-                text += shapes[a] + ',';
-            else
-                text += '*,';
-        }
-        if (shapes.length > 1)
-            shapes.length -= 1;
-        else
-            text += '*';
-        node.text('[' + text + ']');
-    }
 
     function adaptText(node, textNode, text, scale) {
         let textRect = node[0].getBoundingClientRect();
@@ -267,6 +250,22 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
         return adaptedText;
 
+    }
+
+    function setShape(element, array) {
+        if (!array) {
+            element.text('[*]');
+            return;
+        }
+        let shapeText = '[';
+            array.forEach(function (item, index) {
+                shapeText += `${item ? item: '*'}`;
+                if (index < array.length - 1)
+                    shapeText +=', ';
+            });
+            shapeText += ']';
+
+            element.text(shapeText);
     }
 
 }
