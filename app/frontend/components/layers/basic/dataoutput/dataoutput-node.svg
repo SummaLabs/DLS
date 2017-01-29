@@ -22,7 +22,6 @@
     <text
        x="131"
        y="79.75"
-       id="shape_out"
        xml:space="preserve"
        style="font-size:22px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><title
          id="title3858-8-1-6">label1</title><tspan
@@ -36,8 +35,7 @@
              style="font-size:10px"><tspan
                id="tspan4050"
                style="font-size:6px"><tspan
-                 id="tspan4078"
-                 style="font-size:8px">[*,16,16,256] </tspan></tspan></tspan></tspan></tspan></text>
+                 style="font-size:8px" id="shape_out">[*,16,16,256] </tspan></tspan></tspan></tspan></tspan></text>
     <rect
        width="36.383923"
        height="36.383923"
@@ -61,7 +59,6 @@
     <text
        x="31"
        y="79.75"
-       id="shape_in"
        xml:space="preserve"
        style="font-size:22px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><title
          id="title3858-8-0">label1</title><tspan
@@ -89,6 +86,5 @@
                            style="font-size:11px"><tspan
                              id="tspan4074"
                              style="font-size:10px"><tspan
-                               id="tspan4076"
-                               style="font-size:8px">[*,32,32,128] </tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></text>
+                               style="font-size:8px" id="shape_in">[*,32,32,128] </tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></tspan></text>
   </g>

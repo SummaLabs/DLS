@@ -358,12 +358,11 @@ function Schema(viewContext, maxStorageSize) {
     	let links = this.currentState().links;
 
     	nodes.forEach(function(node){
-    		let layer = Object.create(null);
+    		let layer = {};/*Object.create(null);*/
     		layer.id = node.id;
 			layer.name = node.name;
             layer.layerType = node.layerType;
 			layer.category = node.category;
-			// layer.template = node.template;
 			layer.pos = node.pos;
 			layer.params = node.params;
 			layer.wires = [];
@@ -375,6 +374,17 @@ function Schema(viewContext, maxStorageSize) {
     		schema.push(layer);
     	});
     	return schema;
+    };
+
+    this.updateShapes = function () {
+        let self = this;
+        let sch = this.getSchema();
+        calculateShapesInModel(sch);
+        sch.forEach(function (item) {
+            let node = self.getNodeById(item.id);
+            node.shapeInp = item.shapeInp;
+            node.shapeOut = item.shapeOut;
+        });
     };
 
     this.addNode = function(layer) {
@@ -393,6 +403,7 @@ function Schema(viewContext, maxStorageSize) {
         node.category = layer.category;
         node.params = layer.params;
         nodes.push(node);
+        this.updateShapes();
         return node;
     };
 
@@ -435,6 +446,7 @@ function Schema(viewContext, maxStorageSize) {
 
         link.nodes = [from, to];
         links.push(link);
+        this.updateShapes();
         return link;
     };
 
@@ -463,6 +475,7 @@ function Schema(viewContext, maxStorageSize) {
                 links.splice(index, 1);
             }
         });
+        this.updateShapes();
     };
 
     this.getItemById = function(id, type) {
@@ -528,16 +541,19 @@ function Schema(viewContext, maxStorageSize) {
             }
         }
 
-        let counterDel = 0;
+        let counterDelNodes = 0;
         for (let i = 0; i < delNodes.length; ++i) {
-            nodes.splice(delNodes[i] - counterDel, 1);
-            counterDel ++;
+            nodes.splice(delNodes[i] - counterDelNodes, 1);
+            counterDelNodes ++;
         }
-        counterDel = 0;
+        let counterDelLinks = 0;
         for (let i = 0; i < delLinks.length; ++i) {
-            links.splice(delLinks[i] - counterDel, 1);
-            counterDel ++;
+            links.splice(delLinks[i] - counterDelLinks, 1);
+            counterDelLinks ++;
         }
+
+        if (counterDelNodes > 0 || counterDelLinks > 0)
+            this.updateShapes();
         if (remItems.links.length > 0 || remItems.nodes.length > 0)
             return remItems;
         return null;

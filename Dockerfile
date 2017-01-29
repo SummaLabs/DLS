@@ -11,12 +11,22 @@ RUN easy_install pygraphviz
 
 RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 RUN sudo apt-get install -y nodejs
-ADD dls/ /opt/dls
-RUN mkdir -p  /opt/dls/data/datasets
+RUN mkdir -p  /opt/dls
+
+ADD app /opt/dls/app
+ADD data /opt/dls/data
+ADD data-test /opt/dls/data-test
+ADD data-design /opt/dls/data-design
+ADD run-app.py /opt/dls/run-app.py
+ADD config.py /opt/dls/config.py
+ADD requirements.txt /opt/dls/requirements.txt
+
 WORKDIR /opt/dls
 RUN npm install grunt-cli -g
 #RUN npm install
 
 RUN sudo pip install -r requirements.txt
+RUN pip install toposort
+RUN pip install h5py
 #RUN grunt
 CMD python run-app.py
