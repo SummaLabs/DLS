@@ -16,3 +16,9 @@ _Run tests with coverage report_:
 * py.test --cov-report term --cov=app app/test
 
 More about measuring test coverage: https://pypi.python.org/pypi/pytest-cov
+
+_Run With Docker
+* install nvidia-docker as described here https://github.com/NVIDIA/nvidia-docker
+* sudo docker login
+* sudo docker pull yegortsebro/dls
+* sudo nvidia-docker  run -p 5001:5001 --name dls dls/dls
