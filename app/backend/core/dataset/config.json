@@ -1,0 +1,31 @@
+{
+  "columns": [
+    {
+      "name": "col_0",
+      "type": "FLOAT",
+      "index":[0]
+    },
+    {
+      "name": "col_1",
+      "type": "STRING",
+      "index":[1]
+    },
+    {
+      "name": "col_2",
+      "type": "VECTOR",
+      "index":[2,3,4]
+    },
+    {
+      "name": "col_3",
+      "type": "CATEGORICAL",
+      "index":[5]
+    },
+    {
+      "name": "col_4",
+      "type": "IMG_2D",
+      "index":[6],
+      "pre_transform": [{"ResizeImage": {"height": 256, "width": 256}}],
+      "post_transform": [{"CropImage": {"height": 256, "width": 256}}]
+    }
+  ]
+}

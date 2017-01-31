@@ -1,5 +1,5 @@
 from itertools import islice
-import csv, sys
+import csv, sys, json
 import copy
 
 
@@ -113,105 +113,80 @@ class Schema(object):
 
 
 class Input(object):
-    def __init__(self, schema):
-        if not isinstance(schema, Schema):
-            raise TypeError("Must be set to an Schema")
+    def __init__(self, schema=None):
+        if schema is not None or not isinstance(schema, Schema):
+            raise TypeError("Pass Schema instance as an argument")
         self._schema = schema
         self._columns = {}
 
     class Builder(object):
-        def __init__(self, config):
-            pass
+        def __init__(self, schema_config):
+            self._schema_config = json.load(schema_config)
 
         def build(self):
-            pass
+            input = Input()
+            for config_column in self._schema_config["columns"]:
+                schema_column = Schema.Column(config_column["name"], config_column["index"])
+                input.columns[schema_column] = Input.Column()
 
     class Column(object):
-        def __init__(self, pre_transforms=None, post_transforms=None, ser_de=None, reader=None):
-            self._pre_transforms = pre_transforms
-            self._post_transforms = post_transforms
-            self._reader = reader
-            self._ser_de = ser_de
+        def __init__(self, data_type):
+            self._data_type = data_type
+
+        class DataType:
+            INT = "INT",
+            FLOAT = "FLOAT",
+            STRING = "STRING",
+            VECTOR = "VECTOR",
+            CATEGORICAL = "CATEGORICAL",
+            IMG_2D = "IMG_2D"
 
         @property
-        def pre_transforms(self):
-            return self._pre_transforms
-
-        @pre_transforms.setter
-        def pre_transforms(self, pre_transforms):
-            self._pre_transforms = pre_transforms
-
-        @property
-        def post_transforms(self):
-            return self._post_transforms
-
-        @post_transforms.setter
-        def post_transforms(self, post_transforms):
-            self._post_transforms = post_transforms
-
-        @property
-        def reader(self):
-            return self._reader
-
-        @reader.setter
-        def reader(self, reader):
-            self._reader = reader
-
-        @property
-        def ser_de(self):
-            return self._ser_de
-
-        @ser_de.setter
-        def ser_de(self, ser_de):
-            self._ser_de = ser_de
+        def data_type(self):
+            return self._data_type
 
     @property
     def columns(self):
         return self._columns
 
     def add_int_column(self, column_name):
-        pass
+        schema_column = self.find_column_in_schema(column_name)
+        self._columns[schema_column] = BasicTypeColumn(Input.Column.DataType.INT)
 
     def add_float_column(self, column_name):
-        pass
+        schema_column = self.find_column_in_schema(column_name)
+        self._columns[schema_column] = BasicTypeColumn(Input.Column.DataType.FLOAT)
 
     def add_categorical_column(self, column_name):
-        pass
+        schema_column = self.find_column_in_schema(column_name)
+        self._columns[schema_column] = BasicTypeColumn(Input.Column.DataType.CATEGORICAL)
 
     def add_string_column(self, column_name):
-        pass
+        schema_column = self.find_column_in_schema(column_name)
+        self._columns[schema_column] = BasicTypeColumn(Input.Column.DataType.STRING)
 
-    def add_array_column(self, column_name):
-        pass
+    def add_vector_column(self, column_name):
+        schema_column = self.find_column_in_schema(column_name)
+        self._columns[schema_column] = BasicTypeColumn(Input.Column.DataType.VECTOR)
 
     def add_column(self, column_name, input_column):
-        column = self._find_schema_column(column_name)
-        if column is None:
-            raise Exception("No column with such name in schema %s" % (column_name))
-        self._columns[column_name] = input_column
+        schema_column = self.find_column_in_schema(column_name)
+        self._columns[schema_column] = input_column
 
-    @staticmethod
-    def check_transform_arg(transform_param, arg_name):
-        if isinstance(transform_param, list):
-            if not all(issubclass(t.__class__, Transform) for t in transform_param):
-                raise Exception("Arg %s should be list of Transform class instances" % arg_name)
-        elif not issubclass(transform_param.__class__, Transform):
-            raise Exception("Arg %s should be Transform class instance" % arg_name)
-
-    def _find_schema_column(self, column_name):
+    def find_column_in_schema(self, column_name):
         for schema_column in self._schema.columns:
             if schema_column.name == column_name:
                 return schema_column
-        return None
-
-
-class ComplexTypeColumn(Input.Column):
-    pass
+        raise Exception("No column with name %s in schema." % (column_name))
 
 
 class BasicTypeColumn(Input.Column):
-    def __init__(self, pre_transforms=None, post_transforms=None, ser_de=None, reader=None):
-        super(BasicTypeColumn, self).__init__(pre_transforms, post_transforms, ser_de, reader)
+    pass
+
+
+class ComplexTypeColumn(Input.Column):
+    def __init__(self, data_type, pre_transforms=None, post_transforms=None, ser_de=None, reader=None):
+        super(ComplexTypeColumn, self).__init__(data_type)
         self._pre_transforms = pre_transforms
         self._post_transforms = post_transforms
         self._reader = reader
