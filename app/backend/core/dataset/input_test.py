@@ -2,8 +2,7 @@ import shutil, tempfile
 from os import path
 from input import *
 import unittest
-from transform import *
-from reader import *
+from img2d import *
 
 
 def create_csv_file(file_name):

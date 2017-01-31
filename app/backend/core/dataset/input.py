@@ -1,7 +1,6 @@
 from itertools import islice
 import csv, sys
 import copy
-from transform import *
 
 
 class Schema(object):
@@ -118,7 +117,7 @@ class Input(object):
         if not isinstance(schema, Schema):
             raise TypeError("Must be set to an Schema")
         self._schema = schema
-        self._transforms = {}
+        self._columns = {}
 
     class Builder(object):
         def __init__(self, config):
@@ -127,39 +126,69 @@ class Input(object):
         def build(self):
             pass
 
-    class ColumnTransform(object):
-        def __init__(self, column, pre_transforms, post_transforms, reader=None):
-            self._column = column
+    class Column(object):
+        def __init__(self, pre_transforms=None, post_transforms=None, ser_de=None, reader=None):
             self._pre_transforms = pre_transforms
             self._post_transforms = post_transforms
             self._reader = reader
-
-        @property
-        def column(self):
-            return self._column
+            self._ser_de = ser_de
 
         @property
         def pre_transforms(self):
             return self._pre_transforms
 
+        @pre_transforms.setter
+        def pre_transforms(self, pre_transforms):
+            self._pre_transforms = pre_transforms
+
         @property
         def post_transforms(self):
             return self._post_transforms
+
+        @post_transforms.setter
+        def post_transforms(self, post_transforms):
+            self._post_transforms = post_transforms
 
         @property
         def reader(self):
             return self._reader
 
-    def columns_transforms(self):
-        return self._transforms
+        @reader.setter
+        def reader(self, reader):
+            self._reader = reader
 
-    def transform_column(self, column_name, pre_transforms=[], post_transforms=[], reader=None):
-        column = self._find_column(column_name)
+        @property
+        def ser_de(self):
+            return self._ser_de
+
+        @ser_de.setter
+        def ser_de(self, ser_de):
+            self._ser_de = ser_de
+
+    @property
+    def columns(self):
+        return self._columns
+
+    def add_int_column(self, column_name):
+        pass
+
+    def add_float_column(self, column_name):
+        pass
+
+    def add_categorical_column(self, column_name):
+        pass
+
+    def add_string_column(self, column_name):
+        pass
+
+    def add_array_column(self, column_name):
+        pass
+
+    def add_column(self, column_name, input_column):
+        column = self._find_schema_column(column_name)
         if column is None:
-            raise Exception("No column with such name %s" % (column_name))
-        Input.check_transform_arg(pre_transforms, "pre_transforms")
-        Input.check_transform_arg(post_transforms, "post_transforms")
-        self._transforms[column_name] = Input.ColumnTransform(column, pre_transforms, post_transforms, reader)
+            raise Exception("No column with such name in schema %s" % (column_name))
+        self._columns[column_name] = input_column
 
     @staticmethod
     def check_transform_arg(transform_param, arg_name):
@@ -169,8 +198,80 @@ class Input(object):
         elif not issubclass(transform_param.__class__, Transform):
             raise Exception("Arg %s should be Transform class instance" % arg_name)
 
-    def _find_column(self, column_name):
-        for column in self._schema.columns:
-            if column.name == column_name:
-                return column
+    def _find_schema_column(self, column_name):
+        for schema_column in self._schema.columns:
+            if schema_column.name == column_name:
+                return schema_column
         return None
+
+
+class ComplexTypeColumn(Input.Column):
+    pass
+
+
+class BasicTypeColumn(Input.Column):
+    def __init__(self, pre_transforms=None, post_transforms=None, ser_de=None, reader=None):
+        super(BasicTypeColumn, self).__init__(pre_transforms, post_transforms, ser_de, reader)
+        self._pre_transforms = pre_transforms
+        self._post_transforms = post_transforms
+        self._reader = reader
+        self._ser_de = ser_de
+
+    @property
+    def pre_transforms(self):
+        return self._pre_transforms
+
+    @pre_transforms.setter
+    def pre_transforms(self, pre_transforms):
+        self._pre_transforms = pre_transforms
+
+    @property
+    def post_transforms(self):
+        return self._post_transforms
+
+    @post_transforms.setter
+    def post_transforms(self, post_transforms):
+        self._post_transforms = post_transforms
+
+    @property
+    def reader(self):
+        return self._reader
+
+    @reader.setter
+    def reader(self, reader):
+        self._reader = reader
+
+    @property
+    def ser_de(self):
+        return self._ser_de
+
+    @ser_de.setter
+    def ser_de(self, ser_de):
+        self._ser_de = ser_de
+
+
+class ColumnTransform(object):
+    def __init__(self):
+        pass
+
+    def apply(self, data):
+        return data
+
+
+class ColumnReader(object):
+    def __init__(self):
+        pass
+
+    def read(self, path):
+        return
+
+
+class ColumnSerDe(object):
+    def __init__(self):
+        pass
+
+    def serialize(self, path):
+        return
+
+    def deserialize(self, path):
+        return
