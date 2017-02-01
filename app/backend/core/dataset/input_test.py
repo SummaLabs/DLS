@@ -1,8 +1,7 @@
 import shutil, tempfile
 from os import path
-from input import *
 import unittest
-from img2d import *
+from input import Schema
 
 
 def create_csv_file(file_name):
@@ -89,56 +88,56 @@ class TestInput(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
-    def test_transforms_column(self):
+    def test_add_categorical_column(self):
         input = Input(Schema(self.test_file_path))
-        input.transform_column('col_3', CropImageTransform(), ResizeTransform())
-        column_transform_0 = input.columns_transforms()['col_3']
-        self.assertEqual(column_transform_0.column.name, 'col_3')
-        self.assertEqual(column_transform_0.column.columns_indexes[0], 3)
+        input.add_categorical_column("col_3")
+        categorical_column = input.columns()['col_3']
+        self.assertEqual(categorical_column.column.name, 'col_3')
+        self.assertEqual(categorical_column.column.columns_indexes[0], 3)
 
-    def test_transforms_without_reader(self):
-        input = Input(Schema(self.test_file_path))
-        input.transform_column('col_0', CropImageTransform(), ResizeTransform())
-        column_transform_0 = input.columns_transforms()['col_0']
-        self.assertEqual(column_transform_0.column.name, 'col_0')
-        self.assertTrue(isinstance(column_transform_0.pre_transforms, CropImageTransform))
-        self.assertTrue(isinstance(column_transform_0.post_transforms, ResizeTransform))
-        self.assertEqual(column_transform_0.reader, None)
-
-    def test_transforms_with_reader(self):
-        input = Input(Schema(self.test_file_path))
-        input.transform_column('col_1', CropImageTransform(), ResizeTransform(), Image2DReader())
-        column_transform_1 = input.columns_transforms()['col_1']
-        self.assertEqual(column_transform_1.column.name, 'col_1')
-        self.assertTrue(isinstance(column_transform_1.pre_transforms, CropImageTransform))
-        self.assertTrue(isinstance(column_transform_1.post_transforms, ResizeTransform))
-        self.assertTrue(isinstance(column_transform_1.reader, Image2DReader))
-
-    def test_transforms_with_list_of_transformers(self):
-        input = Input(Schema(self.test_file_path))
-        input.transform_column('col_2', [CropImageTransform(), ResizeTransform()], [ResizeTransform(), ResizeTransform()])
-        column_transform_1 = input.columns_transforms()['col_2']
-        self.assertEqual(column_transform_1.column.name, 'col_2')
-        self.assertTrue(isinstance(column_transform_1.pre_transforms, list))
-        self.assertTrue(isinstance(column_transform_1.post_transforms, list))
-
-    def test_transforms_incorrect_args_post_transform(self):
-        with self.assertRaises(Exception) as context:
-            input = Input(Schema(self.test_file_path))
-            input.transform_column('col_0', Image2DReader(), ResizeTransform())
-        self.assertTrue('Arg pre_transforms should be Transform class instance' in context.exception)
-
-    def test_transforms_incorrect_args_pre_transform(self):
-        with self.assertRaises(Exception) as context:
-            input = Input(Schema(self.test_file_path))
-            input.transform_column('col_0', CropImageTransform(), Image2DReader())
-        self.assertTrue('Arg post_transforms should be Transform class instance' in context.exception)
-
-    def test_transforms_incorrect_args_post_transform_list(self):
-        with self.assertRaises(Exception) as context:
-            input = Input(Schema(self.test_file_path))
-            input.transform_column('col_0', [CropImageTransform()], [Image2DReader()])
-        self.assertTrue('Arg post_transforms should be list of Transform class instances' in context.exception)
+    # def test_transforms_without_reader(self):
+    #     input = Input(Schema(self.test_file_path))
+    #     input.transform_column('col_0', CropImageTransform(), ResizeTransform())
+    #     column_transform_0 = input.columns_transforms()['col_0']
+    #     self.assertEqual(column_transform_0.column.name, 'col_0')
+    #     self.assertTrue(isinstance(column_transform_0.pre_transforms, CropImageTransform))
+    #     self.assertTrue(isinstance(column_transform_0.post_transforms, ResizeTransform))
+    #     self.assertEqual(column_transform_0.reader, None)
+    #
+    # def test_transforms_with_reader(self):
+    #     input = Input(Schema(self.test_file_path))
+    #     input.transform_column('col_1', CropImageTransform(), ResizeTransform(), Image2DReader())
+    #     column_transform_1 = input.columns_transforms()['col_1']
+    #     self.assertEqual(column_transform_1.column.name, 'col_1')
+    #     self.assertTrue(isinstance(column_transform_1.pre_transforms, CropImageTransform))
+    #     self.assertTrue(isinstance(column_transform_1.post_transforms, ResizeTransform))
+    #     self.assertTrue(isinstance(column_transform_1.reader, Image2DReader))
+    #
+    # def test_transforms_with_list_of_transformers(self):
+    #     input = Input(Schema(self.test_file_path))
+    #     input.transform_column('col_2', [CropImageTransform(), ResizeTransform()], [ResizeTransform(), ResizeTransform()])
+    #     column_transform_1 = input.columns_transforms()['col_2']
+    #     self.assertEqual(column_transform_1.column.name, 'col_2')
+    #     self.assertTrue(isinstance(column_transform_1.pre_transforms, list))
+    #     self.assertTrue(isinstance(column_transform_1.post_transforms, list))
+    #
+    # def test_transforms_incorrect_args_post_transform(self):
+    #     with self.assertRaises(Exception) as context:
+    #         input = Input(Schema(self.test_file_path))
+    #         input.transform_column('col_0', Image2DReader(), ResizeTransform())
+    #     self.assertTrue('Arg pre_transforms should be Transform class instance' in context.exception)
+    #
+    # def test_transforms_incorrect_args_pre_transform(self):
+    #     with self.assertRaises(Exception) as context:
+    #         input = Input(Schema(self.test_file_path))
+    #         input.transform_column('col_0', CropImageTransform(), Image2DReader())
+    #     self.assertTrue('Arg post_transforms should be Transform class instance' in context.exception)
+    #
+    # def test_transforms_incorrect_args_post_transform_list(self):
+    #     with self.assertRaises(Exception) as context:
+    #         input = Input(Schema(self.test_file_path))
+    #         input.transform_column('col_0', [CropImageTransform()], [Image2DReader()])
+    #     self.assertTrue('Arg post_transforms should be list of Transform class instances' in context.exception)
 
 
 if __name__ == '__main__':

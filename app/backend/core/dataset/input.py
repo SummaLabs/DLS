@@ -1,6 +1,7 @@
 from itertools import islice
 import csv, sys, json
 import copy
+from img2d import Img2DColumn
 
 
 class Schema(object):
@@ -127,7 +128,17 @@ class Input(object):
             input = Input()
             for config_column in self._schema_config["columns"]:
                 schema_column = Schema.Column(config_column["name"], config_column["index"])
-                input.columns[schema_column] = Input.Column()
+                column_type = config_column["type"]
+                if column_type == Input.Column.DataType.INT or\
+                                column_type == Input.Column.DataType.FLOAT or\
+                                column_type == Input.Column.DataType.STRING or\
+                                column_type == Input.Column.DataType.STRING:
+                    input.columns[schema_column] = BasicTypeColumn(column_type)
+                elif column_type == Input.Column.DataType.IMG_2D:
+                    input.columns[schema_column] = Img2DColumn.Builder(config_column)
+                else:
+                    raise TypeError("Unsupported column type: %s" % column_type)
+                return input
 
     class Column(object):
         def __init__(self, data_type):
