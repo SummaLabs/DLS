@@ -1,7 +1,6 @@
 from itertools import islice
 import csv, sys, json
 import copy
-from img2d import Img2DColumn
 
 
 class Schema(object):
@@ -86,7 +85,7 @@ class Schema(object):
         columns_indexes = []
         for column in copy.deepcopy(self._columns):
             if column.name in columns_to_merge:
-                columns_indexes.append(column.columns_indexes)
+                columns_indexes.extend(column.columns_indexes)
                 self.drop_column(column.name)
         self._columns.append(Schema.Column(new_column_name, columns_indexes))
 
@@ -100,7 +99,7 @@ class Schema(object):
         columns_indexes = []
         for index, column in enumerate(copy.deepcopy(self._columns)):
             if range[0] <= index <= range[1]:
-                columns_indexes.append(column.columns_indexes)
+                columns_indexes.extend(column.columns_indexes)
                 self.drop_column(column.name)
         self._columns.append(Schema.Column(new_column_name, columns_indexes))
 
@@ -115,7 +114,7 @@ class Schema(object):
 
 class Input(object):
     def __init__(self, schema=None):
-        if schema is not None or not isinstance(schema, Schema):
+        if schema is not None and not isinstance(schema, Schema):
             raise TypeError("Pass Schema instance as an argument")
         self._schema = schema
         self._columns = {}
@@ -125,6 +124,7 @@ class Input(object):
             self._schema_config = json.load(schema_config)
 
         def build(self):
+            from img2d import Img2DColumn
             input = Input()
             for config_column in self._schema_config["columns"]:
                 schema_column = Schema.Column(config_column["name"], config_column["index"])
@@ -135,7 +135,7 @@ class Input(object):
                                 column_type == Input.Column.DataType.STRING:
                     input.columns[schema_column] = BasicTypeColumn(column_type)
                 elif column_type == Input.Column.DataType.IMG_2D:
-                    input.columns[schema_column] = Img2DColumn.Builder(config_column)
+                    input.columns[schema_column] = Img2DColumn.Builder(config_column).build()
                 else:
                     raise TypeError("Unsupported column type: %s" % column_type)
                 return input

@@ -1,7 +1,7 @@
 import shutil, tempfile
 from os import path
 import unittest
-from input import Schema
+from input import Schema, Input
 
 
 def create_csv_file(file_name):
@@ -48,14 +48,18 @@ class TestSchema(unittest.TestCase):
         schema.merge_columns("test_col", ["col_0", "col_1"])
         self.assertEqual(len(schema.columns), 5)
         self.assertEqual(schema.columns[0].name, 'col_2')
-        self.assertEqual(schema.columns[len(schema.columns) - 1].name, 'test_col')
+        merged_column = schema.columns[len(schema.columns) - 1]
+        self.assertEqual(merged_column.name, 'test_col')
+        self.assertTrue(merged_column.columns_indexes, [0 ,2])
 
     def test_merge_columns_in_range(self):
         schema = Schema(self.test_file_path)
         schema.merge_columns_in_range("test_col", (3, 5))
         self.assertEqual(len(schema.columns), 4)
         self.assertEqual(schema.columns[0].name, 'col_0')
-        self.assertEqual(schema.columns[len(schema.columns) - 1].name, 'test_col')
+        merged_column = schema.columns[len(schema.columns) - 1]
+        self.assertEqual(merged_column.name, 'test_col')
+        self.assertTrue(merged_column.columns_indexes == [3, 4 ,5])
 
     def test_duplicate_in_header(self):
         test_file_path = path.join(self.test_dir, 'test_duplicate_header.csv')
@@ -88,56 +92,42 @@ class TestInput(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
-    def test_add_categorical_column(self):
+    def test_add_basic_type_column(self):
+        input = Input(Schema(self.test_file_path))
+        input.add_int_column("col_3")
+        is_column_exist = False
+        for column in input.columns:
+            if column.name == 'col_3':
+                is_column_exist = True
+                self.assertEqual(column.columns_indexes[0], 3)
+                self.assertEqual(input.columns.get(column).data_type[0], "INT")
+        self.assertTrue(is_column_exist, 'Expected column was not found')
+
+    def test_add_categorical_type_column(self):
         input = Input(Schema(self.test_file_path))
         input.add_categorical_column("col_3")
-        categorical_column = input.columns()['col_3']
-        self.assertEqual(categorical_column.column.name, 'col_3')
-        self.assertEqual(categorical_column.column.columns_indexes[0], 3)
+        is_column_exist = False
+        for column in input.columns:
+            if column.name == 'col_3':
+                is_column_exist = True
+                self.assertEqual(column.columns_indexes[0], 3)
+                self.assertEqual(input.columns.get(column).data_type[0], "CATEGORICAL")
+        self.assertTrue(is_column_exist, 'Expected column was not found')
 
-    # def test_transforms_without_reader(self):
-    #     input = Input(Schema(self.test_file_path))
-    #     input.transform_column('col_0', CropImageTransform(), ResizeTransform())
-    #     column_transform_0 = input.columns_transforms()['col_0']
-    #     self.assertEqual(column_transform_0.column.name, 'col_0')
-    #     self.assertTrue(isinstance(column_transform_0.pre_transforms, CropImageTransform))
-    #     self.assertTrue(isinstance(column_transform_0.post_transforms, ResizeTransform))
-    #     self.assertEqual(column_transform_0.reader, None)
-    #
-    # def test_transforms_with_reader(self):
-    #     input = Input(Schema(self.test_file_path))
-    #     input.transform_column('col_1', CropImageTransform(), ResizeTransform(), Image2DReader())
-    #     column_transform_1 = input.columns_transforms()['col_1']
-    #     self.assertEqual(column_transform_1.column.name, 'col_1')
-    #     self.assertTrue(isinstance(column_transform_1.pre_transforms, CropImageTransform))
-    #     self.assertTrue(isinstance(column_transform_1.post_transforms, ResizeTransform))
-    #     self.assertTrue(isinstance(column_transform_1.reader, Image2DReader))
-    #
-    # def test_transforms_with_list_of_transformers(self):
-    #     input = Input(Schema(self.test_file_path))
-    #     input.transform_column('col_2', [CropImageTransform(), ResizeTransform()], [ResizeTransform(), ResizeTransform()])
-    #     column_transform_1 = input.columns_transforms()['col_2']
-    #     self.assertEqual(column_transform_1.column.name, 'col_2')
-    #     self.assertTrue(isinstance(column_transform_1.pre_transforms, list))
-    #     self.assertTrue(isinstance(column_transform_1.post_transforms, list))
-    #
-    # def test_transforms_incorrect_args_post_transform(self):
-    #     with self.assertRaises(Exception) as context:
-    #         input = Input(Schema(self.test_file_path))
-    #         input.transform_column('col_0', Image2DReader(), ResizeTransform())
-    #     self.assertTrue('Arg pre_transforms should be Transform class instance' in context.exception)
-    #
-    # def test_transforms_incorrect_args_pre_transform(self):
-    #     with self.assertRaises(Exception) as context:
-    #         input = Input(Schema(self.test_file_path))
-    #         input.transform_column('col_0', CropImageTransform(), Image2DReader())
-    #     self.assertTrue('Arg post_transforms should be Transform class instance' in context.exception)
-    #
-    # def test_transforms_incorrect_args_post_transform_list(self):
-    #     with self.assertRaises(Exception) as context:
-    #         input = Input(Schema(self.test_file_path))
-    #         input.transform_column('col_0', [CropImageTransform()], [Image2DReader()])
-    #     self.assertTrue('Arg post_transforms should be list of Transform class instances' in context.exception)
+    def test_add_vector_type_column(self):
+        schema = Schema(self.test_file_path)
+        schema.merge_columns_in_range("merged_col", (3, 5))
+        input = Input(schema)
+        input.add_vector_column("merged_col")
+        is_column_exist = False
+        for column in input.columns:
+            if column.name == 'merged_col':
+                is_column_exist = True
+                self.assertTrue(column.columns_indexes == [3, 4, 5])
+                self.assertEqual(input.columns.get(column).data_type[0], "VECTOR")
+        self.assertTrue(is_column_exist, 'Expected column was not found')
+
+
 
 
 if __name__ == '__main__':
