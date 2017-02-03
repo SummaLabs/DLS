@@ -1415,8 +1415,10 @@ function calculateShapesInModel(modelJson, defaultInputShape=[null, 3, 256, 256]
         let tmpNode = new NodeF(ll,ii,newNodeName);
         tmpNode.inpNodesLst = [];
         tmpNode.outNodesLst = [];
-        if(ll.hasOwnProperty('shapeInp')) {
+
+        if(ll.hasOwnProperty('shapeInp') && ll.shapeInp) {
             tmpNode.shapeInp = ll.shapeInp;
+
         } else {
             if(tmpType==='datainput') {
                 tmpNode.shapeInp = defaultInputShape.slice();
@@ -1449,9 +1451,9 @@ function calculateShapesInModel(modelJson, defaultInputShape=[null, 3, 256, 256]
             nodeOut.inpNodesLst.push(node);
         }
     }
-    for( let [ii,ll] of nodeArray.entries()) {
+  /*  for( let [ii,ll] of nodeArray.entries()) {
         console.log(`${ii}  :  ${ll.toString()}`);
-    }
+    }*/
     // (3) Prepare Edge Index before sorting
     let edgesIdx = [];
     for(let [idx, ll] of nodeArray.entries()) {
@@ -1461,11 +1463,11 @@ function calculateShapesInModel(modelJson, defaultInputShape=[null, 3, 256, 256]
             }
         }
     }
-    console.log(edgesIdx);
+    // console.log(edgesIdx);
     // (4) Sort Topolgicaly index of nodes
     let nodeIndexTopoSorted = topologicalSort(edgesIdx);
-    console.log(nodeIndexTopoSorted);
-    console.log(nodeArray);
+    // console.log(nodeIndexTopoSorted);
+    // console.log(nodeArray);
     // (5) Fill Shape Information for every Node from list of NodeF
     for(let ii of nodeIndexTopoSorted) {
         let ll = nodeArray[ii];
@@ -1506,7 +1508,7 @@ function calculateShapesInModel(modelJson, defaultInputShape=[null, 3, 256, 256]
             ll.shapeOut  = null;
         } else {
             ll.shapeOut  = tmpLayer.get_output_shape_for(ll.shapeInp.slice());
-            console.log(`[${ii}] ${ll.shapeInp} : [${ll.shapeOut}] -> ${ll.toString()} * ${tmpLayer}`);
+            // console.log(`[${ii}] ${ll.shapeInp} : [${ll.shapeOut}] -> ${ll.toString()} * ${tmpLayer}`);
         }
     }
     // (6) Add inpShape and outShape properties in Model Json

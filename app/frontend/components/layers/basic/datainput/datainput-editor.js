@@ -18,7 +18,8 @@ angular
                             var info = {
                                 id:     loadedDataSets[ii].id,
                                 text:   loadedDataSets[ii].name + ' (' + loadedDataSets[ii].id + ')',
-                                shape:  loadedDataSets[ii].shapestr
+                                shape:  loadedDataSets[ii].shapestr,
+                                shapeObject:  loadedDataSets[ii].shape
                             };
                             dataSets.push(info);
                         }
@@ -29,8 +30,18 @@ angular
 
 
                 $scope.$watch('selectedDataSet', function (selectedDataSet) {
-                    if (selectedDataSet != null)
+                    if (selectedDataSet != null) {
+                        // console.log($scope.layerData);
+                        if (!$scope.layerData.hasOwnProperty('params'))
+                            $scope.layerData.params = {};
                         $scope.layerData.params.datasetId = selectedDataSet.id;
+                        $scope.layerData.shapeInp = [
+                            null,
+                            selectedDataSet.shapeObject.channels,
+                            selectedDataSet.shapeObject.height,
+                            selectedDataSet.shapeObject.width
+                        ];
+                    }
                 }, true);
 
 

@@ -65,12 +65,12 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 
 			if (shapeIn) {
 				shapeIn.attr('id', '#' + patternDefinitions.markerShapeIn + idNode);
-				setShape(shapeIn, $scope.nodeData.shapeInp);
+				setShape(shapeIn, $scope.nodeData.params.shapeInp);
 			}
 
 			if (shapeOut) {
 				shapeOut.attr('id', '#' + patternDefinitions.markerShapeOut + idNode);
-				setShape(shapeOut, $scope.nodeData.shapeOut);
+				setShape(shapeOut, $scope.nodeData.params.shapeOut);
             }
 
 			element.attr('id', 'id_' + idNode);
@@ -119,6 +119,29 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
 				rectNode.removeClass("node_active");
 			}
 		});
+
+		scope.$watch('nodeData.shapeInp', function(newValue, oldValue) {
+		    if (scope.nodeData.layerType !== 'datainput')
+		        return;
+
+            if (!oldValue && newValue) {
+                scope.$emit('node:param:update', {});
+                return;
+            }
+
+
+
+            if (newValue && (newValue.length === oldValue.length)) {
+                for (let a = 0; a < newValue.length; ++a) {
+                    if (!Array.isArray(newValue[a]) && newValue[a] !== oldValue[a]) {
+                         console.log(scope.nodeData, oldValue, newValue);
+                        scope.$emit('node:param:update', {});
+                        break;
+                    }
+                };
+
+            }
+        });
 	}
 
 	function nodeEventsHandler(scope, element, rectNode, idNode) {

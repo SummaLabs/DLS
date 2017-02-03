@@ -220,6 +220,8 @@ function Node() {
     this.category = null;
     this.pos = new Position(0, 0);
     this.params = {};
+    this.shapeInp = null;
+    this.shapeOut = null;
 };
 
 Node.prototype = Object.create(Item.prototype);
@@ -366,6 +368,8 @@ function Schema(viewContext, maxStorageSize) {
 			layer.pos = node.pos;
 			layer.params = node.params;
 			layer.wires = [];
+			layer.shapeInp = node.shapeInp;
+			layer.shapeOut = node.shapeOut;
 			links.forEach(function(link){
 				if (link.nodes[0].id === layer.id) {
 					layer.wires.push(link.nodes[1].id);
@@ -377,11 +381,24 @@ function Schema(viewContext, maxStorageSize) {
     };
 
     this.updateShapes = function () {
+        // console.log('updateShapes');
         let self = this;
         let sch = this.getSchema();
+        /*  let inputNode = this.getNodesByType('datainput');
+        let inputShapes = null;
+        if (inputNode.length > 0 && inputNode[0].params.shapeInp) {
+            if (typeof inputNode[0].params.shapeInp == 'string')
+                inputShapes = inputNode[0].params.shapeInp.split(/[^0-9]/).map(Number);
+            else inputShapes = inputNode[0].params.shapeInp;
+        }
+
+        if (inputShapes)
+            calculateShapesInModel(sch, inputShapes);
+        else*/
         calculateShapesInModel(sch);
         sch.forEach(function (item) {
             let node = self.getNodeById(item.id);
+
             node.shapeInp = item.shapeInp;
             node.shapeOut = item.shapeOut;
         });
@@ -403,12 +420,23 @@ function Schema(viewContext, maxStorageSize) {
         node.category = layer.category;
         node.params = layer.params;
         nodes.push(node);
-        this.updateShapes();
+        // this.updateShapes();
         return node;
     };
 
     this.getNodeById = function(id) {
         return getItemById(this.currentState().nodes, id);
+    };
+
+    this.getNodesByType = function(type) {
+        let resultNodes = [];
+        let nodes = this.getNodes();
+        for (let i = 0; i < nodes.length ; i ++) {
+            if (nodes[i].layerType === type) {
+                resultNodes.push(nodes[i]);
+            }
+        }
+        return resultNodes;
     };
 
     this.getNodes = function() {
@@ -446,7 +474,7 @@ function Schema(viewContext, maxStorageSize) {
 
         link.nodes = [from, to];
         links.push(link);
-        this.updateShapes();
+        // this.updateShapes();
         return link;
     };
 

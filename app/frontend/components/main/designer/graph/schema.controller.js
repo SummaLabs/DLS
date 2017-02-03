@@ -153,6 +153,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
             }
             console.log('addLinks');
             self.emitEvent(events.ADDED_LAYERS, {});
+            schema.updateShapes();
         };
 
         return true;
@@ -201,6 +202,10 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
         }
     });
 
+    $scope.$on('node:param:update', function (event, data) {
+        schema.updateShapes();
+    });
+
     $scope.controlItem.getNodes = function() {
         return schema.getSchema();
     };
@@ -231,8 +236,15 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
 
 	function addLink(nodeFrom, nodeTo) {
 		let link = schema.addLink(nodeFrom, nodeTo);
-        if (link)
+        if (link) {
+            try {
+                schema.updateShapes();
+            } catch (ex){
+                console.log(ex.message);
+            }
             self.emitEvent(events.ADD_LINK, link);
+
+        }
 	}
 
     function updateLinks() {
@@ -279,6 +291,7 @@ function SchemaController($scope, $rootScope, $element, coreService, appConfig, 
                         } else {
                             schema.saveState();
                             coreService.addLayerByDefault(data.node.layerType, correctPos);
+                            schema.updateShapes();
                         }
                         self.emitEvent(events.ADD_NODE, node);
 					});
