@@ -381,20 +381,9 @@ function Schema(viewContext, maxStorageSize) {
     };
 
     this.updateShapes = function () {
-        // console.log('updateShapes');
+        console.log('updateShapes');
         let self = this;
         let sch = this.getSchema();
-        /*  let inputNode = this.getNodesByType('datainput');
-        let inputShapes = null;
-        if (inputNode.length > 0 && inputNode[0].params.shapeInp) {
-            if (typeof inputNode[0].params.shapeInp == 'string')
-                inputShapes = inputNode[0].params.shapeInp.split(/[^0-9]/).map(Number);
-            else inputShapes = inputNode[0].params.shapeInp;
-        }
-
-        if (inputShapes)
-            calculateShapesInModel(sch, inputShapes);
-        else*/
         calculateShapesInModel(sch);
         sch.forEach(function (item) {
             let node = self.getNodeById(item.id);
@@ -419,6 +408,8 @@ function Schema(viewContext, maxStorageSize) {
         node.layerType = layer.layerType;
         node.category = layer.category;
         node.params = layer.params;
+        node.shapeInp = layer.shapeInp;
+        node.shapeOut = layer.shapeOut;
         nodes.push(node);
         // this.updateShapes();
         return node;

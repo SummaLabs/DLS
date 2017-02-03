@@ -120,7 +120,7 @@ function NetworkDataService($rootScope, $http, $timeout, $mdToast) {
     this.saveNetwork = function (name, description) {
         network.name = name;
         network.description = description;
-        network.layers = filterNetwork(network.layers);
+        // network.layers = filterNetwork(network.layers);
         network.source = 'custom';
         let result = saveNetwork(network, name);
         result.then(function (response) {

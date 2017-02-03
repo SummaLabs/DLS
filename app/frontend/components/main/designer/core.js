@@ -128,7 +128,6 @@ function ConstructorController($mdDialog, $mdToast, $mdSidenav, $scope, networkD
 
     this.saveOrCreateNetworkDialog = function ($event, doSave, createNewNetworkFunc) {
         networkDataService.setLayers(coreService.getNetwork());
-        console.log(networkDataService.getLayers());
 
 
         let parentEl = angular.element(document.body);

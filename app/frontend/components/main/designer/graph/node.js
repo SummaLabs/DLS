@@ -134,7 +134,6 @@ function node($compile, $templateCache, $http, appConfig, $rootScope, coreServic
             if (newValue && (newValue.length === oldValue.length)) {
                 for (let a = 0; a < newValue.length; ++a) {
                     if (!Array.isArray(newValue[a]) && newValue[a] !== oldValue[a]) {
-                         console.log(scope.nodeData, oldValue, newValue);
                         scope.$emit('node:param:update', {});
                         break;
                     }
