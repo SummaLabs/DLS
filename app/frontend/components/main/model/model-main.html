@@ -32,11 +32,9 @@
             <md-tabs md-dynamic-height md-border-bottom>
                 <md-tab label="Training">
                     <md-card>
+                        <plotly plotly-data="dataAcc" plotly-layout="layoutAcc" plotly-options="options"></plotly>
+                        <plotly plotly-data="dataLoss" plotly-layout="layoutLoss" plotly-options="options"></plotly>
 
-                         <div flex ng-cloak id="model-training-chart"
-                             class="md-item-text md-whiteframe-z1"></div>
-                         <div flex ng-cloak id="model-validation-chart"
-                             class="md-item-text md-whiteframe-z1"></div>
                     </md-card>
                 </md-tab>
                 <md-tab label="Inference">

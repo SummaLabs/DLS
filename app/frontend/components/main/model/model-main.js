@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('modelMain', ['ngMaterial', 'modelService', 'inference', 'layersVisualization', 'validation'])
+    angular.module('modelMain', ['ngMaterial', 'modelService', 'inference', 'layersVisualization', 'validation', 'plotly'])
         .component('modelMain', {
             templateUrl: '/frontend/components/main/model/model-main.html',
             bindings: {
@@ -57,9 +57,7 @@
                 this.initChartLayout = function(title){
                     return {
                                 title: title,
-                                //autosize: true,
-                                height: 500,
-                                width: 1000,
+                                autosize: true,
                                 xaxis: {
                                     title: 'Iterations',
                                     showline: false
@@ -81,15 +79,17 @@
                             var dataAcc = [ traceTrainAcc, traceValacc ];
                             var layoutAcc = this.initChartLayout('Accuracy');
 
-                            Plotly.newPlot('model-training-chart', dataAcc, layoutAcc);
-                    
-                              
+
                             var dataLoss = [ tracetrainLoss, traceValLoss ];
                             var layoutLoss = this.initChartLayout('Loss Function');
 
-                            Plotly.newPlot('model-validation-chart', dataLoss, layoutLoss);
+                            $scope.dataAcc = dataAcc;
+                            $scope.layoutAcc = layoutAcc;
+                            $scope.options = {};
+                            $scope.dataLoss = dataLoss;
+                            $scope.layoutLoss = layoutLoss;
+
                 };
-                
              
             }
         });
