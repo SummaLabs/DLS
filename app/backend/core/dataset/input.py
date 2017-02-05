@@ -1,6 +1,8 @@
 from itertools import islice
+from enum import Enum
 import csv, sys, json
 import copy
+import abc
 
 
 class Schema(object):
@@ -121,36 +123,26 @@ class Input(object):
 
     class Builder(object):
         def __init__(self, schema_config):
-            self._schema_config = json.load(schema_config)
+            self._schema_config = schema_config
 
         def build(self):
             from img2d import Img2DColumn
             input = Input()
-            for config_column in self._schema_config["columns"]:
-                schema_column = Schema.Column(config_column["name"], config_column["index"])
-                column_type = config_column["type"]
-                if column_type == Input.Column.DataType.INT or\
-                                column_type == Input.Column.DataType.FLOAT or\
-                                column_type == Input.Column.DataType.STRING or\
-                                column_type == Input.Column.DataType.STRING:
+            for config_column in self._schema_config['columns']:
+                schema_column = Schema.Column(config_column['name'], config_column['index'])
+                column_type = config_column['type']
+                if column_type in BasicTypeColumn.type():
                     input.columns[schema_column] = BasicTypeColumn(column_type)
-                elif column_type == Input.Column.DataType.IMG_2D:
+                elif column_type == Img2DColumn.type():
                     input.columns[schema_column] = Img2DColumn.Builder(config_column).build()
                 else:
                     raise TypeError("Unsupported column type: %s" % column_type)
-                return input
+
+            return input
 
     class Column(object):
         def __init__(self, data_type):
             self._data_type = data_type
-
-        class DataType:
-            INT = "INT",
-            FLOAT = "FLOAT",
-            STRING = "STRING",
-            VECTOR = "VECTOR",
-            CATEGORICAL = "CATEGORICAL",
-            IMG_2D = "IMG_2D"
 
         @property
         def data_type(self):
@@ -162,23 +154,23 @@ class Input(object):
 
     def add_int_column(self, column_name):
         schema_column = self.find_column_in_schema(column_name)
-        self._columns[schema_column] = BasicTypeColumn(Input.Column.DataType.INT)
+        self._columns[schema_column] = BasicTypeColumn(BasicTypeColumn.Type.INT)
 
     def add_float_column(self, column_name):
         schema_column = self.find_column_in_schema(column_name)
-        self._columns[schema_column] = BasicTypeColumn(Input.Column.DataType.FLOAT)
+        self._columns[schema_column] = BasicTypeColumn(BasicTypeColumn.Type.FLOAT)
 
     def add_categorical_column(self, column_name):
         schema_column = self.find_column_in_schema(column_name)
-        self._columns[schema_column] = BasicTypeColumn(Input.Column.DataType.CATEGORICAL)
+        self._columns[schema_column] = BasicTypeColumn(BasicTypeColumn.Type.CATEGORICAL)
 
     def add_string_column(self, column_name):
         schema_column = self.find_column_in_schema(column_name)
-        self._columns[schema_column] = BasicTypeColumn(Input.Column.DataType.STRING)
+        self._columns[schema_column] = BasicTypeColumn(BasicTypeColumn.Type.STRING)
 
     def add_vector_column(self, column_name):
         schema_column = self.find_column_in_schema(column_name)
-        self._columns[schema_column] = BasicTypeColumn(Input.Column.DataType.VECTOR)
+        self._columns[schema_column] = BasicTypeColumn(BasicTypeColumn.Type.VECTOR)
 
     def add_column(self, column_name, input_column):
         schema_column = self.find_column_in_schema(column_name)
@@ -192,7 +184,20 @@ class Input(object):
 
 
 class BasicTypeColumn(Input.Column):
-    pass
+    class Type(Enum):
+        INT = "INT"
+        FLOAT = "FLOAT"
+        STRING = "STRING"
+        VECTOR = "VECTOR"
+        CATEGORICAL = "CATEGORICAL"
+
+    @staticmethod
+    def type():
+        return [BasicTypeColumn.Type.INT,
+                BasicTypeColumn.Type.FLOAT,
+                BasicTypeColumn.Type.STRING,
+                BasicTypeColumn.Type.VECTOR,
+                BasicTypeColumn.Type.CATEGORICAL]
 
 
 class ComplexTypeColumn(Input.Column):
@@ -240,6 +245,10 @@ class ColumnTransform(object):
     def __init__(self):
         pass
 
+    @staticmethod
+    def type():
+        pass
+
     def apply(self, data):
         return data
 
@@ -248,6 +257,7 @@ class ColumnReader(object):
     def __init__(self):
         pass
 
+    @abc.abstractmethod
     def read(self, path):
         return
 
@@ -256,8 +266,10 @@ class ColumnSerDe(object):
     def __init__(self):
         pass
 
+    @abc.abstractmethod
     def serialize(self, path):
         return
 
+    @abc.abstractmethod
     def deserialize(self, path):
         return
