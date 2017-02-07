@@ -1,4 +1,6 @@
 import numpy as np
+import concurrent.futures
+from input import Input
 
 
 class Dataset(object):
@@ -12,15 +14,16 @@ class Dataset(object):
     def get_batch(self, batch_size):
         return Data()
 
+    class Builder(object):
+        def __init__(self, input, parallelism_level=4):
+            if not isinstance(input, Input):
+                raise TypeError("Must be set to an Input object")
+            self._input = input
+            self._parallelism_level = parallelism_level
 
-class Builder(object):
-    def __init__(self, input, integrate_data = False):
-        # if not isinstance(input, CSVInput):
-        #     raise TypeError("Must be set to an CSVInput")
-        pass
+        def build(self):
+            return Dataset("", "path")
 
-    def build(self):
-        return Dataset("", "path")
 
 
 class Data(object):
