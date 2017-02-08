@@ -16,25 +16,20 @@ class Dataset(object):
         return Data()
 
     class Builder(object):
-        def __init__(self, input, parallelism_level=4):
+        def __init__(self, input, parallelism_level=2):
             if not isinstance(input, Input):
                 raise TypeError("Must be set to an Input")
             self._input = input
             self._parallelism_level = parallelism_level
 
-        @staticmethod
-        def worker():
-            """worker function"""
-            print 'Worker'
-            return
-
         def build(self):
-            rows = self._read_csv_file()
-            jobs = []
-            for i in range(5):
-                p = multiprocessing.Process(target=Dataset.Builder.worker)
-                jobs.append(p)
-                p.start()
+            csv_rows = self._read_csv_file()
+            status_queue = multiprocessing.Queue()
+            for i in range(self._parallelism_level):
+                p = multiprocessing.Process(target=Dataset.Builder.run, args=(csv_rows, self._input, status_queue))
+                status_queue.close()
+                status_queue.join_thread()
+                p.join()
 
             return Dataset("", "path")
 
@@ -50,6 +45,11 @@ class Dataset(object):
                     sys.exit('Broken line: file %s, line %d: %s' % (csv_file_path, reader.line_num, e))
 
             return rows
+
+        @staticmethod
+        def run(csv_rows, input, status_queue):
+            print 'Builder run'
+            return
 
 
 class Data(object):
