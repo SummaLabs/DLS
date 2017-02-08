@@ -1,6 +1,7 @@
 import multiprocessing
 import numpy as np
 import csv, sys
+import time
 from input import Input
 
 
@@ -25,11 +26,22 @@ class Dataset(object):
         def build(self):
             csv_rows = self._read_csv_file()
             status_queue = multiprocessing.Queue()
+            processes = []
             for i in range(self._parallelism_level):
                 p = multiprocessing.Process(target=Dataset.Builder.run, args=(csv_rows, self._input, status_queue))
-                status_queue.close()
-                status_queue.join_thread()
-                p.join()
+                processes.append(p)
+            for p in processes:
+                p.start()
+            is_complete = False
+            while not is_complete:
+                status = status_queue.get(timeout=10)
+                if status is None:
+                    is_complete = True
+                    status_queue.close()
+                else:
+                    print status
+
+            print "Dataset building is completed!"
 
             return Dataset("", "path")
 
@@ -48,9 +60,12 @@ class Dataset(object):
 
         @staticmethod
         def run(csv_rows, input, status_queue):
-            print 'Builder run'
-            return
-
+            i = 0
+            while i < 5:
+                time.sleep(1)
+                i += 1
+                status_queue.put('Runner-' + str(i))
+            status_queue.put(None)
 
 class Data(object):
     def __init__(self):
