@@ -1,5 +1,6 @@
+import multiprocessing
 import numpy as np
-import concurrent.futures
+import csv, sys
 from input import Input
 
 
@@ -17,13 +18,38 @@ class Dataset(object):
     class Builder(object):
         def __init__(self, input, parallelism_level=4):
             if not isinstance(input, Input):
-                raise TypeError("Must be set to an Input object")
+                raise TypeError("Must be set to an Input")
             self._input = input
             self._parallelism_level = parallelism_level
 
+        @staticmethod
+        def worker():
+            """worker function"""
+            print 'Worker'
+            return
+
         def build(self):
+            rows = self._read_csv_file()
+            jobs = []
+            for i in range(5):
+                p = multiprocessing.Process(target=Dataset.Builder.worker)
+                jobs.append(p)
+                p.start()
+
             return Dataset("", "path")
 
+        def _read_csv_file(self):
+            rows = []
+            csv_file_path = self._input.schema.csv_file_path
+            with open(csv_file_path, 'rb') as f:
+                reader = csv.reader(f)
+                try:
+                    for row in reader:
+                        rows.append(row)
+                except csv.Error as e:
+                    sys.exit('Broken line: file %s, line %d: %s' % (csv_file_path, reader.line_num, e))
+
+            return rows
 
 
 class Data(object):

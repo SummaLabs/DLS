@@ -1,14 +1,14 @@
 from itertools import islice
 from enum import Enum
-import csv, sys, json
+import csv, sys
 import copy
 import abc
 
 
 class Schema(object):
     def __init__(self, csv_file_path, header=False):
-        self.csv_file_path = csv_file_path
-        header_row = [col.strip() for col in Schema._read_n_rows(self.csv_file_path, 1)[0]]
+        self._csv_file_path = csv_file_path
+        header_row = [col.strip() for col in Schema._read_n_rows(self._csv_file_path, 1)[0]]
         if header:
             duplicates = set([x for x in header_row if header_row.count(x) > 1])
             if len(duplicates) > 0:
@@ -16,6 +16,10 @@ class Schema(object):
             self._columns = [Schema.Column(item, [index]) for index, item in enumerate(header_row)]
         else:
             self._columns = [Schema.Column('col_' + str(index), [index]) for index in range(0, len(header_row))]
+
+    @property
+    def csv_file_path(self):
+        return self._csv_file_path
 
     @staticmethod
     def _read_n_rows(csv_file_path, rows_number):
@@ -26,7 +30,7 @@ class Schema(object):
                 for row in islice(reader, 0, rows_number):
                     rows.append(row)
             except csv.Error as e:
-                sys.exit('file %s, line %d: %s' % (csv_file_path, reader.line_num, e))
+                sys.exit('Broken line: file %s, line %d: %s' % (csv_file_path, reader.line_num, e))
 
         return rows
 
@@ -120,6 +124,10 @@ class Input(object):
             raise TypeError("Pass Schema instance as an argument")
         self._schema = schema
         self._columns = {}
+
+    @property
+    def schema(self):
+        return self._schema
 
     class Builder(object):
         def __init__(self, schema_config):
