@@ -37,11 +37,11 @@ class Dataset(object):
                     with self.lock:
                         return self.val.value
 
-            csv_rows_chanks = np.array_split(self._read_csv_file(), self._parallelism_level)
+            csv_rows_chunks = np.array_split(self._read_csv_file(), self._parallelism_level)
             processes = []
             progress = Progress()
             for i in range(self._parallelism_level):
-                p = Process(target=Dataset.Builder.run, args=(csv_rows_chanks[i], self._input, progress))
+                p = Process(target=Dataset.Builder.run, args=(csv_rows_chunks[i], self._input, progress))
                 processes.append(p)
             for p in processes: p.start()
             for p in processes: p.join()
@@ -92,6 +92,7 @@ class Metadata(object):
 
 class Image2DMetadata(Metadata):
     def __init__(self):
+        super(Image2DMetadata, self).__init__()
         print ""
 
 
@@ -100,4 +101,17 @@ class DataType:
 
 
 if __name__ == '__main__':
-    print "main method"
+    from img2d import Img2DColumn, Img2DReader, ImgResizeTransform
+    from input import Schema, Input, BasicTypeColumn
+    import os
+    import glob
+    #
+    pathCSV = '../../../../data-test/dataset-image2d/simple4c_test/test-csv-v1.csv'
+    if not os.path.isfile(pathCSV):
+        raise Exception('Cant find file [%s]' % pathCSV)
+    wdir = os.path.abspath(os.path.dirname(pathCSV))
+    schema = Schema(pathCSV, header=True, separator='|')
+    schema.print_data()
+    input   = Input(schema=schema)
+    # dataset = Dataset()
+    print ('----')

@@ -6,9 +6,15 @@ import abc
 
 
 class Schema(object):
-    def __init__(self, csv_file_path, header=False):
+    separator=','
+    def __init__(self, csv_file_path, header=False, separator=None):
         self._csv_file_path = csv_file_path
-        header_row = [col.strip() for col in Schema._read_n_rows(self._csv_file_path, 1)[0]]
+        if separator is not None:
+            tseparator = separator.strip()
+            if len(tseparator)<0 or len(tseparator)>1:
+                raise Exception('Invalid separator [%s]' % separator)
+            self.separator = tseparator
+        header_row = [col.strip() for col in Schema._read_n_rows(self._csv_file_path, 1, sep=self.separator)[0]]
         if header:
             duplicates = set([x for x in header_row if header_row.count(x) > 1])
             if len(duplicates) > 0:
@@ -22,10 +28,10 @@ class Schema(object):
         return self._csv_file_path
 
     @staticmethod
-    def _read_n_rows(csv_file_path, rows_number):
+    def _read_n_rows(csv_file_path, rows_number, sep=','):
         rows = []
         with open(csv_file_path, 'rb') as f:
-            reader = csv.reader(f)
+            reader = csv.reader(f, delimiter=sep)
             try:
                 for row in islice(reader, 0, rows_number):
                     rows.append(row)
