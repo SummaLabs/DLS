@@ -1,4 +1,4 @@
-import multiprocessing
+from multiprocessing import Process, Value, Lock
 import numpy as np
 import csv, sys
 import time
@@ -24,24 +24,29 @@ class Dataset(object):
             self._parallelism_level = parallelism_level
 
         def build(self):
-            csv_rows = self._read_csv_file()
-            status_queue = multiprocessing.Queue()
-            processes = []
-            for i in range(self._parallelism_level):
-                p = multiprocessing.Process(target=Dataset.Builder.run, args=(csv_rows, self._input, status_queue))
-                processes.append(p)
-            for p in processes:
-                p.start()
-            is_complete = False
-            while not is_complete:
-                status = status_queue.get(timeout=10)
-                if status is None:
-                    is_complete = True
-                    status_queue.close()
-                else:
-                    print status
+            class Progress(object):
+                def __init__(self):
+                    self.val = Value('i', 0)
+                    self.lock = Lock()
 
-            print "Dataset building is completed!"
+                def increment(self):
+                    with self.lock:
+                        self.val.value += 1
+
+                def value(self):
+                    with self.lock:
+                        return self.val.value
+
+            csv_rows_chanks = np.array_split(self._read_csv_file(), self._parallelism_level)
+            processes = []
+            progress = Progress()
+            for i in range(self._parallelism_level):
+                p = Process(target=Dataset.Builder.run, args=(csv_rows_chanks[i], self._input, progress))
+                processes.append(p)
+            for p in processes: p.start()
+            for p in processes: p.join()
+
+            print "Records processed: " + str(progress.value())
 
             return Dataset("", "path")
 
@@ -59,13 +64,12 @@ class Dataset(object):
             return rows
 
         @staticmethod
-        def run(csv_rows, input, status_queue):
-            i = 0
-            while i < 5:
-                time.sleep(1)
-                i += 1
-                status_queue.put('Runner-' + str(i))
-            status_queue.put(None)
+        def run(csv_rows, input, progress):
+            for i, row in enumerate(csv_rows):
+                # time.sleep(0.01)
+                progress.increment()
+                if i % 1000 == 0:
+                    print "Worker - " +str(i)
 
 class Data(object):
     def __init__(self):
@@ -79,6 +83,7 @@ class Data(object):
 
     def for_column(self, column_name):
         return np.array([[7, 8, 5], [3, 5, 7]], np.int32)
+
 
 class Metadata(object):
     def __init__(self):

@@ -19,7 +19,7 @@ def create_csv_file(file_name, records_number):
 
 class TestDataSetBuilder(unittest.TestCase):
     def setUp(self):
-        self.test_dir, self.test_file_path = create_csv_file('test.csv', 1000)
+        self.test_dir, self.test_file_path = create_csv_file('test.csv', 100000)
 
     def tearDown(self):
         shutil.rmtree(self.test_dir)
