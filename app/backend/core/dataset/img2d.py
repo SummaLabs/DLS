@@ -1,33 +1,17 @@
 from input import *
 
 
-class Img2DColumn(Input.Column):
-    img2d_type = 'IMG_2D'
+class Img2DColumn(ComplexTypeColumn):
 
     def __init__(self, pre_transforms, post_transforms, reader=None):
-        super(Img2DColumn, self).__init__(Img2DColumn.img2d_type)
-        self._pre_transforms = pre_transforms
-        self._post_transforms = post_transforms
+        super(Img2DColumn, self).__init__(data_type=Img2DColumn.type, pre_transforms=pre_transforms,
+                                          post_transforms=post_transforms, reader=reader)
         if reader is None:
             self._reader = Img2DReader()
-        else:
-            self._reader = reader
 
     @staticmethod
     def type():
-        return Img2DColumn.img2d_type
-
-    @property
-    def pre_transforms(self):
-        return self._pre_transforms
-
-    @property
-    def post_transforms(self):
-        return self._post_transforms
-
-    @property
-    def reader(self):
-        return self._reader
+        return 'IMG_2D'
 
     class Builder(object):
         def __init__(self, img2d_column_config):

@@ -65,11 +65,10 @@ class Dataset(object):
 
         @staticmethod
         def run(csv_rows, input, progress):
-            for i, row in enumerate(csv_rows):
-                # time.sleep(0.01)
+            columns = input.columns
+            for row in csv_rows:
                 progress.increment()
-                if i % 1000 == 0:
-                    print "Worker - " +str(i)
+
 
 class Data(object):
     def __init__(self):

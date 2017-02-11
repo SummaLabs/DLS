@@ -50,7 +50,7 @@ class TestSchema(unittest.TestCase):
         self.assertEqual(schema.columns[0].name, 'col_2')
         merged_column = schema.columns[len(schema.columns) - 1]
         self.assertEqual(merged_column.name, 'test_col')
-        self.assertTrue(merged_column.columns_indexes, [0 ,2])
+        self.assertTrue(merged_column.columns_indexes, [0, 2])
 
     def test_merge_columns_in_range(self):
         schema = Schema(self.test_file_path)
@@ -59,7 +59,7 @@ class TestSchema(unittest.TestCase):
         self.assertEqual(schema.columns[0].name, 'col_0')
         merged_column = schema.columns[len(schema.columns) - 1]
         self.assertEqual(merged_column.name, 'test_col')
-        self.assertTrue(merged_column.columns_indexes == [3, 4 ,5])
+        self.assertTrue(merged_column.columns_indexes == [3, 4, 5])
 
     def test_duplicate_in_header(self):
         test_file_path = path.join(self.test_dir, 'test_duplicate_header.csv')
@@ -96,22 +96,22 @@ class TestInput(unittest.TestCase):
         input = Input(Schema(self.test_file_path))
         input.add_int_column("col_3")
         is_column_exist = False
-        for column in input.columns:
+        for column in input.schema.columns:
             if column.name == 'col_3':
                 is_column_exist = True
                 self.assertEqual(column.columns_indexes[0], 3)
-                self.assertEqual(input.columns.get(column).data_type, "INT")
+                self.assertEqual(column.data_type, "INT")
         self.assertTrue(is_column_exist, 'Expected column was not found')
 
     def test_add_categorical_type_column(self):
         input = Input(Schema(self.test_file_path))
         input.add_categorical_column("col_3")
         is_column_exist = False
-        for column in input.columns:
+        for column in input.schema.columns:
             if column.name == 'col_3':
                 is_column_exist = True
                 self.assertEqual(column.columns_indexes[0], 3)
-                self.assertEqual(input.columns.get(column).data_type, "CATEGORICAL")
+                self.assertEqual(column.data_type, "CATEGORICAL")
         self.assertTrue(is_column_exist, 'Expected column was not found')
 
     def test_add_vector_type_column(self):
@@ -120,11 +120,11 @@ class TestInput(unittest.TestCase):
         input = Input(schema)
         input.add_vector_column("merged_col")
         is_column_exist = False
-        for column in input.columns:
+        for column in input.schema.columns:
             if column.name == 'merged_col':
                 is_column_exist = True
                 self.assertTrue(column.columns_indexes == [3, 4, 5])
-                self.assertEqual(input.columns.get(column).data_type, "VECTOR")
+                self.assertEqual(column.data_type, "VECTOR")
         self.assertTrue(is_column_exist, 'Expected column was not found')
 
     def test_img2d_type_column(self):
@@ -134,58 +134,68 @@ class TestInput(unittest.TestCase):
                             [ImgNormalizationTransform({"height": 256, "width": 256})])
         input.add_column("col_0", img2d)
         is_column_exist = False
-        for column in input.columns:
+        for column in input.schema.columns:
             if column.name == "col_0":
-                col_img2d = input.columns.get(column)
                 is_column_exist = True
-                self.assertTrue(isinstance(col_img2d, Img2DColumn))
-                self.assertTrue(isinstance(img2d.pre_transforms[0], ImgCropTransform))
-                self.assertTrue(isinstance(img2d.post_transforms[0], ImgNormalizationTransform))
+                self.assertTrue(isinstance(column, Img2DColumn))
+                self.assertTrue(isinstance(column.pre_transforms[0], ImgCropTransform))
+                self.assertTrue(isinstance(column.post_transforms[0], ImgNormalizationTransform))
         self.assertTrue(is_column_exist, 'Expected column was not found')
 
     def test_build_input_from_config(self):
-        input_config = {"columns": [
-            {
-                "name": "col_0",
-                "type": "FLOAT",
-                "index": [0]
-            },
-            {
-                "name": "col_1",
-                "type": "VECTOR",
-                "index": [1, 2, 3]
-            },
-            {
-                "name": "col_2",
-                "type": "IMG_2D",
-                "index": [4],
-                "pre_transforms": [{"type": "imgResize", "params": {"height": 256, "width": 256}},
-                                  {"type": "imgNormalization", "params": {"height": 256, "width": 256}}],
-                "post_transforms": [{"type": "imgCrop", "params": {"height": 256, "width": 256}}]
-            }
-        ]
-        }
+        input_config = {"csv_file_path": self.test_file_path,
+                        "header": "False",
+                        "separator": ",",
+                        "columns": [
+                            {
+                                "name": "col_0",
+                                "type": "FLOAT",
+                                "index": [0]
+                            },
+                            {
+                                "name": "col_1",
+                                "type": "FLOAT",
+                                "index": [1]
+                            },
+                            {
+                                "name": "col_2",
+                                "type": "VECTOR",
+                                "index": [2, 3, 4]
+                            },
+                            {
+                                "name": "col_3",
+                                "type": "IMG_2D",
+                                "index": [5],
+                                "pre_transforms": [{"type": "imgResize", "params": {"height": 256, "width": 256}},
+                                                   {"type": "imgNormalization",
+                                                    "params": {"height": 256, "width": 256}}],
+                                "post_transforms": [{"type": "imgCrop", "params": {"height": 256, "width": 256}}]
+                            }
+                        ]
+                        }
         input = Input.Builder(input_config).build()
-        self.assertTrue(len(input.columns) == 3, 'Unexpected column number.')
-        for column in input.columns:
+        self.assertEqual(len(input.schema.columns), 4)
+        for column in input.schema.columns:
             if column.name == "col_0":
                 self.assertEqual(column.columns_indexes, [0])
-                input_basic_col_float = input.columns.get(column)
-                self.assertTrue(isinstance(input_basic_col_float, BasicTypeColumn))
-                self.assertEqual(input_basic_col_float.data_type, BasicTypeColumn.Type.FLOAT)
+                self.assertTrue(isinstance(column, BasicTypeColumn))
+                self.assertEqual(column.data_type, BasicTypeColumn.Type.FLOAT)
 
             if column.name == "col_1":
-                self.assertEqual(column.columns_indexes, [1, 2, 3])
-                input_basic_col_vector = input.columns.get(column)
-                self.assertTrue(isinstance(input_basic_col_vector, BasicTypeColumn))
-                self.assertEqual(input_basic_col_vector.data_type, BasicTypeColumn.Type.VECTOR)
+                self.assertEqual(column.columns_indexes, [1])
+                self.assertTrue(isinstance(column, BasicTypeColumn))
+                self.assertEqual(column.data_type, BasicTypeColumn.Type.FLOAT)
 
             if column.name == "col_2":
-                self.assertEqual(column.columns_indexes, [4])
-                input_col_img2d = input.columns.get(column)
-                self.assertTrue(isinstance(input_col_img2d, Img2DColumn))
-                self.assertTrue(isinstance(input_col_img2d.pre_transforms[0], ImgResizeTransform))
-                self.assertTrue(isinstance(input_col_img2d.post_transforms[0], ImgCropTransform))
+                self.assertEqual(column.columns_indexes, [2, 3, 4])
+                self.assertTrue(isinstance(column, BasicTypeColumn))
+                self.assertEqual(column.data_type, BasicTypeColumn.Type.VECTOR)
+
+            if column.name == "col_3":
+                self.assertEqual(column.columns_indexes, [5])
+                self.assertTrue(isinstance(column, Img2DColumn))
+                self.assertTrue(isinstance(column.pre_transforms[0], ImgResizeTransform))
+                self.assertTrue(isinstance(column.post_transforms[0], ImgCropTransform))
 
 
 if __name__ == '__main__':
