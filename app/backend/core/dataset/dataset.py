@@ -41,7 +41,8 @@ class Dataset(object):
             processes = []
             progress = Progress()
             for i in range(self._parallelism_level):
-                p = Process(target=Dataset.Builder.run, args=(csv_rows_chunks[i], self._input, progress))
+                record_write = RecordWriter.factory("HDF5", "name", "id", "folder", self._input.schema.columns)
+                p = Process(target=Dataset.Builder.run, args=(csv_rows_chunks[i], record_write, progress))
                 processes.append(p)
             for p in processes: p.start()
             for p in processes: p.join()
@@ -64,10 +65,38 @@ class Dataset(object):
             return rows
 
         @staticmethod
-        def run(csv_rows, input, progress):
-            columns = input.columns
+        def run(csv_rows, record_write, progress):
             for row in csv_rows:
+                record_write.write(row)
                 progress.increment()
+
+
+class RecordWriter(object):
+    def __init__(self, name, id, dataset_folder, columns):
+        self._name = name
+        self._id = id
+        self._dataset_folder = dataset_folder
+        self._columns = columns
+
+    def factory(type, name, id, dataset_folder, columns):
+        if type == "HDF5":
+            return HDF5RecordWriter(name, id, dataset_folder, columns)
+
+        raise TypeError("Unsupported Record Writer Type: " + type)
+
+    factory = staticmethod(factory)
+
+    def write(self, csv_row):
+        pass
+
+
+class HDF5RecordWriter(RecordWriter):
+    def __init__(self, name, id, dataset_folder, columns):
+        super(HDF5RecordWriter, self).__init__(name, id, dataset_folder, columns)
+
+    def write(self, csv_row):
+        for column in self._columns:
+            print ""
 
 
 class Data(object):
