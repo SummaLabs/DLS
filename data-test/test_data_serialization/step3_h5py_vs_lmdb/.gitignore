@@ -1,3 +1,5 @@
 /test-dataset-lmdb-raw0/
 /test-dataset-lmdb-raw1/
 *.tfrecord
+/test-dataset-leveldb-raw0/
+/test-dataset-leveldb-raw1/
