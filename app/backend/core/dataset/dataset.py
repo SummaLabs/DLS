@@ -1,8 +1,10 @@
 from multiprocessing import Process, Value, Lock
 import numpy as np
 import csv, sys
-import time
-from input import Input
+import h5py
+import abc
+from img2d import Img2DSerDe
+from input import ColumnSerDe
 
 
 class Dataset(object):
@@ -66,8 +68,8 @@ class Dataset(object):
 
         @staticmethod
         def run(csv_rows, record_write, progress):
-            for row in csv_rows:
-                record_write.write(row)
+            for idx, row in enumerate(csv_rows):
+                record_write.write(row, idx)
                 progress.increment()
 
 
@@ -86,17 +88,42 @@ class RecordWriter(object):
 
     factory = staticmethod(factory)
 
-    def write(self, csv_row):
+    def write(self, csv_row, idx):
         pass
 
 
 class HDF5RecordWriter(RecordWriter):
     def __init__(self, name, id, dataset_folder, columns):
         super(HDF5RecordWriter, self).__init__(name, id, dataset_folder, columns)
+        self._file = h5py.File(os.path.join(dataset_folder, name + "-" + id), 'w')
+        self._root_data = self._file.create_group('data')
 
-    def write(self, csv_row):
+    def write(self, csv_row, idx):
+        row_data = self._root_data.create_group('row_%08d' % idx)
         for column in self._columns:
+            serializer = self.get_column_serializer(column.data_type)
+            serializer.serialize(csv_row, column)
             print ""
+
+    def get_column_serializer(self, column_type):
+        if type in BasicColumn.type():
+            return HDF5BasicColumnSerDe()
+        elif type == Img2DColumn.type():
+            return Img2DSerDe()
+        raise TypeError("Unsupported SerDe Type: " + column_type)
+
+
+class HDF5BasicColumnSerDe(ColumnSerDe):
+    def __init__(self):
+        super(ColumnSerDe, self).__init__()
+
+    @abc.abstractmethod
+    def serialize(self, csv_row, column):
+        return
+
+    @abc.abstractmethod
+    def deserialize(self, path):
+        return
 
 
 class Data(object):
@@ -130,7 +157,7 @@ class DataType:
 
 if __name__ == '__main__':
     from img2d import Img2DColumn, Img2DReader, ImgResizeTransform
-    from input import Schema, Input, BasicTypeColumn
+    from input import Schema, Input, BasicColumn, BasicColumnSerDe, ColumnSerDe, ColumnSerDe
     import os
     import glob
     #

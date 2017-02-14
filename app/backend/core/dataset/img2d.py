@@ -1,7 +1,7 @@
 from input import *
 
 
-class Img2DColumn(ComplexTypeColumn):
+class Img2DColumn(ComplexColumn):
 
     def __init__(self, pre_transforms, post_transforms, reader=None):
         super(Img2DColumn, self).__init__(data_type=Img2DColumn.type, pre_transforms=pre_transforms,

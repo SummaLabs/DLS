@@ -178,18 +178,18 @@ class TestInput(unittest.TestCase):
         for column in input.schema.columns:
             if column.name == "col_0":
                 self.assertEqual(column.columns_indexes, [0])
-                self.assertTrue(isinstance(column, BasicTypeColumn))
-                self.assertEqual(column.data_type, BasicTypeColumn.Type.FLOAT)
+                self.assertTrue(isinstance(column, BasicColumn))
+                self.assertEqual(column.data_type, BasicColumn.Type.FLOAT)
 
             if column.name == "col_1":
                 self.assertEqual(column.columns_indexes, [1])
-                self.assertTrue(isinstance(column, BasicTypeColumn))
-                self.assertEqual(column.data_type, BasicTypeColumn.Type.FLOAT)
+                self.assertTrue(isinstance(column, BasicColumn))
+                self.assertEqual(column.data_type, BasicColumn.Type.FLOAT)
 
             if column.name == "col_2":
                 self.assertEqual(column.columns_indexes, [2, 3, 4])
-                self.assertTrue(isinstance(column, BasicTypeColumn))
-                self.assertEqual(column.data_type, BasicTypeColumn.Type.VECTOR)
+                self.assertTrue(isinstance(column, BasicColumn))
+                self.assertEqual(column.data_type, BasicColumn.Type.VECTOR)
 
             if column.name == "col_3":
                 self.assertEqual(column.columns_indexes, [5])

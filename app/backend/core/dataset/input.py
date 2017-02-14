@@ -20,9 +20,9 @@ class Schema(object):
             duplicates = set([x for x in header_row if header_row.count(x) > 1])
             if len(duplicates) > 0:
                 raise Exception("Should be no duplicates in CSV header: " + ", ".join([col for col in duplicates]))
-            self._columns = [BasicTypeColumn(item, [index], BasicTypeColumn.Type.STRING) for index, item in enumerate(header_row)]
+            self._columns = [BasicColumn(item, [index], BasicColumn.Type.STRING) for index, item in enumerate(header_row)]
         else:
-            self._columns = [BasicTypeColumn('col_' + str(index), [index], BasicTypeColumn.Type.STRING) for index in range(0, len(header_row))]
+            self._columns = [BasicColumn('col_' + str(index), [index], BasicColumn.Type.STRING) for index in range(0, len(header_row))]
 
     @property
     def csv_file_path(self):
@@ -132,8 +132,8 @@ class Input(object):
             result_columns = []
             for index, config_column in enumerate(config_columns):
                 column_type = config_column['type']
-                if column_type in BasicTypeColumn.type():
-                    result_columns.append(BasicTypeColumn(config_column['name'], config_column['index'], column_type))
+                if column_type in BasicColumn.type():
+                    result_columns.append(BasicColumn(config_column['name'], config_column['index'], column_type))
                 elif column_type == Img2DColumn.type():
                     result_columns.append(Img2DColumn.Builder(config_column).build())
                 else:
@@ -143,23 +143,23 @@ class Input(object):
 
     def add_int_column(self, column_name):
         _, column = self.find_column_in_schema(column_name)
-        column.data_type = BasicTypeColumn.Type.INT
+        column.data_type = BasicColumn.Type.INT
 
     def add_float_column(self, column_name):
         _, column = self.find_column_in_schema(column_name)
-        column.data_type = BasicTypeColumn.Type.FLOAT
+        column.data_type = BasicColumn.Type.FLOAT
 
     def add_categorical_column(self, column_name):
         _, column = self.find_column_in_schema(column_name)
-        column.data_type = BasicTypeColumn.Type.CATEGORICAL
+        column.data_type = BasicColumn.Type.CATEGORICAL
 
     def add_string_column(self, column_name):
         _, column = self.find_column_in_schema(column_name)
-        column.data_type = BasicTypeColumn.Type.STRING
+        column.data_type = BasicColumn.Type.STRING
 
     def add_vector_column(self, column_name):
         _, column = self.find_column_in_schema(column_name)
-        column.data_type = BasicTypeColumn.Type.VECTOR
+        column.data_type = BasicColumn.Type.VECTOR
 
     def add_column(self, column_name, input_column):
         index, column = self.find_column_in_schema(column_name)
@@ -206,7 +206,7 @@ class Column(object):
         self._data_type = data_type
 
 
-class BasicTypeColumn(Column):
+class BasicColumn(Column):
     class Type(Enum):
         INT = "INT"
         FLOAT = "FLOAT"
@@ -216,16 +216,16 @@ class BasicTypeColumn(Column):
 
     @staticmethod
     def type():
-        return [BasicTypeColumn.Type.INT,
-                BasicTypeColumn.Type.FLOAT,
-                BasicTypeColumn.Type.STRING,
-                BasicTypeColumn.Type.VECTOR,
-                BasicTypeColumn.Type.CATEGORICAL]
+        return [BasicColumn.Type.INT,
+                BasicColumn.Type.FLOAT,
+                BasicColumn.Type.STRING,
+                BasicColumn.Type.VECTOR,
+                BasicColumn.Type.CATEGORICAL]
 
 
-class ComplexTypeColumn(Column):
+class ComplexColumn(Column):
     def __init__(self, data_type=None, pre_transforms=None, post_transforms=None, ser_de=None, reader=None):
-        super(ComplexTypeColumn, self).__init__(data_type=data_type)
+        super(ComplexColumn, self).__init__(data_type=data_type)
         self._pre_transforms = pre_transforms
         self._post_transforms = post_transforms
         self._reader = reader
@@ -290,7 +290,7 @@ class ColumnSerDe(object):
         pass
 
     @abc.abstractmethod
-    def serialize(self, path):
+    def serialize(self, csv_row, column):
         return
 
     @abc.abstractmethod
