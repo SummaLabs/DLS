@@ -4,6 +4,7 @@ import csv, sys
 import os
 import h5py
 import abc
+import random
 from img2d import Img2DSerDe
 from input import Input, BasicColumn, ColumnSerDe
 
@@ -20,11 +21,20 @@ class Dataset(object):
         return Data()
 
     class Builder(object):
-        def __init__(self, input, parallelism_level=2):
+        def __init__(self, input, name, root_dir, parallelism_level=2, storage_type="HDF5"):
             if not isinstance(input, Input):
                 raise TypeError("Must be set to an Input")
             self._input = input
+            self._name = name
+            self._root_dir = root_dir
             self._parallelism_level = parallelism_level
+            self._storage_type = storage_type
+            self._init(root_dir)
+
+        def _init(self, root_dir):
+            self._dataset_dir = os.path.join(root_dir, self._name + "-" + random.getrandbits(64))
+            os.makedirs(self._dataset_dir)
+
 
         def build(self):
             class Progress(object):
@@ -44,7 +54,7 @@ class Dataset(object):
             processes = []
             progress = Progress()
             for i in range(self._parallelism_level):
-                record_write = RecordWriter.factory("HDF5", "name", "id", "folder", self._input.schema.columns)
+                record_write = RecordWriter.factory(self._storage_type, self._dataset_dir, self._input.schema.columns)
                 p = Process(target=Dataset.Builder.run, args=(csv_rows_chunks[i], record_write, progress))
                 processes.append(p)
             for p in processes: p.start()
@@ -79,15 +89,13 @@ class Dataset(object):
 
 
 class RecordWriter(object):
-    def __init__(self, name, id, dataset_folder, columns):
-        self._name = name
-        self._id = id
-        self._dataset_folder = dataset_folder
+    def __init__(self, data_dir, columns):
+        self._data_dir = data_dir
         self._columns = columns
 
-    def factory(type, name, id, dataset_folder, columns):
+    def factory(type, data_dir, columns):
         if type == "HDF5":
-            return HDF5RecordWriter(name, id, dataset_folder, columns)
+            return HDF5RecordWriter(data_dir, columns)
         raise TypeError("Unsupported Record Writer Type: " + type)
 
     factory = staticmethod(factory)
@@ -97,9 +105,10 @@ class RecordWriter(object):
 
 
 class HDF5RecordWriter(RecordWriter):
-    def __init__(self, name, id, dataset_folder, columns):
-        super(HDF5RecordWriter, self).__init__(name, id, dataset_folder, columns)
-        self._file = h5py.File(os.path.join(dataset_folder, name + "-" + id), 'w')
+    def __init__(self, data_dir, columns):
+        super(HDF5RecordWriter, self).__init__(data_dir, columns)
+        import multiprocessing as mp
+        self._file = h5py.File(os.path.join(data_dir, "part-" + str(mp.current_process().pid)), 'w')
         self._root_data = self._file.create_group('data')
         self._init_serializers()
 
@@ -126,12 +135,10 @@ class HDF5RecordWriter(RecordWriter):
             data[path] = value
 
 
-
 class HDF5BasicColumnSerDe(ColumnSerDe):
     def __init__(self):
         super(ColumnSerDe, self).__init__()
 
-    @abc.abstractmethod
     def serialize(self, csv_row, column):
         if column.data_type == BasicColumn.Type.STRING:
             return str(csv_row[column.columns_indexes[0]])
@@ -143,8 +150,8 @@ class HDF5BasicColumnSerDe(ColumnSerDe):
             return np.array([float(csv_row[i]) for i in column.columns_indexes])
         if column.data_type == BasicColumn.Type.CATEGORICAL:
             category_value = csv_row[column.columns_indexes[0]]
-            category_value_index = list(column.metadata).index(category_name)
-            return int(category_value_index)
+            category_value_idx = list(column.metadata).index(category_value)
+            return int(category_value_idx)
 
     @abc.abstractmethod
     def deserialize(self, path):
