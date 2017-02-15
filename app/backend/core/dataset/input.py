@@ -142,32 +142,33 @@ class Input(object):
             return Input(schema)
 
     def add_int_column(self, column_name):
-        _, column = self.find_column_in_schema(column_name)
+        _, column = self._find_column_in_schema(column_name)
         column.data_type = BasicColumn.Type.INT
 
     def add_float_column(self, column_name):
-        _, column = self.find_column_in_schema(column_name)
+        _, column = self._find_column_in_schema(column_name)
         column.data_type = BasicColumn.Type.FLOAT
 
     def add_categorical_column(self, column_name):
-        _, column = self.find_column_in_schema(column_name)
+        _, column = self._find_column_in_schema(column_name)
         column.data_type = BasicColumn.Type.CATEGORICAL
+        column.metadata = set()
 
     def add_string_column(self, column_name):
-        _, column = self.find_column_in_schema(column_name)
+        _, column = self._find_column_in_schema(column_name)
         column.data_type = BasicColumn.Type.STRING
 
     def add_vector_column(self, column_name):
-        _, column = self.find_column_in_schema(column_name)
+        _, column = self._find_column_in_schema(column_name)
         column.data_type = BasicColumn.Type.VECTOR
 
     def add_column(self, column_name, input_column):
-        index, column = self.find_column_in_schema(column_name)
+        index, column = self._find_column_in_schema(column_name)
         input_column.name = column.name
         input_column.columns_indexes = column.columns_indexes
         self._schema.columns[index] = input_column
 
-    def find_column_in_schema(self, column_name):
+    def _find_column_in_schema(self, column_name):
         for index, schema_column in enumerate(self._schema.columns):
             if schema_column.name == column_name:
                 return index, schema_column
@@ -204,6 +205,14 @@ class Column(object):
     @data_type.setter
     def data_type(self, data_type):
         self._data_type = data_type
+
+    @property
+    def metadata(self):
+        return self._metadata
+
+    @metadata.setter
+    def metadata(self, metadata):
+        self._metadata = metadata
 
 
 class BasicColumn(Column):

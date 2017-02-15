@@ -1,10 +1,11 @@
 from multiprocessing import Process, Value, Lock
 import numpy as np
 import csv, sys
+import os
 import h5py
 import abc
 from img2d import Img2DSerDe
-from input import ColumnSerDe
+from input import Input, BasicColumn, ColumnSerDe
 
 
 class Dataset(object):
@@ -39,7 +40,7 @@ class Dataset(object):
                     with self.lock:
                         return self.val.value
 
-            csv_rows_chunks = np.array_split(self._read_csv_file(), self._parallelism_level)
+            csv_rows_chunks = np.array_split(self._process_csv_file(), self._parallelism_level)
             processes = []
             progress = Progress()
             for i in range(self._parallelism_level):
@@ -53,14 +54,18 @@ class Dataset(object):
 
             return Dataset("", "path")
 
-        def _read_csv_file(self):
+        def _process_csv_file(self):
             rows = []
             csv_file_path = self._input.schema.csv_file_path
+            columns = self._input.schema.columns
             with open(csv_file_path, 'rb') as f:
                 reader = csv.reader(f)
                 try:
                     for row in reader:
                         rows.append(row)
+                        for column in columns:
+                            if column.data_type == BasicColumn.Type.CATEGORICAL:
+                                column.metadata.add(row[column.columns_indexes[0]])
                 except csv.Error as e:
                     sys.exit('Broken line: file %s, line %d: %s' % (csv_file_path, reader.line_num, e))
 
