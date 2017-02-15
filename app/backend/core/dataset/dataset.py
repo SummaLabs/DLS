@@ -88,7 +88,6 @@ class RecordWriter(object):
     def factory(type, name, id, dataset_folder, columns):
         if type == "HDF5":
             return HDF5RecordWriter(name, id, dataset_folder, columns)
-
         raise TypeError("Unsupported Record Writer Type: " + type)
 
     factory = staticmethod(factory)
@@ -102,20 +101,30 @@ class HDF5RecordWriter(RecordWriter):
         super(HDF5RecordWriter, self).__init__(name, id, dataset_folder, columns)
         self._file = h5py.File(os.path.join(dataset_folder, name + "-" + id), 'w')
         self._root_data = self._file.create_group('data')
+        self._init_serializers()
+
+    def _init_serializers(self):
+        self._serializers = {}
+        basic = HDF5BasicColumnSerDe()
+        for type in BasicColumn.type():
+            self._serializers[type] = basic
+        self._serializers[Img2DColumn.type()] = Img2DSerDe()
 
     def write(self, csv_row, idx):
         row_data = self._root_data.create_group('row_%08d' % idx)
         for column in self._columns:
-            serializer = self.get_column_serializer(column.data_type)
-            serializer.serialize(csv_row, column)
-            print ""
+            serializer = self._serializers[column.data_type]
+            self._save(row_data, column.name, serializer.serialize(csv_row, column))
 
-    def get_column_serializer(self, column_type):
-        if type in BasicColumn.type():
-            return HDF5BasicColumnSerDe()
-        elif type == Img2DColumn.type():
-            return Img2DSerDe()
-        raise TypeError("Unsupported SerDe Type: " + column_type)
+    @staticmethod
+    def _save(data, path, value):
+        if isinstance(value, dict):
+            sub_path = data.create_group(path)
+            for key in value:
+                sub_path[key] = value[key]
+        else:
+            data[path] = value
+
 
 
 class HDF5BasicColumnSerDe(ColumnSerDe):
@@ -124,7 +133,18 @@ class HDF5BasicColumnSerDe(ColumnSerDe):
 
     @abc.abstractmethod
     def serialize(self, csv_row, column):
-        return
+        if column.data_type == BasicColumn.Type.STRING:
+            return str(csv_row[column.columns_indexes[0]])
+        if column.data_type == BasicColumn.Type.INT:
+            return int(csv_row[column.columns_indexes[0]])
+        if column.data_type == BasicColumn.Type.FLOAT:
+            return float(csv_row[column.columns_indexes[0]])
+        if column.data_type == BasicColumn.Type.VECTOR:
+            return np.array([float(csv_row[i]) for i in column.columns_indexes])
+        if column.data_type == BasicColumn.Type.CATEGORICAL:
+            category_value = csv_row[column.columns_indexes[0]]
+            category_value_index = list(column.metadata).index(category_name)
+            return int(category_value_index)
 
     @abc.abstractmethod
     def deserialize(self, path):
