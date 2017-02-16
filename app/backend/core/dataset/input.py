@@ -286,18 +286,12 @@ class ColumnTransform(object):
 
 
 class ColumnReader(object):
-    def __init__(self):
-        pass
-
     @abc.abstractmethod
     def read(self, path):
         return
 
 
 class ColumnSerDe(object):
-    def __init__(self):
-        pass
-
     @abc.abstractmethod
     def serialize(self, csv_row, column):
         return

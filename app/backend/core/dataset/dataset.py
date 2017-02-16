@@ -5,11 +5,15 @@ import os
 import h5py
 import abc
 import random
+import json
 from img2d import Img2DSerDe
 from input import Input, BasicColumn, ColumnSerDe
 
 
 class Dataset(object):
+    DATA_DIR = "data"
+    SCHEMA_NAME = "schema.json"
+
     def __init__(self, workspace, path):
         self.workspace = workspace
         self.metadata = self._load_metadata(path)
@@ -19,6 +23,14 @@ class Dataset(object):
 
     def get_batch(self, batch_size):
         return Data()
+
+    def load(self, path):
+        self._validate(path)
+
+        pass
+
+    def _validate(self, path):
+        pass
 
     class Builder(object):
         def __init__(self, input, name, root_dir, parallelism_level=2, storage_type="HDF5"):
@@ -32,9 +44,9 @@ class Dataset(object):
             self._init(root_dir)
 
         def _init(self, root_dir):
-            self._dataset_dir = os.path.join(root_dir, self._name + "-" + random.getrandbits(64))
-            os.makedirs(self._dataset_dir)
-
+            self._dataset_root_dir = os.path.join(root_dir, self._name + "-" + random.getrandbits(64))
+            self._dataset_data_dir = os.path.join(self._dataset_root_dir, Dataset.DATA_DIR)
+            os.makedirs(self._dataset_root_dir)
 
         def build(self):
             class Progress(object):
@@ -50,11 +62,12 @@ class Dataset(object):
                     with self.lock:
                         return self.val.value
 
+            self._create_data_schema()
             csv_rows_chunks = np.array_split(self._process_csv_file(), self._parallelism_level)
             processes = []
             progress = Progress()
             for i in range(self._parallelism_level):
-                record_write = RecordWriter.factory(self._storage_type, self._dataset_dir, self._input.schema.columns)
+                record_write = RecordWriter.factory(self._storage_type, self._dataset_data_dir, self._input.schema.columns)
                 p = Process(target=Dataset.Builder.run, args=(csv_rows_chunks[i], record_write, progress))
                 processes.append(p)
             for p in processes: p.start()
@@ -81,6 +94,16 @@ class Dataset(object):
 
             return rows
 
+        def _create_data_schema(self):
+            data_schema = {}
+            for column in self._input.schema.columns:
+                data_schema['name'] = column.name
+                data_schema['type'] = column.data_type
+                if column.data_type == BasicColumn.Type.CATEGORICAL:
+                    data_schema['categories'] = list(column.metadata)
+            with open(os.path.join(self._dataset_data_dir, Dataset.SCHEMA_NAME), 'w') as f:
+                f.write(json.dumps(data_schema))
+
         @staticmethod
         def run(csv_rows, record_write, progress):
             for idx, row in enumerate(csv_rows):
@@ -89,6 +112,22 @@ class Dataset(object):
 
 
 class RecordWriter(object):
+    def __init__(self, data_dir, columns):
+        self._data_dir = data_dir
+        self._columns = columns
+
+    def factory(type, data_dir, columns):
+        if type == "HDF5":
+            return HDF5RecordWriter(data_dir, columns)
+        raise TypeError("Unsupported Record Writer Type: " + type)
+
+    factory = staticmethod(factory)
+
+    def write(self, csv_row, idx):
+        pass
+
+
+class RecordReader(object):
     def __init__(self, data_dir, columns):
         self._data_dir = data_dir
         self._columns = columns
@@ -137,7 +176,7 @@ class HDF5RecordWriter(RecordWriter):
 
 class HDF5BasicColumnSerDe(ColumnSerDe):
     def __init__(self):
-        super(ColumnSerDe, self).__init__()
+        pass
 
     def serialize(self, csv_row, column):
         if column.data_type == BasicColumn.Type.STRING:
@@ -149,9 +188,9 @@ class HDF5BasicColumnSerDe(ColumnSerDe):
         if column.data_type == BasicColumn.Type.VECTOR:
             return np.array([float(csv_row[i]) for i in column.columns_indexes])
         if column.data_type == BasicColumn.Type.CATEGORICAL:
-            category_value = csv_row[column.columns_indexes[0]]
-            category_value_idx = list(column.metadata).index(category_value)
-            return int(category_value_idx)
+            cat_val = csv_row[column.columns_indexes[0]]
+            cat_val_idx = list(column.metadata).index(cat_val)
+            return int(cat_val_idx)
 
     @abc.abstractmethod
     def deserialize(self, path):

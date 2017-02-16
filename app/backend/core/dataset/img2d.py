@@ -1,4 +1,7 @@
 from input import *
+import numpy as np
+import skimage.io as skimgio
+import imghdr
 
 
 class Img2DColumn(ComplexColumn):
@@ -78,19 +81,34 @@ class ImgNormalizationTransform(ColumnTransform):
 
 
 class Img2DReader(ColumnReader):
-    def __init__(self):
-        super(Img2DReader, self).__init__()
+    def __init__(self, is_raw_blob=True):
+        self._is_raw_blob = is_raw_blob
 
     def read(self, path):
-        return
+        return np.void(open(path, 'r').read()) if self._is_raw_blob else skimgio.imread(path)
 
 
 class Img2DSerDe(ColumnSerDe):
-    def __init__(self):
-        super(Img2DSerDe, self).__init__()
+    def __init__(self, is_raw_blob=True):
+        self._is_raw_blob = is_raw_blob
+        self._reader = Img2DReader(is_raw_blob)
 
-    def serialize(self, path):
-        return
+    def serialize(self, csv_row, column):
+        path = str(csv_row[column.columns_indexes[0]])
+        img_array = self._reader.read(path)
+        img_arr_rows = img_array.shape[0]
+        img_arr_cols = img_array.shape[1]
+        img_ch_num = 1
+        if len(img_array.shape) > 2:
+            img_ch_num = img_array.shape[2]
+        img_fmt = imghdr.what(path)
+        return {
+            'rows' : int(img_arr_rows),
+            'cols' : int(img_arr_cols),
+            'ch_num' : int(img_ch_num),
+            'fmt' : str(img_fmt),
+            'data' : img_array
+        }
 
     def deserialize(self, path):
-        return
+        pass
