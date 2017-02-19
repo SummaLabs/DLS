@@ -1,4 +1,5 @@
-from multiprocessing import Process, Value, Lock
+from Queue import Empty
+from multiprocessing import Process, Value, Lock, Queue
 import numpy as np
 import csv, sys
 import os
@@ -6,12 +7,14 @@ import h5py
 import abc
 import random
 import json
-from img2d import Img2DSerDe
-from input import Input, BasicColumn, ColumnSerDe
+import logging
+from img2d import Img2DSerDe, Img2DColumn
+from input import Input, BasicColumn, BasicColumnSerDe, ComplexColumn
 
 
 class Dataset(object):
-    DATA_DIR = "data"
+    DATA_DIR_NAME = "data"
+    FILE_NAME = "dataset.processed"
     SCHEMA_NAME = "schema.json"
 
     def __init__(self, workspace, path):
@@ -26,7 +29,7 @@ class Dataset(object):
 
     def load(self, path):
         self._validate(path)
-
+        data_files = [h5py.File(f, 'r') for f in os.listdir(os.path.join(path, Dataset.DATA_DIR_NAME))]
         pass
 
     def _validate(self, path):
@@ -44,36 +47,36 @@ class Dataset(object):
             self._init(root_dir)
 
         def _init(self, root_dir):
-            self._dataset_root_dir = os.path.join(root_dir, self._name + "-" + random.getrandbits(64))
-            self._dataset_data_dir = os.path.join(self._dataset_root_dir, Dataset.DATA_DIR)
-            os.makedirs(self._dataset_root_dir)
+            self._dataset_root_dir = os.path.join(root_dir, self._name + "-" + str(random.getrandbits(64)))
+            self._dataset_data_dir = os.path.join(self._dataset_root_dir, Dataset.DATA_DIR_NAME)
+            os.makedirs(self._dataset_data_dir)
 
         def build(self):
-            class Progress(object):
-                def __init__(self):
-                    self.val = Value('i', 0)
-                    self.lock = Lock()
-
-                def increment(self):
-                    with self.lock:
-                        self.val.value += 1
-
-                def value(self):
-                    with self.lock:
-                        return self.val.value
-
-            self._create_data_schema()
+            self._save_data_schema()
             csv_rows_chunks = np.array_split(self._process_csv_file(), self._parallelism_level)
-            processes = []
-            progress = Progress()
+            processor = []
+            results = Queue()
             for i in range(self._parallelism_level):
-                record_write = RecordWriter.factory(self._storage_type, self._dataset_data_dir, self._input.schema.columns)
-                p = Process(target=Dataset.Builder.run, args=(csv_rows_chunks[i], record_write, progress))
-                processes.append(p)
-            for p in processes: p.start()
-            for p in processes: p.join()
+                p = RecordProcessor(self._input.schema.columns, results, csv_rows_chunks[i])
+                processor.append(p)
+            for p in processor: p.start()
+            record_write = RecordWriter.factory(self._storage_type, self._dataset_data_dir, self._input.schema.columns)
+            completed_processor_num = 0
+            record_idx = 0
+            try:
+                while completed_processor_num < self._parallelism_level:
+                    record = results.get(block=True, timeout=5)
+                    if record is not None:
+                        record_write.write(record, record_idx)
+                        record_idx += 1
+                    else:
+                        completed_processor_num += 1
+            except Empty:
+                logging.warning("Not all the threads completed as expected")
 
-            print "Records processed: " + str(progress.value())
+            record_write.close()
+
+            print "Records processed: " + str(record_idx)
 
             return Dataset("", "path")
 
@@ -94,21 +97,15 @@ class Dataset(object):
 
             return rows
 
-        def _create_data_schema(self):
-            data_schema = {}
+        def _save_data_schema(self):
+            data_schema = []
             for column in self._input.schema.columns:
-                data_schema['name'] = column.name
-                data_schema['type'] = column.data_type
+                _column = {'name': column.name, 'type': column.data_type}
                 if column.data_type == BasicColumn.Type.CATEGORICAL:
-                    data_schema['categories'] = list(column.metadata)
+                    _column['categories'] = list(column.metadata)
+                data_schema.append(_column)
             with open(os.path.join(self._dataset_data_dir, Dataset.SCHEMA_NAME), 'w') as f:
                 f.write(json.dumps(data_schema))
-
-        @staticmethod
-        def run(csv_rows, record_write, progress):
-            for idx, row in enumerate(csv_rows):
-                record_write.write(row, idx)
-                progress.increment()
 
 
 class RecordWriter(object):
@@ -146,55 +143,47 @@ class RecordReader(object):
 class HDF5RecordWriter(RecordWriter):
     def __init__(self, data_dir, columns):
         super(HDF5RecordWriter, self).__init__(data_dir, columns)
-        import multiprocessing as mp
-        self._file = h5py.File(os.path.join(data_dir, "part-" + str(mp.current_process().pid)), 'w')
+        self._file = h5py.File(os.path.join(self._data_dir, Dataset.FILE_NAME), 'w')
         self._root_data = self._file.create_group('data')
-        self._init_serializers()
 
-    def _init_serializers(self):
-        self._serializers = {}
-        basic = HDF5BasicColumnSerDe()
-        for type in BasicColumn.type():
-            self._serializers[type] = basic
-        self._serializers[Img2DColumn.type()] = Img2DSerDe()
-
-    def write(self, csv_row, idx):
+    def write(self, record, idx):
         row_data = self._root_data.create_group('row_%08d' % idx)
-        for column in self._columns:
-            serializer = self._serializers[column.data_type]
-            self._save(row_data, column.name, serializer.serialize(csv_row, column))
+        for col_name, value in record.iteritems():
+            self._save(row_data, col_name, value)
 
     @staticmethod
-    def _save(data, path, value):
+    def _save(data, col_name, value):
         if isinstance(value, dict):
-            sub_path = data.create_group(path)
+            sub_cal_name = data.create_group(col_name)
             for key in value:
-                sub_path[key] = value[key]
+                sub_cal_name[key] = value[key]
         else:
-            data[path] = value
+            data[col_name] = value
+
+    def close(self):
+        self._file.close()
 
 
-class HDF5BasicColumnSerDe(ColumnSerDe):
-    def __init__(self):
-        pass
+class RecordProcessor(Process):
+    def __init__(self, columns, result_queue, csv_rows):
+        super(RecordProcessor, self).__init__()
+        self._columns = columns
+        self._result_queue = result_queue
+        self._csv_rows = csv_rows
 
-    def serialize(self, csv_row, column):
-        if column.data_type == BasicColumn.Type.STRING:
-            return str(csv_row[column.columns_indexes[0]])
-        if column.data_type == BasicColumn.Type.INT:
-            return int(csv_row[column.columns_indexes[0]])
-        if column.data_type == BasicColumn.Type.FLOAT:
-            return float(csv_row[column.columns_indexes[0]])
-        if column.data_type == BasicColumn.Type.VECTOR:
-            return np.array([float(csv_row[i]) for i in column.columns_indexes])
-        if column.data_type == BasicColumn.Type.CATEGORICAL:
-            cat_val = csv_row[column.columns_indexes[0]]
-            cat_val_idx = list(column.metadata).index(cat_val)
-            return int(cat_val_idx)
-
-    @abc.abstractmethod
-    def deserialize(self, path):
-        return
+    def run(self):
+        for csv_row in self._csv_rows:
+            # Trim row entries
+            csv_row = [e.strip() for e in csv_row]
+            precessed_row = {}
+            for column in self._columns:
+                col_reader = column.reader
+                col_data = col_reader.read(csv_row)
+                col_serializer = column.ser_de
+                precessed_row[column.name] = col_serializer.serialize(col_data)
+            self._result_queue.put(precessed_row)
+            # Signalize that processing is completed
+            self._result_queue.put(None)
 
 
 class Data(object):
@@ -231,6 +220,7 @@ if __name__ == '__main__':
     from input import Schema, Input, BasicColumn, BasicColumnSerDe, ColumnSerDe, ColumnSerDe
     import os
     import glob
+
     #
     pathCSV = '../../../../data-test/dataset-image2d/simple4c_test/test-csv-v1.csv'
     if not os.path.isfile(pathCSV):
@@ -238,6 +228,6 @@ if __name__ == '__main__':
     wdir = os.path.abspath(os.path.dirname(pathCSV))
     schema = Schema(pathCSV, header=True, separator='|')
     schema.print_data()
-    input   = Input(schema=schema)
+    input = Input(schema=schema)
     # dataset = Dataset()
     print ('----')

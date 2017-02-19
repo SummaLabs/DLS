@@ -1,20 +1,23 @@
 from input import *
 import numpy as np
 import skimage.io as skimgio
+import PIL.Image
 import imghdr
 
 
 class Img2DColumn(ComplexColumn):
+    TYPE = 'IMG_2D'
 
-    def __init__(self, pre_transforms, post_transforms, reader=None):
-        super(Img2DColumn, self).__init__(data_type=Img2DColumn.type, pre_transforms=pre_transforms,
-                                          post_transforms=post_transforms, reader=reader)
+    def __init__(self, pre_transforms, post_transforms, is_raw_blob=False, reader=None):
+        super(Img2DColumn, self).__init__(data_type=Img2DColumn.TYPE, pre_transforms=pre_transforms,
+                                          post_transforms=post_transforms, reader=None)
         if reader is None:
-            self._reader = Img2DReader()
+            self._reader = Img2DReader(is_raw_blob, self)
+        self.ser_de = Img2DSerDe()
 
     @staticmethod
     def type():
-        return 'IMG_2D'
+        return Img2DColumn.TYPE
 
     class Builder(object):
         def __init__(self, img2d_column_config):
@@ -81,33 +84,32 @@ class ImgNormalizationTransform(ColumnTransform):
 
 
 class Img2DReader(ColumnReader):
-    def __init__(self, is_raw_blob=True):
+    def __init__(self, is_raw_blob, column):
+        super(Img2DReader, self).__init__(column)
         self._is_raw_blob = is_raw_blob
 
-    def read(self, path):
-        return np.void(open(path, 'r').read()) if self._is_raw_blob else skimgio.imread(path)
+    def read(self, csv_row):
+        path = str(csv_row[self._column.columns_indexes[0]])
+        img_data = np.void(open(path, 'r').read()) if self._is_raw_blob else skimgio.imread(path)
+        img_fmt = imghdr.what(path)
+        return img_data, img_fmt
 
 
 class Img2DSerDe(ColumnSerDe):
-    def __init__(self, is_raw_blob=True):
-        self._is_raw_blob = is_raw_blob
-        self._reader = Img2DReader(is_raw_blob)
-
-    def serialize(self, csv_row, column):
-        path = str(csv_row[column.columns_indexes[0]])
-        img_array = self._reader.read(path)
-        img_arr_rows = img_array.shape[0]
-        img_arr_cols = img_array.shape[1]
+    def serialize(self, data):
+        img_data = data[0]
+        img_fmt = data[1]
+        img_data_rows = img_data.shape[0]
+        img_data_cols = img_data.shape[1]
         img_ch_num = 1
-        if len(img_array.shape) > 2:
-            img_ch_num = img_array.shape[2]
-        img_fmt = imghdr.what(path)
+        if len(img_data.shape) > 2:
+            img_ch_num = img_data.shape[2]
         return {
-            'rows' : int(img_arr_rows),
-            'cols' : int(img_arr_cols),
-            'ch_num' : int(img_ch_num),
-            'fmt' : str(img_fmt),
-            'data' : img_array
+            'rows': int(img_data_rows),
+            'cols': int(img_data_cols),
+            'ch_num': int(img_ch_num),
+            'fmt': str(img_fmt),
+            'data': img_data
         }
 
     def deserialize(self, path):

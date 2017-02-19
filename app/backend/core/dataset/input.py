@@ -3,6 +3,7 @@ from enum import Enum
 import csv, sys
 import copy
 import abc
+import numpy as np
 
 
 class Schema(object):
@@ -81,7 +82,7 @@ class Schema(object):
             if column.name in columns_to_merge:
                 columns_indexes.extend(column.columns_indexes)
                 self.drop_column(column.name)
-        self._columns.append(Column(new_column_name, columns_indexes))
+        self._columns.append(BasicColumn(new_column_name, columns_indexes))
 
     def merge_columns_in_range(self, new_column_name, range=()):
         if not isinstance(range, tuple):
@@ -95,7 +96,7 @@ class Schema(object):
             if range[0] <= index <= range[1]:
                 columns_indexes.extend(column.columns_indexes)
                 self.drop_column(column.name)
-        self._columns.append(Column(new_column_name, columns_indexes))
+        self._columns.append(BasicColumn(new_column_name, columns_indexes))
 
     def print_columns(self):
         print ", ".join([col.name for col in self._columns])
@@ -164,7 +165,7 @@ class Input(object):
 
     def add_column(self, column_name, input_column):
         index, column = self._find_column_in_schema(column_name)
-        input_column.name = column.name
+        input_column.name = column_name
         input_column.columns_indexes = column.columns_indexes
         self._schema.columns[index] = input_column
 
@@ -176,11 +177,13 @@ class Input(object):
 
 
 class Column(object):
-    def __init__(self, name=None, columns_indexes=[], data_type=None):
+    def __init__(self, name=None, columns_indexes=[], data_type=None, reader=None, ser_de=None):
         self._name = name
         # CSV corresponding columns indexes
         self._columns_indexes = columns_indexes
         self._data_type = data_type
+        self._reader = reader
+        self._ser_de = ser_de
 
     @property
     def name(self):
@@ -207,6 +210,22 @@ class Column(object):
         self._data_type = data_type
 
     @property
+    def reader(self):
+        return self._reader
+
+    @reader.setter
+    def reader(self, reader):
+        self._reader = reader
+
+    @property
+    def ser_de(self):
+        return self._ser_de
+
+    @ser_de.setter
+    def ser_de(self, ser_de):
+        self._ser_de = ser_de
+
+    @property
     def metadata(self):
         return self._metadata
 
@@ -215,30 +234,11 @@ class Column(object):
         self._metadata = metadata
 
 
-class BasicColumn(Column):
-    class Type(Enum):
-        INT = "INT"
-        FLOAT = "FLOAT"
-        STRING = "STRING"
-        VECTOR = "VECTOR"
-        CATEGORICAL = "CATEGORICAL"
-
-    @staticmethod
-    def type():
-        return [BasicColumn.Type.INT,
-                BasicColumn.Type.FLOAT,
-                BasicColumn.Type.STRING,
-                BasicColumn.Type.VECTOR,
-                BasicColumn.Type.CATEGORICAL]
-
-
 class ComplexColumn(Column):
     def __init__(self, data_type=None, pre_transforms=None, post_transforms=None, ser_de=None, reader=None):
         super(ComplexColumn, self).__init__(data_type=data_type)
         self._pre_transforms = pre_transforms
         self._post_transforms = post_transforms
-        self._reader = reader
-        self._ser_de = ser_de
 
     @property
     def pre_transforms(self):
@@ -256,22 +256,6 @@ class ComplexColumn(Column):
     def post_transforms(self, post_transforms):
         self._post_transforms = post_transforms
 
-    @property
-    def reader(self):
-        return self._reader
-
-    @reader.setter
-    def reader(self, reader):
-        self._reader = reader
-
-    @property
-    def ser_de(self):
-        return self._ser_de
-
-    @ser_de.setter
-    def ser_de(self, ser_de):
-        self._ser_de = ser_de
-
 
 class ColumnTransform(object):
     def __init__(self):
@@ -286,16 +270,79 @@ class ColumnTransform(object):
 
 
 class ColumnReader(object):
+    def __init__(self, column):
+        self._column = column
+
     @abc.abstractmethod
-    def read(self, path):
-        return
+    def read(self, csv_row):
+        pass
 
 
 class ColumnSerDe(object):
+
     @abc.abstractmethod
-    def serialize(self, csv_row, column):
-        return
+    def serialize(self, data):
+        pass
 
     @abc.abstractmethod
     def deserialize(self, path):
-        return
+        pass
+
+
+class BasicColumn(Column):
+    def __init__(self, name=None, columns_indexes=[], data_type=None, reader=None, ser_de=None):
+        super(BasicColumn, self).__init__(name, columns_indexes, data_type, reader, ser_de)
+        self.reader = BasicColumnReader(self)
+        self.ser_de = BasicColumnSerDe(data_type)
+
+    class Type(Enum):
+        INT = "INT"
+        FLOAT = "FLOAT"
+        STRING = "STRING"
+        VECTOR = "VECTOR"
+        CATEGORICAL = "CATEGORICAL"
+
+    @staticmethod
+    def type():
+        return [BasicColumn.Type.INT,
+                BasicColumn.Type.FLOAT,
+                BasicColumn.Type.STRING,
+                BasicColumn.Type.VECTOR,
+                BasicColumn.Type.CATEGORICAL]
+
+
+class BasicColumnReader(ColumnReader):
+    def read(self, csv_row):
+        if self._column.data_type == BasicColumn.Type.STRING:
+            return csv_row[self._column.columns_indexes[0]]
+        if self._column.data_type == BasicColumn.Type.INT:
+            return csv_row[self._column.columns_indexes[0]]
+        if self._column.data_type == BasicColumn.Type.FLOAT:
+            return csv_row[self._column.columns_indexes[0]]
+        if self._column.data_type == BasicColumn.Type.VECTOR:
+            return [float(csv_row[i]) for i in self._column.columns_indexes]
+        if self._column.data_type == BasicColumn.Type.CATEGORICAL:
+            cat_val = csv_row[self._column.columns_indexes[0]]
+            cat_val_idx = list(self._column.metadata).index(cat_val)
+            return cat_val_idx
+
+
+class BasicColumnSerDe(ColumnSerDe):
+    def __init__(self, data_type):
+        self._data_type = data_type
+
+    def serialize(self, data):
+        if self._data_type == BasicColumn.Type.STRING:
+            return str(data)
+        if self._data_type == BasicColumn.Type.INT:
+            return int(data)
+        if self._data_type == BasicColumn.Type.FLOAT:
+            return float(data)
+        if self._data_type == BasicColumn.Type.VECTOR:
+            return np.array(data)
+        if self._data_type == BasicColumn.Type.CATEGORICAL:
+            return int(data)
+
+    @abc.abstractmethod
+    def deserialize(self, path):
+        pass
