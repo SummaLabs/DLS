@@ -15,25 +15,29 @@ from input import Input, BasicColumn, BasicColumnSerDe, ComplexColumn
 class Dataset(object):
     DATA_DIR_NAME = "data"
     FILE_NAME = "dataset.processed"
-    SCHEMA_NAME = "schema.json"
+    SCHEMA_FILE = "schema.json"
 
-    def __init__(self, workspace, path):
-        self.workspace = workspace
-        self.metadata = self._load_metadata(path)
+    def __init__(self, input):
+        self._input = input
+        self._record_reader = RecordReader.factory(input['storage_type'], 'data_dir')
 
-    def _load_metadata(self, path):
-        print "Load Dataset from Path" + path
+    def get_batch(self, batch_size=64):
+        data = {}
+        for column in input.schema.columns:
+            data[column.name] = []
+        for inx in random.randrange(0, batch_size):
+            record = self._record_reader.read(inx)
+            for column in input.schema.columns:
+                value = column.ser_de.deserialize(record[column.name])
+                data[column.name].append(value)
 
-    def get_batch(self, batch_size):
+
         return Data()
 
-    def load(self, path):
-        self._validate(path)
-        data_files = [h5py.File(f, 'r') for f in os.listdir(os.path.join(path, Dataset.DATA_DIR_NAME))]
-        pass
-
-    def _validate(self, path):
-        pass
+    @staticmethod
+    def load(path):
+        schema = json.load(os.path.join(path, Dataset.DATA_DIR_NAME, Dataset.SCHEMA_FILE))
+        return Dataset(Input.Builder(schema).build())
 
     class Builder(object):
         def __init__(self, input, name, root_dir, parallelism_level=2, storage_type="HDF5"):
@@ -52,7 +56,7 @@ class Dataset(object):
             os.makedirs(self._dataset_data_dir)
 
         def build(self):
-            self._save_data_schema()
+            self._save_data_set_schema()
             csv_rows_chunks = np.array_split(self._process_csv_file(), self._parallelism_level)
             processor = []
             results = Queue()
@@ -97,15 +101,15 @@ class Dataset(object):
 
             return rows
 
-        def _save_data_schema(self):
-            data_schema = []
+        def _save_data_set_schema(self):
+            schema = []
             for column in self._input.schema.columns:
                 _column = {'name': column.name, 'type': str(column.data_type)}
                 if column.data_type == BasicColumn.Type.CATEGORICAL:
                     _column['categories'] = list(column.metadata)
-                data_schema.append(_column)
-            with open(os.path.join(self._dataset_data_dir, Dataset.SCHEMA_NAME), 'w') as f:
-                f.write(json.dumps(data_schema))
+                schema.append(_column)
+            with open(os.path.join(self._dataset_data_dir, Dataset.SCHEMA_FILE), 'w') as f:
+                f.write(json.dumps(schema))
 
 
 class RecordWriter(object):
@@ -125,19 +129,30 @@ class RecordWriter(object):
 
 
 class RecordReader(object):
-    def __init__(self, data_dir, columns):
-        self._data_dir = data_dir
-        self._columns = columns
-
-    def factory(type, data_dir, columns):
+    def factory(type, data_dir):
         if type == "HDF5":
-            return HDF5RecordWriter(data_dir, columns)
+            return HDF5RecordWriter(data_dir)
         raise TypeError("Unsupported Record Writer Type: " + type)
 
     factory = staticmethod(factory)
 
-    def write(self, csv_row, idx):
+    def read(self, idx):
         pass
+
+
+class HDF5RecordReader(object):
+    def __init__(self, data_dir):
+        data_file = h5py.File(os.path.join(data_dir, Dataset.FILE_NAME), 'r')
+        self._data = data_file['data']
+        self._data_keys = data_file['data'].keys()
+
+    def records_count(self):
+        len(self._data_keys)
+
+    def read(self, idx):
+        key = self._data_keys[idx]
+        record = self._data[key]
+        return record
 
 
 class HDF5RecordWriter(RecordWriter):
@@ -186,6 +201,9 @@ class RecordProcessor(Process):
 class Data(object):
     def __init__(self):
         print ""
+
+    def __getitem__(self, old_name, new_name):
+        pass
 
     def _load_data(self):
         print "Test"
