@@ -233,6 +233,10 @@ class Column(object):
     def metadata(self, metadata):
         self._metadata = metadata
 
+    def process(self, record):
+        data = self.reader.read(record)
+        return self.ser_de.serialize(data)
+
 
 class ComplexColumn(Column):
     def __init__(self, data_type=None, pre_transforms=None, post_transforms=None, ser_de=None, reader=None):
@@ -255,6 +259,12 @@ class ComplexColumn(Column):
     @post_transforms.setter
     def post_transforms(self, post_transforms):
         self._post_transforms = post_transforms
+
+    def process(self, record):
+        data = self.reader.read(record)
+        for transform in self._pre_transforms:
+            data = transform.apply(data)
+        return self.ser_de.serialize(data)
 
 
 class ColumnTransform(object):
@@ -301,6 +311,9 @@ class BasicColumn(Column):
         STRING = "STRING"
         VECTOR = "VECTOR"
         CATEGORICAL = "CATEGORICAL"
+
+        def __str__(self):
+            return str(self.value)
 
     @staticmethod
     def type():

@@ -100,7 +100,7 @@ class Dataset(object):
         def _save_data_schema(self):
             data_schema = []
             for column in self._input.schema.columns:
-                _column = {'name': column.name, 'type': column.data_type}
+                _column = {'name': column.name, 'type': str(column.data_type)}
                 if column.data_type == BasicColumn.Type.CATEGORICAL:
                     _column['categories'] = list(column.metadata)
                 data_schema.append(_column)
@@ -177,13 +177,10 @@ class RecordProcessor(Process):
             csv_row = [e.strip() for e in csv_row]
             precessed_row = {}
             for column in self._columns:
-                col_reader = column.reader
-                col_data = col_reader.read(csv_row)
-                col_serializer = column.ser_de
-                precessed_row[column.name] = col_serializer.serialize(col_data)
+                precessed_row[column.name] = column.process(csv_row)
             self._result_queue.put(precessed_row)
-            # Signalize that processing is completed
-            self._result_queue.put(None)
+        # Signalize that processing is completed
+        self._result_queue.put(None)
 
 
 class Data(object):
