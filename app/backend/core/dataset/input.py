@@ -229,6 +229,10 @@ class Column(object):
     def metadata(self):
         return self._metadata
 
+    @property
+    def schema(self):
+        return {'name': self.name, 'type': str(self.data_type)}
+
     @metadata.setter
     def metadata(self, metadata):
         self._metadata = metadata
@@ -276,7 +280,12 @@ class ColumnTransform(object):
         pass
 
     def apply(self, data):
-        return data
+        pass
+
+    @property
+    @abc.abstractmethod
+    def schema(self):
+        pass
 
 
 class ColumnReader(object):
@@ -295,7 +304,7 @@ class ColumnSerDe(object):
         pass
 
     @abc.abstractmethod
-    def deserialize(self, path):
+    def deserialize(self, data):
         pass
 
 
@@ -322,6 +331,13 @@ class BasicColumn(Column):
                 BasicColumn.Type.STRING,
                 BasicColumn.Type.VECTOR,
                 BasicColumn.Type.CATEGORICAL]
+
+    @property
+    def schema(self):
+        schema = super(BasicColumn, self).schema
+        if self.data_type == BasicColumn.Type.CATEGORICAL:
+            schema['categories'] = list(self.metadata)
+        return schema
 
 
 class BasicColumnReader(ColumnReader):
@@ -357,5 +373,14 @@ class BasicColumnSerDe(ColumnSerDe):
             return int(data)
 
     @abc.abstractmethod
-    def deserialize(self, path):
-        pass
+    def deserialize(self, data):
+        if self._data_type == BasicColumn.Type.STRING:
+            return str(data.value)
+        if self._data_type == BasicColumn.Type.INT:
+            return int(data.value)
+        if self._data_type == BasicColumn.Type.FLOAT:
+            return float(data.value)
+        if self._data_type == BasicColumn.Type.VECTOR:
+            return np.array(data.value)
+        if self._data_type == BasicColumn.Type.CATEGORICAL:
+            return int(data.value)

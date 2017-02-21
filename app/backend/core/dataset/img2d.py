@@ -19,6 +19,19 @@ class Img2DColumn(ComplexColumn):
     def type():
         return Img2DColumn.TYPE
 
+    @property
+    def schema(self):
+        schema = super(Img2DColumn, self).schema
+        pre_transforms = []
+        for transform in self.pre_transforms:
+            pre_transforms.append(transform.schema)
+        schema['pre_transforms'] = pre_transforms
+        post_transforms = []
+        for transform in self.post_transforms:
+            post_transforms.append(transform.schema)
+        schema['post_transforms'] = post_transforms
+        return schema
+
     class Builder(object):
         def __init__(self, img2d_column_config):
             self._img2d_column_config = img2d_column_config
@@ -70,6 +83,11 @@ class ImgResizeTransform(ColumnTransform):
     def apply(self, data):
         return data
 
+    @property
+    @abc.abstractmethod
+    def schema(self):
+        return {}
+
 
 class ImgNormalizationTransform(ColumnTransform):
     def __init__(self, params):
@@ -81,6 +99,11 @@ class ImgNormalizationTransform(ColumnTransform):
 
     def apply(self, data):
         return data
+
+    @property
+    @abc.abstractmethod
+    def schema(self):
+        return {}
 
 
 class Img2DReader(ColumnReader):
@@ -112,5 +135,6 @@ class Img2DSerDe(ColumnSerDe):
             'data': img_data
         }
 
-    def deserialize(self, path):
+    def deserialize(self, data):
+        # What do we need to implement in???
         pass

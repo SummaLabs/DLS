@@ -32,9 +32,9 @@ class TestDataSetBuilder(unittest.TestCase):
     def setUp(self):
         self.test_dir, self.test_file_path = create_test_data(10)
 
-    # def tearDown(self):
-    #     shutil.rmtree(self.test_dir)
-
+    def tearDown(self):
+        shutil.rmtree(self.test_dir)
+    #
     # def test_process_csv_file(self):
     #     schema = Schema(self.test_file_path)
     #     input = Input(schema)
@@ -43,13 +43,23 @@ class TestDataSetBuilder(unittest.TestCase):
     #     self.assertEqual(len(raws), 10)
     #     _, column = input._find_column_in_schema('col_0')
     #     self.assertTrue(len(column.metadata), 4)
+    #
+    # def test_build_dataset(self):
+    #     schema = Schema(self.test_file_path)
+    #     input = Input(schema)
+    #     img2d = Img2DColumn([], [])
+    #     input.add_column("col_5", img2d)
+    #     dataset = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2).build()
+        # self.assertEqual(dataset, 1000)
 
-    def test_build_dataset(self):
+    def test_read_dataset(self):
+        # Build dataset
         schema = Schema(self.test_file_path)
         input = Input(schema)
         img2d = Img2DColumn([], [])
         input.add_column("col_5", img2d)
         dataset = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2).build()
+        dataset.get_batch(5)
         # self.assertEqual(dataset, 1000)
 
 
