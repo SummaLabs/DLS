@@ -117,6 +117,11 @@ class Input(object):
     def schema(self):
         return self._schema
 
+    @property
+    def json_schema(self):
+        json_schema = {}
+        return self._schema
+
     class Builder(object):
         def __init__(self, schema_config):
             self._schema_config = schema_config

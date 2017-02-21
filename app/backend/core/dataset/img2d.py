@@ -119,9 +119,9 @@ class Img2DReader(ColumnReader):
 
 
 class Img2DSerDe(ColumnSerDe):
-    def serialize(self, data):
-        img_data = data[0]
-        img_fmt = data[1]
+    def serialize(self, img):
+        img_data = img[0]
+        img_fmt = img[1]
         img_data_rows = img_data.shape[0]
         img_data_cols = img_data.shape[1]
         img_ch_num = 1
@@ -135,6 +135,7 @@ class Img2DSerDe(ColumnSerDe):
             'data': img_data
         }
 
-    def deserialize(self, data):
-        # What do we need to implement in???
-        pass
+    def deserialize(self, img):
+        # What do we need with metadata???
+        img_data = img['data'].value
+        return img_data.ravel()

@@ -34,15 +34,13 @@ class Dataset(object):
                 value = column.ser_de.deserialize(record[column.name])
                 data[column.name].append(value)
             i += 1
-
-
-        return Data()
+        return Data(data)
 
     @staticmethod
     def load(path):
         with open(os.path.join(path, Dataset.DATA_DIR_NAME, Dataset.SCHEMA_FILE)) as s:
             schema_json = json.load(s)
-        return Dataset(Input.Builder(schema_json).build())
+        return Dataset(Input.Builder(schema_json).build(), path)
 
     class Builder(object):
         def __init__(self, input, name, root_dir, parallelism_level=2, storage_type="HDF5"):
@@ -202,35 +200,18 @@ class RecordProcessor(Process):
 
 
 class Data(object):
-    def __init__(self):
-        print ""
+    def __init__(self, data):
+        self._data = {}
+        for key in data.keys():
+            self._data[key] = np.array(data[key])
 
-    def __getitem__(self, old_name, new_name):
-        pass
-
-    def _load_data(self):
-        print "Test"
-
-    def to_data_frame(self):
-        raise NotImplementedError("Please Implement this method")
-
-    def for_column(self, column_name):
-        return np.array([[7, 8, 5], [3, 5, 7]], np.int32)
+    def __getitem__(self, column_name):
+        return self._data[column_name]
 
 
 class Metadata(object):
     def __init__(self):
         print ""
-
-
-class Image2DMetadata(Metadata):
-    def __init__(self):
-        super(Image2DMetadata, self).__init__()
-        print ""
-
-
-class DataType:
-    Image2D, Image3D, Text = range(3)
 
 
 if __name__ == '__main__':

@@ -23,7 +23,7 @@ def create_test_data(records_number):
     categories = ['cat_1', 'cat_2', 'cat_3', 'cat_4']
     f = open(test_csv_file_path, 'w')
     for i in range(records_number):
-        f.write('col_0_%s, col_1_%d, col_2_%d, col_3_%d, col_4_%d, %s\n' % (categories[random.randrange(4)], i, i, i, i, test_img_file_path))
+        f.write('%s, %d, %d, %d, %d, %s\n' % (categories[random.randrange(4)], i, i, i, i, test_img_file_path))
     f.close()
     return test_dir, test_csv_file_path
 
@@ -59,7 +59,8 @@ class TestDataSetBuilder(unittest.TestCase):
         img2d = Img2DColumn([], [])
         input.add_column("col_5", img2d)
         dataset = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2).build()
-        dataset.get_batch(5)
+        data = dataset.get_batch(5)
+        print data['col_1']
         # self.assertEqual(dataset, 1000)
 
 
