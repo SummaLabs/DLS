@@ -130,8 +130,8 @@ class TestInput(unittest.TestCase):
     def test_img2d_type_column(self):
         schema = Schema(self.test_file_path)
         input = Input(schema)
-        img2d = Img2DColumn([ImgCropTransform({"height": 256, "width": 256})],
-                            [ImgNormalizationTransform({"height": 256, "width": 256})])
+        img2d = Img2DColumn(pre_transforms=[ImgCropTransform({"height": 256, "width": 256})],
+                            post_transforms=[ImgNormalizationTransform({"height": 256, "width": 256})])
         input.add_column("col_0", img2d)
         is_column_exist = False
         for column in input.schema.columns:

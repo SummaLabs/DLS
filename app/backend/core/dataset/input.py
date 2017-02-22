@@ -114,10 +114,13 @@ class Schema(object):
 
         from img2d import Img2DColumn
         result_columns = []
-        for index, config_column in enumerate(schema_json['columns']):
-            column_type = config_column['type']
+        for config_column in schema_json['columns']:
+            column_type = str(config_column['type'])
+            index = None
+            if 'index' in config_column:
+                index = config_column['index']
             if column_type in BasicColumn.type():
-                result_columns.append(BasicColumn(config_column['name'], config_column['index'], column_type))
+                result_columns.append(BasicColumn(str(config_column['name']), index, column_type))
             elif column_type == Img2DColumn.type():
                 result_columns.append(Img2DColumn.Builder(config_column).build())
             else:
@@ -189,7 +192,7 @@ class Input(object):
 
 
 class Column(object):
-    def __init__(self, name=None, columns_indexes=[], data_type=None, reader=None, ser_de=None):
+    def __init__(self, name=None, columns_indexes=None, data_type=None, reader=None, ser_de=None):
         self._name = name
         # CSV corresponding columns indexes
         self._columns_indexes = columns_indexes
@@ -255,8 +258,8 @@ class Column(object):
 
 
 class ComplexColumn(Column):
-    def __init__(self, data_type=None, pre_transforms=None, post_transforms=None, ser_de=None, reader=None):
-        super(ComplexColumn, self).__init__(data_type=data_type)
+    def __init__(self, name=None, data_type=None, pre_transforms=[], post_transforms=[], ser_de=None, reader=None):
+        super(ComplexColumn, self).__init__(name=name, data_type=data_type)
         self._pre_transforms = pre_transforms
         self._post_transforms = post_transforms
 
@@ -321,7 +324,7 @@ class ColumnSerDe(object):
 
 
 class BasicColumn(Column):
-    def __init__(self, name=None, columns_indexes=[], data_type=None, reader=None, ser_de=None):
+    def __init__(self, name=None, columns_indexes=None, data_type=None, reader=None, ser_de=None):
         super(BasicColumn, self).__init__(name, columns_indexes, data_type, reader, ser_de)
         self.reader = BasicColumnReader(self)
         self.ser_de = BasicColumnSerDe(data_type)

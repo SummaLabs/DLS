@@ -8,8 +8,8 @@ import imghdr
 class Img2DColumn(ComplexColumn):
     TYPE = 'IMG_2D'
 
-    def __init__(self, pre_transforms, post_transforms, is_raw_blob=False, reader=None):
-        super(Img2DColumn, self).__init__(data_type=Img2DColumn.TYPE, pre_transforms=pre_transforms,
+    def __init__(self, name=None, pre_transforms=[], post_transforms=[], is_raw_blob=False, reader=None):
+        super(Img2DColumn, self).__init__(name=name, data_type=Img2DColumn.TYPE, pre_transforms=pre_transforms,
                                           post_transforms=post_transforms, reader=None)
         if reader is None:
             self._reader = Img2DReader(is_raw_blob, self)
@@ -45,7 +45,13 @@ class Img2DColumn(ComplexColumn):
             for post_transform in self._img2d_column_config["post_transforms"]:
                 post_transforms.append(self._build_transform(post_transform))
 
-            return Img2DColumn(pre_transforms, post_transforms)
+            indexes = None
+            if 'index' in self._img2d_column_config:
+                indexes = self._img2d_column_config['index']
+
+            img2d = Img2DColumn(str(self._img2d_column_config['name']), pre_transforms, post_transforms)
+            img2d.columns_indexes = indexes
+            return img2d
 
         @staticmethod
         def _build_transform(transform):
@@ -82,6 +88,10 @@ class ImgResizeTransform(ColumnTransform):
 
     def apply(self, data):
         return data
+
+    @staticmethod
+    def config():
+        return {'type': 'input'}
 
     @property
     @abc.abstractmethod

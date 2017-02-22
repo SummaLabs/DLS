@@ -9,7 +9,7 @@ import random
 import json
 import logging
 from img2d import Img2DSerDe, Img2DColumn
-from input import Input, BasicColumn, BasicColumnSerDe, ComplexColumn
+from input import Schema, Input, BasicColumn, BasicColumnSerDe, ComplexColumn
 
 
 class Dataset(object):
@@ -19,6 +19,7 @@ class Dataset(object):
 
     def __init__(self, schema, path):
         self._schema = schema
+        self._path = path
         self._record_reader = RecordReader.factory("HDF5", path)
 
     def get_batch(self, batch_size=64):
@@ -39,8 +40,7 @@ class Dataset(object):
     @staticmethod
     def load(path):
         with open(os.path.join(path, Dataset.DATA_DIR_NAME, Dataset.SCHEMA_FILE)) as s:
-            schema_json = json.load(s)
-        return Dataset(Schema.deserialize(schema_json), path)
+            return Dataset(Schema.deserialize(json.load(s)), path)
 
     class Builder(object):
         def __init__(self, input, name, root_dir, parallelism_level=2, storage_type="HDF5"):
