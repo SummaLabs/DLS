@@ -17,20 +17,20 @@ class Dataset(object):
     FILE_NAME = "dataset.processed"
     SCHEMA_FILE = "schema.json"
 
-    def __init__(self, input, path):
-        self._input = input
+    def __init__(self, schema, path):
+        self._schema = schema
         self._record_reader = RecordReader.factory("HDF5", path)
 
     def get_batch(self, batch_size=64):
         data = {}
-        for column in self._input.schema.columns:
+        for column in self._schema.columns:
             data[column.name] = []
         records_count = self._record_reader.records_count
         i = 0
         while i < batch_size:
             inx = random.randrange(0, records_count)
             record = self._record_reader.read(inx)
-            for column in self._input.schema.columns:
+            for column in self._schema.columns:
                 value = column.ser_de.deserialize(record[column.name])
                 data[column.name].append(value)
             i += 1
@@ -40,7 +40,7 @@ class Dataset(object):
     def load(path):
         with open(os.path.join(path, Dataset.DATA_DIR_NAME, Dataset.SCHEMA_FILE)) as s:
             schema_json = json.load(s)
-        return Dataset(Input.Builder(schema_json).build(), path)
+        return Dataset(Schema.deserialize(schema_json), path)
 
     class Builder(object):
         def __init__(self, input, name, root_dir, parallelism_level=2, storage_type="HDF5"):
@@ -59,7 +59,7 @@ class Dataset(object):
             os.makedirs(self._dataset_data_dir)
 
         def build(self):
-            self._save_dataset_schema()
+            self._save_data_schema()
             csv_rows_chunks = np.array_split(self._process_csv_file(), self._parallelism_level)
             processor = []
             results = Queue()
@@ -85,7 +85,7 @@ class Dataset(object):
 
             print "Records processed: " + str(record_idx)
 
-            return Dataset(self._input, self._dataset_root_dir)
+            return Dataset(self._input.schema, self._dataset_root_dir)
 
         def _process_csv_file(self):
             rows = []
@@ -104,12 +104,9 @@ class Dataset(object):
 
             return rows
 
-        def _save_dataset_schema(self):
-            schema = []
-            for column in self._input.schema.columns:
-                schema.append(column.schema)
+        def _save_data_schema(self):
             with open(os.path.join(self._dataset_data_dir, Dataset.SCHEMA_FILE), 'w') as f:
-                f.write(json.dumps(schema))
+                f.write(json.dumps(self._input.schema.serialize()))
 
 
 class RecordWriter(object):

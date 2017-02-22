@@ -9,7 +9,12 @@ import numpy as np
 class Schema(object):
     separator = ','
 
-    def __init__(self, csv_file_path, header=False, separator=None):
+    def __init__(self, csv_file_path=None, header=False, separator=None):
+        self._csv_file_path = csv_file_path
+        if csv_file_path is not None:
+            self._build_from_csv(csv_file_path, header, separator)
+
+    def _build_from_csv(self, csv_file_path, header=False, separator=None):
         self._csv_file_path = csv_file_path
         if separator is not None:
             tseparator = separator.strip()
@@ -24,10 +29,6 @@ class Schema(object):
             self._columns = [BasicColumn(item, [index], BasicColumn.Type.STRING) for index, item in enumerate(header_row)]
         else:
             self._columns = [BasicColumn('col_' + str(index), [index], BasicColumn.Type.STRING) for index in range(0, len(header_row))]
-
-    @property
-    def csv_file_path(self):
-        return self._csv_file_path
 
     @staticmethod
     def _read_n_rows(csv_file_path, rows_number, sep=','):
@@ -49,6 +50,10 @@ class Schema(object):
         for column in self._columns:
             if column.name == old_name:
                 column.name = new_name.strip()
+
+    @property
+    def csv_file_path(self):
+        return self._csv_file_path
 
     @property
     def columns(self):
@@ -98,6 +103,31 @@ class Schema(object):
                 self.drop_column(column.name)
         self._columns.append(BasicColumn(new_column_name, columns_indexes))
 
+    @staticmethod
+    def deserialize(schema_json):
+        schema = Schema()
+        if 'csv_file_path' in schema_json:
+            schema = Schema(schema_json['csv_file_path'], schema_json['header'], schema_json['separator'])
+            columns_indexes_number = sum(len(column["index"]) for column in schema_json['columns'])
+            if columns_indexes_number != len(schema.columns):
+                raise TypeError("Columns indexes number in config is not equal to csv file: %s" % columns_indexes_number)
+
+        from img2d import Img2DColumn
+        result_columns = []
+        for index, config_column in enumerate(schema_json['columns']):
+            column_type = config_column['type']
+            if column_type in BasicColumn.type():
+                result_columns.append(BasicColumn(config_column['name'], config_column['index'], column_type))
+            elif column_type == Img2DColumn.type():
+                result_columns.append(Img2DColumn.Builder(config_column).build())
+            else:
+                raise TypeError("Unsupported column type: %s" % column_type)
+        schema.update_columns(result_columns)
+        return schema
+
+    def serialize(self):
+        return {'columns': [column.schema for column in self._columns]}
+
     def print_columns(self):
         print ", ".join([col.name for col in self._columns])
 
@@ -117,35 +147,12 @@ class Input(object):
     def schema(self):
         return self._schema
 
-    @property
-    def json_schema(self):
-        json_schema = {}
-        return self._schema
-
     class Builder(object):
         def __init__(self, schema_config):
             self._schema_config = schema_config
 
         def build(self):
-            from img2d import Img2DColumn
-            config = self._schema_config
-            schema = Schema(config['csv_file_path'], config['header'], config['separator'])
-            config_columns = config['columns']
-            columns_indexes_number = sum(len(column["index"]) for column in config_columns)
-            if columns_indexes_number != len(schema.columns):
-                raise TypeError("Columns indexes number in config is not equal to csv file: %s" % columns_indexes_number)
-
-            result_columns = []
-            for index, config_column in enumerate(config_columns):
-                column_type = config_column['type']
-                if column_type in BasicColumn.type():
-                    result_columns.append(BasicColumn(config_column['name'], config_column['index'], column_type))
-                elif column_type == Img2DColumn.type():
-                    result_columns.append(Img2DColumn.Builder(config_column).build())
-                else:
-                    raise TypeError("Unsupported column type: %s" % column_type)
-            schema.update_columns(result_columns)
-            return Input(schema)
+            return Input(Schema.deserialize(self._schema_config))
 
     def add_int_column(self, column_name):
         _, column = self._find_column_in_schema(column_name)
