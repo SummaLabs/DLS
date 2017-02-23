@@ -26,9 +26,9 @@ class Schema(object):
             duplicates = set([x for x in header_row if header_row.count(x) > 1])
             if len(duplicates) > 0:
                 raise Exception("Should be no duplicates in CSV header: " + ", ".join([col for col in duplicates]))
-            self._columns = [BasicColumn(item, [index], BasicColumn.Type.STRING) for index, item in enumerate(header_row)]
+            self._columns = [BasicColumn(name=item, columns_indexes=[index]) for index, item in enumerate(header_row)]
         else:
-            self._columns = [BasicColumn('col_' + str(index), [index], BasicColumn.Type.STRING) for index in range(0, len(header_row))]
+            self._columns = [BasicColumn(name='col_' + str(index), columns_indexes=[index]) for index in range(0, len(header_row))]
 
     @staticmethod
     def _read_n_rows(csv_file_path, rows_number, sep=','):
@@ -119,9 +119,9 @@ class Schema(object):
             index = None
             if 'index' in config_column:
                 index = config_column['index']
-            if column_type in BasicColumn.type():
+            if column_type in BasicColumn.types():
                 result_columns.append(BasicColumn(str(config_column['name']), index, column_type))
-            elif column_type == Img2DColumn.type():
+            elif column_type == Column.Type.IMG_2D:
                 result_columns.append(Img2DColumn.Builder(config_column).build())
             else:
                 raise TypeError("Unsupported column type: %s" % column_type)
@@ -157,26 +157,18 @@ class Input(object):
         def build(self):
             return Input(Schema.deserialize(self._schema_config))
 
-    def add_int_column(self, column_name):
-        _, column = self._find_column_in_schema(column_name)
-        column.data_type = BasicColumn.Type.INT
-
     def add_float_column(self, column_name):
         _, column = self._find_column_in_schema(column_name)
-        column.data_type = BasicColumn.Type.FLOAT
+        column.type = Column.Type.FLOAT
 
     def add_categorical_column(self, column_name):
         _, column = self._find_column_in_schema(column_name)
-        column.data_type = BasicColumn.Type.CATEGORICAL
+        column.type = Column.Type.CATEGORICAL
         column.metadata = set()
-
-    def add_string_column(self, column_name):
-        _, column = self._find_column_in_schema(column_name)
-        column.data_type = BasicColumn.Type.STRING
 
     def add_vector_column(self, column_name):
         _, column = self._find_column_in_schema(column_name)
-        column.data_type = BasicColumn.Type.VECTOR
+        column.type = Column.Type.VECTOR
 
     def add_column(self, column_name, input_column):
         index, column = self._find_column_in_schema(column_name)
@@ -192,13 +184,23 @@ class Input(object):
 
 
 class Column(object):
-    def __init__(self, name=None, columns_indexes=None, data_type=None, reader=None, ser_de=None):
+    def __init__(self, name=None, columns_indexes=None, type=None, reader=None, ser_de=None, metadata=None):
         self._name = name
         # CSV corresponding columns indexes
         self._columns_indexes = columns_indexes
-        self._data_type = data_type
+        self._type = type
         self._reader = reader
         self._ser_de = ser_de
+        self._metadata = metadata
+
+    class Type(Enum):
+        FLOAT = "FLOAT"
+        VECTOR = "VECTOR"
+        CATEGORICAL = "CATEGORICAL"
+        IMG_2D = 'IMG_2D'
+
+        def __str__(self):
+            return str(self.value)
 
     @property
     def name(self):
@@ -217,12 +219,12 @@ class Column(object):
         self._columns_indexes = columns_indexes
 
     @property
-    def data_type(self):
-        return self._data_type
+    def type(self):
+        return self._type
 
-    @data_type.setter
-    def data_type(self, data_type):
-        self._data_type = data_type
+    @type.setter
+    def type(self, type):
+        self._type = type
 
     @property
     def reader(self):
@@ -246,7 +248,7 @@ class Column(object):
 
     @property
     def schema(self):
-        return {'name': self.name, 'type': str(self.data_type)}
+        return {'name': self.name, 'type': str(self.type)}
 
     @metadata.setter
     def metadata(self, metadata):
@@ -258,8 +260,8 @@ class Column(object):
 
 
 class ComplexColumn(Column):
-    def __init__(self, name=None, data_type=None, pre_transforms=[], post_transforms=[], ser_de=None, reader=None):
-        super(ComplexColumn, self).__init__(name=name, data_type=data_type)
+    def __init__(self, name=None, type=None, ser_de=None, reader=None, metadata=None, pre_transforms=[], post_transforms=[]):
+        super(ComplexColumn, self).__init__(name=name, type=type, ser_de=ser_de, reader=reader, metadata=metadata)
         self._pre_transforms = pre_transforms
         self._post_transforms = post_transforms
 
@@ -324,78 +326,64 @@ class ColumnSerDe(object):
 
 
 class BasicColumn(Column):
-    def __init__(self, name=None, columns_indexes=None, data_type=None, reader=None, ser_de=None):
-        super(BasicColumn, self).__init__(name, columns_indexes, data_type, reader, ser_de)
-        self.reader = BasicColumnReader(self)
-        self.ser_de = BasicColumnSerDe(data_type)
-
-    class Type(Enum):
-        INT = "INT"
-        FLOAT = "FLOAT"
-        STRING = "STRING"
-        VECTOR = "VECTOR"
-        CATEGORICAL = "CATEGORICAL"
-
-        def __str__(self):
-            return str(self.value)
+    def __init__(self, name=None, columns_indexes=None, type=None):
+        super(BasicColumn, self).__init__(name, columns_indexes, type, BasicColumnReader(self), BasicColumnSerDe(type))
 
     @staticmethod
-    def type():
-        return [BasicColumn.Type.INT,
-                BasicColumn.Type.FLOAT,
-                BasicColumn.Type.STRING,
-                BasicColumn.Type.VECTOR,
-                BasicColumn.Type.CATEGORICAL]
+    def types():
+        return [Column.Type.FLOAT,
+                Column.Type.VECTOR,
+                Column.Type.CATEGORICAL]
 
     @property
     def schema(self):
         schema = super(BasicColumn, self).schema
-        if self.data_type == BasicColumn.Type.CATEGORICAL:
+        if self.type == Column.Type.CATEGORICAL:
             schema['categories'] = list(self.metadata)
         return schema
 
 
 class BasicColumnReader(ColumnReader):
     def read(self, csv_row):
-        if self._column.data_type == BasicColumn.Type.STRING:
+        if self._column.type == Column.Type.STRING:
             return csv_row[self._column.columns_indexes[0]]
-        if self._column.data_type == BasicColumn.Type.INT:
+        if self._column.type == Column.Type.INT:
             return csv_row[self._column.columns_indexes[0]]
-        if self._column.data_type == BasicColumn.Type.FLOAT:
+        if self._column.type == Column.Type.FLOAT:
             return csv_row[self._column.columns_indexes[0]]
-        if self._column.data_type == BasicColumn.Type.VECTOR:
+        if self._column.type == Column.Type.VECTOR:
             return [float(csv_row[i]) for i in self._column.columns_indexes]
-        if self._column.data_type == BasicColumn.Type.CATEGORICAL:
+        if self._column.type == Column.Type.CATEGORICAL:
             cat_val = csv_row[self._column.columns_indexes[0]]
             cat_val_idx = list(self._column.metadata).index(cat_val)
             return cat_val_idx
 
 
 class BasicColumnSerDe(ColumnSerDe):
-    def __init__(self, data_type):
-        self._data_type = data_type
+    def __init__(self, type):
+        self._type = type
 
     def serialize(self, data):
-        if self._data_type == BasicColumn.Type.STRING:
+        if self._type == Column.Type.STRING:
             return str(data)
-        if self._data_type == BasicColumn.Type.INT:
+        if self._type == Column.Type.INT:
             return int(data)
-        if self._data_type == BasicColumn.Type.FLOAT:
+        if self._type == Column.Type.FLOAT:
             return float(data)
-        if self._data_type == BasicColumn.Type.VECTOR:
+        if self._type == Column.Type.VECTOR:
             return np.array(data)
-        if self._data_type == BasicColumn.Type.CATEGORICAL:
+        if self._type == Column.Type.CATEGORICAL:
             return int(data)
 
     @abc.abstractmethod
     def deserialize(self, data):
-        if self._data_type == BasicColumn.Type.STRING:
+        if self._type == Column.Type.STRING:
             return str(data.value)
-        if self._data_type == BasicColumn.Type.INT:
+        if self._type == Column.Type.INT:
             return int(data.value)
-        if self._data_type == BasicColumn.Type.FLOAT:
+        if self._type == Column.Type.FLOAT:
             return float(data.value)
-        if self._data_type == BasicColumn.Type.VECTOR:
+        if self._type == Column.Type.VECTOR:
             return np.array(data.value)
-        if self._data_type == BasicColumn.Type.CATEGORICAL:
+        if self._type == Column.Type.CATEGORICAL:
             return int(data.value)

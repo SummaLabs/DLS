@@ -9,7 +9,7 @@ import random
 import json
 import logging
 from img2d import Img2DSerDe, Img2DColumn
-from input import Schema, Input, BasicColumn, BasicColumnSerDe, ComplexColumn
+from input import Schema, Input, Column, BasicColumn, BasicColumnSerDe, ComplexColumn
 
 
 class Dataset(object):
@@ -97,7 +97,7 @@ class Dataset(object):
                     for row in reader:
                         rows.append(row)
                         for column in columns:
-                            if column.data_type == BasicColumn.Type.CATEGORICAL:
+                            if column.type == Column.Type.CATEGORICAL:
                                 column.metadata.add(row[column.columns_indexes[0]])
                 except csv.Error as e:
                     sys.exit('Broken line: file %s, line %d: %s' % (csv_file_path, reader.line_num, e))

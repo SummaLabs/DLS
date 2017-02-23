@@ -92,15 +92,15 @@ class TestInput(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
-    def test_add_basic_type_column(self):
+    def test_add_float_type_column(self):
         input = Input(Schema(self.test_file_path))
-        input.add_int_column("col_3")
+        input.add_float_column("col_3")
         is_column_exist = False
         for column in input.schema.columns:
             if column.name == 'col_3':
                 is_column_exist = True
                 self.assertEqual(column.columns_indexes[0], 3)
-                self.assertEqual(column.data_type, "INT")
+                self.assertEqual(column.type, "FLOAT")
         self.assertTrue(is_column_exist, 'Expected column was not found')
 
     def test_add_categorical_type_column(self):
@@ -111,7 +111,7 @@ class TestInput(unittest.TestCase):
             if column.name == 'col_3':
                 is_column_exist = True
                 self.assertEqual(column.columns_indexes[0], 3)
-                self.assertEqual(column.data_type, "CATEGORICAL")
+                self.assertEqual(column.type, "CATEGORICAL")
         self.assertTrue(is_column_exist, 'Expected column was not found')
 
     def test_add_vector_type_column(self):
@@ -124,7 +124,7 @@ class TestInput(unittest.TestCase):
             if column.name == 'merged_col':
                 is_column_exist = True
                 self.assertTrue(column.columns_indexes == [3, 4, 5])
-                self.assertEqual(column.data_type, "VECTOR")
+                self.assertEqual(column.type, "VECTOR")
         self.assertTrue(is_column_exist, 'Expected column was not found')
 
     def test_img2d_type_column(self):
@@ -179,17 +179,17 @@ class TestInput(unittest.TestCase):
             if column.name == "col_0":
                 self.assertEqual(column.columns_indexes, [0])
                 self.assertTrue(isinstance(column, BasicColumn))
-                self.assertEqual(column.data_type, BasicColumn.Type.FLOAT)
+                self.assertEqual(column.type, Column.Type.FLOAT)
 
             if column.name == "col_1":
                 self.assertEqual(column.columns_indexes, [1])
                 self.assertTrue(isinstance(column, BasicColumn))
-                self.assertEqual(column.data_type, BasicColumn.Type.FLOAT)
+                self.assertEqual(column.type, Column.Type.FLOAT)
 
             if column.name == "col_2":
                 self.assertEqual(column.columns_indexes, [2, 3, 4])
                 self.assertTrue(isinstance(column, BasicColumn))
-                self.assertEqual(column.data_type, BasicColumn.Type.VECTOR)
+                self.assertEqual(column.type, Column.Type.VECTOR)
 
             if column.name == "col_3":
                 self.assertEqual(column.columns_indexes, [5])
