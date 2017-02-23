@@ -39,33 +39,27 @@ class TestDataSetBuilder(unittest.TestCase):
         schema = Schema(self.test_file_path)
         input = Input(schema)
         input.add_categorical_column('col_0')
-        raws = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2)._process_csv_file()
-        self.assertEqual(len(raws), 10)
+        rows = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2)._process_csv_file()
+        self.assertEqual(len(rows), 10)
         _, column = input._find_column_in_schema('col_0')
         self.assertTrue(len(column.metadata), 4)
 
     def test_build_dataset(self):
         schema = Schema(self.test_file_path)
+        schema.merge_columns_in_range('col_vector', (2, 4))
         input = Input(schema)
+        input.add_categorical_column('col_0')
+        input.add_float_column('col_1')
+        input.add_vector_column('col_vector')
         img2d = Img2DColumn([], [])
         input.add_column("col_5", img2d)
         dataset = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2).build()
         data = dataset.get_batch(5)
         print data['col_1']
-        # self.assertEqual(dataset, 1000)
-
-    def test_load_dataset(self):
-        # Build dataset
-        schema = Schema(self.test_file_path)
-        input = Input(schema)
-        img2d = Img2DColumn(pre_transforms=[], post_transforms=[])
-        input.add_column("col_5", img2d)
-        dataset_path = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2).build()._path
-        dataset = Dataset.load(dataset_path)
+        dataset = Dataset.load(dataset._path)
         data = dataset.get_batch(5)
         print data['col_1']
         # self.assertEqual(dataset, 1000)
-
 
 if __name__ == '__main__':
     unittest.main()

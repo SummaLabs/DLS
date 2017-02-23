@@ -59,6 +59,7 @@ class Dataset(object):
             os.makedirs(self._dataset_data_dir)
 
         def build(self):
+            self._validate_data_schema()
             self._save_data_schema()
             csv_rows_chunks = np.array_split(self._process_csv_file(), self._parallelism_level)
             processor = []
@@ -103,6 +104,11 @@ class Dataset(object):
                     sys.exit('Broken line: file %s, line %d: %s' % (csv_file_path, reader.line_num, e))
 
             return rows
+
+        def _validate_data_schema(self):
+            for column in self._input.schema.columns:
+                if column.type is None:
+                    raise TypeError("Please specify type for column: %s" % column.name)
 
         def _save_data_schema(self):
             with open(os.path.join(self._dataset_data_dir, Dataset.SCHEMA_FILE), 'w') as f:

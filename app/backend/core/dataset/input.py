@@ -180,7 +180,7 @@ class Input(object):
         for index, schema_column in enumerate(self._schema.columns):
             if schema_column.name == column_name:
                 return index, schema_column
-        raise Exception("No column with name %s in schema." % (column_name))
+        raise Exception("No column with name %s in schema." % column_name)
 
 
 class Column(object):
@@ -198,9 +198,6 @@ class Column(object):
         VECTOR = "VECTOR"
         CATEGORICAL = "CATEGORICAL"
         IMG_2D = 'IMG_2D'
-
-        def __str__(self):
-            return str(self.value)
 
     @property
     def name(self):
@@ -327,7 +324,7 @@ class ColumnSerDe(object):
 
 class BasicColumn(Column):
     def __init__(self, name=None, columns_indexes=None, type=None):
-        super(BasicColumn, self).__init__(name, columns_indexes, type, BasicColumnReader(self), BasicColumnSerDe(type))
+        super(BasicColumn, self).__init__(name, columns_indexes, type, BasicColumnReader(self), BasicColumnSerDe(self))
 
     @staticmethod
     def types():
@@ -345,10 +342,6 @@ class BasicColumn(Column):
 
 class BasicColumnReader(ColumnReader):
     def read(self, csv_row):
-        if self._column.type == Column.Type.STRING:
-            return csv_row[self._column.columns_indexes[0]]
-        if self._column.type == Column.Type.INT:
-            return csv_row[self._column.columns_indexes[0]]
         if self._column.type == Column.Type.FLOAT:
             return csv_row[self._column.columns_indexes[0]]
         if self._column.type == Column.Type.VECTOR:
@@ -360,30 +353,24 @@ class BasicColumnReader(ColumnReader):
 
 
 class BasicColumnSerDe(ColumnSerDe):
-    def __init__(self, type):
-        self._type = type
+    def __init__(self, column):
+        self._column = column
 
     def serialize(self, data):
-        if self._type == Column.Type.STRING:
-            return str(data)
-        if self._type == Column.Type.INT:
-            return int(data)
-        if self._type == Column.Type.FLOAT:
+        if self._column.type == Column.Type.FLOAT:
             return float(data)
-        if self._type == Column.Type.VECTOR:
+        if self._column.type == Column.Type.VECTOR:
             return np.array(data)
-        if self._type == Column.Type.CATEGORICAL:
+        if self._column.type == Column.Type.CATEGORICAL:
             return int(data)
+        raise Exception("Unsupported column type: %s." % self._column.type)
 
     @abc.abstractmethod
     def deserialize(self, data):
-        if self._type == Column.Type.STRING:
-            return str(data.value)
-        if self._type == Column.Type.INT:
-            return int(data.value)
-        if self._type == Column.Type.FLOAT:
+        if self._column.type == Column.Type.FLOAT:
             return float(data.value)
-        if self._type == Column.Type.VECTOR:
+        if self._column.type == Column.Type.VECTOR:
             return np.array(data.value)
-        if self._type == Column.Type.CATEGORICAL:
+        if self._column.type == Column.Type.CATEGORICAL:
             return int(data.value)
+        raise Exception("Unsupported column type: %s." % self._column.type)
