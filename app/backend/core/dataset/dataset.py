@@ -33,6 +33,10 @@ class Dataset(object):
             record = self._record_reader.read(inx)
             for column in self._schema.columns:
                 value = column.ser_de.deserialize(record[column.name])
+                if issubclass(column.__class__, ComplexColumn):
+                    # Apply transformations on get batch phase
+                    for transform in column.post_transforms:
+                        value = transform.apply(value)
                 data[column.name].append(value)
             i += 1
         return Data(data)

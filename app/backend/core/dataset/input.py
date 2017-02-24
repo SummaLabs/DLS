@@ -193,7 +193,7 @@ class Column(object):
         self._ser_de = ser_de
         self._metadata = metadata
 
-    class Type(Enum):
+    class Type:
         FLOAT = "FLOAT"
         VECTOR = "VECTOR"
         CATEGORICAL = "CATEGORICAL"
@@ -245,7 +245,7 @@ class Column(object):
 
     @property
     def schema(self):
-        return {'name': self.name, 'type': str(self.type)}
+        return {'name': self.name, 'type': self.type}
 
     @metadata.setter
     def metadata(self, metadata):
@@ -350,6 +350,7 @@ class BasicColumnReader(ColumnReader):
             cat_val = csv_row[self._column.columns_indexes[0]]
             cat_val_idx = list(self._column.metadata).index(cat_val)
             return cat_val_idx
+        raise Exception("Unsupported column type: %s." % self._column.type)
 
 
 class BasicColumnSerDe(ColumnSerDe):

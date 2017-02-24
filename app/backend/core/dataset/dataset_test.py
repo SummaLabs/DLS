@@ -55,11 +55,21 @@ class TestDataSetBuilder(unittest.TestCase):
         input.add_column("col_5", img2d)
         dataset = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2).build()
         data = dataset.get_batch(5)
-        print data['col_1']
+        categories_vector = data['col_0']
+        # Check that for the same record there are the same values in vectors as we assign it in csv file
+        float_vector = data['col_1']
+        col_vector = data['col_vector']
+        self.assertEqual(col_vector[0, 0], col_vector[0, 1])
+        self.assertEqual(col_vector[0, 0], float_vector[0])
+        # Load dataset
         dataset = Dataset.load(dataset._path)
         data = dataset.get_batch(5)
-        print data['col_1']
-        # self.assertEqual(dataset, 1000)
+        # Check that for the same record there are the same values in vectors as we assign it in csv file
+        float_vector = data['col_1']
+        col_vector = data['col_vector']
+        self.assertEqual(col_vector[0, 0], col_vector[0, 1])
+        self.assertEqual(col_vector[0, 0], float_vector[0])
+
 
 if __name__ == '__main__':
     unittest.main()
