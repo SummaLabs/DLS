@@ -94,13 +94,13 @@ class TestInput(unittest.TestCase):
 
     def test_add_float_type_column(self):
         input = Input(Schema(self.test_file_path))
-        input.add_float_column("col_3")
+        input.add_numeric_column("col_3")
         is_column_exist = False
         for column in input.schema.columns:
             if column.name == 'col_3':
                 is_column_exist = True
                 self.assertEqual(column.columns_indexes[0], 3)
-                self.assertEqual(column.type, "FLOAT")
+                self.assertEqual(column.type, "NUMERIC")
         self.assertTrue(is_column_exist, 'Expected column was not found')
 
     def test_add_categorical_type_column(self):
@@ -149,12 +149,12 @@ class TestInput(unittest.TestCase):
                         "columns": [
                             {
                                 "name": "col_0",
-                                "type": "FLOAT",
+                                "type": "NUMERIC",
                                 "index": [0]
                             },
                             {
                                 "name": "col_1",
-                                "type": "FLOAT",
+                                "type": "NUMERIC",
                                 "index": [1]
                             },
                             {
@@ -179,12 +179,12 @@ class TestInput(unittest.TestCase):
             if column.name == "col_0":
                 self.assertEqual(column.columns_indexes, [0])
                 self.assertTrue(isinstance(column, BasicColumn))
-                self.assertEqual(column.type, Column.Type.FLOAT)
+                self.assertEqual(column.type, Column.Type.NUMERIC)
 
             if column.name == "col_1":
                 self.assertEqual(column.columns_indexes, [1])
                 self.assertTrue(isinstance(column, BasicColumn))
-                self.assertEqual(column.type, Column.Type.FLOAT)
+                self.assertEqual(column.type, Column.Type.NUMERIC)
 
             if column.name == "col_2":
                 self.assertEqual(column.columns_indexes, [2, 3, 4])

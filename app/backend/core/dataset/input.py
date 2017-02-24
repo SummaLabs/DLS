@@ -157,9 +157,9 @@ class Input(object):
         def build(self):
             return Input(Schema.deserialize(self._schema_config))
 
-    def add_float_column(self, column_name):
+    def add_numeric_column(self, column_name):
         _, column = self._find_column_in_schema(column_name)
-        column.type = Column.Type.FLOAT
+        column.type = Column.Type.NUMERIC
 
     def add_categorical_column(self, column_name):
         _, column = self._find_column_in_schema(column_name)
@@ -194,7 +194,7 @@ class Column(object):
         self._metadata = metadata
 
     class Type:
-        FLOAT = "FLOAT"
+        NUMERIC = "NUMERIC"
         VECTOR = "VECTOR"
         CATEGORICAL = "CATEGORICAL"
         IMG_2D = 'IMG_2D'
@@ -328,7 +328,7 @@ class BasicColumn(Column):
 
     @staticmethod
     def types():
-        return [Column.Type.FLOAT,
+        return [Column.Type.NUMERIC,
                 Column.Type.VECTOR,
                 Column.Type.CATEGORICAL]
 
@@ -342,7 +342,7 @@ class BasicColumn(Column):
 
 class BasicColumnReader(ColumnReader):
     def read(self, csv_row):
-        if self._column.type == Column.Type.FLOAT:
+        if self._column.type == Column.Type.NUMERIC:
             return csv_row[self._column.columns_indexes[0]]
         if self._column.type == Column.Type.VECTOR:
             return [float(csv_row[i]) for i in self._column.columns_indexes]
@@ -358,7 +358,7 @@ class BasicColumnSerDe(ColumnSerDe):
         self._column = column
 
     def serialize(self, data):
-        if self._column.type == Column.Type.FLOAT:
+        if self._column.type == Column.Type.NUMERIC:
             return float(data)
         if self._column.type == Column.Type.VECTOR:
             return np.array(data)
@@ -368,7 +368,7 @@ class BasicColumnSerDe(ColumnSerDe):
 
     @abc.abstractmethod
     def deserialize(self, data):
-        if self._column.type == Column.Type.FLOAT:
+        if self._column.type == Column.Type.NUMERIC:
             return float(data.value)
         if self._column.type == Column.Type.VECTOR:
             return np.array(data.value)

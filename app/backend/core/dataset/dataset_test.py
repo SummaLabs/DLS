@@ -49,7 +49,7 @@ class TestDataSetBuilder(unittest.TestCase):
         schema.merge_columns_in_range('col_vector', (2, 4))
         input = Input(schema)
         input.add_categorical_column('col_0')
-        input.add_float_column('col_1')
+        input.add_numeric_column('col_1')
         input.add_vector_column('col_vector')
         img2d = Img2DColumn([], [])
         input.add_column("col_5", img2d)
