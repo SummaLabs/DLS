@@ -14,12 +14,6 @@
                     </md-option>
                 </md-select>
             </div>
-            <div ng-show="dsTypes.length > 0"  layout="column" layout-align="center start">
-                <strong>Data Set Type:</strong>
-                <md-select placeholder="Data Set Type" ng-model="dsTypeSelected" class="md-no-underline">
-                    <md-option ng-value="dsType" ng-repeat="dsType in dsTypes">{{dsType}}</md-option>
-                </md-select>
-            </div>
             <div ng-show="classNames.length > 0"  layout="column" layout-align="center start">
                 <strong>Class VS All:</strong>
                 <md-select placeholder="Class VS All" ng-model="classNameSelected" class="md-no-underline">
@@ -27,10 +21,9 @@
                 </md-select>
             </div>
         </div>
-        <div layout-padding layout="row" layout-fill>
-            <div flex ng-cloak google-chart chart="rocData" class="md-item-text md-whiteframe-z1"
-                 style="height: 600px"></div>
-        </div>
+        <plotly plotly-data="rocPlotlyData" plotly-layout="rocPlotlyLayout" plotly-options="options"></plotly>
+
+
     </md-card-content>
 </md-card>
 
