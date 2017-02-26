@@ -1,4 +1,5 @@
 import shutil, tempfile
+import numpy as np
 from os import path
 from skimage import data
 from PIL import Image
@@ -28,17 +29,25 @@ class TestImg2DSerDe(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
-    def test_img2d_ser_de_serialize(self):
-        img2d_col = Img2DColumn([], [], is_raw_blob=False)
+    def test_img2d_ser_de_is_raw_img_true(self):
+        img2d_col = Img2DColumn([], [], is_raw_img=True)
         img2d_col.columns_indexes = [0]
         reader = img2d_col.reader
-        serializer = img2d_col.ser_de
+        ser_de = img2d_col.ser_de
         img = reader.read([self.test_img_file_path])
-        ser_img = serializer.serialize(img)
-        self.assertEqual(ser_img['rows'], 512)
-        self.assertEqual(ser_img['cols'], 512)
-        self.assertEqual(ser_img['ch_num'], 1)
-        self.assertEqual(ser_img['fmt'], 'png')
+        img_s = ser_de.serialize(img)
+        img_d = ser_de.deserialize(img_s)
+        self.assertTrue(np.array_equal(img[0], img_d))
+
+    def test_img2d_ser_de_is_raw_img_false(self):
+        img2d_col = Img2DColumn([], [], is_raw_img=False)
+        img2d_col.columns_indexes = [0]
+        reader = img2d_col.reader
+        ser_de = img2d_col.ser_de
+        img = reader.read([self.test_img_file_path])
+        img_s = ser_de.serialize(img)
+        img_d = ser_de.deserialize(img_s)
+        self.assertTrue(np.array_equal(img[0], img_d))
 
 
 if __name__ == '__main__':

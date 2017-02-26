@@ -32,11 +32,9 @@ class Dataset(object):
             inx = random.randrange(0, records_count)
             record = self._record_reader.read(inx)
             for column in self._schema.columns:
-                value = column.ser_de.deserialize(record[column.name])
-                if issubclass(column.__class__, ComplexColumn):
-                    # Apply transformations on get batch phase
-                    for transform in column.post_transforms:
-                        value = transform.apply(value)
+                value = column.process_on_read(record)
+                if isinstance(value, np.ndarray) and value.ndim > 1:
+                    value = value.ravel()
                 data[column.name].append(value)
             i += 1
         return Data(data)
@@ -72,7 +70,7 @@ class Dataset(object):
                 p = RecordProcessor(self._input.schema.columns, results, csv_rows_chunks[i])
                 processor.append(p)
             for p in processor: p.start()
-            record_write = RecordWriter.factory(self._storage_type, self._dataset_data_dir, self._input.schema.columns)
+            record_write = RecordWriter.factory(self._storage_type, self._dataset_root_dir, self._input.schema.columns)
             completed_processor_num = 0
             record_idx = 0
             try:
@@ -100,7 +98,8 @@ class Dataset(object):
                 reader = csv.reader(f)
                 try:
                     for row in reader:
-                        rows.append(row)
+                        # Trim row entries
+                        rows.append([e.strip() for e in row])
                         for column in columns:
                             if column.type == Column.Type.CATEGORICAL:
                                 column.metadata.add(row[column.columns_indexes[0]])
@@ -159,14 +158,25 @@ class HDF5RecordReader(object):
 
     def read(self, idx):
         key = self._data_keys[idx]
-        record = self._data[key]
+        hdf5_record = self._data[key]
+        record = {}
+        from h5py import Group
+        for key in hdf5_record:
+            if isinstance(hdf5_record[key], Group):
+                sub_group = hdf5_record[key]
+                value = {}
+                for sub_key in sub_group:
+                    value[sub_key] = sub_group[sub_key].value
+                record[key] = (value)
+            else:
+                record[key] = hdf5_record[key].value
         return record
 
 
 class HDF5RecordWriter(RecordWriter):
     def __init__(self, data_dir, columns):
         super(HDF5RecordWriter, self).__init__(data_dir, columns)
-        self._file = h5py.File(os.path.join(self._data_dir, Dataset.FILE_NAME), 'w')
+        self._file = h5py.File(os.path.join(self._data_dir, Dataset.DATA_DIR_NAME, Dataset.FILE_NAME), 'w')
         self._root_data = self._file.create_group('data')
 
     def write(self, record, idx):
@@ -179,9 +189,15 @@ class HDF5RecordWriter(RecordWriter):
         if isinstance(value, dict):
             sub_cal_name = data.create_group(col_name)
             for key in value:
-                sub_cal_name[key] = value[key]
+                if isinstance(value[key], str):
+                    sub_cal_name[key] = np.void(value[key])
+                else:
+                    sub_cal_name[key] = value[key]
         else:
-            data[col_name] = value
+            if isinstance(value, str):
+                data[col_name] = np.void(value)
+            else:
+                data[col_name] = value
 
     def close(self):
         self._file.close()
@@ -196,12 +212,10 @@ class RecordProcessor(Process):
 
     def run(self):
         for csv_row in self._csv_rows:
-            # Trim row entries
-            csv_row = [e.strip() for e in csv_row]
-            precessed_row = {}
+            processed_row = {}
             for column in self._columns:
-                precessed_row[column.name] = column.process(csv_row)
-            self._result_queue.put(precessed_row)
+                processed_row[column.name] = column.process_on_write(csv_row)
+            self._result_queue.put(processed_row)
         # Signalize that processing is completed
         self._result_queue.put(None)
 

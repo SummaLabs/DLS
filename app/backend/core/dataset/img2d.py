@@ -4,13 +4,18 @@ import skimage.io as skimgio
 import PIL.Image
 import imghdr
 
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+
 
 class Img2DColumn(ComplexColumn):
-    def __init__(self, name=None, pre_transforms=[], post_transforms=[], is_raw_blob=False, reader=None):
-        super(Img2DColumn, self).__init__(name=name, type=Column.Type.IMG_2D, ser_de=Img2DSerDe(), reader=reader,
+    def __init__(self, name=None, pre_transforms=[], post_transforms=[], is_raw_img=False, reader=None):
+        super(Img2DColumn, self).__init__(name=name, type=Column.Type.IMG_2D, ser_de=Img2DSerDe(is_raw_img), reader=reader,
                                           pre_transforms=pre_transforms, post_transforms=post_transforms)
         if reader is None:
-            self._reader = Img2DReader(is_raw_blob, self)
+            self._reader = Img2DReader(self)
 
     @property
     def schema(self):
@@ -110,35 +115,50 @@ class ImgNormalizationTransform(ColumnTransform):
 
 
 class Img2DReader(ColumnReader):
-    def __init__(self, is_raw_blob, column):
+    def __init__(self, column):
         super(Img2DReader, self).__init__(column)
-        self._is_raw_blob = is_raw_blob
 
     def read(self, csv_row):
         path = str(csv_row[self._column.columns_indexes[0]])
-        img_data = np.void(open(path, 'r').read()) if self._is_raw_blob else skimgio.imread(path)
+        img_data = skimgio.imread(path)
         img_fmt = imghdr.what(path)
         return img_data, img_fmt
 
 
 class Img2DSerDe(ColumnSerDe):
+    def __init__(self, is_raw_img):
+        self._is_raw_img = is_raw_img
+
     def serialize(self, img):
         img_data = img[0]
         img_fmt = img[1]
-        img_data_rows = img_data.shape[0]
-        img_data_cols = img_data.shape[1]
-        img_ch_num = 1
-        if len(img_data.shape) > 2:
-            img_ch_num = img_data.shape[2]
-        return {
-            'rows': int(img_data_rows),
-            'cols': int(img_data_cols),
-            'ch_num': int(img_ch_num),
-            'fmt': str(img_fmt),
-            'data': img_data
-        }
+        img_ser = {}
+        if self._is_raw_img:
+            img_ser['rows'] = img_data.shape[0]
+            img_ser['cols'] = img_data.shape[1]
+            img_ser['ch_num'] = 1
+            if len(img_data.shape) > 2:
+                img_ser['ch_num'] = img_data.shape[2]
+            img_ser['data'] = img_data.tostring()
+        else:
+            img_array = PIL.Image.fromarray(img_data.astype(np.uint8))
+            img_buffer = StringIO()
+            img_array.save(img_buffer, format=img_fmt)
+            img_ser['data'] = img_buffer.getvalue()
+
+        return img_ser
 
     def deserialize(self, img):
-        # What do we need with metadata???
-        img_data = img['data'].value
-        return img_data.ravel()
+        if 'cols' in img:
+            rows = img['rows']
+            cols = img['cols']
+            ch_num = img['ch_num']
+            img = np.frombuffer(img['data'], dtype=np.uint8)
+            if ch_num==1:
+                img = img.reshape((rows, cols))
+            else:
+                img = img.reshape((rows, cols, ch_num))
+        else:
+            img = skimgio.imread(StringIO(img['data']))
+
+        return img

@@ -157,8 +157,9 @@ class Input(object):
         def build(self):
             return Input(Schema.deserialize(self._schema_config))
 
-    def add_numeric_column(self, column_name):
+    def add_numeric_column(self, column_name, float_type=np.float64):
         _, column = self._find_column_in_schema(column_name)
+        column._metadata = float_type.name
         column.type = Column.Type.NUMERIC
 
     def add_categorical_column(self, column_name):
@@ -166,8 +167,9 @@ class Input(object):
         column.type = Column.Type.CATEGORICAL
         column.metadata = set()
 
-    def add_vector_column(self, column_name):
+    def add_vector_column(self, column_name, float_type=np.float64):
         _, column = self._find_column_in_schema(column_name)
+        column._metadata = float_type.name
         column.type = Column.Type.VECTOR
 
     def add_column(self, column_name, input_column):
@@ -251,9 +253,12 @@ class Column(object):
     def metadata(self, metadata):
         self._metadata = metadata
 
-    def process(self, record):
+    def process_on_write(self, record):
         data = self.reader.read(record)
         return self.ser_de.serialize(data)
+
+    def process_on_read(self, record):
+        return self._ser_de.deserialize(record[self._name])
 
 
 class ComplexColumn(Column):
@@ -278,11 +283,17 @@ class ComplexColumn(Column):
     def post_transforms(self, post_transforms):
         self._post_transforms = post_transforms
 
-    def process(self, record):
+    def process_on_write(self, record):
         data = self.reader.read(record)
         for transform in self._pre_transforms:
             data = transform.apply(data)
         return self.ser_de.serialize(data)
+
+    def process_on_read(self, record):
+        value = self._ser_de.deserialize(record[self._name])
+        for transform in self._post_transforms:
+            value = transform.apply(value)
+        return value
 
 
 class ColumnTransform(object):
@@ -361,17 +372,16 @@ class BasicColumnSerDe(ColumnSerDe):
         if self._column.type == Column.Type.NUMERIC:
             return float(data)
         if self._column.type == Column.Type.VECTOR:
-            return np.array(data)
+            return np.array(data).tostring()
         if self._column.type == Column.Type.CATEGORICAL:
             return int(data)
         raise Exception("Unsupported column type: %s." % self._column.type)
 
-    @abc.abstractmethod
     def deserialize(self, data):
         if self._column.type == Column.Type.NUMERIC:
-            return float(data.value)
+            return float(data)
         if self._column.type == Column.Type.VECTOR:
-            return np.array(data.value)
+            return np.frombuffer(data, dtype=np.float64)
         if self._column.type == Column.Type.CATEGORICAL:
-            return int(data.value)
+            return int(data)
         raise Exception("Unsupported column type: %s." % self._column.type)
