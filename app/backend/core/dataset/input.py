@@ -157,9 +157,8 @@ class Input(object):
         def build(self):
             return Input(Schema.deserialize(self._schema_config))
 
-    def add_numeric_column(self, column_name, float_type=np.float64):
+    def add_numeric_column(self, column_name):
         _, column = self._find_column_in_schema(column_name)
-        column._metadata = float_type.name
         column.type = Column.Type.NUMERIC
 
     def add_categorical_column(self, column_name):
@@ -167,9 +166,8 @@ class Input(object):
         column.type = Column.Type.CATEGORICAL
         column.metadata = set()
 
-    def add_vector_column(self, column_name, float_type=np.float64):
+    def add_vector_column(self, column_name):
         _, column = self._find_column_in_schema(column_name)
-        column._metadata = float_type.name
         column.type = Column.Type.VECTOR
 
     def add_column(self, column_name, input_column):
