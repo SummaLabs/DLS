@@ -4,11 +4,9 @@ import numpy as np
 import csv, sys
 import os
 import h5py
-import lmdb
 import abc
 import random
 import json
-import tensorflow as tf
 import logging
 from img2d import Img2DSerDe, Img2DColumn
 from input import Schema, Input, Column, BasicColumn, BasicColumnSerDe, ComplexColumn
@@ -128,8 +126,6 @@ class RecordWriter(object):
     def factory(type, data_dir, columns):
         if type == "HDF5":
             return HDF5RecordWriter(data_dir, columns)
-        elif type == "LMDB":
-            return LMDBRecordWriter(data_dir, columns)
         raise TypeError("Unsupported Record Writer Type: " + type)
 
     factory = staticmethod(factory)
@@ -148,8 +144,6 @@ class RecordReader(object):
     def factory(type, data_dir):
         if type == "HDF5":
             return HDF5RecordReader(data_dir)
-        elif type == "LMDB":
-            return LMDBRecordReader(data_dir)
         raise TypeError("Unsupported Record Writer Type: " + type)
 
     factory = staticmethod(factory)
@@ -217,72 +211,6 @@ class HDF5RecordWriter(RecordWriter):
 
     def close(self):
         self._file.close()
-
-
-class LMDBRecordWriter(RecordWriter):
-    def __init__(self, data_dir, columns):
-        super(LMDBRecordWriter, self).__init__(data_dir, columns)
-        db_file_path = os.path.join(self._data_dir, Dataset.DATA_DIR_NAME, Dataset.FILE_NAME)
-        map_file_size = 24 * (1024 ** 3)
-        self._db = lmdb.open(db_file_path, map_size=map_file_size)
-        self._txn = self._db.begin(write=True)
-
-    def write(self, record, idx):
-        r = {}
-        for col_name, value in record.iteritems():
-            if isinstance(value, dict):
-                for key in value:
-                    compound_key = col_name + ":" + key
-                    if isinstance(value[key], str):
-                        r[compound_key] = self._to_pb(value[key])
-                    else:
-                        r[compound_key] = self._to_pb(value[key])
-            else:
-                if isinstance(value, str):
-                    r[col_name] = self._to_pb(value)
-                else:
-                    r[col_name] = self._to_pb(value)
-        pb_record = tf.train.Example(features=tf.train.Features(feature=r))
-        self._txn.put(('row_%08d' % idx).encode('ascii'), pb_record.SerializeToString())
-
-    @staticmethod
-    def _to_pb(value):
-        if isinstance(value, int):
-            return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
-        elif isinstance(value, float):
-            return tf.train.Feature(float_list=tf.train.FloatList(value=[value]))
-        elif isinstance(value, str):
-            return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
-        raise Exception("Unsupported value type: %s." % value)
-
-    def close(self):
-        self._txn.commit()
-        self._db.close()
-
-
-class LMDBRecordReader(RecordReader):
-    def __init__(self, data_dir):
-        super(LMDBRecordReader, self).__init__(data_dir)
-        db_file_path = os.path.join(self._data_dir, Dataset.DATA_DIR_NAME, Dataset.FILE_NAME)
-        self._db = lmdb.open(db_file_path, readonly=True)
-        self._txn = self._db.begin()
-        cursor = self._txn.cursor()
-        self._data_keys = [key for key, _ in self._txn.cursor()]
-
-    @property
-    def records_count(self):
-        return len(self._data_keys)
-
-    def read(self, idx):
-        key = self._data_keys[idx]
-        record = self._txn.get(key)
-        record_pb = tf.train.Example()
-        record_pb.ParseFromString(record)
-        tfeatures = record_pb.features._fields.values()[0]
-        print tfeatures
-        # features = tf.parse_single_example(record_pb, features=)
-
-        return record
 
 
 class RecordProcessor(Process):
