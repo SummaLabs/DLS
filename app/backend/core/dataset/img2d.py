@@ -54,21 +54,21 @@ class Img2DColumn(ComplexColumn):
 
         @staticmethod
         def _build_transform(transform):
-            transform_type = transform["type"]
-            transform_params = transform["params"]
-            if transform_type == ImgCropTransform.type():
-                return ImgCropTransform(transform_params)
-            if transform_type == ImgResizeTransform.type():
-                return ImgResizeTransform(transform_params)
-            if transform_type == ImgNormalizationTransform.type():
-                return ImgNormalizationTransform(transform_params)
+            type = transform["type"]
+            params = transform["params"]
+            if type == ImgCropTransform.type():
+                return ImgCropTransform(params)
+            if type == ImgResizeTransform.type():
+                return ImgResizeTransform(params)
+            if type == ImgNormalizationTransform.type():
+                return ImgNormalizationTransform.Builder(params).build()
             raise TypeError("Unsupported column transform type: %s" % transform)
 
 
 class ImgCropTransform(ColumnTransform):
-    def __init__(self, params):
+    def __init__(self, shape):
         super(ImgCropTransform, self).__init__()
-        self.out_shape = params['shape']
+        self.out_shape = shape
 
     @staticmethod
     def type():
@@ -76,6 +76,19 @@ class ImgCropTransform(ColumnTransform):
 
     def apply(self, data):
         return ImageTransformer2D.transformCropImage(data, self.out_shape)
+
+    @property
+    def schema(self):
+        return {}
+
+    class Builder:
+        def __init__(self, params):
+            self._params = params
+
+        def build(self):
+            height = int(self._params['height'])
+            width = int(self._params['width'])
+            return ImgCropTransform((height, width))
 
 
 class ImgResizeTransform(ColumnTransform):
@@ -100,15 +113,28 @@ class ImgResizeTransform(ColumnTransform):
 
 
 class ImgNormalizationTransform(ColumnTransform):
-    def __init__(self, params):
+    def __init__(self, is_global, mean=None, std=None):
         super(ImgNormalizationTransform, self).__init__()
-        self.is_global = params['is_global']
+        self.is_global = is_global
         if self.is_global:
-            self.mean = params['mean']
-            self.std  = params['std']
+            self.mean = mean
+            self.std = std
         else:
             self.mean = 0.
-            self.std  = 1.
+            self.std = 1.
+
+    class Builder:
+        def __init__(self, params):
+            self._params = params
+
+        def build(self):
+            is_global = True if self._params['is_global'] == "True" else False
+            mean = None
+            std = None
+            if is_global:
+                mean = float(self._params['mean'])
+                std = float(self._params['std'])
+            return ImgNormalizationTransform(is_global, mean, std)
 
     @staticmethod
     def type():

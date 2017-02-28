@@ -168,7 +168,7 @@ class TestInput(unittest.TestCase):
                                 "index": [5],
                                 "pre_transforms": [{"type": "imgResize", "params": {"height": 256, "width": 256}},
                                                    {"type": "imgNormalization",
-                                                    "params": {"height": 256, "width": 256}}],
+                                                    "params": {"is_global": "False"}}],
                                 "post_transforms": [{"type": "imgCrop", "params": {"height": 256, "width": 256}}]
                             }
                         ]
