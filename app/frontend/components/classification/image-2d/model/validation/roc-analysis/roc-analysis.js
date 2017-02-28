@@ -19,6 +19,10 @@
                     var dataSetTypesRocData = [];
                     var classesRocData = [];
 
+                    var rocPlotlyData = [];
+                    var rocPlotlyLayout = initChartLayout("ROC Analysis");
+                    var plotlyDatas = {training: [], validation: []};
+
                     this.$onInit = function () {
                         $scope.rocsIds = [];
                         $scope.dsTypes = [];
@@ -55,6 +59,7 @@
                                 var classNames = $scope.classNames;
                                 var index = classNames.indexOf($scope.classNameSelected);
                                 $scope.rocData = classesRocData[index];
+                                $scope.rocPlotlyData = [plotlyDatas.training[index], plotlyDatas.validation[index]];
                             }
                         });
 
@@ -179,22 +184,67 @@
                             dataSetTypesRocData.push(rocData.roc[type]);
                         });
                         $scope.dsTypeSelected = $scope.dsTypes[0];
-                        setROCDataForClass(dataSetTypesRocData[0]);
+                        setROCDataForClass(dataSetTypesRocData);
                     }
 
-                    function setROCDataForClass(rocData) {
+                    function setROCDataForClass(dataSetTypesRocData) {
+                        var rocData =  dataSetTypesRocData[0]
                         $scope.classNames = [];
                         classesRocData.length = 0;
+
                         rocData.forEach(function (classROC) {
                             $scope.classNames.push(classROC.name);
-                            var chartPoints = createRocChartPoints(classROC.rocPoints);
-                            var chartSettings = getDefaultChartSettings(classROC.auc);
-                            chartSettings['data']['rows'] = chartPoints;
-                            classesRocData.push(chartSettings)
                         });
+
+                        $scope.plotlyDatas = {training: [], validation: []};
+
                         $scope.classNameSelected = $scope.classNames[0];
-                        $scope.rocData = classesRocData[0];
+
+
+
+                        dataSetTypesRocData[0].forEach(function (classROC) {
+                            $scope.plotlyDatas.training.push(initChartTrace(classROC.rocPoints, "Training"))
+                        });
+
+                        dataSetTypesRocData[1].forEach(function (classROC) {
+                            $scope.plotlyDatas.validation.push(initChartTrace(classROC.rocPoints, "Validation"))
+                        });
+                        $scope.rocPlotlyData = [$scope.plotlyDatas.training[0], $scope.plotlyDatas.validation[0]];
+                        $scope.rocPlotlyLayout = initChartLayout("ROC Analysis");
+
+
+
                     }
+
+                     function initChartLayout(title){
+                       return {
+                               title: title,
+                               autosize: true,
+                               xaxis: {
+                                   title: 'False Positive Rate',
+                                   showline: false
+                               },
+                               yaxis: {
+                                   title: 'True Positive Rate',
+                                   showline: false
+                               }
+                           };
+                     }
+
+                     function initChartTrace(xyArray, name){
+                           var xArray = [];
+                           var yArray = [];
+                           xyArray.forEach(function (p){
+                               xArray.push(p.x);
+                               yArray.push(p.y);
+                           });
+                           return  {
+                               x: xArray,
+                               y: yArray,
+                               mode: 'lines+markers',
+                               name: name
+                           };
+                     }
 
                     function createRocChartPoints(classRocPointsJson) {
                         var classRocPoints = [];
@@ -208,38 +258,6 @@
                         });
 
                         return classRocPoints;
-                    }
-
-                    function getDefaultChartSettings(auc) {
-                        return {
-                            "type": "AreaChart",
-                            "displayed": false,
-                            "data": {
-                                "cols": [
-                                    {
-                                        "id": "TP",
-                                        "type": "number",
-                                        "p": {}
-                                    },
-                                    {
-                                        "id": "FP",
-                                        "label": "AUC: " + auc + "",
-                                        "type": "number",
-                                        "p": {}
-                                    }
-                                ],
-                                "rows": []
-                            },
-                            "options": {
-                                "vAxis": {
-                                    "title": "True Positive Rate"
-                                },
-                                "hAxis": {
-                                    "title": "False Positive Rate"
-                                }
-                            },
-                            "formatters": {}
-                        };
                     }
                     
                 }

@@ -3,6 +3,7 @@ import numpy as np
 import skimage.io as skimgio
 import PIL.Image
 import imghdr
+from img2d_utils import ImageTransformer2D
 
 try:
     from cStringIO import StringIO
@@ -67,13 +68,14 @@ class Img2DColumn(ComplexColumn):
 class ImgCropTransform(ColumnTransform):
     def __init__(self, params):
         super(ImgCropTransform, self).__init__()
+        self.out_shape = params['shape']
 
     @staticmethod
     def type():
         return "imgCrop"
 
     def apply(self, data):
-        return data
+        return ImageTransformer2D.transformCropImage(data, self.out_shape)
 
 
 class ImgResizeTransform(ColumnTransform):
@@ -100,13 +102,25 @@ class ImgResizeTransform(ColumnTransform):
 class ImgNormalizationTransform(ColumnTransform):
     def __init__(self, params):
         super(ImgNormalizationTransform, self).__init__()
+        self.is_global = params['is_global']
+        if self.is_global:
+            self.mean = params['mean']
+            self.std  = params['std']
+        else:
+            self.mean = 0.
+            self.std  = 1.
 
     @staticmethod
     def type():
         return "imgNormalization"
 
     def apply(self, data):
-        return data
+        if self.is_global:
+            return (data - self.mean) / data.std
+        else:
+            tmean = data.mean()
+            tstd  = data.std()
+            return (data - tmean)/tstd
 
     @property
     @abc.abstractmethod

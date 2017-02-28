@@ -198,6 +198,7 @@ class Column(object):
         VECTOR = "VECTOR"
         CATEGORICAL = "CATEGORICAL"
         IMG_2D = 'IMG_2D'
+        IMG_3D = 'IMG_3D'
 
     @property
     def name(self):
