@@ -129,7 +129,7 @@ class Schema(object):
         return schema
 
     def serialize(self):
-        return {'columns': [column.schema for column in self._columns]}
+        return {'columns': [column.serialize for column in self._columns]}
 
     def print_columns(self):
         print ", ".join([col.name for col in self._columns])
@@ -246,7 +246,7 @@ class Column(object):
         return self._metadata
 
     @property
-    def schema(self):
+    def serialize(self):
         return {'name': self.name, 'type': self.type}
 
     @metadata.setter
@@ -321,7 +321,7 @@ class ColumnTransform(object):
 
     @property
     @abc.abstractmethod
-    def schema(self):
+    def serialize(self):
         pass
 
 
@@ -347,10 +347,26 @@ class ColumnSerDe(object):
 
 class ColumnAggregator(object):
     def __init__(self):
-        self._agg_data = None
+        self._data = None
+
+    @staticmethod
+    def type():
+        pass
+
+    @property
+    def data(self):
+        return self._data
 
     @abc.abstractmethod
     def aggregate(self, data):
+        pass
+
+    @abc.abstractmethod
+    def serialize(self, data):
+        pass
+
+    @abc.abstractmethod
+    def deserialize(self, data):
         pass
 
 
@@ -365,8 +381,8 @@ class BasicColumn(Column):
                 Column.Type.CATEGORICAL]
 
     @property
-    def schema(self):
-        schema = super(BasicColumn, self).schema
+    def serialize(self):
+        schema = super(BasicColumn, self).serialize
         if self.type == Column.Type.CATEGORICAL:
             schema['categories'] = list(self.metadata)
         return schema

@@ -15,8 +15,8 @@ class Img3DColumn(ComplexColumn):
             self._reader = Img3DReader(is_raw_blob, self)
 
     @property
-    def schema(self):
-        schema = super(Img3DColumn, self).schema
+    def serialize(self):
+        schema = super(Img3DColumn, self).serialize
         # FIXME: move to parent class??
         pre_transforms = []
         for transform in self.pre_transforms:
@@ -90,7 +90,6 @@ class Img3DResizeTransform(ColumnTransform):
         return {'type': 'input'}
 
     @property
-    @abc.abstractmethod
     def schema(self):
         return {}
 
@@ -107,8 +106,7 @@ class Img3DNormalizationTransform(ColumnTransform):
         return data
 
     @property
-    @abc.abstractmethod
-    def schema(self):
+    def serialize(self):
         return {}
 
 

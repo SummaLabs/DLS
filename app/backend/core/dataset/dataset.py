@@ -62,7 +62,6 @@ class Dataset(object):
 
         def build(self):
             self._validate_data_schema()
-            self._save_data_schema()
             csv_rows_chunks = np.array_split(self._process_csv_file(), self._parallelism_level)
             processor = []
             processed_records = Queue()
@@ -73,7 +72,7 @@ class Dataset(object):
             record_write = RecordWriter.factory(self._storage_type, self._dataset_root_dir, self._input.schema.columns)
             completed_processor_num = 0
             record_idx = 0
-            processing_results = []
+            aggregated_data = []
             try:
                 while completed_processor_num < self._parallelism_level:
                     record = processed_records.get(block=True, timeout=5)
@@ -82,15 +81,37 @@ class Dataset(object):
                         record_idx += 1
                     else:
                         completed_processor_num += 1
-                        processing_results.append(record.get)
+                        aggregated_data.append(record.get)
             except Empty:
                 logging.warning("Not all the threads completed as expected")
-
             record_write.close()
+
+            self._merge_aggregated_data(aggregated_data)
+            self._serialize_data_schema()
 
             print "Records processed: " + str(record_idx)
 
             return Dataset(self._input.schema, self._dataset_root_dir)
+
+        def _merge_aggregated_data(self, columns_with_aggregates):
+            # Init data structures
+            aggregated_data_by_column = {}
+            for column in self._input.schema.columns:
+                aggregated_data_by_type = {}
+                for aggregator in column.aggregators:
+                    aggregated_data_by_type[aggregator.type()] = []
+                aggregated_data_by_column[column.name] = aggregated_data_by_type
+
+            # List of columns from different processes which contains aggregated data
+            for columns in columns_with_aggregates:
+                for column in columns:
+                    for aggregator in column.aggregators:
+                        aggregated_data_by_column[column.name][aggregator.type()].append(aggregator.data)
+
+            for column in self._input.schema.columns:
+                for aggregator in column.aggregators:
+                    for data in aggregated_data_by_column[column.name][aggregator.type()]:
+                        aggregator.aggregate(data)
 
         def _process_csv_file(self):
             rows = []
@@ -115,7 +136,7 @@ class Dataset(object):
                 if column.type is None:
                     raise TypeError("Please specify type for column: %s" % column.name)
 
-        def _save_data_schema(self):
+        def _serialize_data_schema(self):
             with open(os.path.join(self._dataset_data_dir, Dataset.SCHEMA_FILE), 'w') as f:
                 f.write(json.dumps(self._input.schema.serialize()))
 

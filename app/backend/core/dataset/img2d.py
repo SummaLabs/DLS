@@ -24,8 +24,8 @@ class Img2DColumn(ComplexColumn):
             self._reader = Img2DReader(self)
 
     @property
-    def schema(self):
-        schema = super(Img2DColumn, self).schema
+    def serialize(self):
+        schema = super(Img2DColumn, self).serialize
         pre_transforms = []
         for transform in self.pre_transforms:
             pre_transforms.append(transform.schema)
@@ -83,7 +83,7 @@ class ImgCropTransform(ColumnTransform):
         return ImageTransformer2D.transformCropImage(data, self.out_shape)
 
     @property
-    def schema(self):
+    def serialize(self):
         return {}
 
     class Builder:
@@ -112,8 +112,7 @@ class ImgResizeTransform(ColumnTransform):
         return {'type': 'input'}
 
     @property
-    @abc.abstractmethod
-    def schema(self):
+    def serialize(self):
         return {}
 
 
@@ -154,8 +153,7 @@ class ImgNormalizationTransform(ColumnTransform):
             return (data - tmean)/tstd
 
     @property
-    @abc.abstractmethod
-    def schema(self):
+    def serialize(self):
         return {}
 
 
