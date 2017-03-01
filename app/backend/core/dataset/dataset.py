@@ -65,22 +65,24 @@ class Dataset(object):
             self._save_data_schema()
             csv_rows_chunks = np.array_split(self._process_csv_file(), self._parallelism_level)
             processor = []
-            results = Queue()
+            processed_records = Queue()
             for i in range(self._parallelism_level):
-                p = RecordProcessor(self._input.schema.columns, results, csv_rows_chunks[i])
+                p = RecordProcessor(self._input.schema.columns, processed_records, csv_rows_chunks[i])
                 processor.append(p)
             for p in processor: p.start()
             record_write = RecordWriter.factory(self._storage_type, self._dataset_root_dir, self._input.schema.columns)
             completed_processor_num = 0
             record_idx = 0
+            processing_results = []
             try:
                 while completed_processor_num < self._parallelism_level:
-                    record = results.get(block=True, timeout=5)
-                    if record is not None:
+                    record = processed_records.get(block=True, timeout=5)
+                    if record is not RecordProcessor.Result:
                         record_write.write(record, record_idx)
                         record_idx += 1
                     else:
                         completed_processor_num += 1
+                        processing_results.append(record.get)
             except Empty:
                 logging.warning("Not all the threads completed as expected")
 
@@ -220,6 +222,14 @@ class RecordProcessor(Process):
         self._result_queue = result_queue
         self._csv_rows = csv_rows
 
+    class Result:
+        def __init__(self, columns):
+                self._columns = columns
+
+        @property
+        def get(self):
+            return self._columns
+
     def run(self):
         for csv_row in self._csv_rows:
             processed_row = {}
@@ -227,7 +237,7 @@ class RecordProcessor(Process):
                 processed_row[column.name] = column.process_on_write(csv_row)
             self._result_queue.put(processed_row)
         # Signalize that processing is completed
-        self._result_queue.put(None)
+        self._result_queue.put(RecordProcessor.Result(self._columns))
 
 
 class Data(object):

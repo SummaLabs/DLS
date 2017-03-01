@@ -184,7 +184,7 @@ class Input(object):
 
 
 class Column(object):
-    def __init__(self, name=None, columns_indexes=None, type=None, reader=None, ser_de=None, metadata=None):
+    def __init__(self, name=None, columns_indexes=None, type=None, reader=None, ser_de=None, metadata=None, aggregators=[]):
         self._name = name
         # CSV corresponding columns indexes
         self._columns_indexes = columns_indexes
@@ -192,6 +192,7 @@ class Column(object):
         self._reader = reader
         self._ser_de = ser_de
         self._metadata = metadata
+        self._aggregators = aggregators
 
     class Type:
         NUMERIC = "NUMERIC"
@@ -252,8 +253,18 @@ class Column(object):
     def metadata(self, metadata):
         self._metadata = metadata
 
+    @property
+    def aggregators(self):
+        return self._aggregators
+
+    @aggregators.setter
+    def aggregators(self, aggregators):
+        self._aggregators = aggregators
+
     def process_on_write(self, record):
         data = self.reader.read(record)
+        for aggregator in self._aggregators:
+            aggregator.aggregate(data)
         return self.ser_de.serialize(data)
 
     def process_on_read(self, record):
@@ -261,8 +272,8 @@ class Column(object):
 
 
 class ComplexColumn(Column):
-    def __init__(self, name=None, type=None, ser_de=None, reader=None, metadata=None, pre_transforms=[], post_transforms=[]):
-        super(ComplexColumn, self).__init__(name=name, type=type, ser_de=ser_de, reader=reader, metadata=metadata)
+    def __init__(self, name=None, type=None, ser_de=None, reader=None, metadata=None, pre_transforms=[], post_transforms=[], aggregators=[]):
+        super(ComplexColumn, self).__init__(name=name, type=type, ser_de=ser_de, reader=reader, metadata=metadata, aggregators=aggregators)
         self._pre_transforms = pre_transforms
         self._post_transforms = post_transforms
 
@@ -284,6 +295,8 @@ class ComplexColumn(Column):
 
     def process_on_write(self, record):
         data = self.reader.read(record)
+        for aggregator in self._aggregators:
+            aggregator.aggregate(data)
         for transform in self._pre_transforms:
             data = transform.apply(data)
         return self.ser_de.serialize(data)
@@ -332,9 +345,18 @@ class ColumnSerDe(object):
         pass
 
 
+class ColumnAggregator(object):
+    def __init__(self):
+        self._agg_data = None
+
+    @abc.abstractmethod
+    def aggregate(self, data):
+        pass
+
+
 class BasicColumn(Column):
-    def __init__(self, name=None, columns_indexes=None, type=None):
-        super(BasicColumn, self).__init__(name, columns_indexes, type, BasicColumnReader(self), BasicColumnSerDe(self))
+    def __init__(self, name=None, columns_indexes=None, type=None, aggregators=[]):
+        super(BasicColumn, self).__init__(name, columns_indexes, type, BasicColumnReader(self), BasicColumnSerDe(self), aggregators)
 
     @staticmethod
     def types():
