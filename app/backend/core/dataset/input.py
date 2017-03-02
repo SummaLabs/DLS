@@ -246,13 +246,17 @@ class Column(object):
     def metadata(self):
         return self._metadata
 
-    @property
-    def serialize(self):
-        return {'name': self.name, 'type': self.type}
-
     @metadata.setter
     def metadata(self, metadata):
         self._metadata = metadata
+
+    def create_from(self, column):
+        return locals()[self.__class__.__name__](column.name, column.columns_indexes)
+        # return globals()["class_name"]()
+
+    @property
+    def serialize(self):
+        return {'name': self.name, 'type': self.type}
 
     def process_on_write(self, record):
         data = self.reader.read(record)
@@ -421,7 +425,62 @@ class BasicColumnSerDe(ColumnSerDe):
 
 
 class NumericColumn(Column):
-    def __init__(self, name=None, columns_indexes=None, type=None):
-        super(NumericColumn, self).__init__(name, columns_indexes, type, BasicColumnReader(self), BasicColumnSerDe(self))
+    def __init__(self, name=None, columns_indexes=None):
+        super(NumericColumn, self).__init__(name, columns_indexes, Column.Type.NUMERIC,
+                                            NumericColumn.Reader(self), NumericColumn.SerDe(self))
 
-    def
+    class Reader(ColumnReader):
+        def read(self, csv_row):
+            return csv_row[self._column.columns_indexes[0]]
+
+    class SerDe(ColumnSerDe):
+        def __init__(self, column):
+            self._column = column
+
+        def serialize(self, data):
+            return float(data)
+
+        def deserialize(self, data):
+            return float(data)
+
+
+class VectorColumn(Column):
+    def __init__(self, name=None, columns_indexes=None):
+        super(VectorColumn, self).__init__(name, columns_indexes, Column.Type.VECTOR,
+                                           VectorColumn.Reader(self), VectorColumn.SerDe(self))
+
+    class Reader(ColumnReader):
+        def read(self, csv_row):
+            return [float(csv_row[i]) for i in self._column.columns_indexes]
+
+    class SerDe(ColumnSerDe):
+        def __init__(self, column):
+            self._column = column
+
+        def serialize(self, data):
+            return np.array(data).tostring()
+
+        def deserialize(self, data):
+            return np.frombuffer(data, dtype=np.float64)
+
+
+class CategoricalColumn(Column):
+    def __init__(self, name=None, columns_indexes=None):
+        super(CategoricalColumn, self).__init__(name, columns_indexes,
+                                                Column.Type.CATEGORICAL, CategoricalColumn.Reader(self),
+                                                CategoricalColumn.SerDe(self), CategoricalColumnMetadata())
+
+    class Reader(ColumnReader):
+        def read(self, csv_row):
+            cat_val = csv_row[self._column.columns_indexes[0]]
+            return self._column.metadata.categories.index(cat_val)
+
+    class SerDe(ColumnSerDe):
+        def __init__(self, column):
+            self._column = column
+
+        def serialize(self, data):
+            return int(data)
+
+        def deserialize(self, data):
+            return int(data)
