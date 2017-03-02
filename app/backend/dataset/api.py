@@ -6,6 +6,7 @@ import json
 
 from flask import Blueprint
 from flask import request, Response
+from app.backend.dataset import ds_ui_layout_service
 
 dataset = Blueprint(__name__, __name__)
 
@@ -78,3 +79,9 @@ def delete(id):
     datasetWatcher.delete(id)
     datasetWatcher.refreshDatasetsInfo()
     return list_data_sets_metadata()
+
+
+@dataset.route('/ui/layout', methods=['GET'])
+def get_dataset_ui_layout():
+    ui_layout = ds_ui_layout_service.produce_ui_layout()
+    return Response(json.dumps(ui_layout), mimetype='application/json')
