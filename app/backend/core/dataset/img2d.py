@@ -12,14 +12,13 @@ except ImportError:
 
 
 class Img2DColumn(ComplexColumn):
-    def __init__(self, name=None, pre_transforms=[], post_transforms=[], is_raw_img=False, reader=None, aggregators=[]):
+    def __init__(self, name=None, pre_transforms=[], post_transforms=[], is_raw_img=False, reader=None):
         super(Img2DColumn, self).__init__(name=name,
                                           type=Column.Type.IMG_2D,
                                           ser_de=Img2DSerDe(is_raw_img),
                                           reader=reader,
                                           pre_transforms=pre_transforms,
-                                          post_transforms=post_transforms,
-                                          aggregators=aggregators)
+                                          post_transforms=post_transforms)
         if reader is None:
             self._reader = Img2DReader(self)
 

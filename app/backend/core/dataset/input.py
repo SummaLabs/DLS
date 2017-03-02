@@ -28,7 +28,8 @@ class Schema(object):
                 raise Exception("Should be no duplicates in CSV header: " + ", ".join([col for col in duplicates]))
             self._columns = [BasicColumn(name=item, columns_indexes=[index]) for index, item in enumerate(header_row)]
         else:
-            self._columns = [BasicColumn(name='col_' + str(index), columns_indexes=[index]) for index in range(0, len(header_row))]
+            self._columns = [BasicColumn(name='col_' + str(index), columns_indexes=[index]) for index in
+                             range(0, len(header_row))]
 
     @staticmethod
     def _read_n_rows(csv_file_path, rows_number, sep=','):
@@ -110,7 +111,8 @@ class Schema(object):
             schema = Schema(schema_json['csv_file_path'], schema_json['header'], schema_json['separator'])
             columns_indexes_number = sum(len(column["index"]) for column in schema_json['columns'])
             if columns_indexes_number != len(schema.columns):
-                raise TypeError("Columns indexes number in config is not equal to csv file: %s" % columns_indexes_number)
+                raise TypeError(
+                    "Columns indexes number in config is not equal to csv file: %s" % columns_indexes_number)
 
         from img2d import Img2DColumn
         result_columns = []
@@ -164,7 +166,7 @@ class Input(object):
     def add_categorical_column(self, column_name):
         _, column = self._find_column_in_schema(column_name)
         column.type = Column.Type.CATEGORICAL
-        column.metadata = set()
+        column.metadata = CategoricalColumnMetadata()
 
     def add_vector_column(self, column_name):
         _, column = self._find_column_in_schema(column_name)
@@ -184,7 +186,7 @@ class Input(object):
 
 
 class Column(object):
-    def __init__(self, name=None, columns_indexes=None, type=None, reader=None, ser_de=None, metadata=None, aggregators=[]):
+    def __init__(self, name=None, columns_indexes=None, type=None, reader=None, ser_de=None, metadata=None):
         self._name = name
         # CSV corresponding columns indexes
         self._columns_indexes = columns_indexes
@@ -192,7 +194,6 @@ class Column(object):
         self._reader = reader
         self._ser_de = ser_de
         self._metadata = metadata
-        self._aggregators = aggregators
 
     class Type:
         NUMERIC = "NUMERIC"
@@ -253,18 +254,8 @@ class Column(object):
     def metadata(self, metadata):
         self._metadata = metadata
 
-    @property
-    def aggregators(self):
-        return self._aggregators
-
-    @aggregators.setter
-    def aggregators(self, aggregators):
-        self._aggregators = aggregators
-
     def process_on_write(self, record):
         data = self.reader.read(record)
-        for aggregator in self._aggregators:
-            aggregator.aggregate(data)
         return self.ser_de.serialize(data)
 
     def process_on_read(self, record):
@@ -272,8 +263,9 @@ class Column(object):
 
 
 class ComplexColumn(Column):
-    def __init__(self, name=None, type=None, ser_de=None, reader=None, metadata=None, pre_transforms=[], post_transforms=[], aggregators=[]):
-        super(ComplexColumn, self).__init__(name=name, type=type, ser_de=ser_de, reader=reader, metadata=metadata, aggregators=aggregators)
+    def __init__(self, name=None, type=None, ser_de=None, reader=None, metadata=None, pre_transforms=[],
+                 post_transforms=[]):
+        super(ComplexColumn, self).__init__(name=name, type=type, ser_de=ser_de, reader=reader, metadata=metadata)
         self._pre_transforms = pre_transforms
         self._post_transforms = post_transforms
 
@@ -295,8 +287,8 @@ class ComplexColumn(Column):
 
     def process_on_write(self, record):
         data = self.reader.read(record)
-        for aggregator in self._aggregators:
-            aggregator.aggregate(data)
+        if self._metadata is not None:
+            self._metadata.aggregate(data)
         for transform in self._pre_transforms:
             data = transform.apply(data)
         return self.ser_de.serialize(data)
@@ -335,7 +327,6 @@ class ColumnReader(object):
 
 
 class ColumnSerDe(object):
-
     @abc.abstractmethod
     def serialize(self, data):
         pass
@@ -345,34 +336,40 @@ class ColumnSerDe(object):
         pass
 
 
-class ColumnAggregator(object):
-    def __init__(self):
-        self._data = None
-
-    @staticmethod
-    def type():
-        pass
-
-    @property
-    def data(self):
-        return self._data
-
-    @abc.abstractmethod
+class ColumnMetadata(object):
     def aggregate(self, data):
         pass
 
-    @abc.abstractmethod
-    def serialize(self, data):
+    def serialize(self):
         pass
 
-    @abc.abstractmethod
-    def deserialize(self, data):
+    def deserialize(self):
+        pass
+
+    def merge(self, metdata):
+        pass
+
+
+class CategoricalColumnMetadata(ColumnMetadata):
+    def __init__(self):
+        self._data = set()
+
+    def categories(self):
+        return list(self._data)
+
+    def aggregate(self, data):
+        self._data.add(data)
+
+    def serialize(self):
+        pass
+
+    def deserialize(self):
         pass
 
 
 class BasicColumn(Column):
-    def __init__(self, name=None, columns_indexes=None, type=None, aggregators=[]):
-        super(BasicColumn, self).__init__(name, columns_indexes, type, BasicColumnReader(self), BasicColumnSerDe(self), aggregators)
+    def __init__(self, name=None, columns_indexes=None, type=None):
+        super(BasicColumn, self).__init__(name, columns_indexes, type, BasicColumnReader(self), BasicColumnSerDe(self))
 
     @staticmethod
     def types():
@@ -396,8 +393,7 @@ class BasicColumnReader(ColumnReader):
             return [float(csv_row[i]) for i in self._column.columns_indexes]
         if self._column.type == Column.Type.CATEGORICAL:
             cat_val = csv_row[self._column.columns_indexes[0]]
-            cat_val_idx = list(self._column.metadata).index(cat_val)
-            return cat_val_idx
+            return self._column.metadata.categories.index(cat_val)
         raise Exception("Unsupported column type: %s." % self._column.type)
 
 
@@ -422,3 +418,10 @@ class BasicColumnSerDe(ColumnSerDe):
         if self._column.type == Column.Type.CATEGORICAL:
             return int(data)
         raise Exception("Unsupported column type: %s." % self._column.type)
+
+
+class NumericColumn(Column):
+    def __init__(self, name=None, columns_indexes=None, type=None):
+        super(NumericColumn, self).__init__(name, columns_indexes, type, BasicColumnReader(self), BasicColumnSerDe(self))
+
+    def

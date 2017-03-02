@@ -72,7 +72,7 @@ class Dataset(object):
             record_write = RecordWriter.factory(self._storage_type, self._dataset_root_dir, self._input.schema.columns)
             completed_processor_num = 0
             record_idx = 0
-            aggregated_data = []
+            aggregated_metadata = []
             try:
                 while completed_processor_num < self._parallelism_level:
                     record = processed_records.get(block=True, timeout=5)
@@ -81,37 +81,37 @@ class Dataset(object):
                         record_idx += 1
                     else:
                         completed_processor_num += 1
-                        aggregated_data.append(record.get)
+                        aggregated_metadata.append(record.get)
             except Empty:
                 logging.warning("Not all the threads completed as expected")
             record_write.close()
 
-            self._merge_aggregated_data(aggregated_data)
+            self._merge_metadata(aggregated_metadata)
             self._serialize_data_schema()
 
             print "Records processed: " + str(record_idx)
 
             return Dataset(self._input.schema, self._dataset_root_dir)
 
-        def _merge_aggregated_data(self, columns_with_aggregates):
-            # Init data structures
-            aggregated_data_by_column = {}
+        def _merge_metadata(self, dist_calc_metadata):
+            """
+            :param dist_calc_metadata: List of columns from different processes which contains metadata.
+            :return:
+            """
+            metadata_by_column = {}
             for column in self._input.schema.columns:
-                aggregated_data_by_type = {}
-                for aggregator in column.aggregators:
-                    aggregated_data_by_type[aggregator.type()] = []
-                aggregated_data_by_column[column.name] = aggregated_data_by_type
+                if column.metadata is not None:
+                    metadata_by_column[column.name] = []
 
-            # List of columns from different processes which contains aggregated data
-            for columns in columns_with_aggregates:
+            for columns in dist_calc_metadata:
                 for column in columns:
-                    for aggregator in column.aggregators:
-                        aggregated_data_by_column[column.name][aggregator.type()].append(aggregator.data)
+                    if column.metadata is not None:
+                        metadata_by_column[column.name].append(column.metadata)
 
             for column in self._input.schema.columns:
-                for aggregator in column.aggregators:
-                    for data in aggregated_data_by_column[column.name][aggregator.type()]:
-                        aggregator.aggregate(data)
+                if column.metadata is not None:
+                    for metadata in metadata_by_column[column.name]:
+                        column.metadata.merge(metadata)
 
         def _process_csv_file(self):
             rows = []
@@ -122,10 +122,11 @@ class Dataset(object):
                 try:
                     for row in reader:
                         # Trim row entries
-                        rows.append([e.strip() for e in row])
+                        row = [e.strip() for e in row]
+                        rows.append(row)
                         for column in columns:
-                            if column.type == Column.Type.CATEGORICAL:
-                                column.metadata.add(row[column.columns_indexes[0]])
+                            if isinstance(column, BasicColumn) and column.metadata is not None:
+                                column.metadata.aggregate(row[column.columns_indexes[0]])
                 except csv.Error as e:
                     sys.exit('Broken line: file %s, line %d: %s' % (csv_file_path, reader.line_num, e))
 
@@ -245,7 +246,7 @@ class RecordProcessor(Process):
 
     class Result:
         def __init__(self, columns):
-                self._columns = columns
+            self._columns = columns
 
         @property
         def get(self):
@@ -257,7 +258,7 @@ class RecordProcessor(Process):
             for column in self._columns:
                 processed_row[column.name] = column.process_on_write(csv_row)
             self._result_queue.put(processed_row)
-        # Signalize that processing is completed
+        # Signalize that processing is completed and send back columns with it's metadata
         self._result_queue.put(RecordProcessor.Result(self._columns))
 
 
