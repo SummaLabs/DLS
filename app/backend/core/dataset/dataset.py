@@ -9,7 +9,8 @@ import random
 import json
 import logging
 from img2d import Img2DSerDe, Img2DColumn
-from input import Schema, Input, Column, BasicColumn, BasicColumnSerDe, ComplexColumn
+from input import Schema, Input, Column, ComplexColumn, NumericColumn, VectorColumn, \
+    CategoricalColumn
 
 
 class Dataset(object):
@@ -125,7 +126,8 @@ class Dataset(object):
                         row = [e.strip() for e in row]
                         rows.append(row)
                         for column in columns:
-                            if isinstance(column, BasicColumn) and column.metadata is not None:
+                            if (isinstance(column, NumericColumn) or isinstance(column, VectorColumn) or isinstance(
+                                    column, CategoricalColumn)) and column.metadata is not None:
                                 column.metadata.aggregate(row[column.columns_indexes[0]])
                 except csv.Error as e:
                     sys.exit('Broken line: file %s, line %d: %s' % (csv_file_path, reader.line_num, e))
@@ -279,7 +281,7 @@ class Metadata(object):
 
 if __name__ == '__main__':
     from img2d import Img2DColumn, Img2DReader, ImgResizeTransform
-    from input import Schema, Input, BasicColumn, BasicColumnSerDe, ColumnSerDe, ColumnSerDe
+    from input import Schema, Input, ColumnSerDe, ColumnSerDe
     import os
     import glob
 

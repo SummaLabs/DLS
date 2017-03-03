@@ -17,14 +17,15 @@ class Img2DColumn(ComplexColumn):
                                           type=Column.Type.IMG_2D,
                                           ser_de=Img2DSerDe(is_raw_img),
                                           reader=reader,
+                                          metadata=Img2DColumnMetadata(),
                                           pre_transforms=pre_transforms,
                                           post_transforms=post_transforms)
         if reader is None:
             self._reader = Img2DReader(self)
 
     @property
-    def serialize(self):
-        schema = super(Img2DColumn, self).serialize
+    def schema(self):
+        schema = super(Img2DColumn, self).schema
         pre_transforms = []
         for transform in self.pre_transforms:
             pre_transforms.append(transform.schema)
@@ -204,3 +205,17 @@ class Img2DSerDe(ColumnSerDe):
             img = skimgio.imread(StringIO(img['data']))
 
         return img
+
+
+class Img2DColumnMetadata(ColumnMetadata):
+    def aggregate(self, data):
+        pass
+
+    def serialize(self):
+        pass
+
+    def deserialize(self, schema):
+        pass
+
+    def merge(self, metadata):
+        pass

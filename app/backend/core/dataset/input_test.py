@@ -178,17 +178,17 @@ class TestInput(unittest.TestCase):
         for column in input.schema.columns:
             if column.name == "col_0":
                 self.assertEqual(column.columns_indexes, [0])
-                self.assertTrue(isinstance(column, BasicColumn))
+                self.assertTrue(isinstance(column, NumericColumn))
                 self.assertEqual(column.type, Column.Type.NUMERIC)
 
             if column.name == "col_1":
                 self.assertEqual(column.columns_indexes, [1])
-                self.assertTrue(isinstance(column, BasicColumn))
+                self.assertTrue(isinstance(column, NumericColumn))
                 self.assertEqual(column.type, Column.Type.NUMERIC)
 
             if column.name == "col_2":
                 self.assertEqual(column.columns_indexes, [2, 3, 4])
-                self.assertTrue(isinstance(column, BasicColumn))
+                self.assertTrue(isinstance(column, VectorColumn))
                 self.assertEqual(column.type, Column.Type.VECTOR)
 
             if column.name == "col_3":

@@ -7,16 +7,15 @@ import nibabel
 
 
 class Img3DColumn(ComplexColumn):
-    def __init__(self, name=None, pre_transforms=[], post_transforms=[], is_raw_blob=False, reader=None, aggregators=[]):
+    def __init__(self, name=None, pre_transforms=[], post_transforms=[], is_raw_blob=False, reader=None):
         super(Img3DColumn, self).__init__(name=name, type=Column.Type.IMG_3D, ser_de=Img3DSerDe(), reader=reader,
-                                          pre_transforms=pre_transforms, post_transforms=post_transforms,
-                                          aggregators=aggregators)
+                                          pre_transforms=pre_transforms, post_transforms=post_transforms)
         if reader is None:
             self._reader = Img3DReader(is_raw_blob, self)
 
     @property
-    def serialize(self):
-        schema = super(Img3DColumn, self).serialize
+    def schema(self):
+        schema = super(Img3DColumn, self).schema
         # FIXME: move to parent class??
         pre_transforms = []
         for transform in self.pre_transforms:
