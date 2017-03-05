@@ -89,7 +89,6 @@ class Img3DResizeTransform(ColumnTransform):
         return {'type': 'input'}
 
     @property
-    @abc.abstractmethod
     def schema(self):
         return {}
 
@@ -106,8 +105,7 @@ class Img3DNormalizationTransform(ColumnTransform):
         return data
 
     @property
-    @abc.abstractmethod
-    def schema(self):
+    def serialize(self):
         return {}
 
 

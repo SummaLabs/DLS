@@ -1,5 +1,4 @@
 from itertools import islice
-from enum import Enum
 import csv, sys
 import copy
 import abc
@@ -26,9 +25,9 @@ class Schema(object):
             duplicates = set([x for x in header_row if header_row.count(x) > 1])
             if len(duplicates) > 0:
                 raise Exception("Should be no duplicates in CSV header: " + ", ".join([col for col in duplicates]))
-            self._columns = [BasicColumn(name=item, columns_indexes=[index]) for index, item in enumerate(header_row)]
+            self._columns = [Column(name=item, columns_indexes=[index]) for index, item in enumerate(header_row)]
         else:
-            self._columns = [BasicColumn(name='col_' + str(index), columns_indexes=[index]) for index in range(0, len(header_row))]
+            self._columns = [Column(name='col_' + str(index), columns_indexes=[index]) for index in range(0, len(header_row))]
 
     @staticmethod
     def _read_n_rows(csv_file_path, rows_number, sep=','):
@@ -87,7 +86,7 @@ class Schema(object):
             if column.name in columns_to_merge:
                 columns_indexes.extend(column.columns_indexes)
                 self.drop_column(column.name)
-        self._columns.append(BasicColumn(new_column_name, columns_indexes))
+        self._columns.append(Column(new_column_name, columns_indexes))
 
     def merge_columns_in_range(self, new_column_name, range=()):
         if not isinstance(range, tuple):
@@ -101,7 +100,7 @@ class Schema(object):
             if range[0] <= index <= range[1]:
                 columns_indexes.extend(column.columns_indexes)
                 self.drop_column(column.name)
-        self._columns.append(BasicColumn(new_column_name, columns_indexes))
+        self._columns.append(Column(new_column_name, columns_indexes))
 
     @staticmethod
     def deserialize(schema_json):
@@ -110,22 +109,24 @@ class Schema(object):
             schema = Schema(schema_json['csv_file_path'], schema_json['header'], schema_json['separator'])
             columns_indexes_number = sum(len(column["index"]) for column in schema_json['columns'])
             if columns_indexes_number != len(schema.columns):
-                raise TypeError("Columns indexes number in config is not equal to csv file: %s" % columns_indexes_number)
+                raise TypeError(
+                    "Columns indexes number in config is not equal to csv file: %s" % columns_indexes_number)
 
         from img2d import Img2DColumn
-        result_columns = []
-        for config_column in schema_json['columns']:
-            column_type = str(config_column['type'])
-            index = None
-            if 'index' in config_column:
-                index = config_column['index']
-            if column_type in BasicColumn.types():
-                result_columns.append(BasicColumn(str(config_column['name']), index, column_type))
+        _columns = []
+        for column_schema in schema_json['columns']:
+            column_type = str(column_schema['type'])
+            if column_type == Column.Type.NUMERIC:
+                _columns.append(NumericColumn.from_schema(column_schema))
+            elif column_type == Column.Type.VECTOR:
+                _columns.append(VectorColumn.from_schema(column_schema))
+            elif column_type == Column.Type.CATEGORICAL:
+                _columns.append(CategoricalColumn.from_schema(column_schema))
             elif column_type == Column.Type.IMG_2D:
-                result_columns.append(Img2DColumn.Builder(config_column).build())
+                _columns.append(Img2DColumn.from_schema(column_schema))
             else:
                 raise TypeError("Unsupported column type: %s" % column_type)
-        schema.update_columns(result_columns)
+        schema.update_columns(_columns)
         return schema
 
     def serialize(self):
@@ -158,17 +159,16 @@ class Input(object):
             return Input(Schema.deserialize(self._schema_config))
 
     def add_numeric_column(self, column_name):
-        _, column = self._find_column_in_schema(column_name)
-        column.type = Column.Type.NUMERIC
+        index, column = self._find_column_in_schema(column_name)
+        self._schema.columns[index] = NumericColumn.from_column(column)
 
     def add_categorical_column(self, column_name):
-        _, column = self._find_column_in_schema(column_name)
-        column.type = Column.Type.CATEGORICAL
-        column.metadata = set()
+        index, column = self._find_column_in_schema(column_name)
+        self._schema.columns[index] = CategoricalColumn.from_column(column)
 
     def add_vector_column(self, column_name):
-        _, column = self._find_column_in_schema(column_name)
-        column.type = Column.Type.VECTOR
+        index, column = self._find_column_in_schema(column_name)
+        self._schema.columns[index] = VectorColumn.from_column(column)
 
     def add_column(self, column_name, input_column):
         index, column = self._find_column_in_schema(column_name)
@@ -244,22 +244,35 @@ class Column(object):
     def metadata(self):
         return self._metadata
 
-    @property
-    def schema(self):
-        return {'name': self.name, 'type': self.type}
-
     @metadata.setter
     def metadata(self, metadata):
         self._metadata = metadata
 
-    def process(self, record):
+    @classmethod
+    def from_column(cls, column):
+        # return locals()[cls.__name__](column.name, column.columns_indexes)
+        return globals()[cls.__name__](column.name, column.columns_indexes)
+
+    @property
+    def schema(self):
+        schema = {'name': self.name, 'type': self.type}
+        if self._metadata is not None:
+            schema['metadata'] = self._metadata.serialize()
+        return schema
+
+    def process_on_write(self, record):
         data = self.reader.read(record)
         return self.ser_de.serialize(data)
 
+    def process_on_read(self, record):
+        return self._ser_de.deserialize(record[self._name])
+
 
 class ComplexColumn(Column):
-    def __init__(self, name=None, type=None, ser_de=None, reader=None, metadata=None, pre_transforms=[], post_transforms=[]):
-        super(ComplexColumn, self).__init__(name=name, type=type, ser_de=ser_de, reader=reader, metadata=metadata)
+    def __init__(self, name=None, type=None, columns_indexes=None, ser_de=None, reader=None, metadata=None,
+                 pre_transforms=[], post_transforms=[]):
+        super(ComplexColumn, self).__init__(name=name, type=type, columns_indexes=columns_indexes, ser_de=ser_de,
+                                            reader=reader, metadata=metadata)
         self._pre_transforms = pre_transforms
         self._post_transforms = post_transforms
 
@@ -279,11 +292,19 @@ class ComplexColumn(Column):
     def post_transforms(self, post_transforms):
         self._post_transforms = post_transforms
 
-    def process(self, record):
+    def process_on_write(self, record):
         data = self.reader.read(record)
+        if self._metadata is not None:
+            self._metadata.aggregate(data)
         for transform in self._pre_transforms:
             data = transform.apply(data)
         return self.ser_de.serialize(data)
+
+    def process_on_read(self, record):
+        value = self._ser_de.deserialize(record[self._name])
+        for transform in self._post_transforms:
+            value = transform.apply(value)
+        return value
 
 
 class ColumnTransform(object):
@@ -299,7 +320,7 @@ class ColumnTransform(object):
 
     @property
     @abc.abstractmethod
-    def schema(self):
+    def serialize(self):
         pass
 
 
@@ -313,7 +334,6 @@ class ColumnReader(object):
 
 
 class ColumnSerDe(object):
-
     @abc.abstractmethod
     def serialize(self, data):
         pass
@@ -323,56 +343,133 @@ class ColumnSerDe(object):
         pass
 
 
-class BasicColumn(Column):
-    def __init__(self, name=None, columns_indexes=None, type=None):
-        super(BasicColumn, self).__init__(name, columns_indexes, type, BasicColumnReader(self), BasicColumnSerDe(self))
+class ColumnMetadata(object):
+    def aggregate(self, data):
+        pass
 
-    @staticmethod
-    def types():
-        return [Column.Type.NUMERIC,
-                Column.Type.VECTOR,
-                Column.Type.CATEGORICAL]
+    def serialize(self):
+        pass
+
+    @classmethod
+    def deserialize(cls, schema):
+        pass
+
+    def merge(self, metadata):
+        pass
+
+
+class NumericColumn(Column):
+    def __init__(self, name=None, columns_indexes=None):
+        super(NumericColumn, self).__init__(name, columns_indexes, Column.Type.NUMERIC,
+                                            NumericColumn.Reader(self), NumericColumn.SerDe(self))
+
+    @classmethod
+    def from_schema(cls, column_schema):
+        name = str(column_schema['name'])
+        index = None
+        if 'index' in column_schema:
+            index = column_schema['index']
+        return NumericColumn(name=name, columns_indexes=index)
+
+    class Reader(ColumnReader):
+        def read(self, csv_row):
+            return csv_row[self._column.columns_indexes[0]]
+
+    class SerDe(ColumnSerDe):
+        def __init__(self, column):
+            self._column = column
+
+        def serialize(self, data):
+            return float(data)
+
+        def deserialize(self, data):
+            return float(data)
+
+
+class VectorColumn(Column):
+    def __init__(self, name=None, columns_indexes=None):
+        super(VectorColumn, self).__init__(name, columns_indexes, Column.Type.VECTOR,
+                                           VectorColumn.Reader(self), VectorColumn.SerDe(self))
+
+    @classmethod
+    def from_schema(cls, column_schema):
+        name = str(column_schema['name'])
+        index = None
+        if 'index' in column_schema:
+            index = column_schema['index']
+        return VectorColumn(name=name, columns_indexes=index)
+
+    class Reader(ColumnReader):
+        def read(self, csv_row):
+            return [float(csv_row[i]) for i in self._column.columns_indexes]
+
+    class SerDe(ColumnSerDe):
+        def __init__(self, column):
+            self._column = column
+
+        def serialize(self, data):
+            return np.array(data).tostring()
+
+        def deserialize(self, data):
+            return np.frombuffer(data, dtype=np.float64)
+
+
+class CategoricalColumn(Column):
+    def __init__(self, name=None, columns_indexes=None, metadata=None):
+        super(CategoricalColumn, self).__init__(name=name,
+                                                columns_indexes=columns_indexes,
+                                                type=Column.Type.CATEGORICAL,
+                                                reader=CategoricalColumn.Reader(self),
+                                                ser_de=CategoricalColumn.SerDe(self),
+                                                metadata=metadata)
+        if self._metadata is None:
+            self._metadata = CategoricalColumnMetadata()
 
     @property
     def schema(self):
-        schema = super(BasicColumn, self).schema
-        if self.type == Column.Type.CATEGORICAL:
-            schema['categories'] = list(self.metadata)
+        schema = super(CategoricalColumn, self).schema
+        schema['metadata'] = self.metadata.serialize()
         return schema
 
+    @classmethod
+    def from_schema(cls, column_schema):
+        name = str(column_schema['name'])
+        index = None
+        if 'index' in column_schema:
+            index = column_schema['index']
+        metadata = CategoricalColumnMetadata.deserialize(column_schema['metadata'])
+        return CategoricalColumn(name=name, columns_indexes=index, metadata=metadata)
 
-class BasicColumnReader(ColumnReader):
-    def read(self, csv_row):
-        if self._column.type == Column.Type.NUMERIC:
-            return csv_row[self._column.columns_indexes[0]]
-        if self._column.type == Column.Type.VECTOR:
-            return [float(csv_row[i]) for i in self._column.columns_indexes]
-        if self._column.type == Column.Type.CATEGORICAL:
+    class Reader(ColumnReader):
+        def read(self, csv_row):
             cat_val = csv_row[self._column.columns_indexes[0]]
-            cat_val_idx = list(self._column.metadata).index(cat_val)
-            return cat_val_idx
-        raise Exception("Unsupported column type: %s." % self._column.type)
+            return self._column.metadata.categories.index(cat_val)
 
+    class SerDe(ColumnSerDe):
+        def __init__(self, column):
+            self._column = column
 
-class BasicColumnSerDe(ColumnSerDe):
-    def __init__(self, column):
-        self._column = column
-
-    def serialize(self, data):
-        if self._column.type == Column.Type.NUMERIC:
-            return float(data)
-        if self._column.type == Column.Type.VECTOR:
-            return np.array(data)
-        if self._column.type == Column.Type.CATEGORICAL:
+        def serialize(self, data):
             return int(data)
-        raise Exception("Unsupported column type: %s." % self._column.type)
 
-    @abc.abstractmethod
-    def deserialize(self, data):
-        if self._column.type == Column.Type.NUMERIC:
-            return float(data.value)
-        if self._column.type == Column.Type.VECTOR:
-            return np.array(data.value)
-        if self._column.type == Column.Type.CATEGORICAL:
-            return int(data.value)
-        raise Exception("Unsupported column type: %s." % self._column.type)
+        def deserialize(self, data):
+            return int(data)
+
+
+class CategoricalColumnMetadata(ColumnMetadata):
+    def __init__(self):
+        self._data = set()
+
+    @property
+    def categories(self):
+        return list(self._data)
+
+    def aggregate(self, data):
+        self._data.add(data)
+
+    def serialize(self):
+        return {'categories': self.categories}
+
+    @classmethod
+    def deserialize(cls, schema):
+        return list(schema['categories'])
