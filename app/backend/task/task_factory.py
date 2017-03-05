@@ -1,5 +1,6 @@
 from app.backend.task.default_task import DefaultTask, CmdTask
 from app.backend.task.roc_analysis_task import ROCAnalysisTask
+from app.backend.task.build_dataset_task import BuildDatasetTask
 
 from task_db_image2d_cls import TaskDBImage2DBuilder
 from task_model_image2d_cls import TaskModelTrainImage2DCls
@@ -11,7 +12,7 @@ class TaskFactory:
     def __init__(self): pass
 
     @staticmethod
-    def create(type, params):
+    def create(type, params, body):
         if type == "default":
             return DefaultTask()
         elif type == "cmd":
@@ -26,5 +27,7 @@ class TaskFactory:
             return TaskROCImage2DCls(params)
         elif type == 'fspace-image2d':
             return TaskFeatureSpaceVisImage2D(params)
+        elif type == 'build_dataset':
+            return BuildDatasetTask(body)
         else:
             return NotImplemented

@@ -33,7 +33,7 @@ class Schema(object):
     def _read_n_rows(csv_file_path, rows_number, sep=','):
         rows = []
         with open(csv_file_path, 'rb') as f:
-            reader = csv.reader(f, delimiter=sep)
+            reader = csv.reader(f, delimiter=str(sep))
             try:
                 for row in islice(reader, 0, rows_number):
                     rows.append(row)
