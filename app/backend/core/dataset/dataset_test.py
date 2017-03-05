@@ -3,7 +3,7 @@ from os import path
 from skimage import data
 import skimage.io as skimgio
 from PIL import Image
-from input import Input, Schema
+from input import Input, Schema, CategoricalColumnMetadata
 from img2d import Img2DColumn
 from dataset import Dataset, RecordWriter, RecordReader
 import unittest
@@ -45,7 +45,7 @@ class TestDataSetBuilder(unittest.TestCase):
         rows = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2)._process_csv_file()
         self.assertEqual(len(rows), 10)
         _, column = input._find_column_in_schema('col_0')
-        self.assertTrue(len(column.metadata), 4)
+        self.assertTrue(len(column.metadata.categories), 4)
 
     def test_build_dataset(self):
         schema = Schema(self.test_file_path)
@@ -87,7 +87,9 @@ class TestHDF5RecordWriterReader(unittest.TestCase):
         input = Input(schema)
         input.add_categorical_column('col_0')
         _, cat_col = input._find_column_in_schema('col_0')
-        cat_col.metadata = categories
+        metadata = CategoricalColumnMetadata()
+        metadata._data = categories
+        cat_col.metadata = metadata
         input.add_numeric_column('col_1')
         input.add_vector_column('col_vector')
         img2d = Img2DColumn(pre_transforms=[], post_transforms=[], is_raw_img=True)
@@ -114,7 +116,9 @@ class TestHDF5RecordWriterReader(unittest.TestCase):
         input = Input(schema)
         input.add_categorical_column('col_0')
         _, cat_col = input._find_column_in_schema('col_0')
-        cat_col.metadata = categories
+        metadata = CategoricalColumnMetadata()
+        metadata._data = categories
+        cat_col.metadata = metadata
         input.add_numeric_column('col_1')
         input.add_vector_column('col_vector')
         img2d = Img2DColumn(pre_transforms=[], post_transforms=[], is_raw_img=False)

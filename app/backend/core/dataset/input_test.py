@@ -166,6 +166,7 @@ class TestInput(unittest.TestCase):
                                 "name": "col_3",
                                 "type": "IMG_2D",
                                 "index": [5],
+                                'metadata': {},
                                 "pre_transforms": [{"type": "imgResize", "params": {"height": 256, "width": 256}},
                                                    {"type": "imgNormalization",
                                                     "params": {"is_global": "False"}}],

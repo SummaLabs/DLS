@@ -76,13 +76,13 @@ class Dataset(object):
             aggregated_metadata = []
             try:
                 while completed_processor_num < self._parallelism_level:
-                    record = processed_records.get(block=True, timeout=5)
-                    if record is not RecordProcessor.Result:
-                        record_write.write(record, record_idx)
+                    result = processed_records.get(block=True, timeout=5)
+                    if not isinstance(result, ProcessingResult):
+                        record_write.write(result, record_idx)
                         record_idx += 1
                     else:
                         completed_processor_num += 1
-                        aggregated_metadata.append(record.get)
+                        aggregated_metadata.append(result.column_metadata)
             except Empty:
                 logging.warning("Not all the threads completed as expected")
             record_write.close()
@@ -94,9 +94,9 @@ class Dataset(object):
 
             return Dataset(self._input.schema, self._dataset_root_dir)
 
-        def _merge_metadata(self, dist_calc_metadata):
+        def _merge_metadata(self, aggregated_metadata):
             """
-            :param dist_calc_metadata: List of columns from different processes which contains metadata.
+            :param aggregated_metadata: List of column's metadata from different processes.
             :return:
             """
             metadata_by_column = {}
@@ -104,10 +104,9 @@ class Dataset(object):
                 if column.metadata is not None:
                     metadata_by_column[column.name] = []
 
-            for columns in dist_calc_metadata:
-                for column in columns:
-                    if column.metadata is not None:
-                        metadata_by_column[column.name].append(column.metadata)
+            for column_metadata in aggregated_metadata:
+                for column_name in column_metadata:
+                    metadata_by_column[column_name].append(column_metadata[column_name])
 
             for column in self._input.schema.columns:
                 if column.metadata is not None:
@@ -246,14 +245,6 @@ class RecordProcessor(Process):
         self._result_queue = result_queue
         self._csv_rows = csv_rows
 
-    class Result:
-        def __init__(self, columns):
-            self._columns = columns
-
-        @property
-        def get(self):
-            return self._columns
-
     def run(self):
         for csv_row in self._csv_rows:
             processed_row = {}
@@ -261,7 +252,19 @@ class RecordProcessor(Process):
                 processed_row[column.name] = column.process_on_write(csv_row)
             self._result_queue.put(processed_row)
         # Signalize that processing is completed and send back columns with it's metadata
-        self._result_queue.put(RecordProcessor.Result(self._columns))
+        self._result_queue.put(ProcessingResult(self._columns))
+
+
+class ProcessingResult:
+    def __init__(self, columns):
+        self._column_metadata = {}
+        for column in columns:
+            if isinstance(column, ComplexColumn):
+                self._column_metadata[column.name] = column.metadata
+
+    @property
+    def column_metadata(self):
+        return self._column_metadata
 
 
 class Data(object):

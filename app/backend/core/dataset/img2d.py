@@ -12,16 +12,21 @@ except ImportError:
 
 
 class Img2DColumn(ComplexColumn):
-    def __init__(self, name=None, pre_transforms=[], post_transforms=[], is_raw_img=False, reader=None):
+    def __init__(self, name=None, columns_indexes=None, pre_transforms=[], post_transforms=[], is_raw_img=False,
+                 reader=None, metadata=None):
         super(Img2DColumn, self).__init__(name=name,
                                           type=Column.Type.IMG_2D,
+                                          columns_indexes=columns_indexes,
                                           ser_de=Img2DSerDe(is_raw_img),
                                           reader=reader,
-                                          metadata=Img2DColumnMetadata(),
+                                          metadata=metadata,
                                           pre_transforms=pre_transforms,
                                           post_transforms=post_transforms)
         if reader is None:
             self._reader = Img2DReader(self)
+
+        if metadata is None:
+            self._metadata = Img2DColumnMetadata()
 
     @property
     def schema(self):
@@ -34,40 +39,37 @@ class Img2DColumn(ComplexColumn):
         for transform in self.post_transforms:
             post_transforms.append(transform.schema)
         schema['post_transforms'] = post_transforms
+        if self._metadata is not None:
+            schema['metadata'] = self._metadata.serialize()
         return schema
 
-    class Builder(object):
-        def __init__(self, img2d_column_config):
-            self._img2d_column_config = img2d_column_config
+    @classmethod
+    def from_schema(cls, column_schema):
+        pre_transforms = []
+        post_transforms = []
+        for pre_transform in column_schema["pre_transforms"]:
+            pre_transforms.append(cls._build_transform(pre_transform))
+        for post_transform in column_schema["post_transforms"]:
+            post_transforms.append(cls._build_transform(post_transform))
+        indexes = None
+        if 'index' in column_schema:
+            indexes = column_schema['index']
+        metadata = Img2DColumnMetadata.deserialize(column_schema['metadata'])
+        img2d = Img2DColumn(name=str(column_schema['name']), columns_indexes=indexes, pre_transforms=pre_transforms,
+                            post_transforms=post_transforms, metadata=metadata)
+        return img2d
 
-        def build(self):
-            pre_transforms = []
-            post_transforms = []
-            for pre_transform in self._img2d_column_config["pre_transforms"]:
-                pre_transforms.append(self._build_transform(pre_transform))
-
-            for post_transform in self._img2d_column_config["post_transforms"]:
-                post_transforms.append(self._build_transform(post_transform))
-
-            indexes = None
-            if 'index' in self._img2d_column_config:
-                indexes = self._img2d_column_config['index']
-
-            img2d = Img2DColumn(str(self._img2d_column_config['name']), pre_transforms, post_transforms)
-            img2d.columns_indexes = indexes
-            return img2d
-
-        @staticmethod
-        def _build_transform(transform):
-            type = transform["type"]
-            params = transform["params"]
-            if type == ImgCropTransform.type():
-                return ImgCropTransform(params)
-            if type == ImgResizeTransform.type():
-                return ImgResizeTransform(params)
-            if type == ImgNormalizationTransform.type():
-                return ImgNormalizationTransform.Builder(params).build()
-            raise TypeError("Unsupported column transform type: %s" % transform)
+    @staticmethod
+    def _build_transform(transform):
+        type = transform["type"]
+        params = transform["params"]
+        if type == ImgCropTransform.type():
+            return ImgCropTransform(params)
+        if type == ImgResizeTransform.type():
+            return ImgResizeTransform(params)
+        if type == ImgNormalizationTransform.type():
+            return ImgNormalizationTransform.Builder(params).build()
+        raise TypeError("Unsupported column transform type: %s" % transform)
 
 
 class ImgCropTransform(ColumnTransform):
@@ -212,10 +214,11 @@ class Img2DColumnMetadata(ColumnMetadata):
         pass
 
     def serialize(self):
-        pass
+        return ()
 
-    def deserialize(self, schema):
-        pass
+    @classmethod
+    def deserialize(cls, schema):
+        return Img2DColumnMetadata()
 
     def merge(self, metadata):
         pass
