@@ -250,7 +250,6 @@ class Column(object):
 
     @classmethod
     def from_column(cls, column):
-        # return locals()[cls.__name__](column.name, column.columns_indexes)
         return globals()[cls.__name__](column.name, column.columns_indexes)
 
     @property
@@ -291,6 +290,19 @@ class ComplexColumn(Column):
     @post_transforms.setter
     def post_transforms(self, post_transforms):
         self._post_transforms = post_transforms
+
+    @property
+    def schema(self):
+        schema = super(ComplexColumn, self).schema
+        pre_transforms = []
+        for transform in self.pre_transforms:
+            pre_transforms.append(transform.schema)
+        schema['pre_transforms'] = pre_transforms
+        post_transforms = []
+        for transform in self.post_transforms:
+            post_transforms.append(transform.schema)
+        schema['post_transforms'] = post_transforms
+        return schema
 
     def process_on_write(self, record):
         data = self.reader.read(record)
@@ -345,6 +357,10 @@ class ColumnSerDe(object):
 
 class ColumnMetadata(object):
     def aggregate(self, data):
+        pass
+
+    def path(self, path):
+        # Path to save metadata if required
         pass
 
     def serialize(self):
@@ -457,8 +473,10 @@ class CategoricalColumn(Column):
 
 
 class CategoricalColumnMetadata(ColumnMetadata):
-    def __init__(self):
+    def __init__(self, categories=None):
         self._data = set()
+        if categories is not None:
+            self._data = set(categories)
 
     @property
     def categories(self):
@@ -472,4 +490,4 @@ class CategoricalColumnMetadata(ColumnMetadata):
 
     @classmethod
     def deserialize(cls, schema):
-        return list(schema['categories'])
+        return CategoricalColumnMetadata(schema['categories'])

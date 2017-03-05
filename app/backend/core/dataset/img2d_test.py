@@ -3,7 +3,7 @@ import numpy as np
 from os import path
 from skimage import data
 from PIL import Image
-from img2d import Img2DColumn, Img2DSerDe
+from img2d import Img2DColumn, Img2DSerDe, Img2DColumnMetadata, Img2DReader
 import unittest
 import random
 
@@ -30,8 +30,7 @@ class TestImg2DSerDe(unittest.TestCase):
         shutil.rmtree(self.test_dir)
 
     def test_img2d_ser_de_is_raw_img_true(self):
-        img2d_col = Img2DColumn([], [], is_raw_img=True)
-        img2d_col.columns_indexes = [0]
+        img2d_col = Img2DColumn(columns_indexes=[0], pre_transforms=[], post_transforms=[], is_raw_img=True)
         reader = img2d_col.reader
         ser_de = img2d_col.ser_de
         img = reader.read([self.test_img_file_path])
@@ -40,8 +39,7 @@ class TestImg2DSerDe(unittest.TestCase):
         self.assertTrue(np.array_equal(img[0], img_d))
 
     def test_img2d_ser_de_is_raw_img_false(self):
-        img2d_col = Img2DColumn([], [], is_raw_img=False)
-        img2d_col.columns_indexes = [0]
+        img2d_col = Img2DColumn(columns_indexes=[0], pre_transforms=[], post_transforms=[], is_raw_img=False)
         reader = img2d_col.reader
         ser_de = img2d_col.ser_de
         img = reader.read([self.test_img_file_path])
@@ -49,6 +47,26 @@ class TestImg2DSerDe(unittest.TestCase):
         img_d = ser_de.deserialize(img_s)
         self.assertTrue(np.array_equal(img[0], img_d))
 
+
+class TestImg2DMetadata(unittest.TestCase):
+    def setUp(self):
+        self.test_dir,  self.test_img_file_path = create_test_data()
+
+    def tearDown(self):
+        shutil.rmtree(self.test_dir)
+
+    def test_img2d_metadata_aggregate(self):
+        img2d_col = Img2DColumn(columns_indexes=[0], pre_transforms=[], post_transforms=[])
+        aggregated_metadata = []
+        for i in range(1, 5):
+            img = img2d_col.reader.read([self.test_img_file_path])
+            metadata = Img2DColumnMetadata()
+            metadata.aggregate(img=img)
+            aggregated_metadata.append(metadata)
+        img2d_col.metadata.merge(aggregated_metadata)
+        mean_img = img2d_col.metadata.img
+        original_img = img2d_col.reader.read([self.test_img_file_path])[0]
+        self.assertTrue(np.array_equal(mean_img, original_img))
 
 if __name__ == '__main__':
     unittest.main()

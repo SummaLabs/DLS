@@ -13,20 +13,6 @@ class Img3DColumn(ComplexColumn):
         if reader is None:
             self._reader = Img3DReader(is_raw_blob, self)
 
-    @property
-    def schema(self):
-        schema = super(Img3DColumn, self).schema
-        # FIXME: move to parent class??
-        pre_transforms = []
-        for transform in self.pre_transforms:
-            pre_transforms.append(transform.schema)
-        schema['pre_transforms'] = pre_transforms
-        post_transforms = []
-        for transform in self.post_transforms:
-            post_transforms.append(transform.schema)
-        schema['post_transforms'] = post_transforms
-        return schema
-
     class Builder(object):
         def __init__(self, img3d_column_config):
             self._img3d_column_config = img3d_column_config

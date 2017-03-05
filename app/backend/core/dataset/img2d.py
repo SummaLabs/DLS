@@ -1,8 +1,11 @@
 from input import *
 import numpy as np
+from os import path
 import skimage.io as skimgio
 import PIL.Image
+from PIL import Image
 import imghdr
+import random
 from img2d_utils import ImageTransformer2D
 
 try:
@@ -26,22 +29,7 @@ class Img2DColumn(ComplexColumn):
             self._reader = Img2DReader(self)
 
         if metadata is None:
-            self._metadata = Img2DColumnMetadata()
-
-    @property
-    def schema(self):
-        schema = super(Img2DColumn, self).schema
-        pre_transforms = []
-        for transform in self.pre_transforms:
-            pre_transforms.append(transform.schema)
-        schema['pre_transforms'] = pre_transforms
-        post_transforms = []
-        for transform in self.post_transforms:
-            post_transforms.append(transform.schema)
-        schema['post_transforms'] = post_transforms
-        if self._metadata is not None:
-            schema['metadata'] = self._metadata.serialize()
-        return schema
+            self._metadata = Img2DColumnMetadata(self._name)
 
     @classmethod
     def from_schema(cls, column_schema):
@@ -210,15 +198,57 @@ class Img2DSerDe(ColumnSerDe):
 
 
 class Img2DColumnMetadata(ColumnMetadata):
-    def aggregate(self, data):
-        pass
+    def __init__(self, column_name=None):
+        self._column_name = column_name
+        self._path = None
+        self._img = None
+        self._img_num = 0
+
+    @property
+    def img(self):
+        return self._img
+
+    @img.setter
+    def img(self, img):
+        self._img = img
+
+    @property
+    def img_num(self):
+        return self._img_num
+
+    def aggregate(self, img):
+        img = img[0]
+        if self._img is None:
+            self._img = img
+        else:
+            self._img = self._img + img
+        self._img_num += 1
+
+    def merge(self, metadata):
+        for m in metadata:
+            if self._img is None:
+                self._img = m.img
+            else:
+                self._img = self._img + m.img
+            self._img_num = self._img_num + m.img_num
+        self._img = self._img / self._img_num
+
+    def path(self, path):
+        self._path = path
 
     def serialize(self):
-        return ()
+        img = Image.fromarray(self._img)
+        img_path_prefix = self._column_name
+        if self._column_name is not None:
+            img_path_prefix = str(random.getrandbits(16))
+        mean_img_path = path.join(self._path, img_path_prefix + '-mean-img.jpg')
+        img.save(mean_img_path)
+        return {'mean-img-path': mean_img_path}
 
     @classmethod
     def deserialize(cls, schema):
-        return Img2DColumnMetadata()
-
-    def merge(self, metadata):
-        pass
+        mean_img_path = path.join(schema['mean-img-path'])
+        img = skimgio.imread(mean_img_path)
+        metadata = Img2DColumnMetadata()
+        metadata.img = img
+        return metadata

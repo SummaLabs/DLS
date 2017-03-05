@@ -110,8 +110,7 @@ class Dataset(object):
 
             for column in self._input.schema.columns:
                 if column.metadata is not None:
-                    for metadata in metadata_by_column[column.name]:
-                        column.metadata.merge(metadata)
+                    column.metadata.merge(metadata_by_column[column.name])
 
         def _process_csv_file(self):
             rows = []
@@ -139,6 +138,9 @@ class Dataset(object):
                     raise TypeError("Please specify type for column: %s" % column.name)
 
         def _serialize_data_schema(self):
+            for column in self._input.schema.columns:
+                if column.metadata is not None:
+                    column.metadata.path(self._dataset_data_dir)
             with open(os.path.join(self._dataset_data_dir, Dataset.SCHEMA_FILE), 'w') as f:
                 f.write(json.dumps(self._input.schema.serialize()))
 
