@@ -218,7 +218,7 @@ class Img2DColumnMetadata(ColumnMetadata):
         if self._img is None:
             self._img = img
         else:
-            self._img = self._img + img
+            self._img += img
         self._img_num += 1
 
     def merge(self, agg_metadata):
@@ -226,7 +226,7 @@ class Img2DColumnMetadata(ColumnMetadata):
             if self._img is None:
                 self._img = metadata.img
             else:
-                self._img = self._img + metadata.img
+                self._img += metadata.img
             self._img_num = self._img_num + metadata.img_num
         self._img = self._img / self._img_num
 

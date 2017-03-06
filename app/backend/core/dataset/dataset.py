@@ -9,8 +9,7 @@ import random
 import json
 import logging
 from img2d import Img2DSerDe, Img2DColumn
-from input import Schema, Input, Column, ComplexColumn, NumericColumn, VectorColumn, \
-    CategoricalColumn
+from input import Schema, Input, Column, ComplexColumn, NumericColumn, VectorColumn, CategoricalColumn
 
 
 class Dataset(object):

@@ -96,7 +96,7 @@ class TestHDF5RecordWriterReader(unittest.TestCase):
         input.add_column("col_5", img2d)
         os.makedirs(os.path.join(self.test_dir, Dataset.DATA_DIR_NAME))
         record_writer = RecordWriter.factory('HDF5', self.test_dir, input.schema.columns)
-        csv_row = [ent.strip() for ent in Schema._read_n_rows(self.test_file_path, 1)[0]]
+        csv_row = [ent.strip() for ent in schema.read_n_rows(1)[0]]
         precessed_row = {}
         for column in input.schema.columns:
             precessed_row[column.name] = column.process_on_write(csv_row)
@@ -125,7 +125,7 @@ class TestHDF5RecordWriterReader(unittest.TestCase):
         input.add_column("col_5", img2d)
         os.makedirs(os.path.join(self.test_dir, Dataset.DATA_DIR_NAME))
         record_writer = RecordWriter.factory('HDF5', self.test_dir, input.schema.columns)
-        csv_row = [ent.strip() for ent in Schema._read_n_rows(self.test_file_path, 1)[0]]
+        csv_row = [ent.strip() for ent in schema.read_n_rows(1)[0]]
         precessed_row = {}
         for column in input.schema.columns:
             precessed_row[column.name] = column.process_on_write(csv_row)

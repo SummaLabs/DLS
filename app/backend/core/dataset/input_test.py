@@ -1,22 +1,32 @@
 import shutil, tempfile
 from os import path
 import unittest
+from skimage import data
 from img2d import *
+
+
+test_img_file = 'test-img.png'
+categories = ['cat_1', 'cat_2', 'cat_3', 'cat_4']
 
 
 def create_csv_file(file_name):
     test_dir = tempfile.mkdtemp()
     test_file_path = path.join(test_dir, file_name)
+    # Create and save image
+    image = data.camera()
+    img = Image.fromarray(image)
+    test_img_file_path = path.join(test_dir, test_img_file)
+    img.save(test_img_file_path)
     f = open(test_file_path, 'w')
     for i in range(15):
         f.write('col1%d, col2%d, col3%d, col4%d, col5%d, col6%d\n' % (i, i, i, i, i, i))
     f.close()
-    return test_dir, test_file_path
+    return test_dir, test_file_path, test_img_file_path
 
 
 class TestSchema(unittest.TestCase):
     def setUp(self):
-        self.test_dir, self.test_file_path = create_csv_file('test.csv')
+        self.test_dir, self.test_file_path, self.test_img_file_path = create_csv_file('test.csv')
 
     def tearDown(self):
         shutil.rmtree(self.test_dir)
@@ -84,10 +94,15 @@ class TestSchema(unittest.TestCase):
             schema.columns = ['col1', 'col1', 'col3', 'col4', 'col5', 'col6']
         self.assertTrue('Should be no duplicates in columns: col1' in context.exception)
 
+    def test_read_rows(self):
+        schema = Schema(self.test_file_path, header=False, separator=",")
+        row = schema.read_n_rows(10)
+        self.assertEqual(len(row), 10)
+
 
 class TestInput(unittest.TestCase):
     def setUp(self):
-        self.test_dir, self.test_file_path = create_csv_file('test.csv')
+        self.test_dir, self.test_file_path, self.test_img_file_path = create_csv_file('test.csv')
 
     def tearDown(self):
         shutil.rmtree(self.test_dir)
@@ -166,7 +181,7 @@ class TestInput(unittest.TestCase):
                                 "name": "col_3",
                                 "type": "IMG_2D",
                                 "index": [5],
-                                'metadata': {},
+                                'metadata': {"mean-img-path": self.test_img_file_path},
                                 "pre_transforms": [{"type": "imgResize", "params": {"height": 256, "width": 256}},
                                                    {"type": "imgNormalization",
                                                     "params": {"is_global": "False"}}],

@@ -20,7 +20,7 @@ class Schema(object):
             if len(tseparator) < 0 or len(tseparator) > 1:
                 raise Exception('Invalid separator [%s]' % separator)
             self.separator = tseparator
-        header_row = [col.strip() for col in Schema._read_n_rows(self._csv_file_path, 1, sep=self.separator)[0]]
+        header_row = [col.strip() for col in self.read_n_rows(1)[0]]
         if header:
             duplicates = set([x for x in header_row if header_row.count(x) > 1])
             if len(duplicates) > 0:
@@ -29,16 +29,15 @@ class Schema(object):
         else:
             self._columns = [Column(name='col_' + str(index), columns_indexes=[index]) for index in range(0, len(header_row))]
 
-    @staticmethod
-    def _read_n_rows(csv_file_path, rows_number, sep=','):
+    def read_n_rows(self, rows_number):
         rows = []
-        with open(csv_file_path, 'rb') as f:
-            reader = csv.reader(f, delimiter=str(sep))
+        with open(self._csv_file_path, 'rb') as f:
+            reader = csv.reader(f, delimiter=str(self.separator))
             try:
                 for row in islice(reader, 0, rows_number):
                     rows.append(row)
             except csv.Error as e:
-                sys.exit('Broken line: file %s, line %d: %s' % (csv_file_path, reader.line_num, e))
+                sys.exit('Broken line: file %s, line %d: %s' % (self._csv_file_path, reader.line_num, e))
 
         return rows
 
@@ -137,7 +136,7 @@ class Schema(object):
 
     def print_data(self):
         print "First 10 records:"
-        for row in Schema._read_n_rows(self.csv_file_path, 10):
+        for row in self.read_n_rows(10):
             print row
 
 
