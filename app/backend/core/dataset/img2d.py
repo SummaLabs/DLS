@@ -6,6 +6,10 @@ import PIL.Image
 from PIL import Image
 import imghdr
 import random
+import skimage as sk
+import skimage.transform as sktf
+from skimage.transform import SimilarityTransform
+from skimage.transform import warp as skwarp
 from img2d_utils import ImageTransformer2D
 
 try:
@@ -52,38 +56,33 @@ class Img2DColumn(ComplexColumn):
         type = transform["type"]
         params = transform["params"]
         if type == ImgCropTransform.type():
-            return ImgCropTransform(params)
+            return ImgCropTransform.from_params(params)
         if type == ImgResizeTransform.type():
             return ImgResizeTransform(params)
         if type == ImgNormalizationTransform.type():
-            return ImgNormalizationTransform.Builder(params).build()
+            return ImgNormalizationTransform.from_params(params)
         raise TypeError("Unsupported column transform type: %s" % transform)
 
 
 class ImgCropTransform(ColumnTransform):
     def __init__(self, shape):
         super(ImgCropTransform, self).__init__()
-        self.out_shape = shape
+        self._out_shape = shape
 
     @staticmethod
     def type():
         return "imgCrop"
 
-    def apply(self, data):
-        return ImageTransformer2D.transformCropImage(data, self.out_shape)
+    def apply(self, img):
+        return crop_image(img, self._out_shape)
+
+    @staticmethod
+    def from_params(params):
+        return ImgCropTransform((int(params['height']), int(params['width'])))
 
     @property
     def serialize(self):
-        return {}
-
-    class Builder:
-        def __init__(self, params):
-            self._params = params
-
-        def build(self):
-            height = int(self._params['height'])
-            width = int(self._params['width'])
-            return ImgCropTransform((height, width))
+        return {"type": ImgCropTransform.type(), "params": {"height": self._out_shape[0], "width": self._out_shape[1]}}
 
 
 class ImgResizeTransform(ColumnTransform):
@@ -109,42 +108,40 @@ class ImgResizeTransform(ColumnTransform):
 class ImgNormalizationTransform(ColumnTransform):
     def __init__(self, is_global, mean=None, std=None):
         super(ImgNormalizationTransform, self).__init__()
-        self.is_global = is_global
-        if self.is_global:
-            self.mean = mean
-            self.std = std
+        self._is_global = is_global
+        if self._is_global:
+            self._mean = mean
+            self._std = std
         else:
-            self.mean = 0.
-            self.std = 1.
-
-    class Builder:
-        def __init__(self, params):
-            self._params = params
-
-        def build(self):
-            is_global = True if self._params['is_global'] == "True" else False
-            mean = None
-            std = None
-            if is_global:
-                mean = float(self._params['mean'])
-                std = float(self._params['std'])
-            return ImgNormalizationTransform(is_global, mean, std)
+            self._mean = 0.
+            self._std = 1.
 
     @staticmethod
     def type():
         return "imgNormalization"
 
     def apply(self, data):
-        if self.is_global:
-            return (data - self.mean) / data.std
+        if self._is_global:
+            return (data - self._mean) / data.std
         else:
-            tmean = data.mean()
-            tstd  = data.std()
-            return (data - tmean)/tstd
+            mean = data.mean()
+            std = data.std()
+            return (data - mean) / std
 
     @property
     def serialize(self):
-        return {}
+        params = {"is_global": self._is_global, "mean": self._mean, "std": self._std}
+        return {"type": ImgCropTransform.type(), "params": params}
+
+    @staticmethod
+    def from_params(params):
+        is_global = True if params['is_global'] == "True" else False
+        mean = None
+        std = None
+        if is_global:
+            mean = float(params['mean'])
+            std = float(params['std'])
+        return ImgNormalizationTransform(is_global, mean, std)
 
 
 class Img2DReader(ColumnReader):
@@ -187,7 +184,7 @@ class Img2DSerDe(ColumnSerDe):
             cols = img['cols']
             ch_num = img['ch_num']
             img = np.frombuffer(img['data'], dtype=np.uint8)
-            if ch_num==1:
+            if ch_num == 1:
                 img = img.reshape((rows, cols))
             else:
                 img = img.reshape((rows, cols, ch_num))
@@ -224,13 +221,13 @@ class Img2DColumnMetadata(ColumnMetadata):
             self._img = self._img + img
         self._img_num += 1
 
-    def merge(self, metadata):
-        for m in metadata:
+    def merge(self, agg_metadata):
+        for metadata in agg_metadata:
             if self._img is None:
-                self._img = m.img
+                self._img = metadata.img
             else:
-                self._img = self._img + m.img
-            self._img_num = self._img_num + m.img_num
+                self._img = self._img + metadata.img
+            self._img_num = self._img_num + metadata.img_num
         self._img = self._img / self._img_num
 
     def path(self, path):
@@ -252,3 +249,41 @@ class Img2DColumnMetadata(ColumnMetadata):
         metadata = Img2DColumnMetadata()
         metadata.img = img
         return metadata
+
+
+# Util methods for img2d
+
+def squash_image(img, output_shape):
+    return sktf.resize(img, output_shape=output_shape)
+
+
+def fill_image(img, output_shape):
+    n_rows = img.shape[0]
+    n_cols = img.shape[1]
+    if n_rows == output_shape[0] and n_cols == output_shape[1]:
+        return img.copy()
+    size_out = float(output_shape[0]) / float(output_shape[1])
+    size_in = float(n_rows) / float(n_cols)
+    if size_out > size_in:
+        new_shape = (int(n_rows * float(output_shape[1]) / n_cols), output_shape[1])
+    else:
+        new_shape = (output_shape[0], int(n_cols * float(output_shape[0]) / n_rows))
+    timg = sktf.resize(img, new_shape, preserve_range=True)
+    timgShape = timg.shape[:2]
+    nch = 1 if timg.ndim < 3 else timg.shape[-1]
+    p0 = (int((output_shape[0] - timgShape[0]) / 2.), int((output_shape[1] - timgShape[1]) / 2.))
+    if nch == 1:
+        tret = np.zeros(output_shape, dtype=img.dtype)
+        tret[p0[0]:p0[0] + timg.shape[0], p0[1]:p0[1] + timg.shape[1]] = timg
+    else:
+        tret = np.zeros((output_shape[0], output_shape[1], nch), dtype=img.dtype)
+        tret[p0[0]:p0[0] + timg.shape[0], p0[1]:p0[1] + timg.shape[1], :] = timg
+    return tret
+
+
+def crop_image(img, output_shape):
+    # TODO: check performance: code is realy clean, but...
+    size_in = (img.shape[1], img.shape[0])
+    size_out = (output_shape[1], output_shape[0])
+    transform = SimilarityTransform(translation=(-0.5 * (size_out[0] - size_in[0]), -0.5 * (size_out[1] - size_in[1])))
+    return skwarp(img, transform, output_shape=output_shape)

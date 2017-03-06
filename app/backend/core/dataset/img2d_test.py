@@ -2,8 +2,10 @@ import shutil, tempfile
 import numpy as np
 from os import path
 from skimage import data
+import skimage.io as skimgio
+import imghdr
 from PIL import Image
-from img2d import Img2DColumn, Img2DSerDe, Img2DColumnMetadata, Img2DReader
+from img2d import Img2DColumn, Img2DSerDe, Img2DColumnMetadata, Img2DReader, ImgNormalizationTransform
 import unittest
 import random
 
@@ -66,7 +68,24 @@ class TestImg2DMetadata(unittest.TestCase):
         img2d_col.metadata.merge(aggregated_metadata)
         mean_img = img2d_col.metadata.img
         original_img = img2d_col.reader.read([self.test_img_file_path])[0]
+        # Should be equal because we are using the same image
         self.assertTrue(np.array_equal(mean_img, original_img))
+
+
+class TestImg2DImgNormalizationTransform(unittest.TestCase):
+    def setUp(self):
+        self.test_dir,  self.test_img_file_path = create_test_data()
+
+    def tearDown(self):
+        shutil.rmtree(self.test_dir)
+
+    def test_img2d_normalization(self):
+        img_data = skimgio.imread(self.test_img_file_path)
+        img_fmt = imghdr.what(path)
+        data = img_data, img_fmt
+        transform = ImgNormalizationTransform(True)
+        tr_data = transform.apply(data)
+        self.assertTrue(np.array_equal(data[0], tr_data[0]))
 
 if __name__ == '__main__':
     unittest.main()
