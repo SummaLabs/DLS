@@ -14,13 +14,18 @@ from input import Schema, Input, Column, ComplexColumn, NumericColumn, VectorCol
 
 class Dataset(object):
     DATA_DIR_NAME = "data"
-    FILE_NAME = "dataset.processed"
+    DATA_FILE = "dataset.processed"
     SCHEMA_FILE = "schema.json"
 
-    def __init__(self, schema, path):
+    def __init__(self, schema, path, metadata):
         self._schema = schema
         self._path = path
+        self._metadata = metadata
         self._record_reader = RecordReader.factory("HDF5", path)
+
+    @property
+    def metadata(self):
+        return self._metadata
 
     def get_batch(self, batch_size=64):
         data = {}
@@ -42,7 +47,8 @@ class Dataset(object):
     @staticmethod
     def load(path):
         with open(os.path.join(path, Dataset.DATA_DIR_NAME, Dataset.SCHEMA_FILE)) as s:
-            return Dataset(Schema.deserialize(json.load(s)), path)
+            dataset_schema = json.load(s)
+            return Dataset(Schema.deserialize(dataset_schema), path, Metadata.from_schema(dataset_schema["metadata"]))
 
     class Builder(object):
         def __init__(self, input, name, root_dir, parallelism_level=2, storage_type="HDF5"):
@@ -72,7 +78,7 @@ class Dataset(object):
             record_write = RecordWriter.factory(self._storage_type, self._dataset_root_dir, self._input.schema.columns)
             completed_processor_num = 0
             record_idx = 0
-            aggregated_metadata = []
+            aggregated_column_metadata = []
             try:
                 while completed_processor_num < self._parallelism_level:
                     result = processed_records.get(block=True, timeout=5)
@@ -81,19 +87,20 @@ class Dataset(object):
                         record_idx += 1
                     else:
                         completed_processor_num += 1
-                        aggregated_metadata.append(result.column_metadata)
+                        aggregated_column_metadata.append(result.column_metadata)
             except Empty:
                 logging.warning("Not all the threads completed as expected")
             record_write.close()
 
-            self._merge_metadata(aggregated_metadata)
-            self._serialize_data_schema()
+            self._merge_column_metadata(aggregated_column_metadata)
+            dataset_metadata = Metadata.create(os.path.join(self._dataset_data_dir, Dataset.DATA_FILE), record_idx)
+            self._serialize_dataset_schema(dataset_metadata)
 
             print "Records processed: " + str(record_idx)
 
-            return Dataset(self._input.schema, self._dataset_root_dir)
+            return Dataset(self._input.schema, self._dataset_root_dir, dataset_metadata)
 
-        def _merge_metadata(self, aggregated_metadata):
+        def _merge_column_metadata(self, aggregated_metadata):
             """
             :param aggregated_metadata: List of column's metadata from different processes.
             :return:
@@ -136,12 +143,13 @@ class Dataset(object):
                 if column.type is None:
                     raise TypeError("Please specify type for column: %s" % column.name)
 
-        def _serialize_data_schema(self):
+        def _serialize_dataset_schema(self, metadata):
             for column in self._input.schema.columns:
                 if column.metadata is not None:
                     column.metadata.path(self._dataset_data_dir)
+            dataset_schema = {"schema": self._input.schema.serialize(), "metadata": metadata.serialize()}
             with open(os.path.join(self._dataset_data_dir, Dataset.SCHEMA_FILE), 'w') as f:
-                f.write(json.dumps(self._input.schema.serialize()))
+                f.write(json.dumps(dataset_schema))
 
 
 class RecordWriter(object):
@@ -184,7 +192,7 @@ class RecordReader(object):
 class HDF5RecordReader(RecordReader):
     def __init__(self, data_dir):
         super(HDF5RecordReader, self).__init__(data_dir)
-        self._data_file = h5py.File(os.path.join(data_dir, Dataset.DATA_DIR_NAME, Dataset.FILE_NAME), 'r')
+        self._data_file = h5py.File(os.path.join(data_dir, Dataset.DATA_DIR_NAME, Dataset.DATA_FILE), 'r')
         self._data = self._data_file['data']
         self._data_keys = self._data_file['data'].keys()
 
@@ -215,7 +223,7 @@ class HDF5RecordReader(RecordReader):
 class HDF5RecordWriter(RecordWriter):
     def __init__(self, data_dir, columns):
         super(HDF5RecordWriter, self).__init__(data_dir, columns)
-        self._file = h5py.File(os.path.join(self._data_dir, Dataset.DATA_DIR_NAME, Dataset.FILE_NAME), 'w')
+        self._file = h5py.File(os.path.join(self._data_dir, Dataset.DATA_DIR_NAME, Dataset.DATA_FILE), 'w')
         self._root_data = self._file.create_group('data')
 
     def write(self, record, idx):
@@ -279,9 +287,28 @@ class Data(object):
 
 
 class Metadata(object):
-    def __init__(self):
-        print ""
+    def __init__(self, size, records_count):
+        self._size = size
+        self._records_count = records_count
 
+    @property
+    def size(self):
+        return self._size
+
+    @property
+    def records_count(self):
+        return self._records_count
+
+    def serialize(self):
+        return {"data-size" : self._size, "records-count": self._records_count}
+
+    @classmethod
+    def from_schema(self, schema):
+        return Metadata(int(schema["data-size"]), int(schema["records_count"]))
+
+    @classmethod
+    def create(cls, dataset_data_path, records_count):
+        return Metadata(os.path.getsize(dataset_data_path), records_count)
 
 if __name__ == '__main__':
     from img2d import Img2DColumn, Img2DReader, ImgResizeTransform
