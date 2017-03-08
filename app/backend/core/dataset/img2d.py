@@ -35,6 +35,14 @@ class Img2DColumn(ComplexColumn):
         if metadata is None:
             self._metadata = Img2DColumnMetadata(self._name)
 
+    def process_on_write(self, record):
+        img_array, img_fmt = self.reader.read(record)
+        if self._metadata is not None:
+            self._metadata.aggregate(img_array)
+        for transform in self._pre_transforms:
+            img_array = transform.apply(img_array)
+        return self.ser_de.serialize((img_array, img_fmt))
+
     @classmethod
     def from_schema(cls, column_schema):
         pre_transforms = []
@@ -214,7 +222,7 @@ class Img2DColumnMetadata(ColumnMetadata):
         return self._img_num
 
     def aggregate(self, img):
-        img = img[0]
+        img = img.astype(np.float)
         if self._img is None:
             self._img = img
         else:
@@ -234,7 +242,7 @@ class Img2DColumnMetadata(ColumnMetadata):
         self._path = path
 
     def serialize(self):
-        img = Image.fromarray(self._img)
+        img = Image.fromarray(self._img).convert('RGB')
         img_path_prefix = self._column_name
         if self._column_name is not None:
             img_path_prefix = str(random.getrandbits(16))
