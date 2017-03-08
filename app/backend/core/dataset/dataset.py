@@ -47,8 +47,8 @@ class Dataset(object):
     @staticmethod
     def load(path):
         with open(os.path.join(path, Dataset.DATA_DIR_NAME, Dataset.SCHEMA_FILE)) as s:
-            dataset_schema = json.load(s)
-            return Dataset(Schema.deserialize(dataset_schema), path, Metadata.from_schema(dataset_schema["metadata"]))
+            dataset_json = json.load(s)
+            return Dataset(Schema.deserialize(dataset_json["schema"]), path, Metadata.from_schema(dataset_json["metadata"]))
 
     class Builder(object):
         def __init__(self, input, name, root_dir, parallelism_level=2, storage_type="HDF5"):
@@ -304,7 +304,7 @@ class Metadata(object):
 
     @classmethod
     def from_schema(self, schema):
-        return Metadata(int(schema["data-size"]), int(schema["records_count"]))
+        return Metadata(int(schema["data-size"]), int(schema["records-count"]))
 
     @classmethod
     def create(cls, dataset_data_path, records_count):

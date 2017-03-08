@@ -57,9 +57,9 @@ class TestDataSetBuilder(unittest.TestCase):
         img2d = Img2DColumn([], [])
         input.add_column("col_5", img2d)
         dataset = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2).build()
-        # metadata = dataset.metadata
-        # self.assertEqual(metadata.records_count, 10)
-        # self.assertTrue(metadata.size > 0)
+        metadata = dataset.metadata
+        self.assertEqual(metadata.records_count, 10)
+        self.assertTrue(metadata.size > 0)
         data = dataset.get_batch(5)
         categories_vector = data['col_0']
         # Check that for the same record there are the same values in vectors as we assign it in csv file
@@ -69,9 +69,9 @@ class TestDataSetBuilder(unittest.TestCase):
         self.assertEqual(col_vector[0, 0], float_vector[0])
         # Load dataset
         dataset = Dataset.load(dataset._path)
-        # metadata = dataset.metadata
-        # self.assertEqual(metadata.records_count, 10)
-        # self.assertTrue(metadata.size > 0)
+        metadata = dataset.metadata
+        self.assertEqual(metadata.records_count, 10)
+        self.assertTrue(metadata.size > 0)
         data = dataset.get_batch(5)
         # Check that for the same record there are the same values in vectors as we assign it in csv file
         float_vector = data['col_1']
