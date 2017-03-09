@@ -7,6 +7,7 @@ import json
 from flask import Blueprint
 from flask import request, Response
 from app.backend.dataset import ds_ui_layout_service
+from app.backend.dataset.service import DatasetService
 
 dataset = Blueprint(__name__, __name__)
 
@@ -14,6 +15,8 @@ from app.backend.core.datasets.dbwatcher import DatasetsWatcher
 
 datasetWatcher = DatasetsWatcher()
 datasetWatcher.refreshDatasetsInfo()
+
+dataset_service = DatasetService("test")
 
 
 @dataset.route('/all/metadata/list', methods=['GET'])
@@ -79,6 +82,15 @@ def delete(id):
     datasetWatcher.delete(id)
     datasetWatcher.refreshDatasetsInfo()
     return list_data_sets_metadata()
+
+
+@dataset.route('/csv/load', methods=['POST'])
+def load_from_csv():
+    csv_rows = dataset_service.load_from_csv(request.args['file-path'],
+                                                             request.args['header'],
+                                                             request.args['separator'],
+                                                             request.args['rows-num'])
+    return Response(json.dumps(csv_rows), mimetype='application/json')
 
 
 @dataset.route('/ui/layout', methods=['GET'])

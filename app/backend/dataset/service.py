@@ -16,6 +16,7 @@ class DatasetService(object):
                 return dataset.metadata
         raise Exception("No dataset with such id")
 
-    def load_csv(self, csv_file_path, header, separator, rows_num):
+    @staticmethod
+    def load_from_csv(csv_file_path, header, separator, rows_num):
         schema = Schema(csv_file_path, header, separator)
         return schema.read_n_rows(rows_num)
