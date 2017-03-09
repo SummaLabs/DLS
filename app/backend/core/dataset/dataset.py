@@ -17,15 +17,20 @@ class Dataset(object):
     DATA_FILE = "dataset.processed"
     SCHEMA_FILE = "schema.json"
 
-    def __init__(self, schema, path, metadata):
+    def __init__(self, schema, path, metadata, id):
         self._schema = schema
         self._path = path
         self._metadata = metadata
+        self._id = id
         self._record_reader = RecordReader.factory("HDF5", path)
 
     @property
     def metadata(self):
         return self._metadata
+
+    @property
+    def id(self):
+        return self._id
 
     def get_batch(self, batch_size=64):
         data = {}
@@ -48,7 +53,9 @@ class Dataset(object):
     def load(path):
         with open(os.path.join(path, Dataset.DATA_DIR_NAME, Dataset.SCHEMA_FILE)) as s:
             dataset_json = json.load(s)
-            return Dataset(Schema.deserialize(dataset_json["schema"]), path, Metadata.from_schema(dataset_json["metadata"]))
+            return Dataset(Schema.deserialize(dataset_json["schema"]), path,
+                           Metadata.from_schema(dataset_json["metadata"]),
+                           dataset_json["dataset-id"])
 
     class Builder(object):
         def __init__(self, input, name, root_dir, parallelism_level=2, storage_type="HDF5"):
@@ -62,7 +69,8 @@ class Dataset(object):
             self._init(root_dir)
 
         def _init(self, root_dir):
-            self._dataset_root_dir = os.path.join(root_dir, self._name + "-" + str(random.getrandbits(64)))
+            self._dataset_id = self._name + "-" + str(random.getrandbits(64))
+            self._dataset_root_dir = os.path.join(root_dir, self._dataset_id)
             self._dataset_data_dir = os.path.join(self._dataset_root_dir, Dataset.DATA_DIR_NAME)
             os.makedirs(self._dataset_data_dir)
 
@@ -98,7 +106,7 @@ class Dataset(object):
 
             print "Records processed: " + str(record_idx)
 
-            return Dataset(self._input.schema, self._dataset_root_dir, dataset_metadata)
+            return Dataset(self._input.schema, self._dataset_root_dir, dataset_metadata, self._dataset_id)
 
         def _merge_column_metadata(self, aggregated_metadata):
             """
@@ -147,7 +155,9 @@ class Dataset(object):
             for column in self._input.schema.columns:
                 if column.metadata is not None:
                     column.metadata.path(self._dataset_data_dir)
-            dataset_schema = {"schema": self._input.schema.serialize(), "metadata": metadata.serialize()}
+            dataset_schema = {"dataset-id": self._dataset_id,
+                              "metadata": metadata.serialize(),
+                              "schema": self._input.schema.serialize()}
             with open(os.path.join(self._dataset_data_dir, Dataset.SCHEMA_FILE), 'w') as f:
                 f.write(json.dumps(dataset_schema))
 
@@ -300,7 +310,7 @@ class Metadata(object):
         return self._records_count
 
     def serialize(self):
-        return {"data-size" : self._size, "records-count": self._records_count}
+        return {"data-size": self._size, "records-count": self._records_count}
 
     @classmethod
     def from_schema(self, schema):
@@ -309,6 +319,7 @@ class Metadata(object):
     @classmethod
     def create(cls, dataset_data_path, records_count):
         return Metadata(os.path.getsize(dataset_data_path), records_count)
+
 
 if __name__ == '__main__':
     from img2d import Img2DColumn, Img2DReader, ImgResizeTransform
