@@ -84,12 +84,18 @@ def delete(id):
     return list_data_sets_metadata()
 
 
-@dataset.route('/csv/load', methods=['POST'])
+@dataset.route('/data/types/config', methods=['GET'])
+def data_types_config():
+    return Response(json.dumps(dataset_service.data_types_config()), mimetype='application/json')
+
+
+@dataset.route('/csv/load/rows', methods=['POST'])
 def load_from_csv():
+    header = True if request.args['header'] == "True" else False
     csv_rows = dataset_service.load_from_csv(request.args['file-path'],
-                                                             request.args['header'],
-                                                             request.args['separator'],
-                                                             request.args['rows-num'])
+                                             header,
+                                             request.args['separator'],
+                                             int(request.args['rows-num']))
     return Response(json.dumps(csv_rows), mimetype='application/json')
 
 

@@ -17,6 +17,26 @@ class DatasetService(object):
         raise Exception("No dataset with such id")
 
     @staticmethod
+    def data_types_config():
+        return {"column": [
+            {
+                "type": "NUMERIC"
+            },
+            {
+                "type": "NUMERIC"
+            },
+            {
+                "type": "VECTOR"
+            },
+            {
+                "type": "IMG_2D",
+                "transforms": [{"type": "imgResize", "name": "Image Resize", "config": {"height": "input-int", "width": "input-int"}},
+                               {"type": "imgNormalization", "name": "Image Normalization", "config": {"height": "input-int", "width": "input-int"}},
+                               {"type": "imgCrop", "name": "Image Cropping", "config": {"height": "input-int", "width": "input-int"}}]
+            }
+        ]}
+
+    @staticmethod
     def load_from_csv(csv_file_path, header, separator, rows_num):
         schema = Schema(csv_file_path, header, separator)
         return schema.read_n_rows(rows_num)
