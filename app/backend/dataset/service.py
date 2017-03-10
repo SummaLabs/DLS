@@ -30,9 +30,9 @@ class DatasetService(object):
             },
             {
                 "type": "IMG_2D",
-                "transforms": [{"type": "imgResize", "name": "Image Resize", "config": {"height": "input-int", "width": "input-int"}},
-                               {"type": "imgNormalization", "name": "Image Normalization", "config": {"height": "input-int", "width": "input-int"}},
-                               {"type": "imgCrop", "name": "Image Cropping", "config": {"height": "input-int", "width": "input-int"}}]
+                "transforms": [{"type": "img-resize", "name": "Image Resize", "config": {"height": {"input": "int"}, "width": {"input":"int"}}},
+                               {"type": "img-normalization", "name": "Image Normalization", "config": {"height": {"input": "int"}, "width": {"input":"int"}}},
+                               {"type": "img-Cropping", "name": "Image Cropping", "config": {"height": {"input": "int"}, "width": {"input":"int"}}}]
             }
         ]}
 
