@@ -6,7 +6,6 @@ import json
 
 from flask import Blueprint
 from flask import request, Response
-from app.backend.dataset import ds_ui_layout_service
 from app.backend.dataset.service import DatasetService
 
 dataset = Blueprint(__name__, __name__)
