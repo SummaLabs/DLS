@@ -6,20 +6,17 @@ import numpy as np
 
 
 class Schema(object):
-    separator = ','
-
-    def __init__(self, csv_file_path=None, header=False, separator=None):
+    def __init__(self, csv_file_path=None, header=False, delimiter=','):
         self._csv_file_path = csv_file_path
         if csv_file_path is not None:
-            self._build_from_csv(csv_file_path, header, separator)
+            self._build_from_csv(csv_file_path, header, delimiter)
 
-    def _build_from_csv(self, csv_file_path, header=False, separator=None):
-        self._csv_file_path = csv_file_path
-        if separator is not None:
-            tseparator = separator.strip()
-            if len(tseparator) < 0 or len(tseparator) > 1:
-                raise Exception('Invalid separator [%s]' % separator)
-            self.separator = tseparator
+    def _build_from_csv(self, csv_file_path, header, delimiter):
+        self.delimiter = csv_file_path
+        delimiter = delimiter.strip()
+        if len(delimiter) < 0 or len(delimiter) > 1:
+            raise Exception('Invalid delimiter [%s]' % delimiter)
+        self._delimiter = delimiter
         header_row = [col.strip() for col in self.read_n_rows(1)[0]]
         if header:
             duplicates = set([x for x in header_row if header_row.count(x) > 1])
@@ -32,7 +29,7 @@ class Schema(object):
     def read_n_rows(self, rows_number):
         rows = []
         with open(self._csv_file_path, 'rb') as f:
-            reader = csv.reader(f, delimiter=str(self.separator))
+            reader = csv.reader(f, delimiter=str(self._delimiter))
             try:
                 for row in islice(reader, 0, rows_number):
                     rows.append(row)
@@ -105,7 +102,8 @@ class Schema(object):
     def deserialize(schema_json):
         schema = Schema()
         if 'csv_file_path' in schema_json:
-            schema = Schema(schema_json['csv_file_path'], schema_json['header'], schema_json['separator'])
+            header = True if schema_json['header'] == 'True' else False
+            schema = Schema(schema_json['csv_file_path'], header, schema_json['delimiter'])
             columns_indexes_number = sum(len(column["index"]) for column in schema_json['columns'])
             if columns_indexes_number != len(schema.columns):
                 raise TypeError(

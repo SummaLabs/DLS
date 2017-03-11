@@ -1,45 +1,25 @@
 import shutil, tempfile
-from os import path
-from skimage import data
 import skimage.io as skimgio
-from PIL import Image
 from input import Input, Schema, CategoricalColumnMetadata
 from img2d import Img2DColumn
 from dataset import Dataset, RecordWriter, RecordReader
 import unittest
-import random
 import os
 import numpy as np
-
-test_csv_file = 'test.csv'
-test_img_file = 'test-img.png'
-categories = ['cat_1', 'cat_2', 'cat_3', 'cat_4']
-
-
-def create_test_data(records_number):
-    test_dir = tempfile.mkdtemp()
-    test_csv_file_path = path.join(test_dir, test_csv_file)
-    # Create and save image
-    image = data.camera()
-    img = Image.fromarray(image)
-    test_img_file_path = path.join(test_dir, test_img_file)
-    img.save(test_img_file_path)
-    f = open(test_csv_file_path, 'w')
-    for i in range(records_number):
-        f.write('%s, %d, %d, %d, %d, %s\n' % (categories[random.randrange(4)], i, i, i, i, test_img_file_path))
-    f.close()
-    return test_dir, test_csv_file_path, test_img_file_path
+from input_test import create_test_data
+from input_test import categories
 
 
 class TestDataSetBuilder(unittest.TestCase):
     def setUp(self):
-        self.test_dir, self.test_file_path, self.test_img_file_path = create_test_data(10)
+        self.test_dir = tempfile.mkdtemp()
+        self.test_csv_file_path, self.test_img_file_path = create_test_data(self.test_dir, 10)
 
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
     def test_process_csv_file(self):
-        schema = Schema(self.test_file_path)
+        schema = Schema(self.test_csv_file_path)
         input = Input(schema)
         input.add_categorical_column('col_0')
         rows = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2)._process_csv_file()
@@ -48,7 +28,7 @@ class TestDataSetBuilder(unittest.TestCase):
         self.assertTrue(len(column.metadata.categories), 4)
 
     def test_build_dataset(self):
-        schema = Schema(self.test_file_path)
+        schema = Schema(self.test_csv_file_path)
         schema.merge_columns_in_range('col_vector', (2, 4))
         input = Input(schema)
         input.add_categorical_column('col_0')
@@ -82,13 +62,14 @@ class TestDataSetBuilder(unittest.TestCase):
 
 class TestHDF5RecordWriterReader(unittest.TestCase):
     def setUp(self):
-        self.test_dir, self.test_file_path, self.test_img_file_path = create_test_data(10)
+        self.test_dir = tempfile.mkdtemp()
+        self.test_csv_file_path, self.test_img_file_path = create_test_data(self.test_dir, 10)
 
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
     def test_write_read_record_raw_img_true(self):
-        schema = Schema(self.test_file_path)
+        schema = Schema(self.test_csv_file_path)
         schema.merge_columns_in_range('col_vector', (2, 4))
         input = Input(schema)
         input.add_categorical_column('col_0')
@@ -117,7 +98,7 @@ class TestHDF5RecordWriterReader(unittest.TestCase):
         self.assertTrue(np.array_equal(img_deserialized, img_original))
 
     def test_write_read_record_raw_img_false(self):
-        schema = Schema(self.test_file_path)
+        schema = Schema(self.test_csv_file_path)
         schema.merge_columns_in_range('col_vector', (2, 4))
         input = Input(schema)
         input.add_categorical_column('col_0')
