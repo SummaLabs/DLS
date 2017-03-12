@@ -232,5 +232,22 @@ class TestInput(unittest.TestCase):
                 self.assertTrue(isinstance(column.post_transforms[0], ImgCropTransform))
 
 
+class TestBasicColumns(unittest.TestCase):
+    def setUp(self):
+        self.test_dir = tempfile.mkdtemp()
+        self.test_csv_file_path, self.test_img_file_path = create_test_data(self.test_dir, 15)
+
+    def tearDown(self):
+        shutil.rmtree(self.test_dir)
+
+    def test_categorical_column_metadata(self):
+        categorical = CategoricalColumn()
+        for i in range(0, 4):
+            categorical.metadata.aggregate(category=categories[i])
+        categories_count = categorical.metadata.categories_count
+        for category in categories_count:
+            self.assertEqual(categories_count[category], 1)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -3,6 +3,7 @@ import csv, sys
 import copy
 import abc
 import numpy as np
+import json
 
 
 class Schema(object):
@@ -470,21 +471,33 @@ class CategoricalColumn(Column):
 
 
 class CategoricalColumnMetadata(ColumnMetadata):
-    def __init__(self, categories=None):
-        self._data = set()
+    def __init__(self, categories=None, categories_count=None):
+        self._categories = set()
         if categories is not None:
-            self._data = set(categories)
+            self._categories = set(categories)
+        self._categories_count = {}
+        if categories_count is not None:
+            self._categories_count = categories_count
 
     @property
     def categories(self):
-        return list(self._data)
+        return list(self._categories)
 
-    def aggregate(self, data):
-        self._data.add(data)
+    @property
+    def categories_count(self):
+        return self._categories_count
+
+    def aggregate(self, category):
+        self._categories.add(category)
+        self._categories_count[category] = self._categories_count.get(category, 0) + 1
 
     def serialize(self):
-        return {'categories': self.categories}
+        dumps = json.dumps(self._categories_count)
+        return {'categories': self.categories, 'categories_count': dumps}
 
     @classmethod
     def deserialize(cls, schema):
-        return CategoricalColumnMetadata(schema['categories'])
+        categories_count = {}
+        for key, value in json.loads(schema['categories_count']).iteritems():
+            categories_count[str(key)] = int(value)
+        return CategoricalColumnMetadata(schema['categories'], categories_count)

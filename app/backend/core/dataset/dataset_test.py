@@ -75,7 +75,7 @@ class TestHDF5RecordWriterReader(unittest.TestCase):
         input.add_categorical_column('col_0')
         _, cat_col = input._find_column_in_schema('col_0')
         metadata = CategoricalColumnMetadata()
-        metadata._data = categories
+        metadata._categories = categories
         cat_col.metadata = metadata
         input.add_numeric_column('col_1')
         input.add_vector_column('col_vector')
@@ -104,7 +104,7 @@ class TestHDF5RecordWriterReader(unittest.TestCase):
         input.add_categorical_column('col_0')
         _, cat_col = input._find_column_in_schema('col_0')
         metadata = CategoricalColumnMetadata()
-        metadata._data = categories
+        metadata._categories = categories
         cat_col.metadata = metadata
         input.add_numeric_column('col_1')
         input.add_vector_column('col_vector')

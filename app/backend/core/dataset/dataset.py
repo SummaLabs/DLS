@@ -332,7 +332,7 @@ if __name__ == '__main__':
     if not os.path.isfile(pathCSV):
         raise Exception('Cant find file [%s]' % pathCSV)
     wdir = os.path.abspath(os.path.dirname(pathCSV))
-    schema = Schema(pathCSV, header=True, separator='|')
+    schema = Schema(pathCSV, header=True, delimiter='|')
     schema.print_data()
     input = Input(schema=schema)
     # dataset = Dataset()
