@@ -9,6 +9,7 @@
                 var taskDirectives =
                 {
                     'db-image2d-cls':'<task-dataset task-id="' + taskId + '" ></task-dataset>',
+                    'build_dataset':'<task-dataset task-id="' + taskId + '" ></task-dataset>',
                     'model-train-image2d-cls':'<task-model task-id="' + taskId + '" ></task-model>',
                     'base':'<task-test task-id="' + taskId + '"></task-test>',
                 };
