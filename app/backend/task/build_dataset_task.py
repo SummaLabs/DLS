@@ -9,9 +9,15 @@ class BuildDatasetTask(Task):
         Task.__init__(self)
         self.schema = schema
         self.test_dir = '/tmp/tmp37_dAG'
+        self.type = 'build_dataset'
+        self.basetype = 'dataset'
+        self.icon = "/frontend/assets/icon/img/img-dataset1.png"
 
 
     def perform(self):
         input = Input.Builder(self.schema).build()
-        dataset = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2).build()
+        dataset = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2).build(self)
+        if self.state == 'running':
+            self.state = 'finished'
+
 

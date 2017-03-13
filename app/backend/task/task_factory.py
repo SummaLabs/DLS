@@ -12,7 +12,7 @@ class TaskFactory:
     def __init__(self): pass
 
     @staticmethod
-    def create(type, params, body):
+    def create(type, params, body=None):
         if type == "default":
             return DefaultTask()
         elif type == "cmd":

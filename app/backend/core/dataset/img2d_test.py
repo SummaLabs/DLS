@@ -57,10 +57,10 @@ class TestImg2DMetadata(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
-    def test_img2d_metadata_aggregate(self):
+    def test_img2d_column_metadata(self):
         img2d_col = Img2DColumn(columns_indexes=[0], pre_transforms=[], post_transforms=[])
         aggregated_metadata = []
-        for i in range(1, 5):
+        for i in range(0, 5):
             img, img_fmt = img2d_col.reader.read([self.test_img_file_path])
             metadata = Img2DColumnMetadata()
             metadata.aggregate(img=img)

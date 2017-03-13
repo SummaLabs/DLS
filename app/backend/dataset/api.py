@@ -6,7 +6,6 @@ import json
 
 from flask import Blueprint
 from flask import request, Response
-from app.backend.dataset import ds_ui_layout_service
 from app.backend.dataset.service import DatasetService
 
 dataset = Blueprint(__name__, __name__)
@@ -97,9 +96,3 @@ def load_from_csv():
                                              request.args['separator'],
                                              int(request.args['rows-num']))
     return Response(json.dumps(csv_rows), mimetype='application/json')
-
-
-@dataset.route('/ui/layout', methods=['GET'])
-def get_dataset_ui_layout():
-    ui_layout = ds_ui_layout_service.produce_ui_layout()
-    return Response(json.dumps(ui_layout), mimetype='application/json')

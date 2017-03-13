@@ -12,6 +12,7 @@ from img2d import Img2DSerDe, Img2DColumn
 from input import Schema, Input, Column, ComplexColumn, NumericColumn, VectorColumn, CategoricalColumn
 
 
+
 class Dataset(object):
     DATA_DIR_NAME = "data"
     DATA_FILE = "dataset.processed"
@@ -74,7 +75,7 @@ class Dataset(object):
             self._dataset_data_dir = os.path.join(self._dataset_root_dir, Dataset.DATA_DIR_NAME)
             os.makedirs(self._dataset_data_dir)
 
-        def build(self):
+        def build(self, progressor=None):
             self._validate_data_schema()
             csv_rows_chunks = np.array_split(self._process_csv_file(), self._parallelism_level)
             processor = []
@@ -95,6 +96,8 @@ class Dataset(object):
                         record_idx += 1
                     else:
                         completed_processor_num += 1
+                        if(progressor != None):
+                            progressor.progress = 100 * self._parallelism_level / completed_processor_num
                         aggregated_column_metadata.append(result.column_metadata)
             except Empty:
                 logging.warning("Not all the threads completed as expected")
@@ -332,7 +335,7 @@ if __name__ == '__main__':
     if not os.path.isfile(pathCSV):
         raise Exception('Cant find file [%s]' % pathCSV)
     wdir = os.path.abspath(os.path.dirname(pathCSV))
-    schema = Schema(pathCSV, header=True, separator='|')
+    schema = Schema(pathCSV, header=True, delimiter='|')
     schema.print_data()
     input = Input(schema=schema)
     # dataset = Dataset()
