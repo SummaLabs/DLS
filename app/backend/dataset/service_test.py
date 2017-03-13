@@ -11,8 +11,9 @@ class TestDatasetService(unittest.TestCase):
     def setUp(self):
         self.test_dir = tempfile.mkdtemp()
         self.test_csv_file_path, self.test_img_file_path = create_test_data(self.test_dir, 10)
-        for i in range(0, 3):
-            create_test_dataset(self.test_dir, self.test_img_file_path, "test_dataset_" + str(i))
+        # for i in range(0, 3):
+        #     create_test_dataset(self.test_dir, self.test_img_file_path, "test_dataset_" + str(i))
+        create_test_dataset(self.test_dir, self.test_csv_file_path, "test_dataset_" + str(0))
 
     def tearDown(self):
         shutil.rmtree(self.test_dir)

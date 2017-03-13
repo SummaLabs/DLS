@@ -53,10 +53,11 @@ class Dataset(object):
     @staticmethod
     def load(path):
         with open(os.path.join(path, Dataset.DATA_DIR_NAME, Dataset.SCHEMA_FILE)) as s:
-            dataset_json = json.load(s)
-            return Dataset(Schema.deserialize(dataset_json["schema"]), path,
-                           Metadata.from_schema(dataset_json["metadata"]),
-                           dataset_json["dataset-id"])
+            dataset_serialized = json.load(s)
+            schema = Schema.deserialize(dataset_serialized["schema"])
+            metadata_serialized = dataset_serialized["metadata"]
+            metadata = Metadata(int(metadata_serialized["data-size"]), int(metadata_serialized["records-count"]), schema.columns)
+            return Dataset(schema, path, metadata, dataset_serialized["dataset-id"])
 
     class Builder(object):
         def __init__(self, input, name, root_dir, parallelism_level=2, storage_type="HDF5"):
@@ -104,7 +105,7 @@ class Dataset(object):
             record_write.close()
 
             self._merge_column_metadata(aggregated_column_metadata)
-            dataset_metadata = Metadata.create(os.path.join(self._dataset_data_dir, Dataset.DATA_FILE), record_idx)
+            dataset_metadata = Metadata.create(os.path.join(self._dataset_data_dir, Dataset.DATA_FILE), record_idx, self._input.schema.columns)
             self._serialize_dataset_schema(dataset_metadata)
 
             print "Records processed: " + str(record_idx)
@@ -304,7 +305,7 @@ class Metadata(object):
         self._size = size
         self._records_count = records_count
         self._columns_metadata = {}
-        for column in columns.keys():
+        for column in columns:
             self._columns_metadata[column.name] = column.metadata
 
     def __getitem__(self, column_name):
@@ -326,12 +327,12 @@ class Metadata(object):
         return {"data-size": self._size, "records-count": self._records_count}
 
     @classmethod
-    def from_schema(self, schema):
+    def from_schema(cls, schema):
         return Metadata(int(schema["data-size"]), int(schema["records-count"]))
 
     @classmethod
-    def create(cls, dataset_data_path, records_count):
-        return Metadata(os.path.getsize(dataset_data_path), records_count)
+    def create(cls, dataset_data_path, records_count, columns):
+        return Metadata(os.path.getsize(dataset_data_path), records_count, columns)
 
 
 if __name__ == '__main__':
