@@ -10,6 +10,18 @@ from input_test import create_test_data
 from input_test import categories
 
 
+def create_test_dataset(test_dir, test_csv_file_path, dataset_name):
+    schema = Schema(test_csv_file_path)
+    schema.merge_columns_in_range('col_vector', (2, 4))
+    input = Input(schema)
+    input.add_categorical_column('col_0')
+    input.add_numeric_column('col_1')
+    input.add_vector_column('col_vector')
+    img2d = Img2DColumn([], [])
+    input.add_column("col_5", img2d)
+    return Dataset.Builder(input, dataset_name, test_dir, parallelism_level=2).build()
+
+
 class TestDataSetBuilder(unittest.TestCase):
     def setUp(self):
         self.test_dir = tempfile.mkdtemp()
@@ -28,15 +40,7 @@ class TestDataSetBuilder(unittest.TestCase):
         self.assertTrue(len(column.metadata.categories), 4)
 
     def test_build_dataset(self):
-        schema = Schema(self.test_csv_file_path)
-        schema.merge_columns_in_range('col_vector', (2, 4))
-        input = Input(schema)
-        input.add_categorical_column('col_0')
-        input.add_numeric_column('col_1')
-        input.add_vector_column('col_vector')
-        img2d = Img2DColumn([], [])
-        input.add_column("col_5", img2d)
-        dataset = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2).build()
+        dataset = create_test_dataset(self.test_dir, self.test_csv_file_path, "test_dataset_name")
         metadata = dataset.metadata
         self.assertEqual(metadata.records_count, 10)
         self.assertTrue(metadata.size > 0)

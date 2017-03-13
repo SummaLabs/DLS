@@ -300,9 +300,15 @@ class Data(object):
 
 
 class Metadata(object):
-    def __init__(self, size, records_count):
+    def __init__(self, size, records_count, columns):
         self._size = size
         self._records_count = records_count
+        self._columns_metadata = {}
+        for column in columns.keys():
+            self._columns_metadata[column.name] = column.metadata
+
+    def __getitem__(self, column_name):
+        return self._columns_metadata[column_name]
 
     @property
     def size(self):
@@ -311,6 +317,10 @@ class Metadata(object):
     @property
     def records_count(self):
         return self._records_count
+
+    @property
+    def columns_metadata(self):
+        return self._columns_metadata
 
     def serialize(self):
         return {"data-size": self._size, "records-count": self._records_count}

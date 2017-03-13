@@ -1,42 +1,34 @@
 import shutil, tempfile
 from os import path
 import unittest
-from skimage import data
-import PIL.Image
-from PIL import Image
 
-from app.backend.dataset.service import DatasetService
-
-
-test_img_file = 'test-img.png'
+from app.backend.core.dataset.input_test import create_test_data
+from app.backend.core.dataset.dataset_test import create_test_dataset
+from service import DatasetService
 
 
-def create_csv_file(file_name):
-    test_dir = tempfile.mkdtemp()
-    test_file_path = path.join(test_dir, file_name)
-    # Create and save image
-    image = data.camera()
-    img = Image.fromarray(image)
-    test_img_file_path = path.join(test_dir, test_img_file)
-    img.save(test_img_file_path)
-    f = open(test_file_path, 'w')
-    for i in range(15):
-        f.write('col1%d, col2%d, col3%d, col4%d, col5%d, col6%d\n' % (i, i, i, i, i, i))
-    f.close()
-    return test_dir, test_file_path, test_img_file_path
-
-
-class TestSchema(unittest.TestCase):
+class TestDatasetService(unittest.TestCase):
     def setUp(self):
-        self.test_dir, self.test_file_path, self.test_img_file_path = create_csv_file('test.csv')
+        self.test_dir = tempfile.mkdtemp()
+        self.test_csv_file_path, self.test_img_file_path = create_test_data(self.test_dir, 10)
+        for i in range(0, 3):
+            create_test_dataset(self.test_dir, self.test_img_file_path, "test_dataset_" + str(i))
 
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
     def test_load_from_csv(self):
         dataset_service = DatasetService("test")
-        rows = dataset_service.load_from_csv(self.test_file_path, False, ',', 10)
+        rows = dataset_service.load_from_csv(self.test_csv_file_path, False, ',', 10)
         self.assertEqual(len(rows), 10)
+
+    def test_load_datasets_metadata(self):
+        dataset_service = DatasetService(self.test_dir)
+        datasets_metadata = dataset_service.datasets_metadata()
+        for metadata in datasets_metadata:
+            self.assertTrue(metadata.size > 0)
+            self.assertEqual(metadata.records_count, 10)
+            # columns_metadata = metadata.columns_metadata
 
 
 if __name__ == '__main__':

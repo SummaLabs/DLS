@@ -1,5 +1,5 @@
 from app.backend.core import Workspace
-from app.backend.core.dataset.input import Schema
+from app.backend.core.dataset.input import Schema, Column
 
 
 class DatasetService(object):
@@ -20,16 +20,16 @@ class DatasetService(object):
     def data_types_config():
         return {"column": [
             {
-                "type": "NUMERIC"
+                "type": Column.Type.NUMERIC
             },
             {
-                "type": "NUMERIC"
+                "type": Column.Type.CATEGORICAL
             },
             {
-                "type": "VECTOR"
+                "type": Column.Type.VECTOR
             },
             {
-                "type": "IMG_2D",
+                "type": Column.Type.IMG_2D,
                 "transforms": [{"type": "img-resize", "name": "Image Resize", "config": {"height": {"input": "int"}, "width": {"input":"int"}}},
                                {"type": "img-normalization", "name": "Image Normalization", "config": {"height": {"input": "int"}, "width": {"input":"int"}}},
                                {"type": "img-Cropping", "name": "Image Cropping", "config": {"height": {"input": "int"}, "width": {"input":"int"}}}]
