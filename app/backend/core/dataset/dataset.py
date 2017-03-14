@@ -55,7 +55,8 @@ class Dataset(object):
             dataset_serialized = json.load(s)
             schema = Schema.deserialize(dataset_serialized["schema"])
             metadata_serialized = dataset_serialized["metadata"]
-            metadata = Metadata(int(metadata_serialized["data-size"]), int(metadata_serialized["records-count"]), schema.columns)
+            metadata = Metadata(metadata_serialized["dataset-id"], int(metadata_serialized["data-size"]),
+                                int(metadata_serialized["records-count"]), schema.columns)
             return Dataset(schema, path, metadata, dataset_serialized["dataset-id"])
 
     class Builder(object):
@@ -104,7 +105,7 @@ class Dataset(object):
             record_write.close()
 
             self._merge_column_metadata(aggregated_column_metadata)
-            dataset_metadata = Metadata.create(os.path.join(self._dataset_data_dir, Dataset.DATA_FILE), record_idx, self._input.schema.columns)
+            dataset_metadata = Metadata.create(self._dataset_id, os.path.join(self._dataset_data_dir, Dataset.DATA_FILE), record_idx, self._input.schema.columns)
             self._serialize_dataset_schema(dataset_metadata)
 
             print "Records processed: " + str(record_idx)
@@ -300,7 +301,8 @@ class Data(object):
 
 
 class Metadata(object):
-    def __init__(self, size, records_count, columns):
+    def __init__(self, dataset_id, size, records_count, columns):
+        self._dataset_id = dataset_id
         self._size = size
         self._records_count = records_count
         self._columns_metadata = {}
@@ -315,6 +317,10 @@ class Metadata(object):
         return self._size
 
     @property
+    def dataset_id(self):
+        return self._dataset_id
+
+    @property
     def records_count(self):
         return self._records_count
 
@@ -323,15 +329,11 @@ class Metadata(object):
         return self._columns_metadata
 
     def serialize(self):
-        return {"data-size": self._size, "records-count": self._records_count}
+        return {"dataset-id": self._dataset_id, "data-size": self._size, "records-count": self._records_count}
 
     @classmethod
-    def from_schema(cls, schema):
-        return Metadata(int(schema["data-size"]), int(schema["records-count"]))
-
-    @classmethod
-    def create(cls, dataset_data_path, records_count, columns):
-        return Metadata(os.path.getsize(dataset_data_path), records_count, columns)
+    def create(cls, dataset_id, dataset_data_path, records_count, columns):
+        return Metadata(dataset_id, os.path.getsize(dataset_data_path), records_count, columns)
 
 
 if __name__ == '__main__':

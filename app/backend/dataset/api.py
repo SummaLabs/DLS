@@ -7,6 +7,7 @@ import json
 from flask import Blueprint
 from flask import request, Response
 from app.backend.dataset.service import DatasetService
+from app.backend.api import app_flask
 
 dataset = Blueprint(__name__, __name__)
 
@@ -15,7 +16,8 @@ from app.backend.core.datasets.dbwatcher import DatasetsWatcher
 datasetWatcher = DatasetsWatcher()
 datasetWatcher.refreshDatasetsInfo()
 
-dataset_service = DatasetService("test")
+datasets_base_path = app_flask.config['DATASETS_BASE_PATH']
+dataset_service = DatasetService(datasets_base_path)
 
 
 @dataset.route('/all/metadata/list', methods=['GET'])
@@ -99,21 +101,20 @@ def load_from_csv():
 
 
 @dataset.route('/all/metadata/list/v2', methods=['GET'])
-def list_data_sets_metadata():
+def list_data_sets_metadata_v2():
     response = []
     for metadata in dataset_service.datasets_metadata():
-        response = {'dataset_metadata': metadata.serialize()}
+        metadata_json = {'dataset_metadata': metadata.serialize(), 'dataset_id': metadata.dataset_id}
         col_metadata = metadata.columns_metadata
-        response['columns_metadata'] = \
+        metadata_json['columns_metadata'] = \
         [col_metadata[c_n].serialize() for c_n in col_metadata.iteritems() if col_metadata[c_n] is not None]
+        response.append(metadata_json)
 
-
-    metadata_list = json.dumps(dataset_service.datasets_metadata)
-    return Response(metadata_list, mimetype='application/json')
+    return Response(json.dumps(response), mimetype='application/json')
 
 
 @dataset.route('/<string:id>/metadata/v2', methods=['GET'])
-def data_set_metadata(id):
+def data_set_metadata_v2(id):
     metadata = dataset_service.dataset_metadata(id)
     response = {'dataset_metadata': metadata.serialize()}
     col_metadata = metadata.columns_metadata

@@ -1,7 +1,9 @@
 import os
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DLS_MODELS_REL_PATH = 'data/models'
+DATASETS_REL_PATH = 'data/datasets-v2'
+
 
 class Config(object):
     DEBUG = True
@@ -28,6 +30,7 @@ class Config(object):
     CUDA_VERSION = "7.5"
 
     DLS_MODELS_BASE_PATH = models_dir = os.path.join(BASE_DIR, DLS_MODELS_REL_PATH)
+    DATASETS_BASE_PATH = os.path.join(BASE_DIR, DATASETS_REL_PATH)
 
 class ProductionConfig(Config):
     pass
