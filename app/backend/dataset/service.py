@@ -14,7 +14,7 @@ class DatasetService(object):
         for dataset in self._workspace.datasets:
             if dataset.id == id:
                 return dataset.metadata
-        raise Exception("No dataset with such id")
+        return None
 
     @staticmethod
     def data_types_config():

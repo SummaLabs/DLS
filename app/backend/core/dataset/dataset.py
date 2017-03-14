@@ -12,7 +12,6 @@ from img2d import Img2DSerDe, Img2DColumn
 from input import Schema, Input, Column, ComplexColumn, NumericColumn, VectorColumn, CategoricalColumn
 
 
-
 class Dataset(object):
     DATA_DIR_NAME = "data"
     DATA_FILE = "dataset.processed"

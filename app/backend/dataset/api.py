@@ -96,3 +96,27 @@ def load_from_csv():
                                              request.args['separator'],
                                              int(request.args['rows-num']))
     return Response(json.dumps(csv_rows), mimetype='application/json')
+
+
+@dataset.route('/all/metadata/list/v2', methods=['GET'])
+def list_data_sets_metadata():
+    response = []
+    for metadata in dataset_service.datasets_metadata():
+        response = {'dataset_metadata': metadata.serialize()}
+        col_metadata = metadata.columns_metadata
+        response['columns_metadata'] = \
+        [col_metadata[c_n].serialize() for c_n in col_metadata.iteritems() if col_metadata[c_n] is not None]
+
+
+    metadata_list = json.dumps(dataset_service.datasets_metadata)
+    return Response(metadata_list, mimetype='application/json')
+
+
+@dataset.route('/<string:id>/metadata/v2', methods=['GET'])
+def data_set_metadata(id):
+    metadata = dataset_service.dataset_metadata(id)
+    response = {'dataset_metadata': metadata.serialize()}
+    col_metadata = metadata.columns_metadata
+    response['columns_metadata'] = \
+        [col_metadata[c_n].serialize() for c_n in col_metadata.iteritems() if col_metadata[c_n] is not None]
+    return Response(json.dumps(response), mimetype='application/json')
