@@ -1,4 +1,5 @@
 from app.backend.core import Workspace
+from app.backend.core.dataset.dataset import HDF5RecordReader
 from app.backend.core.dataset.input import Schema, Column
 
 
@@ -11,10 +12,17 @@ class DatasetService(object):
         return metadata
 
     def dataset_metadata(self, id):
-        for dataset in self._workspace.datasets:
-            if dataset.id == id:
-                return dataset.metadata
-        return None
+        dataset = self._workspace.dataset(id)
+        return None if dataset is None else dataset.metadata
+
+    def load_records(self, dataset_id, start, end):
+        dataset = self._workspace.dataset(dataset_id)
+        record_reader = HDF5RecordReader(dataset.path)
+        records = []
+        for i in range(start, end):
+            records.append(record_reader.read(i))
+        return records
+
 
     @staticmethod
     def data_types_config():

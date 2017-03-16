@@ -47,6 +47,12 @@ class TestDatasetService(unittest.TestCase):
             if isinstance(column_metadata, Img2DColumnMetadata):
                 self.assertEqual(len(column_metadata.img_num), 1)
 
+    def test_load_dataset_records(self):
+        dataset_service = DatasetService(self.test_dir)
+        records = dataset_service.load_records(self.datasets_ids[0], 2, 5)
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

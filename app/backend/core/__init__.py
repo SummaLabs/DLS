@@ -26,5 +26,11 @@ class Workspace(object):
     def datasets(self):
         return self._load_datasets(self.datasets_path)
 
+    def dataset(self, id):
+        for dataset in self.datasets:
+            if dataset.id == id:
+                return dataset
+        return None
+
     def models(self):
         self._load_models(self.models_path)
