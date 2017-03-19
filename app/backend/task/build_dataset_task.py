@@ -5,10 +5,11 @@ from app.backend.core.dataset.input import Input
 
 class BuildDatasetTask(Task):
 
-    def __init__(self, schema):
+    def __init__(self, json):
         Task.__init__(self)
-        self.schema = schema
-        self.test_dir = '/tmp/tmp37_dAG'
+        self.schema = json['schema']
+        self.parallelism_level = json['parallelism_level']
+        self.test_dir =  json['test_dir'] #'/tmp/tmp37_dAG'
         self.type = 'build_dataset'
         self.basetype = 'dataset'
         self.icon = "/frontend/assets/icon/img/img-dataset1.png"
@@ -16,7 +17,7 @@ class BuildDatasetTask(Task):
 
     def perform(self):
         input = Input.Builder(self.schema).build()
-        dataset = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2).build(self)
+        dataset = Dataset.Builder(input, "test", self.test_dir, self.parallelism_level).build(self)
         if self.state == 'running':
             self.state = 'finished'
 
