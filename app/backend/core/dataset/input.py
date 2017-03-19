@@ -4,16 +4,18 @@ import copy
 import abc
 import numpy as np
 import json
+import os
 
 
 class Schema(object):
     def __init__(self, csv_file_path=None, header=False, delimiter=','):
         self._csv_file_path = csv_file_path
+        self._header = header
+        self._columns = []
         if csv_file_path is not None:
-            self._build_from_csv(csv_file_path, header, delimiter)
+            self._build_from_csv(header, delimiter)
 
-    def _build_from_csv(self, csv_file_path, header, delimiter):
-        self.delimiter = csv_file_path
+    def _build_from_csv(self, header, delimiter):
         delimiter = delimiter.strip()
         if len(delimiter) < 0 or len(delimiter) > 1:
             raise Exception('Invalid delimiter [%s]' % delimiter)
@@ -33,6 +35,7 @@ class Schema(object):
             reader = csv.reader(f, delimiter=str(self._delimiter))
             try:
                 for row in islice(reader, 0, rows_number):
+                    row = [e.strip() for e in row]
                     rows.append(row)
             except csv.Error as e:
                 sys.exit('Broken line: file %s, line %d: %s' % (self._csv_file_path, reader.line_num, e))
@@ -50,6 +53,14 @@ class Schema(object):
     @property
     def csv_file_path(self):
         return self._csv_file_path
+
+    @property
+    def header(self):
+        return self._header
+
+    @property
+    def delimiter(self):
+        return self._delimiter
 
     @property
     def columns(self):
@@ -99,37 +110,6 @@ class Schema(object):
                 self.drop_column(column.name)
         self._columns.append(Column(new_column_name, columns_indexes))
 
-    @staticmethod
-    def deserialize(schema_json):
-        schema = Schema()
-        if 'csv_file_path' in schema_json:
-            header = True if schema_json['header'] == 'True' else False
-            schema = Schema(schema_json['csv_file_path'], header, schema_json['delimiter'])
-            columns_indexes_number = sum(len(column["index"]) for column in schema_json['columns'])
-            if columns_indexes_number != len(schema.columns):
-                raise TypeError(
-                    "Columns indexes number in config is not equal to csv file: %s" % columns_indexes_number)
-
-        from img2d import Img2DColumn
-        _columns = []
-        for column_schema in schema_json['columns']:
-            column_type = str(column_schema['type'])
-            if column_type == Column.Type.NUMERIC:
-                _columns.append(NumericColumn.from_schema(column_schema))
-            elif column_type == Column.Type.VECTOR:
-                _columns.append(VectorColumn.from_schema(column_schema))
-            elif column_type == Column.Type.CATEGORICAL:
-                _columns.append(CategoricalColumn.from_schema(column_schema))
-            elif column_type == Column.Type.IMG_2D:
-                _columns.append(Img2DColumn.from_schema(column_schema))
-            else:
-                raise TypeError("Unsupported column type: %s" % column_type)
-        schema.update_columns(_columns)
-        return schema
-
-    def serialize(self):
-        return {'columns': [column.schema for column in self._columns]}
-
     def print_columns(self):
         print ", ".join([col.name for col in self._columns])
 
@@ -141,44 +121,100 @@ class Schema(object):
 
 class Input(object):
     def __init__(self, schema=None):
-        if schema is not None and not isinstance(schema, Schema):
-            raise TypeError("Pass Schema instance as an argument")
-        self._schema = schema
+        if schema is not None:
+            if not isinstance(schema, Schema):
+                raise TypeError("Pass Schema instance as an argument")
+            else:
+                self._input_schema = schema
+                self._csv_file_path=schema.csv_file_path
+                self._header=schema.header
+                self._delimiter=schema.delimiter
+                self._columns = []
 
     @property
-    def schema(self):
-        return self._schema
+    def csv_file_path(self):
+        return self._csv_file_path
 
-    class Builder(object):
-        def __init__(self, schema_config):
-            self._schema_config = schema_config
+    @csv_file_path.setter
+    def csv_file_path(self, csv_file_path):
+        self._csv_file_path = csv_file_path
 
-        def build(self):
-            return Input(Schema.deserialize(self._schema_config))
+    @property
+    def header(self):
+        return self._header
+
+    @header.setter
+    def header(self, header):
+        self._header = header
+
+    @property
+    def delimiter(self):
+        return self._delimiter
+
+    @delimiter.setter
+    def delimiter(self, delimiter):
+        self._delimiter = delimiter
+
+    @property
+    def columns(self):
+        return self._columns
+
+    @columns.setter
+    def columns(self, columns):
+        self._columns = columns
 
     def add_numeric_column(self, column_name):
         index, column = self._find_column_in_schema(column_name)
-        self._schema.columns[index] = NumericColumn.from_column(column)
+        self.columns.append(NumericColumn.from_column(column))
 
     def add_categorical_column(self, column_name):
         index, column = self._find_column_in_schema(column_name)
-        self._schema.columns[index] = CategoricalColumn.from_column(column)
+        self.columns.append(CategoricalColumn.from_column(column))
 
     def add_vector_column(self, column_name):
         index, column = self._find_column_in_schema(column_name)
-        self._schema.columns[index] = VectorColumn.from_column(column)
+        self.columns.append(VectorColumn.from_column(column))
 
     def add_column(self, column_name, input_column):
         index, column = self._find_column_in_schema(column_name)
+        input_column.csv_file_path(os.path.dirname(self.csv_file_path))
         input_column.name = column_name
         input_column.columns_indexes = column.columns_indexes
-        self._schema.columns[index] = input_column
+        self.columns.append(input_column)
 
     def _find_column_in_schema(self, column_name):
-        for index, schema_column in enumerate(self._schema.columns):
+        for index, schema_column in enumerate(self._input_schema.columns):
             if schema_column.name == column_name:
                 return index, schema_column
         raise Exception("No column with name %s in schema." % column_name)
+
+    @classmethod
+    def from_schema(dls, schema):
+        input = Input()
+        if 'csv_file_path' in schema:
+            input.csv_file_path = schema['csv_file_path']
+            input.header = True if schema['header'] == 'True' else False
+            input.delimiter = schema['delimiter']
+
+        from img2d import Img2DColumn
+        columns = []
+        for column_schema in schema['columns']:
+            column_type = str(column_schema['type'])
+            if column_type == Column.Type.NUMERIC:
+                columns.append(NumericColumn.from_schema(column_schema))
+            elif column_type == Column.Type.VECTOR:
+                columns.append(VectorColumn.from_schema(column_schema))
+            elif column_type == Column.Type.CATEGORICAL:
+                columns.append(CategoricalColumn.from_schema(column_schema))
+            elif column_type == Column.Type.IMG_2D:
+                columns.append(Img2DColumn.from_schema(column_schema))
+            else:
+                raise TypeError("Unsupported column type: %s" % column_type)
+        input.columns = columns
+        return input
+
+    def serialize(self):
+        return {'columns': [column.schema for column in self._columns]}
 
 
 class Column(object):

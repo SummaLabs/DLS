@@ -10,7 +10,7 @@ test_img_file = 'test-img.png'
 categories = ['cat_1', 'cat_2', 'cat_3', 'cat_4']
 
 
-def create_test_data(test_dir, records_number, header=False, delimiter=","):
+def create_test_data(test_dir, records_number, header=False, delimiter=",", is_related_path=False):
     test_csv_file_path = path.join(test_dir, test_csv_file)
     # Save test image
     image = data.camera()
@@ -23,7 +23,7 @@ def create_test_data(test_dir, records_number, header=False, delimiter=","):
             f.write('col_0_h{0} col_1_h{0} col_2_h{0} col_3_h{0} col_4_h{0} col_5_h\n'.format(delimiter))
         else:
             f.write('{0}{1} {2}{1} {2}{1} {2}{1} {2}{1} {3}\n'
-                    .format(categories[random.randrange(4)], delimiter, i, test_img_file_path))
+                    .format(categories[random.randrange(4)], delimiter, i, test_img_file if is_related_path else test_img_file_path))
     f.close()
     return test_csv_file_path, test_img_file_path
 
@@ -129,7 +129,7 @@ class TestInput(unittest.TestCase):
         input = Input(Schema(self.test_csv_file_path))
         input.add_numeric_column("col_3")
         is_column_exist = False
-        for column in input.schema.columns:
+        for column in input.columns:
             if column.name == 'col_3':
                 is_column_exist = True
                 self.assertEqual(column.columns_indexes[0], 3)
@@ -140,7 +140,7 @@ class TestInput(unittest.TestCase):
         input = Input(Schema(self.test_csv_file_path))
         input.add_categorical_column("col_3")
         is_column_exist = False
-        for column in input.schema.columns:
+        for column in input.columns:
             if column.name == 'col_3':
                 is_column_exist = True
                 self.assertEqual(column.columns_indexes[0], 3)
@@ -153,7 +153,7 @@ class TestInput(unittest.TestCase):
         input = Input(schema)
         input.add_vector_column("merged_col")
         is_column_exist = False
-        for column in input.schema.columns:
+        for column in input.columns:
             if column.name == 'merged_col':
                 is_column_exist = True
                 self.assertTrue(column.columns_indexes == [3, 4, 5])
@@ -167,7 +167,7 @@ class TestInput(unittest.TestCase):
                             post_transforms=[ImgNormalizationTransform({"height": 256, "width": 256})])
         input.add_column("col_0", img2d)
         is_column_exist = False
-        for column in input.schema.columns:
+        for column in input.columns:
             if column.name == "col_0":
                 is_column_exist = True
                 self.assertTrue(isinstance(column, Img2DColumn))
@@ -207,9 +207,9 @@ class TestInput(unittest.TestCase):
                             }
                         ]
                         }
-        input = Input.Builder(input_config).build()
-        self.assertEqual(len(input.schema.columns), 4)
-        for column in input.schema.columns:
+        input = Input.from_schema(input_config)
+        self.assertEqual(len(input.columns), 4)
+        for column in input.columns:
             if column.name == "col_0":
                 self.assertEqual(column.columns_indexes, [0])
                 self.assertTrue(isinstance(column, NumericColumn))

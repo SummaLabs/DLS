@@ -17,8 +17,8 @@ class Dataset(object):
     DATA_FILE = "dataset.processed"
     SCHEMA_FILE = "schema.json"
 
-    def __init__(self, schema, path, metadata, id):
-        self._schema = schema
+    def __init__(self, input, path, metadata, id):
+        self._input = input
         self._path = path
         self._metadata = metadata
         self._id = id
@@ -34,14 +34,14 @@ class Dataset(object):
 
     def get_batch(self, batch_size=64):
         data = {}
-        for column in self._schema.columns:
+        for column in self._input.columns:
             data[column.name] = []
         records_count = self._record_reader.records_count
         i = 0
         while i < batch_size:
             inx = random.randrange(0, records_count)
             record = self._record_reader.read(inx)
-            for column in self._schema.columns:
+            for column in self._input.columns:
                 value = column.process_on_read(record)
                 if isinstance(value, np.ndarray) and value.ndim > 1:
                     value = value.ravel()
@@ -53,11 +53,11 @@ class Dataset(object):
     def load(path):
         with open(os.path.join(path, Dataset.DATA_DIR_NAME, Dataset.SCHEMA_FILE)) as s:
             dataset_serialized = json.load(s)
-            schema = Schema.deserialize(dataset_serialized["schema"])
+            input = Input.from_schema(dataset_serialized["schema"])
             metadata_serialized = dataset_serialized["metadata"]
             metadata = Metadata(metadata_serialized["dataset-id"], int(metadata_serialized["data-size"]),
-                                int(metadata_serialized["records-count"]), schema.columns)
-            return Dataset(schema, path, metadata, dataset_serialized["dataset-id"])
+                                int(metadata_serialized["records-count"]), input.columns)
+            return Dataset(input, path, metadata, dataset_serialized["dataset-id"])
 
     class Builder(object):
         def __init__(self, input, name, root_dir, parallelism_level=2, storage_type="HDF5"):
@@ -82,10 +82,10 @@ class Dataset(object):
             processor = []
             processed_records = Queue()
             for i in range(self._parallelism_level):
-                p = RecordProcessor(self._input.schema.columns, processed_records, csv_rows_chunks[i])
+                p = RecordProcessor(self._input.columns, processed_records, csv_rows_chunks[i])
                 processor.append(p)
             for p in processor: p.start()
-            record_write = RecordWriter.factory(self._storage_type, self._dataset_root_dir, self._input.schema.columns)
+            record_write = RecordWriter.factory(self._storage_type, self._dataset_root_dir, self._input.columns)
             completed_processor_num = 0
             record_idx = 0
             aggregated_column_metadata = []
@@ -105,12 +105,12 @@ class Dataset(object):
             record_write.close()
 
             self._merge_column_metadata(aggregated_column_metadata)
-            dataset_metadata = Metadata.create(self._dataset_id, os.path.join(self._dataset_data_dir, Dataset.DATA_FILE), record_idx, self._input.schema.columns)
+            dataset_metadata = Metadata.create(self._dataset_id, os.path.join(self._dataset_data_dir, Dataset.DATA_FILE), record_idx, self._input.columns)
             self._serialize_dataset_schema(dataset_metadata)
 
             print "Records processed: " + str(record_idx)
 
-            return Dataset(self._input.schema, self._dataset_root_dir, dataset_metadata, self._dataset_id)
+            return Dataset(self._input, self._dataset_root_dir, dataset_metadata, self._dataset_id)
 
         def _merge_column_metadata(self, aggregated_metadata):
             """
@@ -118,7 +118,7 @@ class Dataset(object):
             :return:
             """
             metadata_by_column = {}
-            for column in self._input.schema.columns:
+            for column in self._input.columns:
                 if column.metadata is not None:
                     metadata_by_column[column.name] = []
 
@@ -126,14 +126,14 @@ class Dataset(object):
                 for column_name in column_metadata:
                     metadata_by_column[column_name].append(column_metadata[column_name])
 
-            for column in self._input.schema.columns:
+            for column in self._input.columns:
                 if column.metadata is not None:
                     column.metadata.merge(metadata_by_column[column.name])
 
         def _process_csv_file(self):
             rows = []
-            csv_file_path = self._input.schema.csv_file_path
-            columns = self._input.schema.columns
+            csv_file_path = self._input.csv_file_path
+            columns = self._input.columns
             with open(csv_file_path, 'rb') as f:
                 reader = csv.reader(f)
                 try:
@@ -151,17 +151,17 @@ class Dataset(object):
             return rows
 
         def _validate_data_schema(self):
-            for column in self._input.schema.columns:
+            for column in self._input.columns:
                 if column.type is None:
                     raise TypeError("Please specify type for column: %s" % column.name)
 
         def _serialize_dataset_schema(self, metadata):
-            for column in self._input.schema.columns:
+            for column in self._input.columns:
                 if column.metadata is not None:
                     column.metadata.path(self._dataset_data_dir)
             dataset_schema = {"dataset-id": self._dataset_id,
                               "metadata": metadata.serialize(),
-                              "schema": self._input.schema.serialize()}
+                              "schema": self._input.serialize()}
             with open(os.path.join(self._dataset_data_dir, Dataset.SCHEMA_FILE), 'w') as f:
                 f.write(json.dumps(dataset_schema))
 
@@ -339,16 +339,20 @@ class Metadata(object):
 if __name__ == '__main__':
     from img2d import Img2DColumn, Img2DReader, ImgResizeTransform
     from input import Schema, Input, ColumnSerDe, ColumnSerDe
+    from app.backend.api import app_flask
     import os
-    import glob
 
-    #
-    pathCSV = '../../../../data-test/dataset-image2d/simple4c_test/test-csv-v1.csv'
-    if not os.path.isfile(pathCSV):
-        raise Exception('Cant find file [%s]' % pathCSV)
-    wdir = os.path.abspath(os.path.dirname(pathCSV))
-    schema = Schema(pathCSV, header=True, delimiter='|')
+    path_csv = '../../../../data-test/dataset-image2d/simple4c_test/test-csv-v1.csv'
+    if not os.path.isfile(path_csv):
+        raise Exception('Cant find file [%s]' % path_csv)
+    schema = Schema(path_csv, header=True, delimiter=',')
+    schema.merge_columns_in_range('col_vector', (2, 4))
     schema.print_data()
     input = Input(schema=schema)
-    # dataset = Dataset()
+    input.add_categorical_column("label")
+    input.add_vector_column('col_vector')
+    img2d = Img2DColumn([], [], is_related_path=True)
+    input.add_column("path", img2d)
+    datasets_base_path = app_flask.config['DATASETS_BASE_PATH']
+    dataset = Dataset.Builder(input, "test", datasets_base_path, parallelism_level=2).build()
     print ('----')

@@ -15,7 +15,7 @@ class BuildDatasetTask(Task):
 
 
     def perform(self):
-        input = Input.Builder(self.schema).build()
+        input = Input.from_schema(self.schema)
         dataset = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2).build(self)
         if self.state == 'running':
             self.state = 'finished'

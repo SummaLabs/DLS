@@ -20,7 +20,7 @@ except ImportError:
 
 class Img2DColumn(ComplexColumn):
     def __init__(self, name=None, columns_indexes=None, pre_transforms=[], post_transforms=[], is_raw_img=False,
-                 reader=None, metadata=None):
+                 is_related_path=False, reader=None, metadata=None):
         super(Img2DColumn, self).__init__(name=name,
                                           type=Column.Type.IMG_2D,
                                           columns_indexes=columns_indexes,
@@ -30,10 +30,13 @@ class Img2DColumn(ComplexColumn):
                                           pre_transforms=pre_transforms,
                                           post_transforms=post_transforms)
         if reader is None:
-            self._reader = Img2DReader(self)
+            self._reader = Img2DReader(self, is_related_path)
 
         if metadata is None:
             self._metadata = Img2DColumnMetadata(self._name)
+
+    def csv_file_path(self, csv_file_path):
+        self._reader.csv_file_path(csv_file_path)
 
     def process_on_write(self, record):
         img_array, img_fmt = self.reader.read(record)
@@ -153,11 +156,18 @@ class ImgNormalizationTransform(ColumnTransform):
 
 
 class Img2DReader(ColumnReader):
-    def __init__(self, column):
+    def __init__(self, column, is_related_path=False):
         super(Img2DReader, self).__init__(column)
+        self._is_related_path = is_related_path
+        self._data_path = None
+
+    def csv_file_path(self, data_path):
+        self._data_path = data_path
 
     def read(self, csv_row):
         path = str(csv_row[self._column.columns_indexes[0]])
+        if self._is_related_path:
+            path = os.path.join(self._data_path, path)
         img_data = skimgio.imread(path)
         img_fmt = imghdr.what(path)
         return img_data, img_fmt
