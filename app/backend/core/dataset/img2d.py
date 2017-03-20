@@ -252,7 +252,7 @@ class Img2DColumnMetadata(ColumnMetadata):
         self._path = path
 
     def serialize(self):
-        img = Image.fromarray(self._img).convert('RGB')
+        img = Image.fromarray(np.uint8(self._img)).convert('RGB')
         img_path_prefix = self._column_name
         if self._column_name is not None:
             img_path_prefix = str(random.getrandbits(16))

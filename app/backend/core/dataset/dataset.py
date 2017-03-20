@@ -91,7 +91,7 @@ class Dataset(object):
             aggregated_column_metadata = []
             try:
                 while completed_processor_num < self._parallelism_level:
-                    result = processed_records.get(block=True, timeout=5)
+                    result = processed_records.get(block=True, timeout=50)
                     if not isinstance(result, ProcessingResult):
                         record_write.write(result, record_idx)
                         record_idx += 1
@@ -137,14 +137,15 @@ class Dataset(object):
             with open(csv_file_path, 'rb') as f:
                 reader = csv.reader(f)
                 try:
-                    for row in reader:
-                        # Trim row entries
-                        row = [e.strip() for e in row]
-                        rows.append(row)
-                        for column in columns:
-                            if (isinstance(column, NumericColumn) or isinstance(column, VectorColumn) or isinstance(
-                                    column, CategoricalColumn)) and column.metadata is not None:
-                                column.metadata.aggregate(row[column.columns_indexes[0]])
+                    for index, row in enumerate(reader):
+                        if not self._input.header or self._input.header and index > 0:
+                            # Trim row entries
+                            row = [e.strip() for e in row]
+                            rows.append(row)
+                            for column in columns:
+                                if (isinstance(column, NumericColumn) or isinstance(column, VectorColumn) or isinstance(
+                                     column, CategoricalColumn)) and column.metadata is not None:
+                                     column.metadata.aggregate(row[column.columns_indexes[0]])
                 except csv.Error as e:
                     sys.exit('Broken line: file %s, line %d: %s' % (csv_file_path, reader.line_num, e))
 
@@ -355,4 +356,5 @@ if __name__ == '__main__':
     input.add_column("path", img2d)
     datasets_base_path = app_flask.config['DATASETS_BASE_PATH']
     dataset = Dataset.Builder(input, "test", datasets_base_path, parallelism_level=2).build()
-    print ('----')
+    data = dataset.get_batch(5)
+    print data['path']
