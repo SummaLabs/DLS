@@ -14,12 +14,9 @@ class BuildDatasetTask(Task):
         self.basetype = 'dataset'
         self.icon = "/frontend/assets/icon/img/img-dataset1.png"
 
-
     def perform(self):
-        input = Input.Builder(self.schema).build()
-        dataset = Dataset.Builder(input, "test", self.test_dir, self.parallelism_level).build(self)
         input = Input.from_schema(self.schema)
-        dataset = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2).build(self)
+        dataset = Dataset.Builder(input, "test", self.test_dir, self.parallelism_level).build(self)
         if self.state == 'running':
             self.state = 'finished'
 
