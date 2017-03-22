@@ -78,7 +78,8 @@ class Dataset(object):
 
         def build(self, progressor=None):
             self._validate_data_schema()
-            csv_rows_chunks = np.array_split(self._process_csv_file(), self._parallelism_level)
+            csv_rows = self._process_csv_file()
+            csv_rows_chunks = np.array_split(csv_rows, self._parallelism_level)
             processor = []
             processed_records = Queue()
             for i in range(self._parallelism_level):
@@ -95,10 +96,10 @@ class Dataset(object):
                     if not isinstance(result, ProcessingResult):
                         record_write.write(result, record_idx)
                         record_idx += 1
+                        if (progressor != None):
+                            progressor.progress = 100 * record_idx / len(csv_rows)
                     else:
                         completed_processor_num += 1
-                        if(progressor != None):
-                            progressor.progress = 100 * self._parallelism_level / completed_processor_num
                         aggregated_column_metadata.append(result.column_metadata)
             except Empty:
                 logging.warning("Not all the threads completed as expected")

@@ -1,0 +1,31 @@
+{	"parallelism_level": 2,
+	"test_dir": "/tmp/tmp37_dAG",
+	"schema": {"csv_file_path": "/home/yegor/trash/DLS/data/test1.csv",
+                        "header": false,
+                        "delimiter": ",",
+                        "columns": [
+                            {
+                                "name": "col_0",
+                                "type": "NUMERIC",
+                                "index": [0]
+                            },
+                            {
+                                "name": "col_1",
+                                "type": "NUMERIC",
+                                "index": [1]
+                            },
+                            {
+                                "name": "col_2",
+                                "type": "VECTOR",
+                                "index": [2, 3, 4]
+                            },
+                            {
+                                "name": "col_3",
+                                "type": "IMG_2D",
+                                "index": [5],
+                                "metadata" : {"mean-img-path": "/home/yegor/trash/DLS/data-test/dataset-image2d/simple4c_test/cat/cat_00001.jpg"},
+                                "pre_transforms": [],
+                                "post_transforms": []
+                            }
+                        ]
+                        }}
