@@ -67,6 +67,12 @@
             Settings
         </md-tab-label>
     </md-tab>
+   <!-- <md-tab ui-sref="importer" class="unselectable">
+        <md-tab-label>
+            <md-icon md-font-library="material-icons" aria-label="settings">settings</md-icon>
+            data-set-importer
+        </md-tab-label>
+    </md-tab>-->
     <md-tab ui-sref="notebook" class="unselectable">
         <md-tab-label>
             <md-icon md-font-library="material-icons" aria-label="notebook">content_paste</md-icon>
@@ -178,7 +184,6 @@
 <script src="/frontend/components/main/task/task-manager-service.js"></script>
 <script src="/frontend/components/main/training-params/training-params.js"></script>
 
-
 <script src="/frontend/components/main/designer/core-lib-es6-noimport.js"></script>
 <script src="/frontend/components/main/designer/core.service.js"></script>
 <script src="/frontend/components/main/designer/core.js"></script>
@@ -206,5 +211,14 @@
 <script src="/frontend/components/layers/visualization/layers-visualization.js"></script>
 
 <!-- Classification part of UI: END-->
+
+<!--https://github.com/daniel-nagy/md-data-table#usage-->
+<link rel="stylesheet" href="/frontend/assets/test/md-data-table.css"/>
+<script src="/frontend/assets/test/md-data-table.js"></script>
+
+<script src="/frontend/components/main/data-set-importer/data-set-importer.service.js"></script>
+<script src="/frontend/components/main/data-set-importer/data-set-importer.controller.js"></script>
+<script src="/frontend/components/main/data-set-importer/data-set-importer.module.js"></script>
+
 </body>
 </html>

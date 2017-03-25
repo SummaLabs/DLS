@@ -1,0 +1,41 @@
+<md-dialog aria-label="FM">
+    <form ng-cloak>
+        <md-dialog-content>
+            <div class="md-dialog-content" style="width:800px; height:600px;">
+                <angular-filemanager></angular-filemanager>
+            </div>
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+
+
+            <md-content layout ="row" layout-padding>
+                <div >
+                  <md-input-container>
+                    <label>Threads count</label>
+                    <input type="number" required min="1" max="24" step="1" ng-model="threads">
+                  </md-input-container>
+
+                  <md-input-container>
+                    <label>Delimiter</label>
+                    <input ng-model="delimiter" md-maxlength="5">
+                  </md-input-container>
+                </div>
+            </md-content>
+
+            <!--<md-input-container >
+                <label>Threads count</label>
+                <input type="text" required name="threads"
+                       ng-model="threads"
+                       min="1" max="24"
+                       step="1"/>
+            </md-input-container>-->
+            <span flex></span>
+            <md-button ng-click="select()" md-autofocus>
+                Select
+            </md-button>
+            <md-button ng-click="cancel()">
+                Cancel
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

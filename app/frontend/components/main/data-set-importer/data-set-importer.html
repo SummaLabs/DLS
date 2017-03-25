@@ -1,0 +1,56 @@
+<md-toolbar class="md-table-toolbar alternate">
+    <div class="md-toolbar-tools">
+        <span>{{selectedRows.length}} {{selectedRows.length > 1 ? 'items' : 'item'}} selected</span>
+        <span flex></span>
+
+        <md-button ng-click="mergeColumn()" >
+            Merge columns
+        </md-button>
+
+        <md-button ng-click="removeColumns()" >
+            Remove columns
+        </md-button>
+
+        <span flex></span>
+        <md-button ng-show="options.rowSelection && selected.length"    class="md-icon-button">
+            <md-icon>delete</md-icon>
+        </md-button>
+    </div>
+</md-toolbar>
+
+<md-table-container>
+    <table data-md-table data-md-row-select="options.rowSelection" multiple="{{options.multiSelect}}" data-ng-model="selectedRows" md-progress="promise">
+        <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder">
+        <tr md-row>
+
+            <th md-column ng-repeat="header in table.headers">
+                <div layout="row" flex>
+                    <md-checkbox ng-model="header.selected" ng-click="checkColumn(header)" aria-label="{{$index}}">
+                        <!--{{checkbox[$index]}}-->
+                    </md-checkbox>
+                    <md-button class="md-icon-button" ng-click="showSettings(header)" >
+                        <md-icon>settings</md-icon>
+                    </md-button>
+                </div>
+                <md-select ng-model="header.type" aria-label="favoriteColor">
+                    <md-option ng-click="headerSelectedType(header, type)" ng-value="type" ng-repeat="type in table.supportedTypes">{{type}}</md-option>
+                </md-select>
+
+            </th>
+        </tr>
+
+        <tr md-row>
+            <th ng-if="table.config.header" md-column ng-click="editHeaderName($event, header)" ng-repeat="header in table.headers">
+                <span>{{header.name}}</span>
+            </th>
+        </tr>
+        </thead>
+        <tbody md-body>
+        <tr md-row data-ng-repeat="row in table.rows" md-select="row" data-md-on-select="log" md-on-deselect="deselect" x-md-auto-select="options.autoSelect"  >
+            <td md-cell ng-repeat="cell in row.cells" >{{cell.toString()}}</td>
+        </tr>
+        </tbody>
+    </table>
+</md-table-container>
+
+<!--<data-md-table-pagination md-limit="query.limit" md-limit-options="limitOptions" md-page="query.page" md-total="{{desserts.count()}}" md-on-paginate="onPaginate" md-page-select="options.pageSelect" md-boundary-links="options.boundaryLinks"></data-md-table-pagination>-->

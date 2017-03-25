@@ -2,6 +2,7 @@
 
 angular.module('dlsApp', ['ngMaterial', "ui.router",
     'networkMain',
+    'dataSetImporter',
     'networkDataService',
     'designerCore',
     'modelMain',
@@ -12,7 +13,7 @@ angular.module('dlsApp', ['ngMaterial', "ui.router",
     'layerService',
     'googlechart',
     'FileManagerApp',
-    'featureSpace'
+    'featureSpace',
 ]);
 
 
@@ -112,6 +113,13 @@ angular.module('dlsApp')
             template: "<settings></settings>",
             controller: function ($rootScope) {
                 $rootScope.tabIndex = 5;
+                document.getElementById('designer').style.display = 'none';
+            }
+        }).state('importer', {
+            url: "/importer",
+            template: "<dataset-importer></dataset-importer>",
+            controller: function ($rootScope) {
+                $rootScope.tabIndex = 3;
                 document.getElementById('designer').style.display = 'none';
             }
         }).state('notebook', {
