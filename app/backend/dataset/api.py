@@ -93,7 +93,9 @@ def data_types_config():
 @dataset.route('/csv/load/rows', methods=['POST'])
 def load_from_csv():
     header = True if request.args['header'] == "True" else False
-    csv_rows = dataset_service.load_from_csv(request.args['file-path'],
+
+    dir_root = app_flask.config['DLS_FILEMANAGER_BASE_PATH']
+    csv_rows = dataset_service.load_from_csv(dir_root + request.args['file-path'],
                                              header,
                                              request.args['separator'],
                                              int(request.args['rows-num']))
