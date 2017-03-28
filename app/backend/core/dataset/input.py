@@ -8,37 +8,57 @@ import os
 
 
 class Schema(object):
-    def __init__(self, csv_file_path=None, header=False, delimiter=','):
+    def __init__(self, columns, csv_file_path=None, train_csv_file_path=None, validation_scv_file_path=None, header=False, delimiter=','):
+        self._columns = columns
         self._csv_file_path = csv_file_path
+        self._train_csv_file_path = train_csv_file_path
+        self._validation_scv_file_path = validation_scv_file_path
         self._header = header
-        self._columns = []
-        if csv_file_path is not None:
-            self._build_from_csv(header, delimiter)
+        self._delimiter = delimiter
 
-    def _build_from_csv(self, header, delimiter):
+    @classmethod
+    def from_csv(cls, csv_path, test_size=70, header=False, delimiter=','):
+        columns = cls._build_from_csv(csv_file_path=csv_path, header=header, delimiter=delimiter)
+        return Schema(columns=columns, csv_file_path=csv_path, header=header, delimiter=delimiter)
+
+    @classmethod
+    def from_train_and_test_csv(cls, train_csv_path, validation_scv_file_path, header=False, delimiter=','):
+        train_csv_columns = cls._build_from_csv(csv_file_path=train_csv_path, header=header, delimiter=delimiter)
+        test_scv_columns = cls._build_from_csv(csv_file_path=validation_scv_file_path, header=header, delimiter=delimiter)
+        if not (len(train_csv_columns) == len(test_scv_columns)):
+            raise Exception('Train and test file has different columns number')
+        for idx, column in enumerate(train_csv_columns):
+            if column.name != test_scv_columns[idx].name:
+                raise Exception('Column names or order in train and test datasets are not equals')
+        return Schema(columns=train_csv_columns, train_csv_file_path=train_csv_path, validation_scv_file_path=validation_scv_file_path, header=header, delimiter=delimiter)
+
+    @classmethod
+    def _build_from_csv(cls, csv_file_path, header, delimiter):
         delimiter = delimiter.strip()
         if len(delimiter) < 0 or len(delimiter) > 1:
             raise Exception('Invalid delimiter [%s]' % delimiter)
-        self._delimiter = delimiter
-        header_row = [col.strip() for col in self.read_n_rows(1)[0]]
+        header_row = [col.strip() for col in cls.read_n_rows(csv_file_path, delimiter, 1)[0]]
         if header:
             duplicates = set([x for x in header_row if header_row.count(x) > 1])
             if len(duplicates) > 0:
                 raise Exception("Should be no duplicates in CSV header: " + ", ".join([col for col in duplicates]))
-            self._columns = [Column(name=item, columns_indexes=[index]) for index, item in enumerate(header_row)]
+            columns = [Column(name=item, columns_indexes=[index]) for index, item in enumerate(header_row)]
         else:
-            self._columns = [Column(name='col_' + str(index), columns_indexes=[index]) for index in range(0, len(header_row))]
+            columns = [Column(name='col_' + str(index), columns_indexes=[index]) for index in range(0, len(header_row))]
 
-    def read_n_rows(self, rows_number):
+        return columns
+
+    @classmethod
+    def read_n_rows(cls, csv_file_path, delimiter, rows_number):
         rows = []
-        with open(self._csv_file_path, 'rb') as f:
-            reader = csv.reader(f, delimiter=str(self._delimiter))
+        with open(csv_file_path, 'rb') as f:
+            reader = csv.reader(f, delimiter=str(delimiter))
             try:
                 for row in islice(reader, 0, rows_number):
                     row = [e.strip() for e in row]
                     rows.append(row)
             except csv.Error as e:
-                sys.exit('Broken line: file %s, line %d: %s' % (self._csv_file_path, reader.line_num, e))
+                sys.exit('Broken line: file %s, line %d: %s' % (csv_file_path, reader.line_num, e))
 
         return rows
 
@@ -53,6 +73,14 @@ class Schema(object):
     @property
     def csv_file_path(self):
         return self._csv_file_path
+
+    @property
+    def train_csv_file_path(self):
+        return self._train_csv_file_path
+
+    @property
+    def validation_scv_file_path(self):
+        return self._validation_scv_file_path
 
     @property
     def header(self):
@@ -115,7 +143,8 @@ class Schema(object):
 
     def print_data(self):
         print "First 10 records:"
-        for row in self.read_n_rows(10):
+        csv_file_path = self.csv_file_path if self._csv_file_path is not None else self._train_csv_file_path
+        for row in self.read_n_rows(csv_file_path, self._delimiter, 10):
             print row
 
 
@@ -126,9 +155,12 @@ class Input(object):
                 raise TypeError("Pass Schema instance as an argument")
             else:
                 self._input_schema = schema
-                self._csv_file_path=schema.csv_file_path
-                self._header=schema.header
-                self._delimiter=schema.delimiter
+                self._csv_file_path = schema.csv_file_path
+                self._train_csv_file_path = schema.train_csv_file_path
+                self._validation_scv_file_path = schema.validation_scv_file_path
+                self._header = schema.header
+                self._delimiter = schema.delimiter
+                self._delimiter = schema.delimiter
                 self._columns = []
 
     @property
@@ -138,6 +170,22 @@ class Input(object):
     @csv_file_path.setter
     def csv_file_path(self, csv_file_path):
         self._csv_file_path = csv_file_path
+
+    @property
+    def train_csv_file_path(self):
+        return self._train_csv_file_path
+
+    @train_csv_file_path.setter
+    def train_csv_file_path(self, train_csv_file_path):
+        self._train_csv_file_path = train_csv_file_path
+
+    @property
+    def validation_scv_file_path(self):
+        return self._validation_scv_file_path
+
+    @validation_scv_file_path.setter
+    def validation_scv_file_path(self, validation_scv_file_path):
+        self._validation_scv_file_path = validation_scv_file_path
 
     @property
     def header(self):
@@ -193,7 +241,13 @@ class Input(object):
         input = Input()
         if 'csv_file_path' in schema:
             input.csv_file_path = schema['csv_file_path']
+        if 'train_csv_file_path' in schema:
+            input.train_csv_file_path = schema['train_csv_file_path']
+        if 'test_scv_file_path' in schema:
+            input.test_scv_file_path = schema['test_scv_file_path']
+        if 'header' in schema:
             input.header = True if schema['header'] == 'True' else False
+        if 'delimiter' in schema:
             input.delimiter = schema['delimiter']
 
         from img2d import Img2DColumn

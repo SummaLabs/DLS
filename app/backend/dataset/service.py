@@ -46,5 +46,4 @@ class DatasetService(object):
 
     @staticmethod
     def load_from_csv(csv_file_path, header, separator, rows_num):
-        schema = Schema(csv_file_path, header, separator)
-        return schema.read_n_rows(rows_num)
+        return Schema.read_n_rows(csv_file_path=csv_file_path, delimiter=separator, rows_number=rows_num)

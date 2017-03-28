@@ -37,41 +37,41 @@ class TestSchema(unittest.TestCase):
         shutil.rmtree(self.test_dir)
 
     def test_default_columns(self):
-        schema = Schema(self.test_csv_file_path)
+        schema = Schema.from_csv(csv_path=self.test_csv_file_path)
         for index, column in enumerate(schema.columns):
             self.assertEqual(column.name, 'col_' + str(index))
 
     def test_header_columns(self):
         test_csv_header_file_path, _ = create_test_data(self.test_dir, 15, header=True)
-        schema = Schema(test_csv_header_file_path, header=True)
+        schema = Schema.from_csv(csv_path=self.test_csv_file_path, header=True)
         for index, column in enumerate(schema.columns):
             self.assertEqual(column.name, 'col_' + str(index) + '_h')
 
     def test_delimiter(self):
         test_csv_header_file_path, _ = create_test_data(self.test_dir, 15, header=True, delimiter='|')
-        schema = Schema(self.test_csv_file_path, delimiter='|')
+        schema = Schema.from_csv(csv_path=self.test_csv_file_path, delimiter='|')
         for index, column in enumerate(schema.columns):
             self.assertEqual(column.name, 'col_' + str(index))
 
     def test_set_column_name(self):
-        schema = Schema(self.test_csv_file_path)
+        schema = Schema.from_csv(csv_path=self.test_csv_file_path)
         schema["col_0"] = "test_col"
         self.assertEqual(schema.columns[0].name, 'test_col')
 
     def test_set_columns_names(self):
-        schema = Schema(self.test_csv_file_path)
+        schema = Schema.from_csv(csv_path=self.test_csv_file_path)
         with self.assertRaises(Exception) as context:
             schema.columns = ("test_col1", "test_col2", "test_col3")
         self.assertTrue("Passed columns number: 3 is not compatible with Schema current columns number: 6"
                         in context.exception)
 
     def test_drop_column(self):
-        schema = Schema(self.test_csv_file_path)
+        schema = Schema.from_csv(csv_path=self.test_csv_file_path)
         schema.drop_column("col_0")
         self.assertEqual(schema.columns[0].name, 'col_1')
 
     def test_merge_columns(self):
-        schema = Schema(self.test_csv_file_path)
+        schema = Schema.from_csv(csv_path=self.test_csv_file_path)
         schema.merge_columns("test_col", ["col_0", "col_1"])
         self.assertEqual(len(schema.columns), 5)
         self.assertEqual(schema.columns[0].name, 'col_2')
@@ -80,7 +80,7 @@ class TestSchema(unittest.TestCase):
         self.assertTrue(merged_column.columns_indexes, [0, 2])
 
     def test_merge_columns_in_range(self):
-        schema = Schema(self.test_csv_file_path)
+        schema = Schema.from_csv(csv_path=self.test_csv_file_path)
         schema.merge_columns_in_range("test_col", (3, 5))
         self.assertEqual(len(schema.columns), 4)
         self.assertEqual(schema.columns[0].name, 'col_0')
@@ -97,23 +97,22 @@ class TestSchema(unittest.TestCase):
         f.close()
 
         with self.assertRaises(Exception) as context:
-            Schema(test_file_path, header=True)
+            Schema.from_csv(csv_path=test_file_path, header=True)
         self.assertTrue("Should be no duplicates in CSV header: head1" in context.exception)
 
     def test_duplicate_columns(self):
         with self.assertRaises(Exception) as context:
-            schema = Schema(self.test_csv_file_path)
+            schema = Schema.from_csv(csv_path=self.test_csv_file_path)
             schema['col_0'] = 'col_1'
         self.assertTrue('Should be no duplicates in columns: col_1' in context.exception)
 
         with self.assertRaises(Exception) as context:
-            schema = Schema(self.test_csv_file_path)
+            schema = Schema.from_csv(csv_path=self.test_csv_file_path)
             schema.columns = ['col1', 'col1', 'col3', 'col4', 'col5', 'col6']
         self.assertTrue('Should be no duplicates in columns: col1' in context.exception)
 
     def test_read_rows(self):
-        schema = Schema(self.test_csv_file_path, header=False, delimiter=",")
-        row = schema.read_n_rows(10)
+        row = Schema.read_n_rows(csv_file_path=self.test_csv_file_path, delimiter=",", rows_number=10)
         self.assertEqual(len(row), 10)
 
 
@@ -126,7 +125,7 @@ class TestInput(unittest.TestCase):
         shutil.rmtree(self.test_dir)
 
     def test_add_float_type_column(self):
-        input = Input(Schema(self.test_csv_file_path))
+        input = Input(Schema.from_csv(csv_path=self.test_csv_file_path))
         input.add_numeric_column("col_3")
         is_column_exist = False
         for column in input.columns:
@@ -137,7 +136,7 @@ class TestInput(unittest.TestCase):
         self.assertTrue(is_column_exist, 'Expected column was not found')
 
     def test_add_categorical_type_column(self):
-        input = Input(Schema(self.test_csv_file_path))
+        input = Input(Schema.from_csv(csv_path=self.test_csv_file_path))
         input.add_categorical_column("col_3")
         is_column_exist = False
         for column in input.columns:
@@ -148,7 +147,7 @@ class TestInput(unittest.TestCase):
         self.assertTrue(is_column_exist, 'Expected column was not found')
 
     def test_add_vector_type_column(self):
-        schema = Schema(self.test_csv_file_path)
+        schema = Schema.from_csv(csv_path=self.test_csv_file_path)
         schema.merge_columns_in_range("merged_col", (3, 5))
         input = Input(schema)
         input.add_vector_column("merged_col")
@@ -161,7 +160,7 @@ class TestInput(unittest.TestCase):
         self.assertTrue(is_column_exist, 'Expected column was not found')
 
     def test_img2d_type_column(self):
-        schema = Schema(self.test_csv_file_path)
+        schema = Schema.from_csv(csv_path=self.test_csv_file_path)
         input = Input(schema)
         img2d = Img2DColumn(pre_transforms=[ImgCropTransform({"height": 256, "width": 256})],
                             post_transforms=[ImgNormalizationTransform({"height": 256, "width": 256})])

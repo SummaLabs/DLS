@@ -18,7 +18,7 @@ def create_test_dataset(test_dir, test_csv_file_path, dataset_name, header=False
         col_0 = 'col_0_h'
         col_1 = 'col_1_h'
         col_5 = 'col_5_h'
-    schema = Schema(test_csv_file_path, header=header)
+    schema = Schema.from_csv(csv_path=test_csv_file_path, header=header)
     schema.merge_columns_in_range('col_vector', (2, 4))
     input = Input(schema)
     input.add_categorical_column(col_0)
@@ -38,10 +38,10 @@ class TestDataSetBuilder(unittest.TestCase):
         shutil.rmtree(self.test_dir)
 
     def test_process_csv_file(self):
-        schema = Schema(self.test_csv_file_path)
+        schema = Schema.from_csv(csv_path=self.test_csv_file_path)
         input = Input(schema)
         input.add_categorical_column('col_0')
-        rows = Dataset.Builder(input, "test", self.test_dir, parallelism_level=2)._process_csv_file()
+        rows = Dataset.Builder(input=input, name="test", root_dir=self.test_dir, parallelism_level=2)._process_csv_files()
         self.assertEqual(len(rows), 10)
         for column in input.columns:
             if column.name == 'col_0':
@@ -52,7 +52,7 @@ class TestDataSetBuilder(unittest.TestCase):
         metadata = dataset.metadata
         self.assertEqual(metadata.records_count, 10)
         self.assertTrue(metadata.size > 0)
-        data = dataset.get_batch(5)
+        data = dataset.get_train_batch(5)
         categories_vector = data['col_0']
         # Check that for the same record there are the same values in vectors as we assign it in csv file
         float_vector = data['col_1']
@@ -64,7 +64,7 @@ class TestDataSetBuilder(unittest.TestCase):
         metadata = dataset.metadata
         self.assertEqual(metadata.records_count, 10)
         self.assertTrue(metadata.size > 0)
-        data = dataset.get_batch(5)
+        data = dataset.get_train_batch(5)
         # Check that for the same record there are the same values in vectors as we assign it in csv file
         float_vector = data['col_1']
         col_vector = data['col_vector']
@@ -77,7 +77,7 @@ class TestDataSetBuilder(unittest.TestCase):
         metadata = dataset.metadata
         self.assertEqual(metadata.records_count, 9)
         self.assertTrue(metadata.size > 0)
-        data = dataset.get_batch(5)
+        data = dataset.get_train_batch(5)
         categories_vector = data['col_0_h']
         # Check that for the same record there are the same values in vectors as we assign it in csv file
         float_vector = data['col_1_h']
@@ -89,7 +89,7 @@ class TestDataSetBuilder(unittest.TestCase):
         metadata = dataset.metadata
         self.assertEqual(metadata.records_count, 9)
         self.assertTrue(metadata.size > 0)
-        data = dataset.get_batch(5)
+        data = dataset.get_train_batch(5)
         # Check that for the same record there are the same values in vectors as we assign it in csv file
         float_vector = data['col_1_h']
         col_vector = data['col_vector']
@@ -106,7 +106,7 @@ class TestHDF5RecordWriterReader(unittest.TestCase):
         shutil.rmtree(self.test_dir)
 
     def test_write_read_record_raw_img_true(self):
-        schema = Schema(self.test_csv_file_path)
+        schema = Schema.from_csv(csv_path=self.test_csv_file_path)
         schema.merge_columns_in_range('col_vector', (2, 4))
         input = Input(schema)
         input.add_categorical_column('col_0')
@@ -121,7 +121,7 @@ class TestHDF5RecordWriterReader(unittest.TestCase):
         input.add_column("col_5", img2d)
         os.makedirs(os.path.join(self.test_dir, Dataset.DATA_DIR_NAME))
         record_writer = RecordWriter.factory('HDF5', self.test_dir, input.columns)
-        csv_row = [ent.strip() for ent in schema.read_n_rows(1)[0]]
+        csv_row = [ent.strip() for ent in Schema.read_n_rows(csv_file_path=self.test_csv_file_path, delimiter=",", rows_number=1)[0]]
         precessed_row = {}
         for column in input.columns:
             precessed_row[column.name] = column.process_on_write(csv_row)
@@ -136,7 +136,7 @@ class TestHDF5RecordWriterReader(unittest.TestCase):
         self.assertTrue(np.array_equal(img_deserialized, img_original))
 
     def test_write_read_record_raw_img_false(self):
-        schema = Schema(self.test_csv_file_path)
+        schema = Schema.from_csv(csv_path=self.test_csv_file_path)
         schema.merge_columns_in_range('col_vector', (2, 4))
         input = Input(schema)
         input.add_categorical_column('col_0')
@@ -151,7 +151,7 @@ class TestHDF5RecordWriterReader(unittest.TestCase):
         input.add_column("col_5", img2d)
         os.makedirs(os.path.join(self.test_dir, Dataset.DATA_DIR_NAME))
         record_writer = RecordWriter.factory('HDF5', self.test_dir, input.columns)
-        csv_row = [ent.strip() for ent in schema.read_n_rows(1)[0]]
+        csv_row = [ent.strip() for ent in Schema.read_n_rows(csv_file_path=self.test_csv_file_path, delimiter=",", rows_number=1)[0]]
         precessed_row = {}
         for column in input.columns:
             precessed_row[column.name] = column.process_on_write(csv_row)

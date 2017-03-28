@@ -17,11 +17,13 @@ class Dataset(object):
     DATA_FILE = "dataset.processed"
     SCHEMA_FILE = "schema.json"
 
-    def __init__(self, input, path, metadata, id):
+    def __init__(self, input, path, metadata, id, train_range, validation_range):
         self._input = input
         self._path = path
         self._metadata = metadata
         self._id = id
+        self._train_range = train_range
+        self._validation_range = validation_range
         self._record_reader = RecordReader.factory("HDF5", path)
 
     @property
@@ -29,17 +31,20 @@ class Dataset(object):
         return self._metadata
 
     @property
+    def path(self):
+        return self._path
+
+    @property
     def id(self):
         return self._id
 
-    def get_batch(self, batch_size=64):
+    def _get_batch(self, records_range, batch_size):
         data = {}
         for column in self._input.columns:
             data[column.name] = []
-        records_count = self._record_reader.records_count
         i = 0
         while i < batch_size:
-            inx = random.randrange(0, records_count)
+            inx = random.randrange(records_range[0], records_range[1])
             record = self._record_reader.read(inx)
             for column in self._input.columns:
                 value = column.process_on_read(record)
@@ -49,6 +54,12 @@ class Dataset(object):
             i += 1
         return Data(data)
 
+    def get_train_batch(self, batch_size=64):
+        return self._get_batch(self._train_range, batch_size)
+
+    def get_validation_batch(self, batch_size=64):
+        return self._get_batch(self._validation_range, batch_size)
+
     @staticmethod
     def load(path):
         with open(os.path.join(path, Dataset.DATA_DIR_NAME, Dataset.SCHEMA_FILE)) as s:
@@ -57,17 +68,22 @@ class Dataset(object):
             metadata_serialized = dataset_serialized["metadata"]
             metadata = Metadata(metadata_serialized["dataset-id"], int(metadata_serialized["data-size"]),
                                 int(metadata_serialized["records-count"]), input.columns)
-            return Dataset(input, path, metadata, dataset_serialized["dataset-id"])
+            train_range = dataset_serialized["train-range"]
+            validation_range = dataset_serialized["validation-range"]
+            return Dataset(input, path, metadata, dataset_serialized["dataset-id"], train_range, validation_range)
 
     class Builder(object):
-        def __init__(self, input, name, root_dir, parallelism_level=2, storage_type="HDF5"):
+        def __init__(self, input, name, root_dir, test_dataset_percentage=70, parallelism_level=2, storage_type="HDF5", progressor=None):
             if not isinstance(input, Input):
                 raise TypeError("Must be set to an Input")
             self._input = input
             self._name = name
             self._root_dir = root_dir
+            self._test_dataset_percentage = test_dataset_percentage
             self._parallelism_level = parallelism_level
             self._storage_type = storage_type
+            self._train_range = []
+            self._validation_range = []
             self._init(root_dir)
 
         def _init(self, root_dir):
@@ -78,12 +94,12 @@ class Dataset(object):
 
         def build(self, progressor=None):
             self._validate_data_schema()
-            csv_rows = self._process_csv_file()
-            csv_rows_chunks = np.array_split(csv_rows, self._parallelism_level)
+            indexed_csv_rows = self._process_csv_files()
+            indexed_csv_rows_chunks = np.array_split(indexed_csv_rows, self._parallelism_level)
             processor = []
             processed_records = Queue()
             for i in range(self._parallelism_level):
-                p = RecordProcessor(self._input.columns, processed_records, csv_rows_chunks[i])
+                p = RecordProcessor(self._input.columns, processed_records, indexed_csv_rows_chunks[i])
                 processor.append(p)
             for p in processor: p.start()
             record_write = RecordWriter.factory(self._storage_type, self._dataset_root_dir, self._input.columns)
@@ -94,10 +110,11 @@ class Dataset(object):
                 while completed_processor_num < self._parallelism_level:
                     result = processed_records.get(block=True, timeout=50)
                     if not isinstance(result, ProcessingResult):
-                        record_write.write(result, record_idx)
+                        index, row = result
+                        record_write.write(row, index)
                         record_idx += 1
                         if (progressor != None):
-                            progressor.progress = 100 * record_idx / len(csv_rows)
+                            progressor.progress = 100 * record_idx / len(indexed_csv_rows)
                     else:
                         completed_processor_num += 1
                         aggregated_column_metadata.append(result.column_metadata)
@@ -111,7 +128,7 @@ class Dataset(object):
 
             print "Records processed: " + str(record_idx)
 
-            return Dataset(self._input, self._dataset_root_dir, dataset_metadata, self._dataset_id)
+            return Dataset(self._input, self._dataset_root_dir, dataset_metadata, self._dataset_id, self._train_range, self._validation_range)
 
         def _merge_column_metadata(self, aggregated_metadata):
             """
@@ -131,10 +148,35 @@ class Dataset(object):
                 if column.metadata is not None:
                     column.metadata.merge(metadata_by_column[column.name])
 
-        def _process_csv_file(self):
+        def _process_csv_files(self):
             rows = []
             csv_file_path = self._input.csv_file_path
+            if self._input.csv_file_path is not None:
+                rows = self._read_csv(csv_file_path)
+                random.shuffle(rows)
+                test_dataset_records_num = int(round(self._test_dataset_percentage * len(rows)) / 100)
+                self._train_range = [0, test_dataset_records_num]
+                self._validation_range = [test_dataset_records_num, len(rows)]
+            else:
+                train_rows = self._read_csv(self._input.train_csv_file_path)
+                random.shuffle(train_rows)
+                self._train_range = [0, len(train_rows)]
+                rows.extend(train_rows)
+                validation_rows = self._read_csv(self._input.validation_scv_file_path)
+                random.shuffle(validation_rows)
+                self._validation_range = [len(train_rows), len(train_rows) + len(validation_rows)]
+                rows.extend(validation_rows)
             columns = self._input.columns
+            for row in rows:
+                for column in columns:
+                    if (isinstance(column, NumericColumn) or isinstance(column, VectorColumn) or isinstance(
+                            column, CategoricalColumn)) and column.metadata is not None:
+                        column.metadata.aggregate(row[column.columns_indexes[0]])
+
+            return [(row, index) for index, row in enumerate(rows)]
+
+        def _read_csv(self, csv_file_path):
+            rows = []
             with open(csv_file_path, 'rb') as f:
                 reader = csv.reader(f)
                 try:
@@ -143,10 +185,6 @@ class Dataset(object):
                             # Trim row entries
                             row = [e.strip() for e in row]
                             rows.append(row)
-                            for column in columns:
-                                if (isinstance(column, NumericColumn) or isinstance(column, VectorColumn) or isinstance(
-                                     column, CategoricalColumn)) and column.metadata is not None:
-                                     column.metadata.aggregate(row[column.columns_indexes[0]])
                 except csv.Error as e:
                     sys.exit('Broken line: file %s, line %d: %s' % (csv_file_path, reader.line_num, e))
 
@@ -162,8 +200,10 @@ class Dataset(object):
                 if column.metadata is not None:
                     column.metadata.path(self._dataset_data_dir)
             dataset_schema = {"dataset-id": self._dataset_id,
-                              "metadata": metadata.serialize(),
-                              "schema": self._input.serialize()}
+                                  "metadata": metadata.serialize(),
+                                  "train-range": self._train_range,
+                                  "validation-range": self._validation_range,
+                                  "schema": self._input.serialize()}
             with open(os.path.join(self._dataset_data_dir, Dataset.SCHEMA_FILE), 'w') as f:
                 f.write(json.dumps(dataset_schema))
 
@@ -264,18 +304,18 @@ class HDF5RecordWriter(RecordWriter):
 
 
 class RecordProcessor(Process):
-    def __init__(self, columns, result_queue, csv_rows):
+    def __init__(self, columns, result_queue, indexed_csv_rows):
         super(RecordProcessor, self).__init__()
         self._columns = columns
         self._result_queue = result_queue
-        self._csv_rows = csv_rows
+        self._indexed_csv_rows = indexed_csv_rows
 
     def run(self):
-        for csv_row in self._csv_rows:
+        for csv_row, index in self._indexed_csv_rows:
             processed_row = {}
             for column in self._columns:
                 processed_row[column.name] = column.process_on_write(csv_row)
-            self._result_queue.put(processed_row)
+            self._result_queue.put((index, processed_row))
         # Signalize that processing is completed and send back columns with it's metadata
         self._result_queue.put(ProcessingResult(self._columns))
 
@@ -347,7 +387,7 @@ if __name__ == '__main__':
     path_csv = '../../../../data-test/dataset-image2d/simple4c_test/test-csv-v1.csv'
     if not os.path.isfile(path_csv):
         raise Exception('Cant find file [%s]' % path_csv)
-    schema = Schema(path_csv, header=True, delimiter=',')
+    schema = Schema.from_csv(path_csv, header=True, delimiter=',')
     schema.merge_columns_in_range('col_vector', (2, 4))
     schema.print_data()
     input = Input(schema=schema)
@@ -357,5 +397,5 @@ if __name__ == '__main__':
     input.add_column("path", img2d)
     datasets_base_path = app_flask.config['DATASETS_BASE_PATH']
     dataset = Dataset.Builder(input, "test", datasets_base_path, parallelism_level=2).build()
-    data = dataset.get_batch(5)
+    data = dataset.get_train_batch(5)
     print data['path']
