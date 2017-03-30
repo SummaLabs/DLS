@@ -38,6 +38,10 @@ class Dataset(object):
     def id(self):
         return self._id
 
+    def read_record(self, index):
+        serialized_record = self._record_reader.read(index)
+        return [column.process_on_read(serialized_record) for column in self._input.columns]
+
     def _get_batch(self, records_range, batch_size):
         data = {}
         for column in self._input.columns:
@@ -45,9 +49,9 @@ class Dataset(object):
         i = 0
         while i < batch_size:
             inx = random.randrange(records_range[0], records_range[1])
-            record = self._record_reader.read(inx)
-            for column in self._input.columns:
-                value = column.process_on_read(record)
+            record = self.read_record(inx)
+            for index, column in enumerate(self._input.columns):
+                value = record[index]
                 if isinstance(value, np.ndarray) and value.ndim > 1:
                     value = value.ravel()
                 data[column.name].append(value)

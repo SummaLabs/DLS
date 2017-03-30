@@ -50,6 +50,7 @@ class TestDatasetService(unittest.TestCase):
     def test_load_dataset_records(self):
         dataset_service = DatasetService(self.test_dir)
         records = dataset_service.load_records(self.datasets_ids[0], 2, 5)
+        self.assertEqual(len(records), 3)
 
 
 if __name__ == '__main__':

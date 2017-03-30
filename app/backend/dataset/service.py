@@ -17,12 +17,10 @@ class DatasetService(object):
 
     def load_records(self, dataset_id, start, end):
         dataset = self._workspace.dataset(dataset_id)
-        record_reader = HDF5RecordReader(dataset.path)
         records = []
-        for i in range(start, end):
-            records.append(record_reader.read(i))
+        for index in range(start, end):
+            records.append(dataset.read_record(index))
         return records
-
 
     @staticmethod
     def data_types_config():
