@@ -24,7 +24,7 @@ def create_test_dataset(test_dir, test_csv_file_path, dataset_name, header=False
     input.add_categorical_column(col_0)
     input.add_numeric_column(col_1)
     input.add_vector_column('col_vector')
-    img2d = Img2DColumn([], [], is_related_path=is_related_path)
+    img2d = Img2DColumn(is_related_path=is_related_path)
     input.add_column(col_5, img2d)
     return Dataset.Builder(input, dataset_name, test_dir, parallelism_level=2).build()
 

@@ -254,7 +254,7 @@ class Img2DColumnMetadata(ColumnMetadata):
     def serialize(self):
         img = Image.fromarray(np.uint8(self._img)).convert('RGB')
         img_path_prefix = self._column_name
-        if self._column_name is not None:
+        if self._column_name is None:
             img_path_prefix = str(random.getrandbits(16))
         mean_img_path = path.join(self._path, img_path_prefix + '-mean-img.jpg')
         img.save(mean_img_path)
@@ -265,6 +265,7 @@ class Img2DColumnMetadata(ColumnMetadata):
         mean_img_path = path.join(schema['mean-img-path'])
         img = skimgio.imread(mean_img_path)
         metadata = Img2DColumnMetadata()
+        metadata.path(os.path.dirname(mean_img_path))
         metadata.img = img
         return metadata
 

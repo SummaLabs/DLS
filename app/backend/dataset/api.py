@@ -106,10 +106,11 @@ def load_from_csv():
 def list_data_sets_metadata_v2():
     response = []
     for metadata in dataset_service.datasets_metadata():
-        metadata_json = {'dataset_metadata': metadata.serialize(), 'dataset_id': metadata.dataset_id}
-        col_metadata = metadata.columns_metadata
-        metadata_json['columns_metadata'] = \
-        [col_metadata[c_n].serialize() for c_n in col_metadata.iteritems() if col_metadata[c_n] is not None]
+        metadata_json = {'dataset-metadata': metadata.serialize()}
+        column_metadata = metadata.columns_metadata
+        for column_name in column_metadata:
+            if column_metadata[column_name] is not None:
+                metadata_json[column_name] = column_metadata[column_name].serialize()
         response.append(metadata_json)
 
     return Response(json.dumps(response), mimetype='application/json')
@@ -119,7 +120,17 @@ def list_data_sets_metadata_v2():
 def data_set_metadata_v2(id):
     metadata = dataset_service.dataset_metadata(id)
     response = {'dataset_metadata': metadata.serialize()}
-    col_metadata = metadata.columns_metadata
-    response['columns_metadata'] = \
-        [col_metadata[c_n].serialize() for c_n in col_metadata.iteritems() if col_metadata[c_n] is not None]
+    column_metadata = metadata.columns_metadata
+    for column_name in column_metadata:
+        if column_metadata[column_name] is not None:
+            response[column_name] = column_metadata[column_name].serialize()
     return Response(json.dumps(response), mimetype='application/json')
+
+
+@dataset.route('/records/preview', methods=['POST'])
+def data_set_records_preview():
+    dataset_id = request.args['id']
+    from_record = int(request.args['from'])
+    to_record = int(request.args['to'])
+    records = dataset_service.load_records_for_preview(dataset_id, from_record, to_record)
+    return Response(json.dumps(records), mimetype='application/json')

@@ -144,8 +144,9 @@ class Schema(object):
     def print_data(self):
         print "First 10 records:"
         csv_file_path = self.csv_file_path if self._csv_file_path is not None else self._train_csv_file_path
-        for row in self.read_n_rows(csv_file_path, self._delimiter, 10):
-            print row
+        for index, row in enumerate(self.read_n_rows(csv_file_path, self._delimiter, 10)):
+            if not (index == 0 and self.header == True):
+                print row
 
 
 class Input(object):
@@ -273,6 +274,12 @@ class Input(object):
 
 class Column(object):
     def __init__(self, name=None, columns_indexes=None, type=None, reader=None, ser_de=None, metadata=None):
+        if not (name is None or isinstance(name, str)):
+            raise Exception("Name field should be string.")
+        if not (columns_indexes is None or isinstance(columns_indexes, list)):
+            raise Exception("Columns indexes field should be list.")
+        if not (type is None or isinstance(type, str)):
+            raise Exception("Type field should be string.")
         self._name = name
         # CSV corresponding columns indexes
         self._columns_indexes = columns_indexes
@@ -358,6 +365,10 @@ class Column(object):
 class ComplexColumn(Column):
     def __init__(self, name=None, type=None, columns_indexes=None, ser_de=None, reader=None, metadata=None,
                  pre_transforms=[], post_transforms=[]):
+        if not (pre_transforms is None or isinstance(pre_transforms, list)):
+            raise Exception("pre_transforms field should be list.")
+        if not (post_transforms is None or isinstance(post_transforms, list)):
+            raise Exception("post_transforms field should be list.")
         super(ComplexColumn, self).__init__(name=name, type=type, columns_indexes=columns_indexes, ser_de=ser_de,
                                             reader=reader, metadata=metadata)
         self._pre_transforms = pre_transforms

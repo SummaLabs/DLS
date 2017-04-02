@@ -394,12 +394,14 @@ if __name__ == '__main__':
     schema = Schema.from_csv(path_csv, header=True, delimiter=',')
     schema.merge_columns_in_range('col_vector', (2, 4))
     schema.print_data()
+    schema['path'] = 'image'
+    schema.print_columns()
     input = Input(schema=schema)
     input.add_categorical_column("label")
     input.add_vector_column('col_vector')
-    img2d = Img2DColumn([], [], is_related_path=True)
-    input.add_column("path", img2d)
+    img2d = Img2DColumn(is_related_path=True)
+    input.add_column("image", img2d)
     datasets_base_path = app_flask.config['DATASETS_BASE_PATH']
     dataset = Dataset.Builder(input, "test", datasets_base_path, parallelism_level=2).build()
     data = dataset.get_train_batch(5)
-    print data['path']
+    print data['image']

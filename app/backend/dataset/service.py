@@ -1,6 +1,10 @@
 from app.backend.core import Workspace
 from app.backend.core.dataset.dataset import HDF5RecordReader
 from app.backend.core.dataset.input import Schema, Column
+import numpy as np
+import base64
+from PIL import Image
+from cStringIO import StringIO
 
 
 class DatasetService(object):
@@ -15,12 +19,24 @@ class DatasetService(object):
         dataset = self._workspace.dataset(id)
         return None if dataset is None else dataset.metadata
 
-    def load_records(self, dataset_id, start, end):
+    def load_records_for_preview(self, dataset_id, start, end):
         dataset = self._workspace.dataset(dataset_id)
-        records = []
+        preview_records = []
         for index in range(start, end):
-            records.append(dataset.read_record(index))
-        return records
+            record = dataset.read_record(index)
+            preview_record = []
+            for index, column in enumerate(dataset._input.columns):
+                if column.type == Column.Type.IMG_2D:
+                    image = Image.fromarray(record[index])
+                    buffer = StringIO()
+                    image.save(buffer, format='JPEG')
+                    preview_record.append('data:image/jpg;base64,' + base64.b64encode(buffer.getvalue()))
+                elif column.type == Column.Type.VECTOR:
+                    preview_record.append(np.asarray(record[index]))
+                else:
+                    preview_record.append(record[index])
+            preview_records.append(preview_record)
+        return preview_records
 
     @staticmethod
     def data_types_config():
