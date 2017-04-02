@@ -186,12 +186,6 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
     };
     
     $scope.headerSelectedType = function (header, type) {
-        if (type === 'number')
-            header.setParams(numberParams);
-        else {
-            header.setParams(stringParams);
-        }
-
-        // header.buildTemplate();
+        header.changeType = type;
     }
 }

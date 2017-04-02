@@ -50,6 +50,9 @@ function DataImporterService ($http) {
 
 }
 
+const types = new Map();
+const typesNames = [];
+
 
 class DataTable {
 
@@ -76,7 +79,6 @@ class DataTable {
     }
 
     static get types () {
-        let types = new Map();
         return types;
     }
 
@@ -84,7 +86,6 @@ class DataTable {
         this.headers = [];
         this.rows = [];
         this.selectedColumnIndexes = [];
-        this.supportedTypes = Array.from(DataTable.columnTypes.keys());
         this.config = {
             filePath: null,
             header: null,
@@ -93,10 +94,17 @@ class DataTable {
         };
     }
 
+    get supportedTypes() {
+        return typesNames;
+    }
+
+
     setSupportedTypes(types) {
         types.forEach(function (item) {
-            if (!DataTable.types.has(item.type))
+            if (!DataTable.types.has(item.type)) {
                 DataTable.types.set(item.type, item);
+                typesNames.push(item.type);
+            }
         });
     }
 
@@ -152,9 +160,9 @@ class DataTable {
     createHeader(headerSize, headerNames) {
         for (let index = 0; index < headerSize; ++index) {
             let name = headerNames ? headerNames[index]: null;
-            let Header = this.headerClassByType('string');
-            let header = new Header(this.config.header, DataTable.types.get('IMG_2D'), index, name);
-            // header.setParams(stringParams);
+            let type = this.supportedTypes[0];
+            let Header = this.headerClassByType(type);
+            let header = new Header(this.config.header, type, index, name);
             this.addColumn(header);
         }
 
@@ -278,18 +286,27 @@ class HeaderItem {
 
     buildTemplate() {
 
+        console.log(DataTable.types);
+        console.log(this.type);
         let params = DataTable.types.get(this.type);
         console.log(params);
 
         let settingsTemplate = '';
-        for (let elem in params) {
-            if (this.params[elem].type === 'list') {
-                settingsTemplate += buildList(this.params[elem], elem);
-            } else if (this.params[elem].type === 'integer') {
-                settingsTemplate += buildInteger(this.params[elem], elem);
-            }
+        if (params.transforms) {
+            for (let param of params.transforms) {
+                console.log(param);
+                for (let elem in param.config) {
+                    console.log(elem);
+                    if (param.config[elem].input === 'list') {
+                        settingsTemplate += buildList(param.config[elem], elem);
+                    } else if (param.config[elem].input === 'int') {
+                        settingsTemplate += buildInteger(param.config[elem], elem);
+                    }
 
+                }
+            }
         }
+
 
         this.template = `
             <md-dialog aria-label=${this.name}>
@@ -345,12 +362,8 @@ class HeaderItem {
 
     set changeType(type) {
         this.type = type;
-    }
-
-    setType(type) {
-        console.log(type);
-        this.type = type;
         this.buildTemplate();
+        console.log(type);
     }
 
 }
