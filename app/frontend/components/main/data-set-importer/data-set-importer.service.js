@@ -28,7 +28,7 @@ function DataImporterService ($http) {
     };
 
 
-    this.getDataSetMetadataInRange = function (path, header, separator, rows) {
+    this.loadRecordsFromCsv = function (path, header, separator, rows) {
         return $http({
             method: 'POST',
             url:    '/dataset/csv/load/rows',

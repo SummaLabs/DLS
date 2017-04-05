@@ -22,27 +22,26 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
     $scope.table = dataImporterService.createTable();
 
     let parentScope = $scope;
-    function selectFile(type, $event) {
 
-        appConfig.fileManager.pickFile = true;
-        appConfig.fileManager.pickFolder = false;
-
-        appConfig.fileManager.singleSelection = true;
+    function loadCSV($event) {
         $mdDialog.show({
             controller: function ($scope, $mdDialog, $rootScope) {
-                $scope.threads = 1;
+                let parentDialogScope = $scope;
                 $scope.delimiter = ',';
-                $scope.select = function (answer) {
+                $scope.header = false;
+                $scope.isUseSeparateVal = false;
+                $scope.percentForValidation = 70;
+                $scope.trainCsvPath = "";
+                $scope.validationCsvPath = "";
+                $scope.formSubmit = function (answer) {
                     $mdDialog.hide(answer);
-
+                    
                     if ($rootScope.selectedFiles.length > 0) {
-                        let path = $rootScope.selectedFiles[0].model.fullPath();
-                        dataImporterService.getDataSetMetadataInRange(path, 'True', $scope.delimiter, 100).then(
+                        dataImporterService.loadRecordsFromCsv(parentDialogScope.trainCsvPath, $scope.header, $scope.delimiter, 100).then(
                             function success(response) {
                                 parentScope.table.setDelimiter($scope.delimiter);
                                 parentScope.table.setThreadsCount($scope.threads);
                                 parentScope.table.loadFromCsv(response.data, true);
-                                // $scope.options.decapitate = true;
                                 console.log(parentScope.table.getConfig());
                             },
                             function error(response) {
@@ -51,18 +50,68 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
                         );
                     }
                 };
+
                 $scope.cancel = function () {
                     $mdDialog.cancel();
                 };
+
+                $scope.selectCsv = function ($event, datasetType) {
+                    appConfig.fileManager.pickFile = true;
+                    appConfig.fileManager.pickFolder = false;
+                    appConfig.fileManager.singleSelection = true;
+                    $mdDialog.show({
+                        controller: function ($scope, $mdDialog, $rootScope) {
+                            $scope.select = function (answer) {
+                                $mdDialog.hide(answer);
+                                if ($rootScope.selectedFiles.length > 0) {
+                                    if (datasetType == "train") {
+                                        parentDialogScope.trainCsvPath = $rootScope.selectedFiles[0].model.fullPath();
+                                    } else {
+                                        parentDialogScope.validationCsvPath = $rootScope.selectedFiles[0].model.fullPath();
+                                    }
+                                }
+                            };
+                            $scope.cancel = function () {
+                                $mdDialog.cancel();
+                            };
+                        },
+                        templateUrl: '/frontend/components/main/file-manager/file-manager.html',
+                        parent: angular.element(document.body),
+                        targetEvent: $event,
+                        clickOutsideToClose: false,
+                        autoWrap : true,
+                        multiple: true
+                    });
+                };
             },
-            templateUrl: '/frontend/components/main/data-set-importer/data-set-importer-file-manager.html',
+            templateUrl: '/frontend/components/main/data-set-importer/data-set-importer-dialog.html',
             parent: angular.element(document.body),
             targetEvent: $event,
             clickOutsideToClose: false
         });
     };
 
-    selectFile();
+    loadCSV();
+
+    $scope.onCreateDataset = function ($event) {
+        $mdDialog.show({
+            controller: function ($scope, $mdDialog, $rootScope) {
+                $scope.threads = 2;
+                $scope.name = '';
+                $scope.formSubmit = function (answer) {
+                    $mdDialog.hide(answer);
+                    alert("Create Dataset")
+                };
+
+                $scope.cancel = function () {
+                    $mdDialog.cancel();
+                };
+            },
+            templateUrl: '/frontend/components/main/data-set-importer/data-set-create-dialog.html',
+            parent: angular.element(document.body),
+            targetEvent: $event,
+            clickOutsideToClose: false
+        })};
 
 
     $scope.options = {
@@ -187,5 +236,9 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
     
     $scope.headerSelectedType = function (header, type) {
         header.changeType = type;
+    };
+
+    $scope.onLoadCSV = function (event) {
+        loadCSV(event);
     }
 }

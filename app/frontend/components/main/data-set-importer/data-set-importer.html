@@ -11,6 +11,14 @@
             Remove columns
         </md-button>
 
+        <md-button ng-click="onLoadCSV()" >
+            Reload CSV
+        </md-button>
+
+        <md-button ng-click="onCreateDataset($event)" >
+            Create Dataset
+        </md-button>
+
         <span flex></span>
         <md-button ng-show="options.rowSelection && selected.length"    class="md-icon-button">
             <md-icon>delete</md-icon>

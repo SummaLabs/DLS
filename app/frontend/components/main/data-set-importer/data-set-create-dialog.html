@@ -1,0 +1,33 @@
+<md-dialog aria-label="Load Dataset CSV" flex="20" ng-cloak>
+    <form ng-submit="formSubmit()">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Create Dataset</h2>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div layout="column" layout-margin>
+                <div layout="row" layout-align="space-between center">
+                    <md-input-container style="width:400px">
+                        <label>Enter Data Set Name</label>
+                        <input name="datasetName" required ng-model="name"
+                               aria-label="dataset-name">
+                    </md-input-container>
+                </div>
+                <md-input-container>
+                    <label>Threads count</label>
+                    <input type="number" required min="1" max="24" step="1" ng-model="threads">
+                </md-input-container>
+            </div>
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button ng-click="cancel()">
+                Cancel
+            </md-button>
+            <md-button type="submit" md-autofocus>
+                Create
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>
