@@ -445,8 +445,6 @@ if __name__=='__main__':
     from app.backend.core.datasets.dbwatcher import DatasetsWatcher
     #
     dirData = dlsutils.getPathForDatasetDir()
-    dbWatcher = DatasetsWatcher(dirData)
-    dbWatcher.refreshDatasetsInfo()
     #
     foutJson = 'keras-model-generated-db.json'
     fnFlowJson = '../../../../data/network/saved/testnet_multi_input_multi_output_v1.json'
@@ -475,5 +473,7 @@ if __name__=='__main__':
     for ii, ll in enumerate(sortedFlow_LW):
         print ('[%d] %s\t: %s' % (ii, ll.type(), ll))
     # (2) Generate dict-based Json Kearas model (from DLS model representation)
+    # dbWatcher = DatasetsWatcher(dirData)
+    # dbWatcher.refreshDatasetsInfo()
     # modelJson, lstDBIdx = flowParser.generateModelKerasConfigJson(dbWatcher=dbWatcher)
     # keras.models.model_from_config(modelJson).summary()
