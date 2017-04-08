@@ -85,7 +85,7 @@ class LW_Conv2D(LW_Layer):
 
 ###############################################
 class LW_AtrousConv2D(LW_Conv2D):
-    def __init__(self, filters, nb_row, nb_col,
+    def __init__(self, filters, kernel_size,
                  padding='valid', strides=(1, 1),
                  atrous_rate=(1, 1), data_format='default'):
         if data_format == 'default':
@@ -93,7 +93,7 @@ class LW_AtrousConv2D(LW_Conv2D):
         if padding not in {'valid', 'same', 'full'}:
             raise Exception('Invalid border mode for AtrousConv2D:', padding)
         self.atrous_rate = tuple(atrous_rate)
-        super(LW_AtrousConv2D, self).__init__(filters, nb_row, nb_col, padding=padding,
+        super(LW_AtrousConv2D, self).__init__(filters, kernel_size, padding=padding,
                                               strides=strides, data_format=data_format)
     def get_output_shape_for(self, input_shape):
         if self.dim_ordering == 'channels_first':
@@ -113,23 +113,23 @@ class LW_AtrousConv2D(LW_Conv2D):
         else:
             raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
 
-class LW_SeparableConvolution2D(LW_Layer):
-    def __init__(self, nb_filter, nb_row, nb_col,
-                 border_mode='valid', subsample=(1, 1),
-                 depth_multiplier=1, dim_ordering='default'):
-        if dim_ordering == 'default':
-            dim_ordering = default_data_format
-        assert dim_ordering in {'channels_last', 'channels_first'}, 'dim_ordering must be in {tf, th}'
-        if border_mode not in {'valid', 'same'}:
-            raise Exception('Invalid border mode for SeparableConv2D:', border_mode)
-        self.nb_filter = nb_filter
-        self.nb_row = nb_row
-        self.nb_col = nb_col
+class LW_SeparableConv2D(LW_Layer):
+    def __init__(self, filters, kernel_size,
+                 padding='valid', strides=(1, 1),
+                 depth_multiplier=1, data_format='default'):
+        if data_format == 'default':
+            data_format = default_data_format
+        assert data_format in {'channels_last', 'channels_first'}, 'dim_ordering must be in {channels_last, channels_first}'
+        if padding not in {'valid', 'same'}:
+            raise Exception('Invalid border mode for SeparableConv2D:', padding)
+        self.nb_filter = filters
+        self.nb_row = kernel_size[0]
+        self.nb_col = kernel_size[1]
         # self.activation = activations.get(activation)
-        self.border_mode = border_mode
-        self.subsample = tuple(subsample)
+        self.border_mode = padding
+        self.subsample = tuple(strides)
         self.depth_multiplier = depth_multiplier
-        self.dim_ordering = dim_ordering
+        self.dim_ordering = data_format
     def get_output_shape_for(self, input_shape):
         if self.dim_ordering == 'channels_first':
             rows = input_shape[2]
@@ -149,21 +149,21 @@ class LW_SeparableConvolution2D(LW_Layer):
             raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
 
 ###############################################
-class LW_Convolution3D(LW_Layer):
-    def __init__(self, nb_filter, kernel_dim1, kernel_dim2, kernel_dim3,
-                 border_mode='valid', subsample=(1, 1, 1), dim_ordering='default'):
-        if dim_ordering == 'default':
-            dim_ordering = default_data_format
-        assert dim_ordering in {'channels_last', 'channels_first'}, 'dim_ordering must be in {tf, th}'
-        if border_mode not in {'valid', 'same', 'full'}:
-            raise Exception('Invalid border mode for Convolution3D:', border_mode)
-        self.nb_filter = nb_filter
-        self.kernel_dim1 = kernel_dim1
-        self.kernel_dim2 = kernel_dim2
-        self.kernel_dim3 = kernel_dim3
-        self.border_mode = border_mode
-        self.subsample = tuple(subsample)
-        self.dim_ordering = dim_ordering
+class LW_Conv3D(LW_Layer):
+    def __init__(self, filters, kernel_size,
+                 padding='valid', strides=(1, 1, 1), data_format='default'):
+        if data_format == 'default':
+            data_format = default_data_format
+        assert data_format in {'channels_last', 'channels_first'}, 'dim_ordering must be in {channels_last, channels_first}'
+        if padding not in {'valid', 'same', 'full'}:
+            raise Exception('Invalid border mode for Convolution3D:', padding)
+        self.nb_filter = filters
+        self.kernel_dim1 = kernel_size[0]
+        self.kernel_dim2 = kernel_size[1]
+        self.kernel_dim3 = kernel_size[2]
+        self.border_mode = padding
+        self.subsample = tuple(strides)
+        self.dim_ordering = data_format
     def get_output_shape_for(self, input_shape):
         if self.dim_ordering == 'channels_first':
             conv_dim1 = input_shape[2]
@@ -187,19 +187,19 @@ class LW_Convolution3D(LW_Layer):
 
 ###############################################
 class LW_UpSampling1D(LW_Layer):
-    def __init__(self, length=2):
-        self.length = length
+    def __init__(self, size=2):
+        self.length = size
     def get_output_shape_for(self, input_shape):
         length = self.length * input_shape[1] if input_shape[1] is not None else None
         return (input_shape[0], length, input_shape[2])
 
 class LW_UpSampling2D(LW_Layer):
-    def __init__(self, size=(2, 2), dim_ordering='default'):
-        if dim_ordering == 'default':
-            dim_ordering = default_data_format
-        assert dim_ordering in {'channels_last', 'channels_first'}, 'dim_ordering must be in {tf, th}'
+    def __init__(self, size=(2, 2), data_format='default'):
+        if data_format == 'default':
+            data_format = default_data_format
+        assert data_format in {'channels_last', 'channels_first'}, 'dim_ordering must be in {channels_last, channels_first}'
         self.size = tuple(size)
-        self.dim_ordering = dim_ordering
+        self.dim_ordering = data_format
     def get_output_shape_for(self, input_shape):
         if self.dim_ordering == 'channels_first':
             width = self.size[0] * input_shape[2] if input_shape[2] is not None else None
@@ -219,12 +219,12 @@ class LW_UpSampling2D(LW_Layer):
             raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
 
 class LW_UpSampling3D(LW_Layer):
-    def __init__(self, size=(2, 2, 2), dim_ordering='default'):
-        if dim_ordering == 'default':
-            dim_ordering = default_data_format
-        assert dim_ordering in {'channels_last', 'channels_first'}, 'dim_ordering must be in {tf, th}'
+    def __init__(self, size=(2, 2, 2), data_format='default'):
+        if data_format == 'default':
+            data_format = default_data_format
+        assert data_format in {'channels_last', 'channels_first'}, 'dim_ordering must be in {channels_last, channels_first}'
         self.size = tuple(size)
-        self.dim_ordering = dim_ordering
+        self.dim_ordering = data_format
     def get_output_shape_for(self, input_shape):
         if self.dim_ordering == 'channels_first':
             dim1 = self.size[0] * input_shape[2] if input_shape[2] is not None else None
@@ -275,10 +275,10 @@ class LW_ZeroPadding1D(LW_Layer):
         return (input_shape[0], length, input_shape[2])
 
 class LW_ZeroPadding2D(LW_Layer):
-    def __init__(self, padding=(1, 1), dim_ordering='default'):
-        if dim_ordering == 'default':
-            dim_ordering = default_data_format
-        assert dim_ordering in {'channels_last', 'channels_first'}, '`dim_ordering` must be in {"tf", "th"}.'
+    def __init__(self, padding=(1, 1), data_format='default'):
+        if data_format == 'default':
+            data_format = default_data_format
+        assert data_format in {'channels_last', 'channels_first'}, '`dim_ordering` must be in {"tf", "th"}.'
         self.padding = padding
         if isinstance(padding, dict):
             if set(padding.keys()) <= {'top_pad', 'bottom_pad', 'left_pad', 'right_pad'}:
@@ -307,7 +307,7 @@ class LW_ZeroPadding2D(LW_Layer):
                 raise TypeError('`padding` should be tuple of int '
                                 'of length 2 or 4, or dict. '
                                 'Found: ' + str(padding))
-        self.dim_ordering = dim_ordering
+        self.dim_ordering = data_format
     def get_output_shape_for(self, input_shape):
         if self.dim_ordering == 'channels_first':
             rows = input_shape[2] + self.top_pad + self.bottom_pad if input_shape[2] is not None else None
@@ -321,12 +321,12 @@ class LW_ZeroPadding2D(LW_Layer):
             raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
 
 class LW_ZeroPadding3D(LW_Layer):
-    def __init__(self, padding=(1, 1, 1), dim_ordering='default'):
-        if dim_ordering == 'default':
-            dim_ordering = default_data_format
-        assert dim_ordering in {'channels_last', 'channels_first'}, 'dim_ordering must be in {tf, th}'
+    def __init__(self, padding=(1, 1, 1), data_format='default'):
+        if data_format == 'default':
+            data_format = default_data_format
+        assert data_format in {'channels_last', 'channels_first'}, 'dim_ordering must be in {channels_last, channels_first}'
         self.padding = tuple(padding)
-        self.dim_ordering = dim_ordering
+        self.dim_ordering = data_format
     def get_output_shape_for(self, input_shape):
         if self.dim_ordering == 'channels_first':
             dim1 = input_shape[2] + 2 * self.padding[0] if input_shape[2] is not None else None
@@ -351,15 +351,15 @@ class LW_Cropping1D(LW_Layer):
         return (input_shape[0], length, input_shape[2])
 
 class LW_Cropping2D(LW_Layer):
-    def __init__(self, cropping=((0, 0), (0, 0)), dim_ordering='default'):
-        if dim_ordering == 'default':
-            dim_ordering = default_data_format
+    def __init__(self, cropping=((0, 0), (0, 0)), data_format='default'):
+        if data_format == 'default':
+            data_format = default_data_format
         self.cropping = tuple(cropping)
         assert len(self.cropping) == 2, 'cropping must be a tuple length of 2'
         assert len(self.cropping[0]) == 2, 'cropping[0] must be a tuple length of 2'
         assert len(self.cropping[1]) == 2, 'cropping[1] must be a tuple length of 2'
-        assert dim_ordering in {'channels_last', 'channels_first'}, 'dim_ordering must be in {tf, th}'
-        self.dim_ordering = dim_ordering
+        assert data_format in {'channels_last', 'channels_first'}, 'dim_ordering must be in {channels_last, channels_first}'
+        self.dim_ordering = data_format
     def get_output_shape_for(self, input_shape):
         if self.dim_ordering == 'channels_first':
             return (input_shape[0],
@@ -375,16 +375,16 @@ class LW_Cropping2D(LW_Layer):
             raise Exception('Invalid dim_ordering: ' + self.dim_ordering)
 
 class LW_Cropping3D(LW_Layer):
-    def __init__(self, cropping=((1, 1), (1, 1), (1, 1)), dim_ordering='default'):
-        if dim_ordering == 'default':
-            dim_ordering = default_data_format
+    def __init__(self, cropping=((1, 1), (1, 1), (1, 1)), data_format='default'):
+        if data_format == 'default':
+            data_format = default_data_format
         self.cropping = tuple(cropping)
         assert len(self.cropping) == 3, 'cropping must be a tuple length of 3'
         assert len(self.cropping[0]) == 2, 'cropping[0] must be a tuple length of 2'
         assert len(self.cropping[1]) == 2, 'cropping[1] must be a tuple length of 2'
         assert len(self.cropping[2]) == 2, 'cropping[2] must be a tuple length of 2'
-        assert dim_ordering in {'channels_last', 'channels_first'}, 'dim_ordering must be in {tf, th}'
-        self.dim_ordering = dim_ordering
+        assert data_format in {'channels_last', 'channels_first'}, 'dim_ordering must be in {channels_last, channels_first}'
+        self.dim_ordering = data_format
     def get_output_shape_for(self, input_shape):
         if self.dim_ordering == 'channels_first':
             dim1 = input_shape[2] - self.cropping[0][0] - self.cropping[0][1] if input_shape[2] is not None else None

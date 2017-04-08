@@ -257,10 +257,10 @@ class NodeConvolution3D(NodeF):
         return tmpLayer
     def _getLayer_LW(self, inputShape=None):
         tmpCfg = self.jsonCfg['params']
-        tmpLayer = LW_Convolution3D(nb_filter=tmpCfg['filtersCount'],
-                                 kernel_dim1=tmpCfg['filterWidth'],
-                                 kernel_dim2=tmpCfg['filterHeight'],
-                                 kernel_dim3=tmpCfg['filterDepth'])
+        tmpLayer = LW_Conv3D(filters=tmpCfg['filtersCount'],
+                             kernel_dim1=tmpCfg['filterWidth'],
+                             kernel_dim2=tmpCfg['filterHeight'],
+                             kernel_dim3=tmpCfg['filterDepth'])
         return tmpLayer
 
 class NodePooling1D(NodeF):

@@ -9,10 +9,10 @@ from layers_basic import LW_Layer, \
     LW_Dense, \
     LW_Activation
 
-from layers_convolutional import LW_Conv1D, LW_Conv2D, LW_Convolution3D, \
+from layers_convolutional import LW_Conv1D, LW_Conv2D, LW_Conv3D, \
     LW_AtrousConv1D, LW_AtrousConv2D,\
     LW_Cropping1D, LW_Cropping2D, LW_Cropping3D,\
-    LW_SeparableConvolution2D,\
+    LW_SeparableConv2D,\
     LW_UpSampling1D, LW_UpSampling2D, LW_UpSampling3D,\
     LW_ZeroPadding1D, LW_ZeroPadding2D, LW_ZeroPadding3D
 
