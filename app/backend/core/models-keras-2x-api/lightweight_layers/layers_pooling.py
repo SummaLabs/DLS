@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'ar'
 
-from layers_basic import LW_Layer, default_dim_ordering
+from layers_basic import LW_Layer, default_data_format
 from layers_convolutional import conv_output_length
 
 ###############################################
@@ -31,7 +31,7 @@ class LW_AveragePooling1D(_LW_Pooling1D):
 class _LW_Pooling2D(LW_Layer):
     def __init__(self, pool_size=(2, 2), strides=None, border_mode='valid', dim_ordering='default'):
         if dim_ordering == 'default':
-            dim_ordering = default_dim_ordering
+            dim_ordering = default_data_format
         assert dim_ordering in {'tf', 'th'}, 'dim_ordering must be in {tf, th}'
         self.pool_size = tuple(pool_size)
         if strides is None:
@@ -70,7 +70,7 @@ class LW_AveragePooling2D(_LW_Pooling2D):
 class _LW_Pooling3D(LW_Layer):
     def __init__(self, pool_size=(2, 2, 2), strides=None, border_mode='valid', dim_ordering='default'):
         if dim_ordering == 'default':
-            dim_ordering = default_dim_ordering
+            dim_ordering = default_data_format
         assert dim_ordering in {'tf', 'th'}, 'dim_ordering must be in {tf, th}'
         self.pool_size = tuple(pool_size)
         if strides is None:
@@ -126,7 +126,7 @@ class _LW_GlobalPooling2D(LW_Layer):
 
     def __init__(self, dim_ordering='default'):
         if dim_ordering == 'default':
-            dim_ordering = default_dim_ordering
+            dim_ordering = default_data_format
         self.dim_ordering = dim_ordering
     def get_output_shape_for(self, input_shape):
         if self.dim_ordering == 'tf':
@@ -144,7 +144,7 @@ class LW_GlobalMaxPooling2D(_LW_GlobalPooling2D):
 class _LW_GlobalPooling3D(LW_Layer):
     def __init__(self, dim_ordering='default'):
         if dim_ordering == 'default':
-            dim_ordering = default_dim_ordering
+            dim_ordering = default_data_format
         self.dim_ordering = dim_ordering
     def get_output_shape_for(self, input_shape):
         if self.dim_ordering == 'tf':

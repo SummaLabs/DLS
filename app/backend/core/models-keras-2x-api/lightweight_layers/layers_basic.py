@@ -3,7 +3,7 @@
 __author__ = 'ar'
 
 ###############################################
-default_dim_ordering = 'th'
+default_data_format = 'channels_last' #'th'
 
 ###############################################
 class LW_Layer(object):

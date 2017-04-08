@@ -44,7 +44,7 @@ def split_list_by_blocks(lst, psiz):
     :param psiz: size of cut
     :return: cutted-list
     """
-    tret = [lst[x:x + psiz] for x in xrange(0, len(lst), psiz)]
+    tret = [lst[x:x + psiz] for x in range(0, len(lst), psiz)]
     return tret
 
 def findLayerFromEndByType(model, layerType):
