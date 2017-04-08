@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 __author__ = 'ar'
-
+import keras.layers.merge
 ###############################################
 default_data_format = 'channels_last' #'th'
 
@@ -66,8 +66,8 @@ class LW_Flatten(LW_Layer):
 
 ###############################################
 class LW_Dense(LW_Layer):
-    def __init__(self, output_dim):
-        self.output_dim = output_dim
+    def __init__(self, units):
+        self.output_dim = units
     def get_output_shape_for(self, input_shape):
         assert input_shape and len(input_shape) == 2
         return (input_shape[0], self.output_dim)

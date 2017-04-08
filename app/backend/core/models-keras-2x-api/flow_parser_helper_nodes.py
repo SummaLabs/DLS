@@ -464,7 +464,7 @@ class NodeDense(NodeF):
         return tmpLayer
     def _getLayer_LW(self, inputShape=None):
         tmpCfg = self.jsonCfg['params']
-        tmpLayer = LW_Dense(output_dim=tmpCfg['neuronsCount'])
+        tmpLayer = LW_Dense(units=tmpCfg['neuronsCount'])
         return tmpLayer
 
 #########################################
