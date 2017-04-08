@@ -29,7 +29,7 @@ class LW_Merge(LW_Layer):
         input_shapes = input_shape
         if self.mode in ['sum', 'mul', 'ave', 'max']:
             # All tuples in input_shapes should be the same.
-            return input_shapes[0]
+            return tuple(input_shapes[0])
         elif self.mode == 'concat':
             output_shape = list(input_shapes[0])
             for shape in input_shapes[1:]:
@@ -41,8 +41,17 @@ class LW_Merge(LW_Layer):
         elif self.mode in ['dot', 'cos']:
             shape1 = list(input_shapes[0])
             shape2 = list(input_shapes[1])
-            shape1.pop(self.dot_axes[0])
-            shape2.pop(self.dot_axes[1])
+            #
+            if isinstance(self.dot_axes, int):
+                if self.dot_axes < 0:
+                    axes = [self.dot_axes % len(shape1), self.dot_axes % len(shape2)]
+                else:
+                    axes = [self.dot_axes] * 2
+            else:
+                axes = self.dot_axes
+            #
+            shape1.pop(axes[0])
+            shape2.pop(axes[1])
             shape2.pop(0)
             output_shape = shape1 + shape2
             if len(output_shape) == 1:
