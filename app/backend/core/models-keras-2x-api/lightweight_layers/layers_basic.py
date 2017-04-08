@@ -70,7 +70,7 @@ class LW_Flatten(LW_Layer):
                             'layer in your model.')
         tprod = 1
         for ii in input_shape[1:]:
-            tprod += ii
+            tprod *= ii
         return (input_shape[0], tprod)
 
 ###############################################
