@@ -1,8 +1,9 @@
 import unittest
 
-from layers_basic import LW_Merge
+from layers_basic import LW_Merge, LW_InputLayer
 
 
+import keras
 from keras.models import Model
 from keras.layers import merge, Input
 
@@ -11,15 +12,51 @@ class TestBasicLWLayers(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_merge_1d(self):
-        inp1 = Input(shape=(8))
-        inp2 = Input(shape=(3))
-        model = Model(inputs=[inp1, inp2])
-
-
+    def test_merge_1d_concat(self):
+        #mode: 'sum', 'mul', 'concat', 'ave', 'cos', 'dot', 'max'
+        inp1 = Input(shape=[8])
+        inp2 = Input(shape=[3])
+        # FIXME: this is a Keras 1.x API
+        # k_x = merge(inputs=[k_inp1, k_inp2], mode='concat')
+        # FIXME: this is a Keras 2.x API
+        x = keras.layers.Concatenate()([inp1, inp2])
+        model = Model(inputs=[inp1, inp2], outputs=x)
+        outShape = model.output_shape
+        #
         merge_layer = LW_Merge(mode='concat')
-        assert merge_layer.input_shape == 4
+        lw_outShape = merge_layer.get_output_shape_for(input_shape=[[None, 8], [None, 3]])
+        assert (outShape[1:] == lw_outShape[1:])
+
+    def test_merge_1d_other(self):
+        # mode: 'sum', 'mul', 'concat', 'ave', 'cos', 'dot', 'max'
+        for pmode in ['sum', 'mul', 'concat', 'ave', 'dot', 'max']:
+            print ('Mode: [ %s ]' % pmode)
+            inp1 = Input(shape=[10])
+            inp2 = Input(shape=[10])
+            # FIXME: this is a Keras 1.x API
+            # k_x = merge(inputs=[k_inp1, k_inp2], mode='concat')
+            # FIXME: this is a Keras 2.x API
+            if pmode == 'sum':
+                x = keras.layers.Add()([inp1, inp2])
+            elif pmode == 'mul':
+                x = keras.layers.Multiply()([inp1, inp2])
+            elif pmode == 'concat':
+                x = keras.layers.Concatenate()([inp1, inp2])
+            elif pmode == 'ave':
+                x = keras.layers.Average()([inp1, inp2])
+            elif pmode == 'dot':
+                x = keras.layers.Dot(axes=-1)([inp1, inp2])
+            elif pmode == 'max':
+                x = keras.layers.Maximum()([inp1, inp2])
+            model = Model(inputs=[inp1, inp2], outputs=x)
+            outShape = model.output_shape
+            #
+            merge_layer = LW_Merge(mode=pmode)
+            lw_outShape = merge_layer.get_output_shape_for(input_shape=[[None, 10], [None, 10]])
+            assert (outShape[1:] == lw_outShape[1:])
 
 
 if __name__ == '__main__':
     unittest.main()
+    # q1 = TestBasicLWLayers()
+    # q1.test_merge_1d_other()
