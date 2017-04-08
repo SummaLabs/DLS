@@ -291,9 +291,9 @@ class NodePooling1D(NodeF):
     def _getLayer_LW(self, inputShape=None):
         tmpCfg = self.jsonCfg['params']
         if self.nodeClass == 'MaxPooling1D':
-            tmpLayer = LW_MaxPooling1D(pool_length=tmpCfg['subsamplingSizeWidth'])
+            tmpLayer = LW_MaxPooling1D(pool_size=tmpCfg['subsamplingSizeWidth'])
         else:
-            tmpLayer = LW_AveragePooling1D(pool_length=tmpCfg['subsamplingSizeWidth'])
+            tmpLayer = LW_AveragePooling1D(pool_size=tmpCfg['subsamplingSizeWidth'])
         return tmpLayer
 
 class NodePooling2D(NodeF):

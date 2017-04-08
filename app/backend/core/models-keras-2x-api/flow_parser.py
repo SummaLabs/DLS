@@ -4,7 +4,20 @@ __author__ = 'ar'
 
 import json
 
-from compiler.ast import flatten
+#FIXME: fix for Python3
+# from compiler.ast import flatten
+import collections
+def flatten_gen(x):
+    def iselement(e):
+        return not(isinstance(e, collections.Iterable) and not isinstance(e, str))
+    for el in x:
+        if iselement(el):
+            yield el
+        else:
+            for sub in flatten_gen(el): yield sub
+
+def flatten(plist):
+    return list(flatten_gen(plist))
 
 import warnings as warn
 
@@ -39,7 +52,7 @@ class DLSDesignerFlowsParser:
     supportedNodes   = dictRequiredFields.keys()
     reqiredNodes     = ['datainput', 'dataoutput']
     def __init__(self, jsonFlow):
-        if isinstance(jsonFlow, basestring):
+        if isinstance(jsonFlow, str) or isinstance(jsonFlow, unicode):
             with open(jsonFlow, 'r') as f:
                 self.configFlowRaw = json.load(f)
         elif isinstance(jsonFlow, dict):
