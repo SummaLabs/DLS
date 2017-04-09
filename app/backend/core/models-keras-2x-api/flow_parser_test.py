@@ -8,8 +8,9 @@ from flow_parser import DLSDesignerFlowsParser, precalculateShapes, precalculate
 class TestBasicLWLayers(unittest.TestCase):
 
     def setUp(self):
-        self.pathNetwork1 = '../../../../data/network/saved_for_tests/testnet_multi_input_multi_output_v1.json'
-        self.pathNetwork2 = '../../../../data/network/saved_for_tests/test_simple_cnn_model1.json'
+        self.pathNetwork1 = '../../../../data/network/saved_for_tests/test_simple_cnn_model1.json'
+        self.pathNetwork2 = '../../../../data/network/saved_for_tests/testnet_multi_input_multi_output_v1.json'
+        self.dirWithTestDataset = '../../../../data/datasets_for_tests'
 
     def test_native_and_lw_flowparser(self):
         lstPathModel = [self.pathNetwork1, self.pathNetwork2]
@@ -31,6 +32,22 @@ class TestBasicLWLayers(unittest.TestCase):
             # (5) compare native and LW-shapes
             for l1,l2 in zip(sortedFlow, sortedFlow_LW):
                 self.assertTrue(l1.shapeOut[1:] == l2.shapeOut[1:])
+
+    def test_convert_network_from_dls_to_keras(self):
+        import keras
+        from app.backend.core.datasets.dbwatcher import DatasetsWatcher
+        dbWatcher = DatasetsWatcher(self.dirWithTestDataset)
+        dbWatcher.refreshDatasetsInfo()
+        lstPathModel = [self.pathNetwork1, self.pathNetwork2]
+        for pathModel in lstPathModel:
+            flowParser = DLSDesignerFlowsParser(pathModel)
+            flowParser.cleanAndValidate()
+            flowParser.buildConnectedFlow()
+            modelJson, lstDBIdx = flowParser.generateModelKerasConfigJson(dbWatcher=dbWatcher)
+            kerasModel = keras.models.model_from_config(modelJson)
+            kerasModel.summary()
+            print ('---')
+
 
 ####################################
 if __name__=='__main__':

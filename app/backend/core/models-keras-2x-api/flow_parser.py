@@ -244,9 +244,12 @@ class DLSDesignerFlowsParser:
         #FIXME: this is a temporary solution
         tmpExcludeNodes={'dataoutput'}
         # (1) Basic model json-template
+        #FIXME: add automatic backend configuration
+        backendType="theano"
         modelTemplate = {
             "class_name":   "Model",
             "keras_version": keras.__version__,
+            "backend": backendType,
             "config": {
                 "name": "%s" % modelName,
                 "layers" : [],
