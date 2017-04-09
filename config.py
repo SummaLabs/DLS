@@ -11,7 +11,7 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET_KEY = 'this-really-needs-to-be-changed'
     #
-    DLS_FILEMANAGER_BASE_PATH = os.path.join(BASE_DIR, 'data-test')
+    DLS_FILEMANAGER_BASE_PATH = os.path.join(BASE_DIR, 'dataset-import-test')
     # Allowed waiting interval for job in queue to be run, seconds
     MISFIRE_GRACE_TIME = 3600
     # seconds
