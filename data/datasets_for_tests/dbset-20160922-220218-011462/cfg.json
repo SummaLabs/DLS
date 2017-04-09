@@ -1,0 +1,97 @@
+{
+    "formImage": {
+        "imgTypeSelectedId": "color", 
+        "resizeTransformSelectedId": "squash", 
+        "imgSizes": {
+            "y": 128, 
+            "x": 128
+        }
+    }, 
+    "datasetname": "simple4c", 
+    "dbhist": {
+        "histTrain": [
+            [
+                "car", 
+                75
+            ], 
+            [
+                "cat", 
+                75
+            ], 
+            [
+                "dog", 
+                75
+            ], 
+            [
+                "fish", 
+                75
+            ]
+        ], 
+        "labels": [
+            "car", 
+            "cat", 
+            "dog", 
+            "fish"
+        ], 
+        "histVal": [
+            [
+                "car", 
+                25
+            ], 
+            [
+                "cat", 
+                25
+            ], 
+            [
+                "dog", 
+                25
+            ], 
+            [
+                "fish", 
+                25
+            ]
+        ]
+    }, 
+    "formDbBackend": {
+        "isUseThreading": false, 
+        "dbBackendSelectedId": "lmdb", 
+        "imageEncodingsSelectedId": "jpeg"
+    }, 
+    "dbType": "image2d", 
+    "dbinfo": {
+        "numTotal": 400, 
+        "numTrain": 300, 
+        "numVal": 100, 
+        "numLabels": 4, 
+        "time": {
+            "sec": "21", 
+            "hour": "22", 
+            "str": "22:02:21", 
+            "min": "02"
+        }, 
+        "date": {
+            "month": "09", 
+            "day": "09", 
+            "str": "2016.09.22", 
+            "year": "2016"
+        }
+    }, 
+    "formFileImport": {
+        "fromDir": {
+            "pathToImageFolder": "/dataset-image2d/simple4c_test", 
+            "percentForValidation": 25, 
+            "pathToImageFolderVal": "", 
+            "percentForTesting": 0, 
+            "isUseSeparateValDir": false
+        }, 
+        "fromTxt": {
+            "pathToImagesTxtVal": "", 
+            "isUseRelativeDir": false, 
+            "pathTorRelativeDir": "", 
+            "percentForValidation": 25, 
+            "isUseSeparateVal": false, 
+            "pathToImagesTxt": ""
+        }, 
+        "selectedType": "dir"
+    }
+}
