@@ -3,7 +3,9 @@
 __author__ = 'ar'
 import keras.layers.merge
 ###############################################
-default_data_format = 'channels_last' #'th'
+# default_data_format = 'channels_last' #'th'
+#FIXME: temporary Theano-channel ordering (channels_first), in feature needd merge to tensorflow ordering (channels_last)
+default_data_format = 'channels_first'
 
 ###############################################
 class LW_Layer(object):

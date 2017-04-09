@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 __author__ = 'ar'
 
+import keras
 from keras.layers import Layer, \
-    Convolution1D, Convolution2D, Convolution3D, \
+    Conv1D, Conv2D, Conv3D, \
     MaxPooling1D, MaxPooling2D, MaxPooling3D, \
     AveragePooling1D, AveragePooling2D, AveragePooling3D, \
     InputLayer, Activation, Flatten, Merge, Dense
@@ -192,8 +193,8 @@ class NodeConvolution1D(NodeF):
         return tmp
     def _getLayer(self, inputShape=None):
         tmpCfg = self.jsonCfg['params']
-        tmpLayer = Convolution1D(nb_filter=tmpCfg['filtersCount'],
-                                    filter_length=tmpCfg['filterWidth'],
+        tmpLayer = Conv1D(filters=tmpCfg['filtersCount'],
+                                    kernel_size=tmpCfg['filterWidth'],
                                     activation=tmpCfg['activationFunction'],
                                     trainable=tmpCfg['isTrainable'])
         return tmpLayer
@@ -219,17 +220,16 @@ class NodeConvolution2D(NodeF):
         return tmp
     def _getLayer(self, inputShape=None):
         tmpCfg = self.jsonCfg['params']
-        tmpLayer = Convolution2D(nb_filter=tmpCfg['filtersCount'],
-                                    nb_col=tmpCfg['filterWidth'],
-                                    nb_row=tmpCfg['filterHeight'],
-                                    activation=tmpCfg['activationFunction'],
-                                    trainable=tmpCfg['isTrainable'])
+        tmpLayer = Conv2D(filters=tmpCfg['filtersCount'],
+                                kernel_size=(tmpCfg['filterWidth'], tmpCfg['filterHeight']),
+                                activation=tmpCfg['activationFunction'],
+                                trainable=tmpCfg['isTrainable'])
         return tmpLayer
     def _getLayer_LW(self, inputShape=None):
         tmpCfg = self.jsonCfg['params']
         tmpLayer = LW_Conv2D(filters=tmpCfg['filtersCount'],
-                             nb_col=tmpCfg['filterWidth'],
-                             nb_row=tmpCfg['filterHeight'])
+                             kernel_size=(tmpCfg['filterWidth'], tmpCfg['filterHeight'])
+                             )
         return tmpLayer
 
 class NodeConvolution3D(NodeF):
@@ -248,19 +248,16 @@ class NodeConvolution3D(NodeF):
         return tmp
     def _getLayer(self, inputShape=None):
         tmpCfg = self.jsonCfg['params']
-        tmpLayer = Convolution3D(nb_filter=tmpCfg['filtersCount'],
-                                    kernel_dim1=tmpCfg['filterWidth'],
-                                    kernel_dim2=tmpCfg['filterHeight'],
-                                    kernel_dim3=tmpCfg['filterDepth'],
-                                    activation=tmpCfg['activationFunction'],
-                                    trainable=tmpCfg['isTrainable'])
+        tmpLayer = Conv3D(filters=tmpCfg['filtersCount'],
+                            kernel_size=(tmpCfg['filterWidth'], tmpCfg['filterHeight'], tmpCfg['filterDepth']),
+                            activation=tmpCfg['activationFunction'],
+                            trainable=tmpCfg['isTrainable'])
         return tmpLayer
     def _getLayer_LW(self, inputShape=None):
         tmpCfg = self.jsonCfg['params']
         tmpLayer = LW_Conv3D(filters=tmpCfg['filtersCount'],
-                             kernel_dim1=tmpCfg['filterWidth'],
-                             kernel_dim2=tmpCfg['filterHeight'],
-                             kernel_dim3=tmpCfg['filterDepth'])
+                             kernel_size = (tmpCfg['filterWidth'], tmpCfg['filterHeight'], tmpCfg['filterDepth'])
+                             )
         return tmpLayer
 
 class NodePooling1D(NodeF):
@@ -435,10 +432,29 @@ class NodeMerge(NodeF):
         return True
     def _getLayer(self, inputShape=None):
         tmpCfg = self.jsonCfg['params']
-        tmpLayer = Merge(mode=tmpCfg['mergeType'], concat_axis=int(tmpCfg['mergeAxis']))
+        tmode = tmpCfg['mergeType']
+        taxis = int(tmpCfg['mergeAxis'])
+        # keras 1.x API
+        # tmpLayer = Merge(mode=tmpCfg['mergeType'], concat_axis=int(tmpCfg['mergeAxis']))
+        #FIXME: keras 2.x API
+        if tmode=='sum':
+            tmpLayer = keras.layers.Add()
+        elif tmode=='mul':
+            tmpLayer = keras.layers.Multiply()
+        elif tmode=='concat':
+            tmpLayer = keras.layers.Concatenate(axis=taxis)
+        elif tmode=='ave':
+            tmpLayer = keras.layers.Average()
+        elif tmode=='dot':
+            tmpLayer = keras.layers.Dot(axes=taxis)
+        elif tmode=='max':
+            tmpLayer = keras.layers.Maximum()
+        else:
+            raise Exception('Unsupported merge-mode [%s]' % tmode)
         return tmpLayer
     def _getLayer_LW(self, inputShape=None):
         tmpCfg = self.jsonCfg['params']
+        #FIXME: split Merge layer into different merge-types sublayers
         tmpLayer = LW_Merge(mode=tmpCfg['mergeType'], concat_axis=int(tmpCfg['mergeAxis']))
         return tmpLayer
 
@@ -458,7 +474,7 @@ class NodeDense(NodeF):
         return tmp
     def _getLayer(self, inputShape=None):
         tmpCfg = self.jsonCfg['params']
-        tmpLayer = Dense(output_dim=tmpCfg['neuronsCount'],
+        tmpLayer = Dense(units=tmpCfg['neuronsCount'],
                             activation=tmpCfg['activationFunction'],
                             trainable=tmpCfg['isTrainable'])
         return tmpLayer
