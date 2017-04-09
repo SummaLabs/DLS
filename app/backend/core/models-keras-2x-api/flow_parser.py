@@ -5,19 +5,24 @@ __author__ = 'ar'
 import json
 
 #FIXME: fix for Python3
-# from compiler.ast import flatten
-import collections
-def flatten_gen(x):
-    def iselement(e):
-        return not(isinstance(e, collections.Iterable) and not isinstance(e, str))
-    for el in x:
-        if iselement(el):
-            yield el
-        else:
-            for sub in flatten_gen(el): yield sub
+from compiler.ast import flatten
+# import collections
+# def flatten_gen(x):
+#     def iselement(e):
+#         return not(isinstance(e, collections.Iterable) and not isinstance(e, str))
+#     for el in x:
+#         if iselement(el):
+#             yield el
+#         else:
+#             for sub in flatten_gen(el): yield sub
+# def flatten(plist):
+#     return list(flatten_gen(plist))
 
-def flatten(plist):
-    return list(flatten_gen(plist))
+# def flatten(x):
+#     if isinstance(x, list):
+#         return sum(map(flatten, x))
+#     else:
+#         return [x]
 
 import warnings as warn
 
@@ -413,7 +418,9 @@ def precalculateShapes(sortedFlow):
                 tinpShape = nn.inpNode[0].shapeOut
         else:
             tinpShape = nn.shapeInp
-        toutShape = nn._getLayer().get_output_shape_for(tinpShape)
+        # toutShape = nn._getLayer().get_output_shape_for(tinpShape)
+        #FIXME: fix for keras 2.x API
+        toutShape = nn._getLayer().compute_output_shape(tinpShape)
         nn.shapeInp = tinpShape
         nn.shapeOut = toutShape
 
@@ -442,7 +449,6 @@ def precalculateShapes_LW(sortedFlow):
 ####################################
 if __name__=='__main__':
     import app.backend.core.utils as dlsutils
-    from app.backend.core.datasets.dbwatcher import DatasetsWatcher
     #
     dirData = dlsutils.getPathForDatasetDir()
     #
@@ -473,6 +479,7 @@ if __name__=='__main__':
     for ii, ll in enumerate(sortedFlow_LW):
         print ('[%d] %s\t: %s' % (ii, ll.type(), ll))
     # (2) Generate dict-based Json Kearas model (from DLS model representation)
+    # from app.backend.core.datasets.dbwatcher import DatasetsWatcher
     # dbWatcher = DatasetsWatcher(dirData)
     # dbWatcher.refreshDatasetsInfo()
     # modelJson, lstDBIdx = flowParser.generateModelKerasConfigJson(dbWatcher=dbWatcher)
