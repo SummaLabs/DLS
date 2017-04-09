@@ -133,9 +133,9 @@ class DLSDesignerFlowsParser:
         for ii in lstNodes:
             if ii.inpNode is None:
                 tmpInputNodes.append(ii)
-        if len(tmpInputNodes)>1:
-            warn.warn('Flow have more than one input nodes (currently not implemented) or not linked [%s]' % tmpInputNodes, FutureWarning)
-            # raise NotImplementedError('Flow have more than one input nodes (currently not implemented) or not linked [%s]' % tmpInputNodes)
+        # if len(tmpInputNodes)>1:
+        #     warn.warn('Flow have more than one input nodes (currently not implemented) or not linked [%s]' % tmpInputNodes, FutureWarning)
+        #     raise NotImplementedError('Flow have more than one input nodes (currently not implemented) or not linked [%s]' % tmpInputNodes)
         if len(tmpInputNodes)<1:
             raise Exception('Unknown graph connection')
         #FIXME: for backward-compatibility
