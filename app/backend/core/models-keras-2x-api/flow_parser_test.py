@@ -45,9 +45,10 @@ class TestBasicLWLayers(unittest.TestCase):
             flowParser.buildConnectedFlow()
             modelJson, lstDBIdx = flowParser.generateModelKerasConfigJson(dbWatcher=dbWatcher)
             kerasModel = keras.models.model_from_config(modelJson)
-            kerasModel.summary()
-            print ('---')
-
+            # kerasModel.summary()
+            for ll in kerasModel.layers:
+                self.assertTrue(min(ll.output_shape[1:])>0)
+            # print ('---')
 
 ####################################
 if __name__=='__main__':

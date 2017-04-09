@@ -419,10 +419,12 @@ class NodeMerge(NodeF):
     def __init__(self, jsonNode, inpNode=None, outNode=None, goodName=None):
         NodeF.__init__(self, jsonNode, inpNode=inpNode, outNode=outNode, goodName=goodName)
     def getConfig(self, inputShape=None):
-        tmpLayerCfg = self._getLayer().get_config()
+        tmpLayer = self._getLayer()
+        nodeClass = type(tmpLayer).__name__ #FIXME: Merge layer splitted into different layers in Keras 2.x
+        tmpLayerCfg = tmpLayer.get_config()
         tmpLayerCfg['name'] = self.getName()
         tmp = {
-            'class_name': self.nodeClass,
+            'class_name': nodeClass,
             'name': self.getName(),
             'config': tmpLayerCfg,
             'inbound_nodes': self.getInboundNodesCfg()
