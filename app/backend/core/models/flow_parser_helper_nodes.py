@@ -199,8 +199,8 @@ class NodeConvolution1D(NodeF):
         return tmpLayer
     def _getLayer_LW(self, inputShape=None):
         tmpCfg = self.jsonCfg['params']
-        tmpLayer = LW_Convolution1D(nb_filter=tmpCfg['filtersCount'],
-                                 filter_length=tmpCfg['filterWidth'])
+        tmpLayer = LW_Conv1D(filters=tmpCfg['filtersCount'],
+                             kernel_size=tmpCfg['filterWidth'])
         return tmpLayer
 
 class NodeConvolution2D(NodeF):
@@ -227,9 +227,9 @@ class NodeConvolution2D(NodeF):
         return tmpLayer
     def _getLayer_LW(self, inputShape=None):
         tmpCfg = self.jsonCfg['params']
-        tmpLayer = LW_Convolution2D(nb_filter=tmpCfg['filtersCount'],
-                                 nb_col=tmpCfg['filterWidth'],
-                                 nb_row=tmpCfg['filterHeight'])
+        tmpLayer = LW_Conv2D(filters=tmpCfg['filtersCount'],
+                             nb_col=tmpCfg['filterWidth'],
+                             nb_row=tmpCfg['filterHeight'])
         return tmpLayer
 
 class NodeConvolution3D(NodeF):
@@ -291,9 +291,9 @@ class NodePooling1D(NodeF):
     def _getLayer_LW(self, inputShape=None):
         tmpCfg = self.jsonCfg['params']
         if self.nodeClass == 'MaxPooling1D':
-            tmpLayer = LW_MaxPooling1D(pool_length=tmpCfg['subsamplingSizeWidth'])
+            tmpLayer = LW_MaxPooling1D(pool_size=tmpCfg['subsamplingSizeWidth'])
         else:
-            tmpLayer = LW_AveragePooling1D(pool_length=tmpCfg['subsamplingSizeWidth'])
+            tmpLayer = LW_AveragePooling1D(pool_size=tmpCfg['subsamplingSizeWidth'])
         return tmpLayer
 
 class NodePooling2D(NodeF):
