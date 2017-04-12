@@ -1,6 +1,10 @@
 <md-toolbar class="md-table-toolbar alternate">
     <div class="md-toolbar-tools">
-        <span>{{selectedRows.length}} {{selectedRows.length > 1 ? 'items' : 'item'}} selected</span>
+        <md-select ng-if="options.separateCSV" ng-model="options.dataset" ng-change="selectDataset()">
+            <md-option ng-repeat="datasetType in options.datasetTypes" ng-value="datasetType">
+                {{datasetType}}
+            </md-option>
+        </md-select>
         <span flex></span>
 
         <md-button ng-click="mergeColumn()" >
@@ -11,17 +15,12 @@
             Remove columns
         </md-button>
 
+        <span flex></span>
         <md-button ng-click="onLoadCSV()" >
             Reload CSV
         </md-button>
-
         <md-button ng-click="onCreateDataset($event)" >
             Create Dataset
-        </md-button>
-
-        <span flex></span>
-        <md-button ng-show="options.rowSelection && selected.length"    class="md-icon-button">
-            <md-icon>delete</md-icon>
         </md-button>
     </div>
 </md-toolbar>

@@ -3,6 +3,7 @@
 __author__ = 'ar'
 
 import json
+import os
 
 from flask import Blueprint
 from flask import request, Response
@@ -92,11 +93,8 @@ def data_types_config():
 
 @dataset.route('/csv/load/rows', methods=['POST'])
 def load_from_csv():
-    header = True if request.args['header'] == "True" else False
-
     dir_root = app_flask.config['DLS_FILEMANAGER_BASE_PATH']
-    csv_rows = dataset_service.load_from_csv(dir_root + request.args['file-path'],
-                                             header,
+    csv_rows = dataset_service.load_from_csv(os.path.join(dir_root, request.args['file-path'].strip("/")),
                                              request.args['separator'],
                                              int(request.args['rows-num']))
     return Response(json.dumps(csv_rows), mimetype='application/json')

@@ -1,24 +1,5 @@
 function importerController($scope, $rootScope, $element, $mdEditDialog, $timeout, dataImporterService, $mdDialog, appConfig) {
 
-
-    let stringParams = {
-        list : {
-            name: 'Список',
-            type: 'list',
-            list: [
-                'item1',
-                'item2',
-                'item3'
-            ],
-            value: 'default'
-        },
-        integer : {
-            name: 'Число',
-            type: 'integer',
-            value: 333
-        }
-    };
-
     $scope.table = dataImporterService.createTable();
 
     let parentScope = $scope;
@@ -35,17 +16,26 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
                 $scope.validationCsvPath = "";
                 $scope.formSubmit = function (answer) {
                     $mdDialog.hide(answer);
-                    
                     if ($rootScope.selectedFiles.length > 0) {
-                        dataImporterService.loadRecordsFromCsv(parentDialogScope.trainCsvPath, $scope.header, $scope.delimiter, 100).then(
-                            function success(response) {
-                                parentScope.table.setDelimiter($scope.delimiter);
-                                parentScope.table.setThreadsCount($scope.threads);
-                                parentScope.table.loadFromCsv(response.data, true);
-                                console.log(parentScope.table.getConfig());
+                        dataImporterService.loadRecordsFromCsv(parentDialogScope.trainCsvPath, $scope.delimiter, 100).then(
+                            function success(trainCsvResponse) {
+                                if (parentDialogScope.validationCsvPath) {
+                                    dataImporterService.loadRecordsFromCsv(parentDialogScope.validationCsvPath, $scope.delimiter, 100).then(
+                                        function success(validationCsvResponse) {
+                                            parentScope.options.separateCSV = true;
+                                            parentScope.table.setData(trainCsvResponse.data, validationCsvResponse.data, true);
+                                        },
+                                        function error(validationCsvResponseError) {
+                                            console.log(validationCsvResponseError.data);
+                                        }
+                                    );
+                                } else {
+                                    parentScope.options.separateCSV = false;
+                                    parentScope.table.setData(trainCsvResponse.data, [], true);
+                                }
                             },
-                            function error(response) {
-                                console.log(response.data);
+                            function error(trainCsvResponseError) {
+                                console.log(trainCsvResponseError.data);
                             }
                         );
                     }
@@ -66,8 +56,10 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
                                 if ($rootScope.selectedFiles.length > 0) {
                                     if (datasetType == "train") {
                                         parentDialogScope.trainCsvPath = $rootScope.selectedFiles[0].model.fullPath();
+                                        console.log(parentDialogScope.trainCsvPath)
                                     } else {
                                         parentDialogScope.validationCsvPath = $rootScope.selectedFiles[0].model.fullPath();
+                                        console.log(parentDialogScope.validationCsvPath)
                                     }
                                 }
                             };
@@ -89,7 +81,7 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
             targetEvent: $event,
             clickOutsideToClose: false
         });
-    };
+    }
 
     loadCSV();
 
@@ -112,7 +104,15 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
             targetEvent: $event,
             clickOutsideToClose: false
         })};
-
+    
+    $scope.selectDataset = function () {
+        if ($scope.options.dataset == 'Training') {
+            $scope.table.setTrainingData()
+        }
+        if ($scope.options.dataset == 'Validation') {
+            $scope.table.setValidationData()
+        }
+    };
 
     $scope.options = {
         rowSelection: false,
@@ -122,7 +122,10 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
         largeEditDialog: false,
         boundaryLinks: false,
         limitSelect: true,
-        pageSelect: true
+        pageSelect: true,
+        separateCSV: false,
+        datasetTypes: ['Training', 'Validation'],
+        dataset: 'Training'
     };
 
     $scope.selectedRows = [];
@@ -132,6 +135,7 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
             return $scope.desserts ? $scope.desserts.count : 0;
         }
     }];*/
+    
 
     $scope.query = {
         order: 'name',
@@ -239,6 +243,7 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
     };
 
     $scope.onLoadCSV = function (event) {
+        $scope.table = dataImporterService.createTable();
         loadCSV(event);
     }
 }
