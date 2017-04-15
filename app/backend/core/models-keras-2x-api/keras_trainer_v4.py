@@ -18,7 +18,7 @@ from keras import backend as K
 
 import keras
 from keras.models import Sequential
-from keras.layers import Convolution1D, Convolution2D, Convolution3D,\
+from keras.layers import Conv1D, Conv2D, Conv3D,\
     MaxPooling1D, MaxPooling2D, MaxPooling3D,\
     AveragePooling1D,AveragePooling2D, AveragePooling3D,\
     InputLayer, Flatten, Merge, Activation, Dense, Dropout
@@ -54,12 +54,12 @@ def findLayerFromEndByType(model, layerType):
     return -1
 
 def cloneLayerFromLayer(pLayer):
-    if isinstance(pLayer, Convolution1D):
-        return Convolution1D.from_config(pLayer.get_config())
-    elif isinstance(pLayer, Convolution2D):
-        return Convolution2D.from_config(pLayer.get_config())
-    elif isinstance(pLayer, Convolution3D):
-        return Convolution3D.from_config(pLayer.get_config())
+    if isinstance(pLayer, Conv1D):
+        return Conv1D.from_config(pLayer.get_config())
+    elif isinstance(pLayer, Conv2D):
+        return Conv2D.from_config(pLayer.get_config())
+    elif isinstance(pLayer, Conv3D):
+        return Conv3D.from_config(pLayer.get_config())
     # Max-Pooling:
     elif isinstance(pLayer, MaxPooling1D):
         return MaxPooling2D.from_config(pLayer.get_config())
@@ -89,7 +89,10 @@ def cloneLayerFromLayer(pLayer):
     return None
 
 #########################
-class KerasTrainer:
+class KerasTrainer2x:
+    pass
+
+class KerasTrainerBackup:
     extModelWeights = 'h5kerasmodel'
     extJsonTrainConfig = '_trainconfig.json'
     extJsonSolverState = '_solverstate.json'
