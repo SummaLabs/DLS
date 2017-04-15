@@ -90,9 +90,22 @@ def cloneLayerFromLayer(pLayer):
 
 #########################
 class KerasTrainer2x:
-    pass
+    path_netcfg = 'network.json'
+    path_params = 'train_params.json'
+    pref_solver_state = '_solverstate.json'
+    def __init__(self, networkPath=None, ):
+        pass
+    def buildFromSavedState(self, modelIdx=None, modelDir=None, modeStatePath=None):
+        if modelIdx is not None:
+            raise NotImplementedError
+        elif modelDir is not None:
+            raise NotImplementedError
+        elif modeStatePath is not None:
+            raise NotImplementedError
+        else:
+            pass
 
-class KerasTrainerBackup:
+class KerasTrainer1x_Backup:
     extModelWeights = 'h5kerasmodel'
     extJsonTrainConfig = '_trainconfig.json'
     extJsonSolverState = '_solverstate.json'
@@ -211,7 +224,7 @@ class KerasTrainerBackup:
                 # FIXME: check this point (automatic output layer size). SoftMax to config in feature
                 # self.model.add(Dense(self.lmdbReader.numLbl))
                 # self.model.add(Activation('softmax'))
-                self.model = KerasTrainer.adjustModelInputOutput2DBData(modelFromCfg, self.batcherLMDB)
+                self.model = KerasTrainer1x_Backup.adjustModelInputOutput2DBData(modelFromCfg, self.batcherLMDB)
                 # TODO: make the setting for code below. For optimizer, loss-function, metrics
                 sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
                 self.model.compile(loss='categorical_crossentropy',
@@ -243,7 +256,7 @@ class KerasTrainerBackup:
                     strErr = "Directory not found [%s]" % outputDir
                     self.printError(strErr)
                     raise Exception(strErr)
-            self.model = KerasTrainer.adjustModelInputOutput2DBData(modelFromCfg, self.batcherLMDB, isFixOutputLayer=isAppendOutputLayer)
+            self.model = KerasTrainer1x_Backup.adjustModelInputOutput2DBData(modelFromCfg, self.batcherLMDB, isFixOutputLayer=isAppendOutputLayer)
             # TODO: make the setting for code below. For optimizer, loss-function, metrics
             if modelOptimizer is None:
                 opt = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
