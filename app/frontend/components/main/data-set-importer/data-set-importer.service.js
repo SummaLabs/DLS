@@ -99,7 +99,6 @@ class DataTable {
         return typesNames;
     }
 
-
     setSupportedTypes(types) {
         types.forEach(function (item) {
             if (!DataTable.types.has(item.type)) {
@@ -107,55 +106,6 @@ class DataTable {
                 typesNames.push(item.type);
             }
         });
-    }
-
-    setDelimiter(delimiter) {
-        this.config.delimiter = delimiter;
-    }
-
-    setThreadsCount(threads) {
-        this.config.threads = threads;
-    }
-
-    getConfig() {
-        let config = {
-            name: '',
-            threads: this.config.threads,
-            transforms: {
-                csv_file_path: this.config.filePath,
-                header: this.config.header,
-                delimiter: this.config.delimiter,
-                columns: []
-            }
-        };
-
-        for (let header of this.headers) {
-            let hd = {
-                name: header.name,
-                type: header.type,
-                columns: header.columns
-            };
-            config.transforms.columns.push(hd);
-        }
-
-        return config;
-    }
-
-    applyConfig(config) {
-        this.config = {
-            filePath: config.transforms.csv_file_path,
-            header: config.transforms.header,
-            threads: config.threads,
-            delimiter: config.transforms.delimiter
-        };
-
-        this.selectedColumnIndexes.length = 0;
-
-        for (let column of config.transforms.columns) {
-            this.selectedColumnIndexes = column;
-            this.mergeColumns();
-        }
-        this.selectedColumnIndexes.length = 0;
     }
 
     createHeader(headerSize, headerNames) {

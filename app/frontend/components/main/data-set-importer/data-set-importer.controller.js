@@ -7,22 +7,27 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
     function loadCSV($event) {
         $mdDialog.show({
             controller: function ($scope, $mdDialog, $rootScope) {
-                let parentDialogScope = $scope;
-                $scope.delimiter = ',';
-                $scope.header = false;
+                let loadCsvDialogScope = $scope;
+                $scope.delimiter = parentScope.config.delimiter;
+                $scope.header = parentScope.config.header;
                 $scope.isUseSeparateVal = false;
-                $scope.percentForValidation = 70;
-                $scope.trainCsvPath = "";
-                $scope.validationCsvPath = "";
+                $scope.percentForValidation = parentScope.config.percentForValidation;
+                $scope.trainCsvPath = parentScope.config.trainCsvPath;
+                $scope.validationCsvPath = parentScope.config.validationCsvPath;
                 $scope.formSubmit = function (answer) {
                     $mdDialog.hide(answer);
+                    parentScope.config.delimiter = $scope.delimiter;
+                    parentScope.config.header = $scope.header;
+                    parentScope.config.percentForValidation = $scope.percentForValidation;
                     if ($rootScope.selectedFiles.length > 0) {
-                        dataImporterService.loadRecordsFromCsv(parentDialogScope.trainCsvPath, $scope.delimiter, 100).then(
+                        dataImporterService.loadRecordsFromCsv(loadCsvDialogScope.trainCsvPath, $scope.delimiter, 100).then(
                             function success(trainCsvResponse) {
-                                if (parentDialogScope.validationCsvPath) {
-                                    dataImporterService.loadRecordsFromCsv(parentDialogScope.validationCsvPath, $scope.delimiter, 100).then(
+                                parentScope.config.trainCsvPath = loadCsvDialogScope.trainCsvPath;
+                                if (loadCsvDialogScope.validationCsvPath) {
+                                    dataImporterService.loadRecordsFromCsv(loadCsvDialogScope.validationCsvPath, $scope.delimiter, 100).then(
                                         function success(validationCsvResponse) {
                                             parentScope.options.separateCSV = true;
+                                            parentScope.config.validationCsvPath = loadCsvDialogScope.validationCsvPath;
                                             parentScope.table.setData(trainCsvResponse.data, validationCsvResponse.data, true);
                                         },
                                         function error(validationCsvResponseError) {
@@ -55,11 +60,9 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
                                 $mdDialog.hide(answer);
                                 if ($rootScope.selectedFiles.length > 0) {
                                     if (datasetType == "train") {
-                                        parentDialogScope.trainCsvPath = $rootScope.selectedFiles[0].model.fullPath();
-                                        console.log(parentDialogScope.trainCsvPath)
+                                        loadCsvDialogScope.trainCsvPath = $rootScope.selectedFiles[0].model.fullPath();
                                     } else {
-                                        parentDialogScope.validationCsvPath = $rootScope.selectedFiles[0].model.fullPath();
-                                        console.log(parentDialogScope.validationCsvPath)
+                                        loadCsvDialogScope.validationCsvPath = $rootScope.selectedFiles[0].model.fullPath();
                                     }
                                 }
                             };
@@ -91,8 +94,23 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
                 $scope.threads = 2;
                 $scope.name = '';
                 $scope.formSubmit = function (answer) {
+                    let headers = [];
+                    for (let header of parentScope.table.headers) {
+                        headers.push({
+                            name: header.name,
+                            type: header.type,
+                            columns: header.columns
+                        });
+                    }
+                    let delimiter = parentScope.config.delimiter;
+                    let header = parentScope.config.header;
+                    let trainCsvPath = parentScope.config.trainCsvPath;
+                    let separateCSV = parentScope.options.separateCSV;
+                    let percentForValidation = parentScope.config.percentForValidation;
+                    let validationCsvPath = parentScope.config.validationCsvPath;
+
                     $mdDialog.hide(answer);
-                    alert("Create Dataset")
+                    alert("Test")
                 };
 
                 $scope.cancel = function () {
@@ -129,18 +147,20 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
     };
 
     $scope.selectedRows = [];
-   /* $scope.limitOptions = [5, 10, 15, {
-        label: 'All',
-        value: function () {
-            return $scope.desserts ? $scope.desserts.count : 0;
-        }
-    }];*/
-    
 
     $scope.query = {
         order: 'name',
         limit: 5,
         page: 1
+    };
+
+    $scope.config = {
+        threads: 1,
+        delimiter: ',',
+        header: false,
+        trainCsvPath: "",
+        percentForValidation: 70,
+        validationCsvPath: ""
     };
     
     $scope.checkColumn = function (header) {
@@ -152,7 +172,7 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
             controller: header.controller(),
             template: header.getTemplate(),
             parent: angular.element(document.body),
-            clickOutsideToClose:true,
+            clickOutsideToClose:true
         }).then(function(answer) {
 
         }, function() {
@@ -169,31 +189,21 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
         $scope.table.removeColumns();
     };
 
-    $scope.editHeaderName = function (event, header) {
-        event.stopPropagation();
+    $scope.editHeaderName = function (ev, header) {
+        var confirm = $mdDialog.prompt()
+            .title("Edit Column Header")
+            .placeholder('Enter Header Name')
+            .ariaLabel('Header Name')
+            .initialValue(header.name)
+            .targetEvent(ev)
+            .ok('Update')
+            .cancel('Cencel');
 
-        let dialog = {
-            modelValue: header.name,
-            placeholder: 'Edit a column name',
-            save: function (input) {
-                header.name = input.$modelValue;
-            },
-            targetEvent: event,
-            title: 'Edit a column name',
-            validators: {
-                'md-maxlength': 30
+        $mdDialog.show(confirm).then(function (result) {
+            if (result) {
+                header.name = result;
             }
-        };
-
-        var promise = /*$scope.options.largeEditDialog ? $mdEditDialog.large(dialog) :*/ $mdEditDialog.small(dialog);
-
-        console.log(event, promise, $mdEditDialog, dialog, header);
-        promise.then(function (ctrl) {
-            var input = ctrl.getInput();
-
-            input.$viewChangeListeners.push(function () {
-                input.$setValidity('test', input.$modelValue !== 'test');
-            });
+        }, function () {
         });
     };
 
