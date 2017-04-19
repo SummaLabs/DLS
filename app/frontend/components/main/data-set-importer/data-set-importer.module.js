@@ -5,7 +5,7 @@ angular.module('dataSetImporter', ['md.data.table'])
     .directive('datasetImporter', function () {
         return {
             restrict: 'E',
-            controller: ['$scope', '$rootScope', '$element', '$mdEditDialog', '$timeout', 'dataImporterService', '$mdDialog', 'appConfig', importerController],
+            controller: ['$scope', '$rootScope', '$element', '$mdEditDialog', '$timeout', 'dataImporterService', '$mdDialog', 'appConfig', 'taskManagerService', importerController],
             controllerAs: 'importer',
             replace: false,
             scope: {

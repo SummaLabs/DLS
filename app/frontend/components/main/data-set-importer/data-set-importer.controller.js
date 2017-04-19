@@ -1,4 +1,4 @@
-function importerController($scope, $rootScope, $element, $mdEditDialog, $timeout, dataImporterService, $mdDialog, appConfig) {
+function importerController($scope, $rootScope, $element, $mdEditDialog, $timeout, dataImporterService, $mdDialog, appConfig, taskManagerService) {
 
     $scope.table = dataImporterService.createTable();
 
@@ -94,23 +94,31 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
                 $scope.threads = 2;
                 $scope.name = '';
                 $scope.formSubmit = function (answer) {
-                    let headers = [];
+                    let columns = [];
                     for (let header of parentScope.table.headers) {
-                        headers.push({
+                        columns.push({
                             name: header.name,
                             type: header.type,
-                            columns: header.columns
+                            index: header.columns
                         });
                     }
-                    let delimiter = parentScope.config.delimiter;
-                    let header = parentScope.config.header;
-                    let trainCsvPath = parentScope.config.trainCsvPath;
-                    let separateCSV = parentScope.options.separateCSV;
-                    let percentForValidation = parentScope.config.percentForValidation;
-                    let validationCsvPath = parentScope.config.validationCsvPath;
+                    let config = {
+                        "name": $scope.name,
+                        "parallelism_level": $scope.threads,
+                        "header": parentScope.config.header,
+                        "delimiter": parentScope.config.delimiter,
+                        "trainCsvPath": parentScope.config.trainCsvPath,
+                        "columns": columns
+                    };
+                    if (parentScope.options.separateCSV) {
+                        config["validationCsvPath"] = parentScope.config.validationCsvPath;
+                    } else  {
+                        config["percentForValidation"] = parentScope.config.percentForValidation;
+                    }
+
+                    taskManagerService.startTask('build_dataset', config);
 
                     $mdDialog.hide(answer);
-                    alert("Test")
                 };
 
                 $scope.cancel = function () {
