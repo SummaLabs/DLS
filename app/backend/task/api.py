@@ -19,8 +19,7 @@ tm = TaskManager()
 def start_task():
     type = request.args['type']
     params = json.loads(request.args['customParams'])
-    body = json.loads(request.data)
-    task = TaskFactory.create(type, params, body)
+    task = TaskFactory.create(type, params)
     tm.start_task(task)
     return Response(json.dumps({'taskId': task.id}), mimetype='application/json')
 

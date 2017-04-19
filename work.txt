@@ -1,0 +1,35 @@
+{
+   parallelism_level: 2,
+   name:"test",
+   schema: {"csv_file_path": self.test_csv_file_path,
+            "header": "False",
+            "delimiter": ",",
+                        "columns": [
+                            {
+                                "name": "col_0",
+                                "type": "NUMERIC",
+                                "index": [0]
+                            },
+                            {
+                                "name": "col_1",
+                                "type": "NUMERIC",
+                                "index": [1]
+                            },
+                            {
+                                "name": "col_2",
+                                "type": "VECTOR",
+                                "index": [2, 3, 4]
+                            },
+                            {
+                                "name": "col_3",
+                                "type": "IMG_2D",
+                                "index": [5],
+                                'metadata': {"mean-img-path": self.test_img_file_path},
+                                "pre_transforms": [{"type": "imgResize", "params": {"height": 256, "width": 256}},
+                                                   {"type": "imgNormalization",
+                                                    "params": {"is_global": "False"}}],
+                                "post_transforms": [{"type": "imgCrop", "params": {"height": 256, "width": 256}}]
+                            }
+                        ]
+                  }
+}

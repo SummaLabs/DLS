@@ -12,7 +12,7 @@ class TaskFactory:
     def __init__(self): pass
 
     @staticmethod
-    def create(type, params, body=None):
+    def create(type, params):
         if type == "default":
             return DefaultTask()
         elif type == "cmd":
@@ -28,6 +28,6 @@ class TaskFactory:
         elif type == 'fspace-image2d':
             return TaskFeatureSpaceVisImage2D(params)
         elif type == 'build_dataset':
-            return BuildDatasetTask(body)
+            return BuildDatasetTask(params)
         else:
             return NotImplemented
