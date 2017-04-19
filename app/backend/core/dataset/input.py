@@ -245,11 +245,11 @@ class Input(object):
         if 'train_csv_file_path' in schema:
             input.train_csv_file_path = schema['train_csv_file_path']
         if 'test_scv_file_path' in schema:
-            input.test_scv_file_path = schema['test_scv_file_path']
+            input.validation_scv_file_path = schema['validation_scv_file_path']
         if 'header' in schema:
             input.header = True if schema['header'] == 'True' else False
         if 'delimiter' in schema:
-            input.delimiter = schema['delimiter']
+            input.delimiter = str(schema['delimiter'])
 
         from img2d import Img2DColumn
         columns = []
@@ -262,7 +262,9 @@ class Input(object):
             elif column_type == Column.Type.CATEGORICAL:
                 columns.append(CategoricalColumn.from_schema(column_schema))
             elif column_type == Column.Type.IMG_2D:
-                columns.append(Img2DColumn.from_schema(column_schema))
+                img2d = Img2DColumn.from_schema(column_schema)
+                img2d.csv_file_path(os.path.dirname(input.csv_file_path))
+                columns.append(img2d)
             else:
                 raise TypeError("Unsupported column type: %s" % column_type)
         input.columns = columns
@@ -552,7 +554,10 @@ class CategoricalColumn(Column):
         index = None
         if 'index' in column_schema:
             index = column_schema['index']
-        metadata = CategoricalColumnMetadata.deserialize(column_schema['metadata'])
+        if 'metadata' in column_schema:
+            metadata = CategoricalColumnMetadata.deserialize(column_schema['metadata'])
+        else:
+            metadata = None
         return CategoricalColumn(name=name, columns_indexes=index, metadata=metadata)
 
     class Reader(ColumnReader):

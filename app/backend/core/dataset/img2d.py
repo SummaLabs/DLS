@@ -57,9 +57,14 @@ class Img2DColumn(ComplexColumn):
         indexes = None
         if 'index' in column_schema:
             indexes = column_schema['index']
-        metadata = Img2DColumnMetadata.deserialize(column_schema['metadata'])
-        img2d = Img2DColumn(name=str(column_schema['name']), columns_indexes=indexes, pre_transforms=pre_transforms,
-                            post_transforms=post_transforms, metadata=metadata)
+        metadata = None
+        if 'metadata' in column_schema:
+            metadata = Img2DColumnMetadata.deserialize(column_schema['metadata'])
+        is_related_path = False
+        if 'is_related_path' in column_schema:
+            is_related_path = column_schema['is_related_path']
+        img2d = Img2DColumn(name=str(column_schema['name']), columns_indexes=indexes, is_related_path=is_related_path,
+                            pre_transforms=pre_transforms, post_transforms=post_transforms, metadata=metadata)
         return img2d
 
     @staticmethod

@@ -182,7 +182,7 @@ class Dataset(object):
         def _read_csv(self, csv_file_path):
             rows = []
             with open(csv_file_path, 'rb') as f:
-                reader = csv.reader(f)
+                reader = csv.reader(f, delimiter=str(self._input.delimiter))
                 try:
                     for index, row in enumerate(reader):
                         if not self._input.header or self._input.header and index > 0:

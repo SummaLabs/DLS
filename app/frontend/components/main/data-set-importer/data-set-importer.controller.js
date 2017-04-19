@@ -99,7 +99,10 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
                         columns.push({
                             name: header.name,
                             type: header.type,
-                            index: header.columns
+                            index: header.columns,
+                            pre_transforms: [],
+                            post_transforms: [],
+                            is_related_path: true
                         });
                     }
                     let config = {
@@ -107,14 +110,16 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
                         "parallelism_level": $scope.threads,
                         "header": parentScope.config.header,
                         "delimiter": parentScope.config.delimiter,
-                        "trainCsvPath": parentScope.config.trainCsvPath,
                         "columns": columns
                     };
                     if (parentScope.options.separateCSV) {
-                        config["validationCsvPath"] = parentScope.config.validationCsvPath;
+                        config["train_csv_file_path"] = parentScope.config.trainCsvPath;
+                        config["validation_scv_file_path"] = parentScope.config.validationCsvPath;
                     } else  {
-                        config["percentForValidation"] = parentScope.config.percentForValidation;
+                        config["csv_file_path"] = parentScope.config.trainCsvPath;
+                        
                     }
+                    config["test_dataset_percentage"] = 100 - parentScope.config.percentForValidation;
 
                     taskManagerService.startTask('build_dataset', config);
 
@@ -167,7 +172,7 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
         delimiter: ',',
         header: false,
         trainCsvPath: "",
-        percentForValidation: 70,
+        percentForValidation: 30,
         validationCsvPath: ""
     };
     
