@@ -247,7 +247,7 @@ class Input(object):
         if 'test_scv_file_path' in schema:
             input.validation_scv_file_path = schema['validation_scv_file_path']
         if 'header' in schema:
-            input.header = True if schema['header'] == 'True' else False
+            input.header = schema['header']
         if 'delimiter' in schema:
             input.delimiter = str(schema['delimiter'])
 

@@ -90,7 +90,7 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
 
     $scope.onCreateDataset = function ($event) {
         $mdDialog.show({
-            controller: function ($scope, $mdDialog, $rootScope) {
+            controller: function ($scope, $mdDialog, $location) {
                 $scope.threads = 2;
                 $scope.name = '';
                 $scope.formSubmit = function (answer) {
@@ -121,8 +121,14 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
                     }
                     config["test_dataset_percentage"] = 100 - parentScope.config.percentForValidation;
 
-                    taskManagerService.startTask('build_dataset', config);
-
+                    taskManagerService.startTask('build_dataset', config).then(
+                                function successCallback(response) {
+                                    $location.url('/task');
+                                },
+                                function errorCallback(response) {
+                                    console.log(response.data);
+                                }
+                            );
                     $mdDialog.hide(answer);
                 };
 

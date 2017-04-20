@@ -176,7 +176,7 @@ class TestInput(unittest.TestCase):
 
     def test_build_input_from_config(self):
         input_config = {"csv_file_path": self.test_csv_file_path,
-                        "header": "False",
+                        "header": False,
                         "delimiter": ",",
                         "columns": [
                             {
