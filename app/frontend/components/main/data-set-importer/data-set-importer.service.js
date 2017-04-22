@@ -28,15 +28,14 @@ function DataImporterService ($http) {
     };
 
 
-    this.loadRecordsFromCsv = function (path, header, separator, rows) {
+    this.loadRecordsFromCsv = function (path, separator, rows_num) {
         return $http({
             method: 'POST',
             url:    '/dataset/csv/load/rows',
             params: {
-                'file-path':       path,
-                header:     header,
-                separator:    separator,
-                'rows-num': rows
+                'file-path': path,
+                'separator': separator,
+                'rows-num': rows_num
             }
         });
     };
@@ -85,6 +84,8 @@ class DataTable {
     constructor(/*path, header, delimiter*/) {
         this.headers = [];
         this.rows = [];
+        this.trainingRows = [];
+        this.validationRows = [];
         this.selectedColumnIndexes = [];
         this.config = {
             filePath: null,
@@ -98,7 +99,6 @@ class DataTable {
         return typesNames;
     }
 
-
     setSupportedTypes(types) {
         types.forEach(function (item) {
             if (!DataTable.types.has(item.type)) {
@@ -106,55 +106,6 @@ class DataTable {
                 typesNames.push(item.type);
             }
         });
-    }
-
-    setDelimiter(delimiter) {
-        this.config.delimiter = delimiter;
-    }
-
-    setThreadsCount(threads) {
-        this.config.threads = threads;
-    }
-
-    getConfig() {
-        let config = {
-            name: '',
-            threads: this.config.threads,
-            transforms: {
-                csv_file_path: this.config.filePath,
-                header: this.config.header,
-                delimiter: this.config.delimiter,
-                columns: []
-            }
-        };
-
-        for (let header of this.headers) {
-            let hd = {
-                name: header.name,
-                type: header.type,
-                columns: header.columns
-            };
-            config.transforms.columns.push(hd);
-        }
-
-        return config;
-    }
-
-    applyConfig(config) {
-        this.config = {
-            filePath: config.transforms.csv_file_path,
-            header: config.transforms.header,
-            threads: config.threads,
-            delimiter: config.transforms.delimiter
-        };
-
-        this.selectedColumnIndexes.length = 0;
-
-        for (let column of config.transforms.columns) {
-            this.selectedColumnIndexes = column;
-            this.mergeColumns();
-        }
-        this.selectedColumnIndexes.length = 0;
     }
 
     createHeader(headerSize, headerNames) {
@@ -168,24 +119,37 @@ class DataTable {
 
     }
 
-    addStringRow(row) {
+    createStringRow(row) {
         let CellItemString = this.cellClassByType('string');
         let rowItem = new RowItem();
 
         for (let cell of row) {
             rowItem.addCell(new CellItemString('string', cell));
         }
-        this.addRow(rowItem);
+        return rowItem;
     }
 
-    loadFromCsv(data, header) {
-
+    setData(trainingData, validationData, header) {
         this.config.header=header;
-        this.createHeader(data[0].length, header ? data[0] : null);
+        this.createHeader(trainingData[0].length, header ? trainingData[0] : null);
 
-        for (let a = 1; a < data.length; ++a) {
-            this.addStringRow(data[a]);
+        for (let a = 1; a < trainingData.length; ++a) {
+            this.trainingRows.push(this.createStringRow(trainingData[a]));
         }
+        
+        for (let a = 1; a < validationData.length; ++a) {
+            this.validationRows.push(this.createStringRow(validationData[a]));
+        }
+        
+        Array.prototype.push.apply(this.rows, this.trainingRows);
+    }
+
+    setTrainingData() {
+        this.rows = this.trainingRows
+    }
+
+    setValidationData() {
+        this.rows = this.validationRows
     }
 
     headerClassByType(type) {
@@ -209,14 +173,18 @@ class DataTable {
         for (let row of this.rows) {
             row.addCell(new (types.get(header.type).cellClass)(header.type));
         }
+        
+        for (let row of this.trainingRows) {
+            row.addCell(new (types.get(header.type).cellClass)(header.type));
+        }
+        
+        for (let row of this.validationRows) {
+            row.addCell(new (types.get(header.type).cellClass)(header.type));
+        }
     }
 
     addRow(row) {
         this.rows.push(row)
-    }
-
-    addRows(rows) {
-        this.rows.push(rows)
     }
 
     checkColumn(header) {
@@ -245,6 +213,15 @@ class DataTable {
         for(let row of this.rows) {
             row.mergeCells(destIndex, srcIndexes);
         }
+        
+        for(let row of this.trainingRows) {
+            row.mergeCells(destIndex, srcIndexes);
+        }
+        
+        for(let row of this.validationRows) {
+            row.mergeCells(destIndex, srcIndexes);
+        }
+        
         this.selectedColumnIndexes.length = 0;
         this.removeColumns(srcIndexes);
     }
@@ -252,6 +229,14 @@ class DataTable {
     removeColumn(index) {
         this.headers.splice(index, 1);
         for(let row of this.rows) {
+            row.cells.splice(index, 1);
+        }
+        
+        for(let row of this.trainingRows) {
+            row.cells.splice(index, 1);
+        }
+        
+        for(let row of this.validationRows) {
             row.cells.splice(index, 1);
         }
     }

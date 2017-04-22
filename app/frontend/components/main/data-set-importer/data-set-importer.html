@@ -1,6 +1,10 @@
 <md-toolbar class="md-table-toolbar alternate">
     <div class="md-toolbar-tools">
-        <span>{{selectedRows.length}} {{selectedRows.length > 1 ? 'items' : 'item'}} selected</span>
+        <md-select ng-if="options.separateCSV" ng-model="options.dataset" ng-change="selectDataset()">
+            <md-option ng-repeat="datasetType in options.datasetTypes" ng-value="datasetType">
+                {{datasetType}}
+            </md-option>
+        </md-select>
         <span flex></span>
 
         <md-button ng-click="mergeColumn()" >
@@ -11,17 +15,12 @@
             Remove columns
         </md-button>
 
+        <span flex></span>
         <md-button ng-click="onLoadCSV()" >
             Reload CSV
         </md-button>
-
         <md-button ng-click="onCreateDataset($event)" >
             Create Dataset
-        </md-button>
-
-        <span flex></span>
-        <md-button ng-show="options.rowSelection && selected.length"    class="md-icon-button">
-            <md-icon>delete</md-icon>
         </md-button>
     </div>
 </md-toolbar>
@@ -34,7 +33,6 @@
             <th md-column ng-repeat="header in table.headers">
                 <div layout="row" flex>
                     <md-checkbox ng-model="header.selected" ng-click="checkColumn(header)" aria-label="{{$index}}">
-                        <!--{{checkbox[$index]}}-->
                     </md-checkbox>
                     <md-button class="md-icon-button" ng-click="showSettings(header)" >
                         <md-icon>settings</md-icon>
@@ -48,8 +46,13 @@
         </tr>
 
         <tr md-row>
-            <th ng-if="table.config.header" md-column ng-click="editHeaderName($event, header)" ng-repeat="header in table.headers">
-                <span>{{header.name}}</span>
+            <th ng-if="table.config.header" md-column ng-repeat="header in table.headers">
+                <div layout="row" flex>
+                    <h3 class="md-title">{{header.name}}</h3>
+                    <md-button class="md-icon-button" ng-click="editHeaderName($event, header)">
+                        <md-icon>mode_edit</md-icon>
+                    </md-button>
+                </div>
             </th>
         </tr>
         </thead>
@@ -60,5 +63,3 @@
         </tbody>
     </table>
 </md-table-container>
-
-<!--<data-md-table-pagination md-limit="query.limit" md-limit-options="limitOptions" md-page="query.page" md-total="{{desserts.count()}}" md-on-paginate="onPaginate" md-page-select="options.pageSelect" md-boundary-links="options.boundaryLinks"></data-md-table-pagination>-->
