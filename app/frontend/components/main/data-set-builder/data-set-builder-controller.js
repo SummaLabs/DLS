@@ -1,6 +1,6 @@
-function importerController($scope, $rootScope, $element, $mdEditDialog, $timeout, dataImporterService, $mdDialog, appConfig, taskManagerService) {
+function DataSetController($scope, $rootScope, $element, $mdEditDialog, $timeout, dataSetBuilderService, $mdDialog, appConfig, taskManagerService) {
 
-    $scope.table = dataImporterService.createTable();
+    $scope.table = dataSetBuilderService.createTable();
 
     let parentScope = $scope;
 
@@ -20,11 +20,11 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
                     parentScope.config.header = $scope.header;
                     parentScope.config.percentForValidation = $scope.percentForValidation;
                     if ($rootScope.selectedFiles.length > 0) {
-                        dataImporterService.loadRecordsFromCsv(loadCsvDialogScope.trainCsvPath, $scope.delimiter, 100).then(
+                        dataSetBuilderService.loadRecordsFromCsv(loadCsvDialogScope.trainCsvPath, $scope.delimiter, 100).then(
                             function success(trainCsvResponse) {
                                 parentScope.config.trainCsvPath = loadCsvDialogScope.trainCsvPath;
                                 if (loadCsvDialogScope.validationCsvPath) {
-                                    dataImporterService.loadRecordsFromCsv(loadCsvDialogScope.validationCsvPath, $scope.delimiter, 100).then(
+                                    dataSetBuilderService.loadRecordsFromCsv(loadCsvDialogScope.validationCsvPath, $scope.delimiter, 100).then(
                                         function success(validationCsvResponse) {
                                             parentScope.options.separateCSV = true;
                                             parentScope.config.validationCsvPath = loadCsvDialogScope.validationCsvPath;
@@ -79,7 +79,7 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
                     });
                 };
             },
-            templateUrl: '/frontend/components/main/data-set-importer/data-set-importer-dialog.html',
+            templateUrl: '/frontend/components/main/data-set-builder/data-set-import-csv-dialog.html',
             parent: angular.element(document.body),
             targetEvent: $event,
             clickOutsideToClose: false
@@ -136,7 +136,7 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
                     $mdDialog.cancel();
                 };
             },
-            templateUrl: '/frontend/components/main/data-set-importer/data-set-create-dialog.html',
+            templateUrl: '/frontend/components/main/data-set-builder/data-set-create-dialog.html',
             parent: angular.element(document.body),
             targetEvent: $event,
             clickOutsideToClose: false
@@ -201,7 +201,6 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
 
     $scope.mergeColumn =function () {
         $scope.table.mergeColumns();
-        console.log($scope.table.getConfig());
     };
 
     $scope.removeColumns = function () {
@@ -272,7 +271,7 @@ function importerController($scope, $rootScope, $element, $mdEditDialog, $timeou
     };
 
     $scope.onLoadCSV = function (event) {
-        $scope.table = dataImporterService.createTable();
+        $scope.table = dataSetBuilderService.createTable();
         loadCSV(event);
     }
 }

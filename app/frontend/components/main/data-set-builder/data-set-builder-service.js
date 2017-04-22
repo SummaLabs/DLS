@@ -1,7 +1,7 @@
 'use strict';
 
 
-function DataImporterService ($http) {
+function DataSetBuilderService ($http) {
 
     let table = null;
 
