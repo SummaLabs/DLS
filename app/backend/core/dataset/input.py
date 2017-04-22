@@ -577,7 +577,12 @@ class CategoricalColumn(Column):
             return int(data)
 
         def deserialize(self, data):
-            return int(data)
+            #FIXME: performance degradation is possible
+            cat_val = int(data)
+            cat_num = len(self._column.metadata.categories)
+            ret = np.zeros(cat_num)
+            ret[cat_val] = 1
+            return ret
 
 
 class CategoricalColumnMetadata(ColumnMetadata):

@@ -430,4 +430,5 @@ if __name__ == '__main__':
         dataset = Dataset.load(lstDB[0])
     dataShapes = dataset.shapes()
     data = dataset.get_train_batch(5)
-    print data['image']
+    for k in data._data.keys():
+        print '%s : %s' % (k, data[k].shape)
