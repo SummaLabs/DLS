@@ -26,6 +26,25 @@ class Dataset(object):
         self._validation_range = validation_range
         self._record_reader = RecordReader.factory("HDF5", path)
 
+        # FIXME: this is a hack: the easiest way to get columns shapes :)
+        tmp_batch = self.get_train_batch(1)
+        for col in self._input.columns:
+            if col.name in tmp_batch._data.keys():
+                # FIXME: tmp solution, batch-dimension can be removed in future, or changed to None, like: [None, 32,32,3]
+                col.shape = tmp_batch._data[col.name].shape
+
+    def shapes(self):
+        ret = dict()
+        for col in self._input.columns:
+            ret[col.name] = col.shape
+        return ret
+
+    def slots(self):
+        ret = []
+        for col in self._input.columns:
+            ret.append(col.name)
+        return ret
+
     @property
     def metadata(self):
         return self._metadata
@@ -409,5 +428,6 @@ if __name__ == '__main__':
         dataset = Dataset.Builder(input, "test", datasets_base_path, parallelism_level=2).build()
     else:
         dataset = Dataset.load(lstDB[0])
+    dataShapes = dataset.shapes()
     data = dataset.get_train_batch(5)
     print data['image']
