@@ -52,8 +52,8 @@ class Dataset(object):
             record = self.read_record(inx)
             for index, column in enumerate(self._input.columns):
                 value = record[index]
-                if isinstance(value, np.ndarray) and value.ndim > 1:
-                    value = value.ravel()
+                # if isinstance(value, np.ndarray) and value.ndim > 1:
+                #     value = value.ravel()
                 data[column.name].append(value)
             i += 1
         return Data(data)
@@ -387,21 +387,27 @@ if __name__ == '__main__':
     from input import Schema, Input, ColumnSerDe, ColumnSerDe
     from app.backend.api import app_flask
     import os
-
-    path_csv = '../../../../data-test/dataset-image2d/simple4c_test/test-csv-v1.csv'
-    if not os.path.isfile(path_csv):
-        raise Exception('Cant find file [%s]' % path_csv)
-    schema = Schema.from_csv(path_csv, header=True, delimiter=',')
-    schema.merge_columns_in_range('col_vector', (2, 4))
-    schema.print_data()
-    schema['path'] = 'image'
-    schema.print_columns()
-    input = Input(schema=schema)
-    input.add_categorical_column("label")
-    input.add_vector_column('col_vector')
-    img2d = Img2DColumn(is_related_path=True)
-    input.add_column("image", img2d)
+    import glob
+    #
     datasets_base_path = app_flask.config['DATASETS_BASE_PATH']
-    dataset = Dataset.Builder(input, "test", datasets_base_path, parallelism_level=2).build()
+    lstDB = glob.glob('%s/test-*' % datasets_base_path)
+    numDB = len(lstDB)
+    if numDB<1:
+        path_csv = '../../../../data-test/dataset-image2d/simple4c_test/test-csv-v1.csv'
+        if not os.path.isfile(path_csv):
+            raise Exception('Cant find file [%s]' % path_csv)
+        schema = Schema.from_csv(path_csv, header=True, delimiter=',')
+        schema.merge_columns_in_range('col_vector', (2, 4))
+        schema.print_data()
+        schema['path'] = 'image'
+        schema.print_columns()
+        input = Input(schema=schema)
+        input.add_categorical_column("label")
+        input.add_vector_column('col_vector')
+        img2d = Img2DColumn(is_related_path=True)
+        input.add_column("image", img2d)
+        dataset = Dataset.Builder(input, "test", datasets_base_path, parallelism_level=2).build()
+    else:
+        dataset = Dataset.load(lstDB[0])
     data = dataset.get_train_batch(5)
     print data['image']
