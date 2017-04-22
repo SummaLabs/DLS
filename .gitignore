@@ -5,3 +5,4 @@
 *.coverage
 /cuda_temp/
 *.log
+*.DS_Store

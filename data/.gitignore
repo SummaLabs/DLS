@@ -1,3 +1,4 @@
 /tasks/
 /datasets/
 /models-bk/
+*.DS_Store
