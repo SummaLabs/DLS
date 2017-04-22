@@ -275,7 +275,7 @@ class Input(object):
 
 
 class Column(object):
-    def __init__(self, name=None, columns_indexes=None, type=None, reader=None, ser_de=None, metadata=None):
+    def __init__(self, name=None, columns_indexes=None, type=None, reader=None, ser_de=None, metadata=None, shape=None):
         if not (name is None or isinstance(name, str)):
             raise Exception("Name field should be string.")
         if not (columns_indexes is None or isinstance(columns_indexes, list)):
@@ -289,6 +289,7 @@ class Column(object):
         self._reader = reader
         self._ser_de = ser_de
         self._metadata = metadata
+        self._shape = None
 
     class Type:
         NUMERIC = "NUMERIC"
@@ -296,6 +297,14 @@ class Column(object):
         CATEGORICAL = "CATEGORICAL"
         IMG_2D = 'IMG_2D'
         IMG_3D = 'IMG_3D'
+
+    @property
+    def shape(self):
+        return self._shape
+
+    @shape.setter
+    def shape(self, shape):
+        self._shape = shape
 
     @property
     def name(self):
@@ -573,7 +582,12 @@ class CategoricalColumn(Column):
             return int(data)
 
         def deserialize(self, data):
-            return int(data)
+            #FIXME: performance degradation is possible
+            cat_val = int(data)
+            cat_num = len(self._column.metadata.categories)
+            ret = np.zeros(cat_num)
+            ret[cat_val] = 1
+            return ret
 
 
 class CategoricalColumnMetadata(ColumnMetadata):

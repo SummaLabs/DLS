@@ -35,7 +35,7 @@ from flow_parser_helper_nodes import *
 from flow_parser_helper_opt import getOptimizerJson2Keras, getKerasOptimizerName
 import cfg as mcfg
 
-from keras_trainer_v4 import KerasTrainer
+from keras_trainer_v4 import KerasTrainer1x_Backup
 
 ####################################
 def checkPreviousConnection(pNode):
@@ -391,7 +391,7 @@ class DLSDesignerFlowsParser:
             'deviceType': paramDeviceType
         }
         if isUseDatasetWatcher:
-            kerasTrainer = KerasTrainer()
+            kerasTrainer = KerasTrainer1x_Backup()
             kerasTrainer.buildModelFromConfigs(batcherLMDB, model,
                                                sizeBatch=batchSize,
                                                numEpoch=paramNumEpochs,
@@ -399,7 +399,7 @@ class DLSDesignerFlowsParser:
                                                intervalSaveModel=paramIntSnapshot,
                                                intervalValidation=paramIntValidation)
         else:
-            kerasTrainer = KerasTrainer()
+            kerasTrainer = KerasTrainer1x_Backup()
             kerasTrainer.model = model
         return (kerasTrainer, cfgJsonSolver)
 
