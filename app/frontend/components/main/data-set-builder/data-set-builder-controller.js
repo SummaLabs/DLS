@@ -1,6 +1,6 @@
 function DataSetController($scope, $rootScope, $element, $mdEditDialog, $timeout, dataSetBuilderService, $mdDialog, appConfig, taskManagerService) {
 
-    $scope.table = dataSetBuilderService.createTable();
+    $scope.table = dataSetBuilderService.initTable();
 
     let parentScope = $scope;
 
@@ -28,7 +28,7 @@ function DataSetController($scope, $rootScope, $element, $mdEditDialog, $timeout
                                         function success(validationCsvResponse) {
                                             parentScope.options.separateCSV = true;
                                             parentScope.config.validationCsvPath = loadCsvDialogScope.validationCsvPath;
-                                            parentScope.table.setData(trainCsvResponse.data, validationCsvResponse.data, true);
+                                            parentScope.table.loadData(trainCsvResponse.data, validationCsvResponse.data, $scope.header);
                                         },
                                         function error(validationCsvResponseError) {
                                             console.log(validationCsvResponseError.data);
@@ -36,7 +36,7 @@ function DataSetController($scope, $rootScope, $element, $mdEditDialog, $timeout
                                     );
                                 } else {
                                     parentScope.options.separateCSV = false;
-                                    parentScope.table.setData(trainCsvResponse.data, [], true);
+                                    parentScope.table.loadData(trainCsvResponse.data, [], $scope.header);
                                 }
                             },
                             function error(trainCsvResponseError) {
@@ -271,7 +271,7 @@ function DataSetController($scope, $rootScope, $element, $mdEditDialog, $timeout
     };
 
     $scope.onLoadCSV = function (event) {
-        $scope.table = dataSetBuilderService.createTable();
+        $scope.table = dataSetBuilderService.initTable();
         loadCSV(event);
     }
 }
