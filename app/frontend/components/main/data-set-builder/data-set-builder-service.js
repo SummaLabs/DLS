@@ -205,17 +205,14 @@ class DataTable {
         let destinationHeader = this.headers[columnIndexes[0]];
         destinationHeader.selected = false;
 
-        for(let headerToMergeInx of columnIndexes.slice(1, columnIndexes.length)) {
+        let headerToMergeInxs = columnIndexes.slice(1, columnIndexes.length);
+        for(let headerToMergeInx of headerToMergeInxs) {
             destinationHeader.mergeWith(this.headers[headerToMergeInx]);
-            this.headers.splice(headerToMergeInx, 1)
         }
     }
 
     removeColumn(index) {
         this.headers.splice(index, 1);
-        for(let row of this.rows) {
-            row.cells.splice(index, 1);
-        }
         
         for(let row of this.trainingRows) {
             row.cells.splice(index, 1);
