@@ -5,14 +5,11 @@ function DataSetBuilderService ($http) {
 
     let table = null;
 
-    this.createTable = function () {
-        let types = null;
-        table = new DataTable(types);
+    this.initTable = function () {
+        table = new DataTable();
         this.getDataSetTypes().then(
             function success(response) {
-
-                console.log(response.data);
-                types = response.data.column;
+                let types = response.data.column;
                 table.setSupportedTypes(types);
             },
             function error(response) {
@@ -108,18 +105,23 @@ class DataTable {
         });
     }
 
-    createHeader(headerSize, headerNames) {
+    createTableHeader(firstRow, headerExist) {
+        let headerSize = firstRow.length;
         for (let index = 0; index < headerSize; ++index) {
-            let name = headerNames ? headerNames[index]: null;
-            let type = this.supportedTypes[0];
-            let Header = this.headerClassByType(type);
-            let header = new Header(this.config.header, type, index, name);
-            this.addColumn(header);
+            let name = headerExist ? firstRow[index]: "col_" + index;
+            let header = this.createColumnHeader(index, name);
+            this.headers.push(header);
         }
 
     }
 
-    createStringRow(row) {
+    createColumnHeader(index, name) {
+        let type = this.supportedTypes[0];
+        let Header = this.headerClassByType(type);
+        return new Header(type, index, name);
+    }
+
+    createTableRow(row) {
         let CellItemString = this.cellClassByType('string');
         let rowItem = new RowItem();
 
@@ -129,18 +131,19 @@ class DataTable {
         return rowItem;
     }
 
-    setData(trainingData, validationData, header) {
+    loadData(trainingData, validationData, header) {
         this.config.header=header;
-        this.createHeader(trainingData[0].length, header ? trainingData[0] : null);
+        this.createTableHeader(trainingData[0], header);
 
-        for (let a = 1; a < trainingData.length; ++a) {
-            this.trainingRows.push(this.createStringRow(trainingData[a]));
+        let firstRowIndex = header ? 1 : 0;
+        for (let i = firstRowIndex; i < trainingData.length; ++i) {
+            this.trainingRows.push(this.createTableRow(trainingData[i]));
         }
         
-        for (let a = 1; a < validationData.length; ++a) {
-            this.validationRows.push(this.createStringRow(validationData[a]));
+        for (let i = firstRowIndex; i < validationData.length; ++i) {
+            this.validationRows.push(this.createTableRow(validationData[i]));
         }
-        
+
         Array.prototype.push.apply(this.rows, this.trainingRows);
     }
 
@@ -167,26 +170,6 @@ class DataTable {
         }
     }
 
-    addColumn(header) {
-        this.headers.push(header);
-
-        for (let row of this.rows) {
-            row.addCell(new (types.get(header.type).cellClass)(header.type));
-        }
-        
-        for (let row of this.trainingRows) {
-            row.addCell(new (types.get(header.type).cellClass)(header.type));
-        }
-        
-        for (let row of this.validationRows) {
-            row.addCell(new (types.get(header.type).cellClass)(header.type));
-        }
-    }
-
-    addRow(row) {
-        this.rows.push(row)
-    }
-
     checkColumn(header) {
         let headerIndex = this.headers.indexOf(header);
         if (headerIndex > -1) {
@@ -201,36 +184,35 @@ class DataTable {
         if (this.selectedColumnIndexes.length < 2)
             return;
 
-        let destIndex = this.selectedColumnIndexes[0];
-        let destHeaderItem = this.headers[this.selectedColumnIndexes[0]];
-        destHeaderItem.selected = false;
+        this.mergeHeaders(this.selectedColumnIndexes);
 
-        let srcIndexes = this.selectedColumnIndexes.slice(1, this.selectedColumnIndexes.length);
-        for(let header of srcIndexes) {
-            destHeaderItem.mergeWith(this.headers[header]);
-        }
-
-        for(let row of this.rows) {
-            row.mergeCells(destIndex, srcIndexes);
-        }
+        let destinationColumnIndex = this.selectedColumnIndexes[0];
+        let columnsToMergeIndexes = this.selectedColumnIndexes.slice(1, this.selectedColumnIndexes.length);
         
         for(let row of this.trainingRows) {
-            row.mergeCells(destIndex, srcIndexes);
+            row.mergeCells(destinationColumnIndex, columnsToMergeIndexes);
         }
         
         for(let row of this.validationRows) {
-            row.mergeCells(destIndex, srcIndexes);
+            row.mergeCells(destinationColumnIndex, columnsToMergeIndexes);
         }
         
         this.selectedColumnIndexes.length = 0;
-        this.removeColumns(srcIndexes);
+        this.removeColumns(columnsToMergeIndexes);
+    }
+
+    mergeHeaders(columnIndexes) {
+        let destinationHeader = this.headers[columnIndexes[0]];
+        destinationHeader.selected = false;
+
+        let headerToMergeInxs = columnIndexes.slice(1, columnIndexes.length);
+        for(let headerToMergeInx of headerToMergeInxs) {
+            destinationHeader.mergeWith(this.headers[headerToMergeInx]);
+        }
     }
 
     removeColumn(index) {
         this.headers.splice(index, 1);
-        for(let row of this.rows) {
-            row.cells.splice(index, 1);
-        }
         
         for(let row of this.trainingRows) {
             row.cells.splice(index, 1);
@@ -254,13 +236,12 @@ class DataTable {
 
 class HeaderItem {
 
-    constructor(visible, type, index, name) {
+    constructor(type, index, name) {
         this.type = type;
         this.name = name;
         this.selected = false;
         this.template = null;
-        this.visible = visible;
-        this.columns = [index];
+        this.columnsIndexes = [index];
 
         this.buildTemplate();
     }
@@ -325,9 +306,8 @@ class HeaderItem {
     }
 
     mergeWith(item) {
-        this.columns = this.columns.concat(item.columns);
-
-        // this.name += ', ' + item.name;
+        this.columnsIndexes = this.columnsIndexes.concat(item.columnsIndexes);
+        this.name += '_' + item.name;
     }
 
     controller() {

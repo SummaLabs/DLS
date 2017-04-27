@@ -46,7 +46,7 @@
         </tr>
 
         <tr md-row>
-            <th ng-if="table.config.header" md-column ng-repeat="header in table.headers">
+            <th md-column ng-repeat="header in table.headers">
                 <div layout="row" flex>
                     <h3 class="md-title">{{header.name}}</h3>
                     <md-button class="md-icon-button" ng-click="editHeaderName($event, header)">
