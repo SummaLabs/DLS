@@ -42,10 +42,10 @@ class DatasetService(object):
     def data_types_config():
         return {"column": [
             {
-                "type": Column.Type.NUMERIC
+                "type": Column.Type.CATEGORICAL
             },
             {
-                "type": Column.Type.CATEGORICAL
+                "type": Column.Type.NUMERIC
             },
             {
                 "type": Column.Type.VECTOR

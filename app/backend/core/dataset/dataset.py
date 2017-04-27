@@ -154,8 +154,8 @@ class Dataset(object):
 
         def _process_csv_files(self):
             rows = []
-            csv_file_path = self._input.csv_file_path
-            if self._input.csv_file_path is not None:
+            if hasattr(self._input, 'csv_file_path'):
+                csv_file_path = self._input.csv_file_path
                 rows = self._read_csv(csv_file_path)
                 random.shuffle(rows)
                 test_dataset_records_num = int(round(self._test_dataset_percentage * len(rows)) / 100)

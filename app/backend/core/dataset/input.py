@@ -244,7 +244,7 @@ class Input(object):
             input.csv_file_path = schema['csv_file_path']
         if 'train_csv_file_path' in schema:
             input.train_csv_file_path = schema['train_csv_file_path']
-        if 'test_scv_file_path' in schema:
+        if 'validation_scv_file_path' in schema:
             input.validation_scv_file_path = schema['validation_scv_file_path']
         if 'header' in schema:
             input.header = schema['header']
@@ -263,7 +263,10 @@ class Input(object):
                 columns.append(CategoricalColumn.from_schema(column_schema))
             elif column_type == Column.Type.IMG_2D:
                 img2d = Img2DColumn.from_schema(column_schema)
-                img2d.csv_file_path(os.path.dirname(input.csv_file_path))
+                if hasattr(input, 'csv_file_path'):
+                    img2d.csv_file_path(os.path.dirname(input.csv_file_path))
+                else:
+                    img2d.csv_file_path(os.path.dirname(input.train_csv_file_path))
                 columns.append(img2d)
             else:
                 raise TypeError("Unsupported column type: %s" % column_type)

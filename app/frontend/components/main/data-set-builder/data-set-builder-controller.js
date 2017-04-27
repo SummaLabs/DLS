@@ -99,7 +99,7 @@ function DataSetController($scope, $rootScope, $element, $mdEditDialog, $timeout
                         columns.push({
                             name: header.name,
                             type: header.type,
-                            index: header.columns,
+                            index: header.columnsIndexes,
                             pre_transforms: [],
                             post_transforms: [],
                             is_related_path: true
