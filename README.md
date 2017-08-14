@@ -1,4 +1,6 @@
-**Deep Learning Studio**
+**Deep Learning Studio Demo**
+
+[![Deep Learning Studio Demo](http://img.youtube.com/vi/nC0bVDBWvF0/0.jpg)](https://www.youtube.com/watch?v=nC0bVDBWvF0)
 
 _How to build and run_:
 * cd to DLS root dir
