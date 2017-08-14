@@ -2,7 +2,7 @@
 
 [![Deep Learning Studio Demo](http://img.youtube.com/vi/nC0bVDBWvF0/0.jpg)](https://www.youtube.com/watch?v=nC0bVDBWvF0)
 
-_How to build and run_:
+**How to build and run**:
 * cd to DLS root dir
 * Install python and pip if not installed
 * Run ```pip install -r requirements.txt``` command
