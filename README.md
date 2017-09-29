@@ -1,4 +1,22 @@
-**Deep Learning Studio Demo**
+# **Deep Learning Studio Demo**
+
+#### DLS Minsk AI Hackathon, Demo#1
+[![DLS Minsk AI Hackathon #1](http://img.youtube.com/vi/N5Pki8ITQz8/0.jpg)](https://www.youtube.com/watch?v=N5Pki8ITQz8)
+
+
+#### DLS Minsk AI Hackathon, Demo#2 (Complex layers)
+[![DLS Minsk AI Hackathon #2](http://img.youtube.com/vi/XdeJK-BFxcI/0.jpg)](https://www.youtube.com/watch?v=XdeJK-BFxcI)
+
+#### DLS Minsk AI Hackathon, Demo#3 (Feature space & feature maps visualization)
+[![DLS Minsk AI Hackathon #3](http://img.youtube.com/vi/bqr_8AG6pis/0.jpg)](https://www.youtube.com/watch?v=bqr_8AG6pis)
+
+------------
+
+#### Keras & Node-RED & NVIDIA-DIGITS Prototype
+[![Node-RED & NVIDIA-DIGITS](http://img.youtube.com/vi/fhsDLFhRuIY/0.jpg)](https://www.youtube.com/watch?v=fhsDLFhRuIY)
+
+
+------------
 
 [![Deep Learning Studio Demo](http://img.youtube.com/vi/nC0bVDBWvF0/0.jpg)](https://www.youtube.com/watch?v=nC0bVDBWvF0)
 
